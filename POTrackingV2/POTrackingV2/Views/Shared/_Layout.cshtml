@@ -1,4 +1,11 @@
-﻿@using POTrackingV2.Constants
+﻿
+@using POTrackingV2.CustomAuthentication
+@using POTrackingV2.Constants
+
+@{
+    var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,24 +79,27 @@
                         <i class="fas fa-cogs"></i> <span>Subcontract</span>
                     </a>
                 </li>
-                @if (User.Identity.Name == LoginConstants.RoleAdministrator)
+                @{
+                    var userData = ((CustomPrincipal)HttpContext.Current.User);
+                }
+                @if (userData.IsInRole(LoginConstants.RoleAdministrator))
                 {
-                <li class="main-menu-item">
-                    <a href="#" class="main-menu__link">
-                        <i class="fas fa-paperclip"></i> <span>Master Data</span>
-                    </a>
-                    <ul class="main-menu-submenu list-unstyled">
-                        <li class="main-menu-submenu-item">
-                            <a href="/MasterVendor" class="main-menu-submenu__link" data-menu="Mastervendor">Vendor</a>
-                        </li>
-                        <li class="main-menu-submenu-item">
-                            <a href="/ReasonSubCont" class="main-menu-submenu__link" data-menu="Mastervendor">Reason SubCont</a>
-                        </li>
-                        <li class="main-menu-submenu-item">
-                            <a href="/DelayReason" class="main-menu-submenu__link" data-menu="Mastervendor">Delay Reason</a>
-                        </li>
-                    </ul>
-                </li>
+                    <li class="main-menu-item">
+                        <a href="#" class="main-menu__link">
+                            <i class="fas fa-paperclip"></i> <span>Master Data</span>
+                        </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="/MasterVendor" class="main-menu-submenu__link" data-menu="Mastervendor">Vendor</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="/ReasonSubCont" class="main-menu-submenu__link" data-menu="Mastervendor">Reason SubCont</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="/DelayReason" class="main-menu-submenu__link" data-menu="Mastervendor">Delay Reason</a>
+                            </li>
+                        </ul>
+                    </li>
                 }
             </ul>
         </nav>
@@ -188,6 +198,6 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
     @RenderSection("notification", required: false)
-    @*@Html.Partial("_NotificationList")*@
+    @Html.Partial("_NotificationList", myRole.Roles)
 </body>
 </html>

@@ -1,11 +1,12 @@
-﻿@if (Request.IsAuthenticated)
+﻿@using POTrackingV2.CustomAuthentication
+@if (Request.IsAuthenticated)
 {
-    ViewBag.Role = Request.QueryString["role"];
-    if (ViewBag.Role == null)
-    {
-        ViewBag.Role = "vendor";
-    }
-    <input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
+    ViewBag.Role = Model;
+    //if (ViewBag.Role == null)
+    //{
+    //    ViewBag.Role = "vendor";
+    //}
+    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
     <script type="text/javascript">
         Date.prototype.newDateFormatMMDD = function () {
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -25,7 +26,8 @@
         }
 
         $(document).ready(function () {
-            var role = $("#role").val();
+            var role = $("#role").val().toLowerCase();
+            $("#role").val(role);
             $.ajax({
                 type: "GET",
                 url: "@Url.Action("/GetNotificationByRole", "Home")",

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Web;
 
-namespace PowerAppsCMS.CustomAuthentication
+namespace POTrackingV2.CustomAuthentication
 {
     /// <summary>
     /// Objek-objek prinsip pada fungsional dasar keamanan login
