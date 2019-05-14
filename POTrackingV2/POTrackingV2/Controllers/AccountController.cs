@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
+using POTrackingV2.Constants;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -23,9 +24,6 @@ namespace POTrackingV2.Controllers
         [HttpGet]
         public ActionResult Login(string ReturnUrl = "")
         {
-            POTrackingEntities db = new POTrackingEntities();
-
-            ViewBag.RoleID = new SelectList(db.Roles,"ID","Name") ;
             ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
@@ -39,64 +37,107 @@ namespace POTrackingV2.Controllers
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
 
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                if (loginView.UserType != LoginConstants.UserTypeInternal)
                 {
-                    try
+                    if (Membership.ValidateUser(loginView.UserName, loginView.Password))
                     {
-                        if (entry.Guid == null)
+                        var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
+                        if (user != null)
                         {
-                            ModelState.AddModelError("", "Username or Password invalid.");
-                            return View();
-                        }
-                        else
-                        {
-                            if (Membership.ValidateUser(loginView.UserName, loginView.Password))
+                            CustomSerializeModel userModel = new Models.CustomSerializeModel()
                             {
-                                var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
-                                if (user != null)
-                                {
-                                    CustomSerializeModel userModel = new Models.CustomSerializeModel()
-                                    {
-                                        UserId = user.UserId,
-                                        Name = user.Name,
-                                        Roles = user.Roles
-                                    };
+                                UserId = user.UserId,
+                                Name = user.Name,
+                                Roles = user.Roles
+                            };
 
-                                    string userData = JsonConvert.SerializeObject(userModel);
-                                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
-                                        (
-                                        1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
-                                        );
+                            string userData = JsonConvert.SerializeObject(userModel);
+                            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
+                                (
+                                1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
+                                );
 
-                                    string enTicket = FormsAuthentication.Encrypt(authTicket);
-                                    HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
-                                    Response.Cookies.Add(faCookie);
-                                }
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
-                                return View();
-                            }
+                            string enTicket = FormsAuthentication.Encrypt(authTicket);
+                            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                            Response.Cookies.Add(faCookie);
                         }
-                    }
-                    catch
-                    {
-                        ModelState.AddModelError("", "Username or Password invalid");
-                        return View();
-                    }
-
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
+                        return View();
                     }
                 }
+                else
+                {
+                    using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                    {
+                        try
+                        {
+                            if (entry.Guid == null)
+                            {
+                                ModelState.AddModelError("", "Username or Password invalid");
+                                return View();
+                            }
+                            else
+                            {
+                                if (Membership.ValidateUser(loginView.UserName, loginView.Password))
+                                {
+                                    var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
+                                    if (user != null)
+                                    {
+                                        CustomSerializeModel userModel = new Models.CustomSerializeModel()
+                                        {
+                                            UserId = user.UserId,
+                                            Name = user.Name,
+                                            Roles = user.Roles
+                                        };
+
+                                        string userData = JsonConvert.SerializeObject(userModel);
+                                        FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
+                                            (
+                                            1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
+                                            );
+
+                                        string enTicket = FormsAuthentication.Encrypt(authTicket);
+                                        HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                                        Response.Cookies.Add(faCookie);
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
+                                    return View();
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            ModelState.AddModelError("", "Username or Password invalid");
+                            return View();
+                        }
+
+                        if (!string.IsNullOrEmpty(ReturnUrl))
+                        {
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+
+                }
+
+                if (!string.IsNullOrEmpty(ReturnUrl))
+                {
+                    return Redirect(ReturnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
-            ModelState.AddModelError("", "Something Wrong : Username or Password invalid ^_^ ");
             return View(loginView);
         }
 

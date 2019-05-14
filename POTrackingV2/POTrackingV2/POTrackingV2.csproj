@@ -56,6 +56,12 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
@@ -151,10 +157,13 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Constants\LoginConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="CustomAuthentication\CustomAuthorizeAttribute.cs" />
     <Compile Include="CustomAuthentication\CustomMembership.cs" />
     <Compile Include="CustomAuthentication\CustomMembershipUser.cs" />
+    <Compile Include="CustomAuthentication\CustomPrincipal.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -253,16 +262,42 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\IndexLocalViewModel.cs" />
+    <Compile Include="ViewModels\IndexSubcontViewModel.cs" />
+    <Compile Include="ViewModels\MasterVendorViewModel.cs" />
+    <Compile Include="ViewModels\POPurchasingDocumentItemViewModel.cs" />
+    <Compile Include="ViewModels\PurchasingDocumentItemPurchasingDocumentItemHistoryViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\all.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\images\login-background.jpg" />
-    <Content Include="Content\images\patria-logo.png" />
+    <Content Include="Content\datepicker.min.css" />
+    <Content Include="Content\PagedList.css" />
+    <Content Include="Content\styles.css" />
+    <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\AvenirLTStd-Black.svg" />
+    <Content Include="fonts\AvenirLTStd-Book.svg" />
+    <Content Include="fonts\AvenirLTStd-Heavy.svg" />
+    <Content Include="fonts\AvenirLTStd-Light.svg" />
+    <Content Include="fonts\AvenirLTStd-Medium.svg" />
+    <Content Include="fonts\AvenirLTStd-Roman.svg" />
+    <Content Include="fonts\fa-brands-400.svg" />
+    <Content Include="fonts\fa-regular-400.svg" />
+    <Content Include="fonts\fa-solid-900.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\close.png" />
+    <Content Include="Images\excel.png" />
+    <Content Include="Images\login-background.jpg" />
+    <Content Include="Images\logo-patria.png" />
+    <Content Include="Images\logout.png" />
+    <Content Include="Images\patria-logo-login.png" />
+    <Content Include="Images\pdf.png" />
+    <Content Include="Images\powerpoint.png" />
+    <Content Include="Images\word.png" />
     <Content Include="Models\POTracking.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>POTracking.Context.cs</LastGenOutput>
@@ -285,18 +320,83 @@
     <Content Include="Models\POTracking.edmx.diagram">
       <DependentUpon>POTracking.edmx</DependentUpon>
     </Content>
+    <Content Include="fonts\AvenirLTStd-Black.eot" />
+    <Content Include="fonts\AvenirLTStd-Black.ttf" />
+    <Content Include="fonts\AvenirLTStd-Black.woff" />
+    <Content Include="fonts\AvenirLTStd-Black.woff2" />
+    <Content Include="fonts\AvenirLTStd-Book.eot" />
+    <Content Include="fonts\AvenirLTStd-Book.ttf" />
+    <Content Include="fonts\AvenirLTStd-Book.woff" />
+    <Content Include="fonts\AvenirLTStd-Book.woff2" />
+    <Content Include="fonts\AvenirLTStd-Heavy.eot" />
+    <Content Include="fonts\AvenirLTStd-Heavy.ttf" />
+    <Content Include="fonts\AvenirLTStd-Heavy.woff" />
+    <Content Include="fonts\AvenirLTStd-Heavy.woff2" />
+    <Content Include="fonts\AvenirLTStd-Light.eot" />
+    <Content Include="fonts\AvenirLTStd-Light.ttf" />
+    <Content Include="fonts\AvenirLTStd-Light.woff" />
+    <Content Include="fonts\AvenirLTStd-Light.woff2" />
+    <Content Include="fonts\AvenirLTStd-Medium.eot" />
+    <Content Include="fonts\AvenirLTStd-Medium.ttf" />
+    <Content Include="fonts\AvenirLTStd-Medium.woff" />
+    <Content Include="fonts\AvenirLTStd-Medium.woff2" />
+    <Content Include="fonts\AvenirLTStd-Roman.eot" />
+    <Content Include="fonts\AvenirLTStd-Roman.ttf" />
+    <Content Include="fonts\AvenirLTStd-Roman.woff" />
+    <Content Include="fonts\AvenirLTStd-Roman.woff2" />
+    <Content Include="fonts\fa-brands-400.eot" />
+    <Content Include="fonts\fa-brands-400.ttf" />
+    <Content Include="fonts\fa-brands-400.woff" />
+    <Content Include="fonts\fa-brands-400.woff2" />
+    <Content Include="fonts\fa-regular-400.eot" />
+    <Content Include="fonts\fa-regular-400.ttf" />
+    <Content Include="fonts\fa-regular-400.woff" />
+    <Content Include="fonts\fa-regular-400.woff2" />
+    <Content Include="fonts\fa-solid-900.eot" />
+    <Content Include="fonts\fa-solid-900.ttf" />
+    <Content Include="fonts\fa-solid-900.woff" />
+    <Content Include="fonts\fa-solid-900.woff2" />
+    <Content Include="Scripts\data.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\datepicker.min.js" />
+    <Content Include="Scripts\donutty-jquery.min.js" />
     <Content Include="Scripts\feather-4.7.3.min.js" />
+    <Content Include="Scripts\Import\stage1-procurement.js" />
+    <Content Include="Scripts\Import\stage1-vendor.js" />
+    <Content Include="Scripts\Import\stage10-vendor.js" />
+    <Content Include="Scripts\Import\stage2-proc.js" />
+    <Content Include="Scripts\Import\stage2-vendor.js" />
+    <Content Include="Scripts\Import\stage2a-proc.js" />
+    <Content Include="Scripts\Import\stage2a-vendor.js" />
+    <Content Include="Scripts\Import\stage3-vendor.js" />
+    <Content Include="Scripts\Import\stage4-vendor.js" />
+    <Content Include="Scripts\Import\stage5-vendor.js" />
+    <Content Include="Scripts\Import\stage5-vendorzzz.js" />
+    <Content Include="Scripts\Import\stage6-vendor.js" />
+    <Content Include="Scripts\Import\stage7-procurement.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\Local\stage1-procurement.js" />
+    <Content Include="Scripts\Local\stage1-vendor.js" />
+    <Content Include="Scripts\Local\stage2-procurement.js" />
+    <Content Include="Scripts\Local\stage2-vendor.js" />
+    <Content Include="Scripts\Local\Stage2a-invoice-vendor.js" />
+    <Content Include="Scripts\Local\Stage2a-procurement.js" />
+    <Content Include="Scripts\Local\stage3-vendor.js" />
+    <Content Include="Scripts\Local\stage4-vendor.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\utpe.js" />
+    <Content Include="Scripts\vue-paginate.js" />
+    <Content Include="Scripts\vue.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -312,9 +412,19 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Shared\Notification.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_NotificationList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Files\Import\Invoice\" />
+    <Folder Include="Files\Import\Proformainvoice\" />
+    <Folder Include="Files\Import\ProgressPhotos\" />
+    <Folder Include="Files\Import\Shipping\" />
+    <Folder Include="Files\Local\ProformaInvoice\" />
+    <Folder Include="Files\Local\ProgressProforma\" />
+    <Folder Include="Files\Subcont\SequencesProgress\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

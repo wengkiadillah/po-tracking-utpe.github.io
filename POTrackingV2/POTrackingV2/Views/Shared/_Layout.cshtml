@@ -1,43 +1,193 @@
-﻿<!DOCTYPE html>
+﻿@using POTrackingV2.Constants
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
-                <p class="nav navbar-text navbar-right">Hello, @User.Identity.Name!</p>
-            </div>
+    <div class="sidebar-container custom-scrollbar">
+        <img class="corporate-logo" src="/Images/logo-patria.png" alt="logo-patria" />
+        <div class="user-info-container">
+            @Html.Partial("_LoginPartial")
         </div>
+        <nav>
+            <ul class="main-menu list-unstyled">
+                <li class="main-menu-item">
+                    <a href="#" class="main-menu__link" data-menu="Performance Purchaser">
+                        <i class="fas fa-shopping-cart"></i><span>Performance Purchaser</span>
+                    </a>
+                    <ul class="main-menu-submenu list-unstyled">
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Impor</a>
+                        </li>
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Lokal</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="main-menu-item">
+                    <a href="#" class="main-menu__link" data-menu="Status Kedatangan Barang">
+                        <i class="fas fa-chart-pie"></i> <span>Status Kedatangan Barang</span>
+                    </a>
+                    <ul class="main-menu-submenu list-unstyled">
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Impor</a>
+                        </li>
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Lokal</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="main-menu-item">
+                    <a href="#" class="main-menu__link" data-menu="Performance Vendor">
+                        <i class="fas fa-industry"></i> <span>Performance Vendor</span>
+                    </a>
+                    <ul class="main-menu-submenu list-unstyled">
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Impor</a>
+                        </li>
+                        <li class="main-menu-submenu-item">
+                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Lokal</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="main-menu-item">
+                    <a href="~/Import" class="main-menu__link" data-menu="PO Impor">
+                        <i class="fas fa-plane"></i> <span>PO Impor</span>
+                    </a>
+                </li>
+                <li class="main-menu-item">
+                    <a href="~/Local/index?role=vendor" class="main-menu__link" data-menu="PO Lokal">
+                        <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Lokal</span>
+                    </a>
+                </li>
+                <li class="main-menu-item">
+                    <a href="~/SubCont" class="main-menu__link" data-menu="Subcontract">
+                        <i class="fas fa-cogs"></i> <span>Subcontract</span>
+                    </a>
+                </li>
+                @if (User.Identity.Name == LoginConstants.RoleAdministrator)
+                {
+                <li class="main-menu-item">
+                    <a href="#" class="main-menu__link">
+                        <i class="fas fa-paperclip"></i> <span>Master Data</span>
+                    </a>
+                    <ul class="main-menu-submenu list-unstyled">
+                        <li class="main-menu-submenu-item">
+                            <a href="/MasterVendor" class="main-menu-submenu__link" data-menu="Mastervendor">Vendor</a>
+                        </li>
+                        <li class="main-menu-submenu-item">
+                            <a href="/ReasonSubCont" class="main-menu-submenu__link" data-menu="Mastervendor">Reason SubCont</a>
+                        </li>
+                        <li class="main-menu-submenu-item">
+                            <a href="/DelayReason" class="main-menu-submenu__link" data-menu="Mastervendor">Delay Reason</a>
+                        </li>
+                    </ul>
+                </li>
+                }
+            </ul>
+        </nav>
     </div>
-    <div class="container body-content">
+    <div id="notificationContainer" class="notification-container custom-scrollbar not-show">
+        <div class="notification-header">
+            <i class="far fa-bell"></i>
+            <p class="notification__title">Notifications</p>
+            <img class="notification__close" src="/Images/close.png" alt="close-icon" onclick="toggleNotification()" />
+        </div>
+        <ul class="list-unstyled notification-list">
+            @*<li class="notification-list-item">
+                    <i class="fas fa-check-circle approved"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser has accepted the delay of the
+                            production for item ENGINE KUBOTA Z482-E2B
+                            1500R E-GOV UT FA from <a href="#" class="third-text">PO 4720047467</a>
+                        </p>
+                        <p class="secondary-text mb-0">4h ago</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-exclamation-circle important"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser asked to upload Performa Invoice
+                            for item LOREM IPSUM D392-R2C 800R from
+                            <a href="#" class="third-text">PO 4720047580</a>
+                        </p>
+                        <p class="secondary-text mb-0">Yesterday</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-check-circle approved"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser chose DP as the term of payment for
+                            item LOREM IPSUM D392-R2C 800R from
+                            <a href="#" class="third-text">PO 4720047580</a>
+                        </p>
+                        <p class="secondary-text mb-0">Sep 14</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-times-circle rejected"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser has cancelled item EPDM RUBBER
+                            4503 from
+                            <a href="#" class="third-text">PO 472004747</a>
+                        </p>
+                        <p class="secondary-text mb-0">Aug 27</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-check-circle approved"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser has approved item ENGINE KUBOTA
+                            Z482-E2B 1500R E-GOV UT FA from <a href="#" class="third-text">PO 4720047467</a> for Qty: 2
+                        </p>
+                        <p class="secondary-text mb-0">Jul 18</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-check-circle approved"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser has confirmed GR on 18/12/2018 for item
+                            ENGINE KUBOTA Z482-E2B 1500R E-GOV UT
+                            FA from <a href="#" class="third-text">PO 4720047386</a> for Qty: 3 (10/10)
+                        </p>
+                        <p class="secondary-text mb-0">Jul 4</p>
+                    </div>
+                </li>
+                <li class="notification-list-item">
+                    <i class="fas fa-exclamation-circle important"></i>
+                    <div class="notification-message-container">
+                        <p class="mb-1">
+                            Purchaser has confirmed GR on 11/12/2018 for item
+                            ENGINE KUBOTA Z482-E2B 1500R E-GOV UT
+                            FA from <a href="#" class="third-text">PO 4720047386</a> for Qty: 7 (7/10)
+                        </p>
+                        <p class="secondary-text mb-0">Jun 30</p>
+                    </div>
+                </li>*@
+        </ul>
+        <a href="#" class="notification-see-all third-text">See All</a>
+    </div>
+    <div class="main-container custom-scrollbar">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    @RenderSection("notification", required: false)
+    @*@Html.Partial("_NotificationList")*@
 </body>
 </html>

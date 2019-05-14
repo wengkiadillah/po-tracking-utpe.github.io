@@ -1,0 +1,173 @@
+﻿@if (Request.IsAuthenticated)
+{
+    ViewBag.Role = Request.QueryString["role"];
+    if (ViewBag.Role == null)
+    {
+        ViewBag.Role = "vendor";
+    }
+    <input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
+    <script type="text/javascript">
+        Date.prototype.newDateFormatMMDD = function () {
+            const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            var dd = this.getDate();
+
+            var mm = this.getMonth() + 1;
+            var yyyy = this.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+
+            //if (mm < 10) {
+            //    mm = '0' + mm;
+            //}
+            //return dd + "/" +mm + "/" + yyyy;
+            return months[mm] + " " + dd;
+        }
+
+        $(document).ready(function () {
+            var role = $("#role").val();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("/GetNotificationByRole", "Home")",
+                data: { 'role': role },
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success: function (response) {
+                    if (response.responseCode == "200") {
+                        //console.log(response.notifications);
+                        var jsonObj = $.parseJSON(response.notifications);
+                        var message = "";
+                        countNotification = Object.keys(jsonObj).length;
+                        if (countNotification > 0){
+                            $(".user-info-notification__count").text(countNotification);
+                            $(".user-info-notification__count").show();
+                        } else {
+                            $(".user-info-notification__count").hide();
+                        }
+
+                        for (var k in jsonObj) {
+                            //var status = jsonObj[k]['status'].toLowerCase();
+                            var status = jsonObj[k]['status'].toLowerCase();
+                            var PONumber = jsonObj[k]['PONumber'].toLowerCase();
+                            var POQty = jsonObj[k]['POQty'];
+                            var material = jsonObj[k]['material'];
+                            var targetRole = jsonObj[k]['role'].toLowerCase();
+                            var assignedFrom = "Vendor";
+                            if (targetRole == "vendor") {
+                                assignedFrom = "Procurement";
+                            }
+                            var GRDate = jsonObj[k]['GRDate'];
+                            var GRQty = jsonObj[k]['GRQty'];
+                            var created = jsonObj[k]['created'];
+                            var stage = jsonObj[k]['stage'];
+                            var confirmedItem = jsonObj[k]['POConfirmedItem'];
+                            var countEtaHistory = jsonObj[k]['CountEtaHistory'];
+                            var confirmFirstETA = jsonObj[k]['ConfirmFirstETA'];
+                            var proformaInvoice = jsonObj[k]['ProformaInvoice'];
+                            var approveProformaInvoice = jsonObj[k]['ApproveProformaInvoice'];
+                            var confirmedPaymentReceive = jsonObj[k]['ConfirmedPaymentReceive'];
+                            var secondETAHistory = jsonObj[k]['SecondETAHistory'];
+                            var countProgressPhotos = jsonObj[k]['CountProgressPhotos'];
+                            var shipmentATD = jsonObj[k]['ShipmentATD'];
+                            var shipmentBookingDate = jsonObj[k]['ShipmentBookingDate'];
+                            var shipmentCopyBLDate = jsonObj[k]['ShipmentCopyBLDate'];
+                            var shipmentATA = jsonObj[k]['ShipmentATA'];
+                            created = new Date(created);
+                            var url = "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase();
+                            message = "";
+
+                            if (GRDate != null) {
+                                message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: "  + GRQty + " (10/10)";
+                            }
+                            else if (stage == "1") {
+                                if (confirmedItem == true) {
+                                    message += " asked to update ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (confirmedItem == false) {
+                                    message += " has canceled item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (POQty != null) {
+                                    message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                }
+                            }
+                            else if (stage == "2") {
+                                if (confirmFirstETA == true) {
+                                    message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (confirmFirstETA == false) {
+                                    message += " has declined ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (countEtaHistory > 0) {
+                                    message += " has updated ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "2a") {
+                                if (approveProformaInvoice == true) {
+                                    message += " asked to update Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                if (approveProformaInvoice == false) {
+                                    message += " has declined proforma invoice and asked vendor to upload another, for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (proformaInvoice != null) {
+                                    message += " has uploaded proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (proformaInvoice == null) {
+                                    message += " has skipped proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "3") {
+                                if (confirmedPaymentReceive != null) {
+                                    message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else {
+                                    message += " asked to update Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "4") {
+                                if (countProgressPhotos > 0) {
+                                    message += " has uploaded Progress photos for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (secondETAHistory != null) {
+                                    message += " has updated the ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "5") {
+                                if (shipmentATD != null) {
+                                    message += " has updated shipment Actual Time Delivery date at " + shipmentATD + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                                else if (shipmentBookingDate != null) {
+                                    message += " has updated shipment booking date at " + shipmentBookingDate + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "6") {
+                                if (shipmentCopyBLDate !=null) {
+                                    message += " has updated shipment form and documents for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else if (stage == "7") {
+                                if (shipmentATA != null) {
+                                    message += " has updated shipment ATA at " + shipmentATA + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }
+                            }
+                            else  {
+                                message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                            }
+
+                            $(".list-unstyled.notification-list").append("<li class='notification-list-item'>"+
+                                "<i class='fas fa-check-circle " + status +"'></i>"+
+                                "<div class='notification-message-container'>"+
+                                "<p class='mb-1'>" +
+                                assignedFrom + message +
+                                "</p>"+
+                                "<p class='secondary-text mb-0'>" + created.newDateFormatMMDD() + "</p>"+
+                                "</div>"+
+                            "</li>");
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr.status + " : " + error);
+                }
+            });
+        });
+    </script>
+}

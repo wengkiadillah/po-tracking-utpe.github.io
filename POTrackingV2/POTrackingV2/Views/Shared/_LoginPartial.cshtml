@@ -1,0 +1,34 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <text>
+        <div class="user-info-action">
+            <div class="user-info-notification" onclick="toggleNotification()">
+                <i class="far fa-bell"></i>
+                <span class="user-info-notification__count" style="display:none;"></span>
+            </div>
+            <div class="user-info__avatar" id="userAvatar"></div>
+            <a href="@Url.Action("LogOut", "Account")"  class="user-info__logout">
+                <img src="/Images/logout.png" alt="log-out-icon" />
+            </a>
+            
+        </div>
+        <p class="user-info__name" id="userName">@User.Identity.Name!</p>
+    </text>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Sign in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            $('.user-info__logout').click(function () {
+                document.execCommand("ClearAuthenticationCache");
+            })
+        });
+    </script>
+}

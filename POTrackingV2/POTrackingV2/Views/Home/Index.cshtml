@@ -1,31 +1,884 @@
 ﻿@{
+    /**/
+
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@section styles {
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" />
+}
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
+<div class="filter-row">
+    <div class="filter-form-container form-inline">
+        <div class="form-group mr-4">
+            <input type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO">
+            <i class="fas fa-search form-type-icon hint"></i>
+        </div>
+        <div class="form-group mr-0">
+            <label for="startPODate">PO Date</label>
+            <input type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                   placeholder="dd/mm/yyyy">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <div class="form-group">
+            <label for="endPODate">to</label>
+            <input type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                   placeholder="dd/mm/yyyy">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="stage-pagination-container">
+        <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
+        <ul class="list-unstyled pagination-list mb-0">
+            <li class="pagination-list__item" onclick="paginationShow(1)">1</li>
+            <li class="pagination-list__item" onclick="paginationShow(2)">2</li>
+            <li class="pagination-list__item" onclick="paginationShow(3)">3</li>
+            <li class="pagination-list__item" onclick="paginationShow(4)">4</li>
+            <li class="pagination-list__item" onclick="paginationShow(5)">5</li>
+            <li class="pagination-list__item" onclick="paginationShow(6)">6</li>
+            <li class="pagination-list__item" onclick="paginationShow(7)">7</li>
+        </ul>
     </div>
 </div>
+<ul class="list-unstyled po-list">
+    <li class="po-item-container">
+        <div class="po-item-section po-item-sticky">
+            <div class="po-item-section-header">
+                <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                <div class="po-item-section-header-text">
+                    <span class="po-item-section-header-text__label">No. PO</span>
+                    <span>4720047580</span>
+                </div>
+                <div class="po-item-section-header-text">
+                    <span class="po-item-section-header-text__label">PO Date</span>
+                    <span>21/09/2018</span>
+                </div>
+                <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                <div class="pop-up-notification">
+                    <table>
+                        <tr>
+                            <td class="secondary-text">No. PO</td>
+                            <td>&nbsp;</td>
+                            <td>4720047580</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">PO Date</td>
+                            <td>&nbsp;</td>
+                            <td>17/09/2018</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">Vendor</td>
+                            <td>&nbsp;</td>
+                            <td>KUBOTA MACHINERY INDONESIA</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">PO Creator</td>
+                            <td>&nbsp;</td>
+                            <td>DIAN BANGKIT SETYADI</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">Release PO Date</td>
+                            <td>&nbsp;</td>
+                            <td>06/12/2018</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="po-item-section-body">
+                <div class="po-item-data-header">
+                    <span class="po-item-data-header__text item-id">Item ID</span>
+                    <span class="po-item-data-header__text description">Item Description</span>
+                    <span class="po-item-data-header__text po-progress">Progress</span>
+                </div>
+                <div class="po-item-data-content row-1">
+                    <span class="po-item-data-header__column item-id">00170</span>
+                    <span class="po-item-data-header__column description">
+                        ENGINE KUBOTA Z482-E2B 1500R E-GOV UT
+                        FA
+                    </span>
+                    <div class="po-item-data-header__column po-progress">
+                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                             data-value="0" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                        <div>0<span class="secondary-text">/6</span></div>
+                    </div>
+                </div>
+                <div class="po-item-data-content row-2">
+                    <span class="po-item-data-header__column item-id">00151</span>
+                    <span class="po-item-data-header__column description">
+                        LOREM IPSUM D392-R2C 800R
+                        FA
+                    </span>
+                    <div class="po-item-data-header__column po-progress">
+                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                             data-value="50" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                        <div>3<span class="secondary-text">/6</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-scrollbar po-item-scrollable">
+            <div class="po-item-section information">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Information</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text quantity">Qty</span>
+                        <span class="po-item-data-header__text currency">Curr</span>
+                        <span class="po-item-data-header__text price">Price</span>
+                        <span class="po-item-data-header__text material">Material</span>
+                        <span class="po-item-data-header__text delivery">Delivery Date</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <span class="po-item-data-header__column quantity">10</span>
+                        <span class="po-item-data-header__column currency">IDR</span>
+                        <span class="po-item-data-header__column price">62.187.000,00</span>
+                        <span class="po-item-data-header__column material">VTKB02-1001</span>
+                        <span class="po-item-data-header__column delivery">20/12/2018</span>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <span class="po-item-data-header__column quantity">4</span>
+                        <span class="po-item-data-header__column currency">IDR</span>
+                        <span class="po-item-data-header__column price">31.155.000,00</span>
+                        <span class="po-item-data-header__column material">VRAB02-1026</span>
+                        <span class="po-item-data-header__column delivery">28/11/2018</span>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-1">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 1</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Confirm PO</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <button class="btn btn-positive mr-2">Yes</button>
+                                <div class="input-group mr-2">
+                                    <input type="text" class="form-control" placeholder="Qty available">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-positive">Yes</button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-negative">No</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <button class="btn btn-positive mr-2 selected" disabled>Yes</button>
+                                <div class="input-group mr-2">
+                                    <input type="text" class="form-control" disabled placeholder="Qty available">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-positive" disabled>Yes</button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-negative" disabled>No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-2">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 2</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text confirm-eta">Confirm ETA</span>
+                        <span class="po-item-data-header__text">Term of Payment</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column confirm-eta">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <select class="form-control" disabled>
+                                <option>-</option>
+                                <option>DP</option>
+                                <option>Full Payment</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column confirm-eta">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <select class="form-control" disabled>
+                                <option>-</option>
+                                <option selected>DP</option>
+                                <option>Full Payment</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-3">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 3</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Upload Performa Invoice</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <p class="mt-2 mb-0"><a href="#">Performa Invoice</a> uploaded <i class="fas fa-check-circle primary ml-2"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-4">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 4</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Confirm Payment Received</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Received</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" disabled
+                                           placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive selected" disabled>Received</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-5">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 5</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">ETA Confirmation</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive mr-3">On Time</button>
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-negative mr-3">Delay</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive mr-3">On Time</button>
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-negative mr-3">Delay</button>
+                                <div class="stage-5-upload-container">
+                                    <span class="po-item-data-header__text">Upload Photo</span>
+                                    <div class="upload-container">
+                                        <div class="form-group mr-2">
+                                            <input type="file" class="form-control with-icon">
+                                            <i class="fas fa-paperclip form-type-icon"></i>
+                                        </div>
+                                        <button class="btn btn-positive">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-6">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 6</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text date">GR Date</span>
+                        <span class="po-item-data-header__text quantity">Qty</span>
+                        <span class="po-item-data-header__text">GR Completed</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column date">13/11/2018</div>
+                        <div class="po-item-data-header__column">
+                            <div>7<span class="secondary-text">/10</span></div>
+                        </div>
+                        <span class="po-item-data-header__column">No</span>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column date">13/11/2018</div>
+                        <div class="po-item-data-header__column">
+                            <div>7<span class="secondary-text">/10</span></div>
+                        </div>
+                        <span class="po-item-data-header__column">No</span>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-7">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 7</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                        <span class="po-item-data-header__text invoice-method">Upload Invoice</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column invoice-method">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select class="form-control">
+                                        <option>Choose One</option>
+                                        <option>Full</option>
+                                        <option>Partial by GR</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column invoice-method">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select class="form-control">
+                                        <option>Choose One</option>
+                                        <option>Full</option>
+                                        <option>Partial by GR</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+
+<ul class="list-unstyled po-list">
+    <li class="po-item-container">
+        <div class="po-item-section po-item-sticky">
+            <div class="po-item-section-header">
+                <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                <div class="po-item-section-header-text">
+                    <span class="po-item-section-header-text__label">No. PO</span>
+                    <span>4720047580</span>
+                </div>
+                <div class="po-item-section-header-text">
+                    <span class="po-item-section-header-text__label">PO Date</span>
+                    <span>21/09/2018</span>
+                </div>
+                <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                <div class="pop-up-notification">
+                    <table>
+                        <tr>
+                            <td class="secondary-text">No. PO</td>
+                            <td>&nbsp;</td>
+                            <td>4720047580</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">PO Date</td>
+                            <td>&nbsp;</td>
+                            <td>17/09/2018</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">Vendor</td>
+                            <td>&nbsp;</td>
+                            <td>KUBOTA MACHINERY INDONESIA</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">PO Creator</td>
+                            <td>&nbsp;</td>
+                            <td>DIAN BANGKIT SETYADI</td>
+                        </tr>
+                        <tr>
+                            <td class="secondary-text">Release PO Date</td>
+                            <td>&nbsp;</td>
+                            <td>06/12/2018</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="po-item-section-body">
+                <div class="po-item-data-header">
+                    <span class="po-item-data-header__text item-id">Item ID</span>
+                    <span class="po-item-data-header__text description">Item Description</span>
+                    <span class="po-item-data-header__text po-progress">Progress</span>
+                </div>
+                <div class="po-item-data-content row-1">
+                    <span class="po-item-data-header__column item-id">00170</span>
+                    <span class="po-item-data-header__column description">
+                        ENGINE KUBOTA Z482-E2B 1500R E-GOV UT
+                        FA
+                    </span>
+                    <div class="po-item-data-header__column po-progress">
+                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                             data-value="0" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                        <div>0<span class="secondary-text">/6</span></div>
+                    </div>
+                </div>
+                <div class="po-item-data-content row-2">
+                    <span class="po-item-data-header__column item-id">00151</span>
+                    <span class="po-item-data-header__column description">
+                        LOREM IPSUM D392-R2C 800R
+                        FA
+                    </span>
+                    <div class="po-item-data-header__column po-progress">
+                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                             data-value="50" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                        <div>3<span class="secondary-text">/6</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-scrollbar po-item-scrollable">
+            <div class="po-item-section information">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Information</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text quantity">Qty</span>
+                        <span class="po-item-data-header__text currency">Curr</span>
+                        <span class="po-item-data-header__text price">Price</span>
+                        <span class="po-item-data-header__text material">Material</span>
+                        <span class="po-item-data-header__text delivery">Delivery Date</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <span class="po-item-data-header__column quantity">10</span>
+                        <span class="po-item-data-header__column currency">IDR</span>
+                        <span class="po-item-data-header__column price">62.187.000,00</span>
+                        <span class="po-item-data-header__column material">VTKB02-1001</span>
+                        <span class="po-item-data-header__column delivery">20/12/2018</span>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <span class="po-item-data-header__column quantity">4</span>
+                        <span class="po-item-data-header__column currency">IDR</span>
+                        <span class="po-item-data-header__column price">31.155.000,00</span>
+                        <span class="po-item-data-header__column material">VRAB02-1026</span>
+                        <span class="po-item-data-header__column delivery">28/11/2018</span>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-1">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 1</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Confirm PO</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <button class="btn btn-positive mr-2">Yes</button>
+                                <div class="input-group mr-2">
+                                    <input type="text" class="form-control" placeholder="Qty available">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-positive">Yes</button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-negative">No</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <button class="btn btn-positive mr-2 selected" disabled>Yes</button>
+                                <div class="input-group mr-2">
+                                    <input type="text" class="form-control" disabled placeholder="Qty available">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-positive" disabled>Yes</button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-negative" disabled>No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-2">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 2</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text confirm-eta">Confirm ETA</span>
+                        <span class="po-item-data-header__text">Term of Payment</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column confirm-eta">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <select class="form-control" disabled>
+                                <option>-</option>
+                                <option>DP</option>
+                                <option>Full Payment</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column confirm-eta">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <select class="form-control" disabled>
+                                <option>-</option>
+                                <option selected>DP</option>
+                                <option>Full Payment</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-3">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 3</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Upload Performa Invoice</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <p class="mt-2 mb-0"><a href="#">Performa Invoice</a> uploaded <i class="fas fa-check-circle primary ml-2"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-4">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 4</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">Confirm Payment Received</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Received</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" disabled
+                                           placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive selected" disabled>Received</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-5">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 5</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text">ETA Confirmation</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive mr-3">On Time</button>
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-negative mr-3">Delay</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive mr-3">On Time</button>
+                                <div class="form-group mr-2">
+                                    <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-negative mr-3">Delay</button>
+                                <div class="stage-5-upload-container">
+                                    <span class="po-item-data-header__text">Upload Photo</span>
+                                    <div class="upload-container">
+                                        <div class="form-group mr-2">
+                                            <input type="file" class="form-control with-icon">
+                                            <i class="fas fa-paperclip form-type-icon"></i>
+                                        </div>
+                                        <button class="btn btn-positive">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-6">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 6</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text date">GR Date</span>
+                        <span class="po-item-data-header__text quantity">Qty</span>
+                        <span class="po-item-data-header__text">GR Completed</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column date">13/11/2018</div>
+                        <div class="po-item-data-header__column">
+                            <div>7<span class="secondary-text">/10</span></div>
+                        </div>
+                        <span class="po-item-data-header__column">No</span>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column date">13/11/2018</div>
+                        <div class="po-item-data-header__column">
+                            <div>7<span class="secondary-text">/10</span></div>
+                        </div>
+                        <span class="po-item-data-header__column">No</span>
+                    </div>
+                </div>
+            </div>
+            <div class="po-item-section stage-7">
+                <div class="po-item-section-header justify-content-center">
+                    <p class="mb-0">Stage 7</p>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                        <span class="po-item-data-header__text invoice-method">Upload Invoice</span>
+                    </div>
+                    <div class="po-item-data-content row-1">
+                        <div class="po-item-data-header__column invoice-method">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select class="form-control">
+                                        <option>Choose One</option>
+                                        <option>Full</option>
+                                        <option>Partial by GR</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="po-item-data-content row-2">
+                        <div class="po-item-data-header__column invoice-method">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select class="form-control">
+                                        <option>Choose One</option>
+                                        <option>Full</option>
+                                        <option>Partial by GR</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                        <div class="po-item-data-header__column">
+                            <div class="form-inline">
+                                <div class="form-group mr-2">
+                                    <input type="file" class="form-control with-icon">
+                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+
+@section scripts {
+    <script src="~/Scripts/datepicker.min.js"></script>
+    <script src="~/Scripts/donutty-jquery.min.js"></script>
+
+    <script type="text/javascript">
+        var scrollLength = [];
+        $(document).ready(function () {
+            $('#startPODate').datepicker({ autoHide: true });
+            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            $('.form-date').datepicker({ autoHide: true });
+
+            var tempArray = [];
+            var tempMaxHeight = 0;
+            var tempMaxWidth = 0;
+            var rowExist = 1;
+
+            while (rowExist > 0) {
+                if ($(".row-" + rowExist).length > 0) {
+                    tempArray = [];
+                    tempMaxHeight = 0;
+                    $(".row-" + rowExist).each(function () {
+                        tempArray.push($(this).height());
+                    });
+                    tempMaxHeight = Math.max(...tempArray);
+                    $(".row-" + rowExist).height(tempMaxHeight);
+                    rowExist++;
+                } else {
+                    rowExist = -1;
+                }
+            }
+
+            tempArray = [];
+            $(".po-item-section.information").each(function () {
+                tempArray.push($(this).outerWidth(true));
+            });
+            tempMaxWidth = Math.max(...tempArray);
+            $(".po-item-section.information").width(tempMaxWidth);
+            scrollLength.push(tempMaxWidth + 1.5);
+
+            for (var i = 1; i <= 7; i++) {
+                tempArray = [];
+                $(".po-item-section.stage-" + i).each(function () {
+                    tempArray.push($(this).outerWidth(true));
+                });
+                tempMaxWidth = Math.max(...tempArray);
+                $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                scrollLength.push(tempMaxWidth + 1.5);
+            }
+
+            var totalDistance = 0;
+            for (var i = 0; i < scrollLength.length; i++) {
+                scrollLength[i] += totalDistance;
+                totalDistance = scrollLength[i];
+            }
+        });
+
+        function paginationShow(destination) {
+            $(".po-item-scrollable").animate({ scrollLeft: scrollLength[destination - 1] }, 500);
+        }
+
+        function poItemCollapse(row) {
+            row.closest("li").toggleClass("collapse-row");
+        }
+    </script>
+}

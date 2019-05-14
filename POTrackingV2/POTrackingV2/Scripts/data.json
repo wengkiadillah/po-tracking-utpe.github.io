@@ -1,0 +1,326 @@
+﻿{
+    "po": [
+        {
+            "poNumber": "4610000383",
+            "poDate": "5/14/2018",
+            "vendor": "KOMANDO TEKNOLOGI INDONESIA",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "5/18/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "Scissor Lift Hydrolic",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "62000000,00",
+                    "material": "",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039959",
+            "poDate": "1/4/2018",
+            "vendor": "TRIM PANDU ENGINEERING",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/4/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "BRACKET ASSY",
+                    "itemProgress": 0,
+                    "informationQuantity": 5,
+                    "currency": "IDR",
+                    "price": "180350,00",
+                    "material": "RB3001-Z1300000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039966",
+            "poDate": "1/5/2018",
+            "vendor": "MULTI TEKNIK MANDIRI",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/5/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "BRACKET CYLINDER GATE",
+                    "itemProgress": 0,
+                    "informationQuantity": 20,
+                    "currency": "IDR",
+                    "price": "600000,00",
+                    "material": "T56001-B1360000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039971",
+            "poDate": "1/5/2018",
+            "vendor": "IMEDAL KARYA TEKNIK",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/8/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "HOOK",
+                    "itemProgress": 0,
+                    "informationQuantity": 64,
+                    "currency": "IDR",
+                    "price": "18000,00",
+                    "material": "R83302-B117000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039972",
+            "poDate": "1/5/2018",
+            "vendor": "JAYA PERKASA AUTO INDONESIA",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/8/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "PAD",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "50000,00",
+                    "material": "TT1-B11W000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 20,
+                    "itemDescription": "COUPLING GUARD",
+                    "itemProgress": 0,
+                    "informationQuantity": 8,
+                    "currency": "IDR",
+                    "price": "388000,00",
+                    "material": "RG1802-P1120000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 30,
+                    "itemDescription": "TS_SAE 10",
+                    "itemProgress": 0,
+                    "informationQuantity": 12,
+                    "currency": "IDR",
+                    "price": "31500,00",
+                    "material": "R60727-TS110000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 40,
+                    "itemDescription": "TAGGING SWITCH WASTE",
+                    "itemProgress": 0,
+                    "informationQuantity": 10,
+                    "currency": "IDR",
+                    "price": "35000,00",
+                    "material": "R61101-TS190000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 50,
+                    "itemDescription": "TT WASTE",
+                    "itemProgress": 0,
+                    "informationQuantity": 7,
+                    "currency": "IDR",
+                    "price": "32000,00",
+                    "material": "R60903-TT161000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 60,
+                    "itemDescription": "TAGGING SWITCH SAE 90",
+                    "itemProgress": 0,
+                    "informationQuantity": 6,
+                    "currency": "IDR",
+                    "price": "32000,00",
+                    "material": "R60903-TS140000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                },
+                {
+                    "itemID": 70,
+                    "itemDescription": "TS_SAE 30",
+                    "itemProgress": 0,
+                    "informationQuantity": 10,
+                    "currency": "IDR",
+                    "price": "54000,00",
+                    "material": "R60903-TS120000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039973",
+            "poDate": "1/5/2018",
+            "vendor": "JAYA PERKASA AUTO INDONESIA",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/9/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "BODY ASSY",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "89000000,00",
+                    "material": "RB2506-B1000000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039974",
+            "poDate": "1/5/2018",
+            "vendor": "MUTIARA PRIMA TEKNIK",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/8/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "SOCKET 2\" 3/4\" NPT",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "30000,00",
+                    "material": "RG2012-P1910000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }, {
+                    "itemID": 20,
+                    "itemDescription": "AIR PIPE",
+                    "itemProgress": 0,
+                    "informationQuantity": 2,
+                    "currency": "IDR",
+                    "price": "114300,00",
+                    "material": "R60903-P1500000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }, {
+                    "itemID": 30,
+                    "itemDescription": "COVER",
+                    "itemProgress": 0,
+                    "informationQuantity": 3,
+                    "currency": "IDR",
+                    "price": "328500,00",
+                    "material": "R60904-P1210000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039975",
+            "poDate": "1/5/2018",
+            "vendor": "MITRA SURYA TEKNIK",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/8/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "DRAIN PORT ASSY",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "509500,00",
+                    "material": "R60602-B3C00000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }, {
+            "poNumber": "4720039977",
+            "poDate": "1/5/2018",
+            "vendor": "MULTI TEKNIK MANDIRI",
+            "poCreator": "DIAN BANGKIT STYADI",
+            "releasePODate": "1/8/2018",
+            "poItems": [
+                {
+                    "itemID": 10,
+                    "itemDescription": "SUB FRAME",
+                    "itemProgress": 0,
+                    "informationQuantity": 3,
+                    "currency": "IDR",
+                    "price": "80000,00",
+                    "material": "R82602-F1000000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }, {
+                    "itemID": 20,
+                    "itemDescription": "BRACKET",
+                    "itemProgress": 0,
+                    "informationQuantity": 1,
+                    "currency": "IDR",
+                    "price": "12000000,00",
+                    "material": "RA2013-P1800000",
+                    "deliveryDate": "",
+                    "grDate": "13/11/2018",
+                    "stageSixCompleteQuantity": 7,
+                    "stageSixTotalQuantity": 10,
+                    "grCompleted": "No"
+                }
+            ]
+        }
+    ]
+}
