@@ -9,6 +9,10 @@ namespace POTrackingV2.Models
     public class LoginView
     {
         [Required]
+        [Display(Name = "Role")]
+        public int RoleID { get; set; }
+
+        [Required]
         [Display(Name = "User Name")]
         public string UserName { get; set; }
         [Required]
@@ -18,14 +22,13 @@ namespace POTrackingV2.Models
         public bool RememberMe { get; set; }
     }
 
-    //public class CustomSerializeModel
-    //{
-    //    public Guid UserId { get; set; }
-    //    public string Name { get; set; }
-    //    //public string LastName { get; set; }
-    //    public string Roles { get; set; }
+    public class CustomSerializeModel
+    {
+        public Guid UserId { get; set; }
+        public string Name { get; set; }
+        public string Roles { get; set; }
 
-    //}
+    }
 
     public class RegistrationView
     {

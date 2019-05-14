@@ -1,53 +1,148 @@
 ﻿@model POTrackingV2.Models.LoginView
 @{
+    ViewBag.Title = "Login | Patria System";
     Layout = null;
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/Content/login.css" rel="stylesheet" />
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Login | Patria System</title>
 </head>
 <body>
+    <div class="bg-image"></div>
     <div class="login-conatainer">
         @using (Html.BeginForm(null, null, new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
         {
             @Html.AntiForgeryToken()
-            @*<form>*@
-            <img src="~/Content/images/patria-logo.png" class="login-logo" />
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.UserName)
-                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group password-input">
-                @Html.LabelFor(model => model.Password)
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
-            </div>
-            <br />
-            <button class="login-button btn" type="submit">Login</button>
+            <form action="/utpe-patria/" method="post">
+                <input name="__RequestVerificationToken" type="hidden" value="1F_VZ9gQnAVhieDi9pRV76_uVf3XE5VhXpXcY18B9YQD0ohm7yhjZ_wMnMxrMp-Lqc0UuuFoAEo4Q-nNHg7H3UY-U18IC5JPi13BwDBtUrY1">
+                <img src="~/Content/images/patria-logo.png" class="login-logo">
+                <div class="form-container">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model)
+                        @Html.DropDownList("RoleID", null, "Select Role", htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.RoleID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UserName)
+                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group password-input">
+                        @Html.LabelFor(model => model.Password)
+                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                        <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
+                    </div>
+                    <br>
+                    <button class="login-button btn" type="submit">Login</button>
+                </div>
+            </form>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @*</form>*@
+
         }
+        <input type="hidden" class="exception">
     </div>
-    <script src="~/Scripts/feather-4.7.3.min.js"></script>
-    <script type="text/javascript">
-        feather.replace();
-        function showHidePassword() {
-            var x = document.getElementById("Password");
-            if (x.type === "password") {
-                x.type = "text";
-            } else {
-                x.type = "password";
-            }
-        }
-    </script>
+    <p class="footer-text">PATRIA © 2018 . All rights reserved</p>
 </body>
 </html>
+
+<style>
+
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .bg-image {
+        /* The image used */
+        background-image: url("~/Content/images/login-background.jpg");
+        /* Add the blur effect */
+        filter: blur(5px);
+        -webkit-filter: blur(5px);
+        /* Full height */
+        height: 100%;
+        /* Center and scale the image nicely */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .login-conatainer {
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+        color: white;
+        font-weight: bold;
+        border: 3px solid #f1f1f1;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        width: 28%;
+        padding: 20px;
+        text-align: center;
+    }
+
+        .login-conatainer > form {
+            width: 100%;
+            margin-top: -75px;
+        }
+
+    .form-group {
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+
+    .password-input {
+        position: relative;
+    }
+
+    .footer-text {
+        filter: none;
+        padding: 20px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+    }
+
+    .login-button {
+        background-color: #31628f;
+        color: #fff;
+        width: 100%;
+        padding: 10px;
+        -webkit-transition: all 500ms ease-out;
+        -moz-transition: all 500ms ease-out;
+        -o-transition: all 500ms ease-out;
+        transition: all 500ms ease-out;
+    }
+
+    .form-container {
+        padding: 2em;
+    }
+</style>
+
+<script src="~/Scripts/feather-4.7.3.min.js"></script>
+<script type="text/javascript">
+    feather.replace();
+    function showHidePassword() {
+        var x = document.getElementById("Password");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+</script>

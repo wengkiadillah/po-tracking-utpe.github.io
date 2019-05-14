@@ -23,10 +23,9 @@ namespace POTrackingV2.Controllers
         [HttpGet]
         public ActionResult Login(string ReturnUrl = "")
         {
-            //if (User.Identity.IsAuthenticated)
-            //{
-            //    return LogOut();
-            //}
+            POTrackingEntities db = new POTrackingEntities();
+
+            ViewBag.RoleID = new SelectList(db.Roles,"ID","Name") ;
             ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
