@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5abf6e3b2a6546fa99887d24b747b1de" Name="Diagram1" ZoomLevel="99">
+        <EntityTypeShape EntityType="POTracking.Capability" Width="1.5" PointX="1.5" PointY="33.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.CapabilityCategory" Width="1.5" PointX="8.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.DelayReason" Width="1.5" PointX="6" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.ETAHistory" Width="1.5" PointX="8.25" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.KompoCategory" Width="1.5" PointX="1.5" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.Notification" Width="1.5" PointX="8.25" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.NotificationStatu" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.PO" Width="1.5" PointX="0.75" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.ProductionSequenceData" Width="1.5" PointX="5.25" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.ProgressPhoto" Width="1.5" PointX="5.25" PointY="19.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.PurchasingDocumentItem" Width="1.5" PointX="3" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.PurchasingDocumentItemHistory" Width="1.5" PointX="5.25" PointY="22.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.QualityControlProgress" Width="1.5" PointX="5.25" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.RawMaterialOrderDetail" Width="1.5" PointX="7.5" PointY="30.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.RawMaterialOrderPoFile" Width="1.5" PointX="7.5" PointY="34.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.RawMaterialOrderProgressFile" Width="1.5" PointX="7.5" PointY="37.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.RawMaterialOrder" Width="1.5" PointX="5.25" PointY="33.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.Role" Width="1.5" PointX="5.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.SequencesProgressReason" Width="1.5" PointX="0.75" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.Shipment" Width="1.5" PointX="5.25" PointY="40.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.SubcontCapability" Width="1.5" PointX="3.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.SubcontCategory" Width="1.5" PointX="1.5" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.SubcontComponentCapability" Width="1.5" PointX="3.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.sysdiagram" Width="1.5" PointX="8.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.User" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTracking.Vendor" Width="1.5" PointX="1.5" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="POTracking.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_ETAHistory_DelayReason_DelayReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_ETAHistory_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PO_KompoCategories_KompoCategoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_Notification_NotificationStatus_StatusID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PO_Vendors_VendorCode" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItem_PO_POID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_ProductionSequanceData_PurchasingDocumentItem_PurchasingDocumentsItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_ProgressPhoto_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItem_SequencesProgressReasons_FullweldLateReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItem_SequencesProgressReasons_PBALateReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItem_SequencesProgressReasons_PremierLateReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItem_SequencesProgressReasons_SettingLateReasonID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_PurchasingDocumentItemHistory_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_QualityControlProgress_PurchasingDocumentItem_PurchasingDocumentsItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_RawMaterialOrders_PurchasingDocumentItem_PurchasingDocumentsItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_Shipment_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_RawMaterialOrderDetails_RawMaterialOrders_RawMaterialOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_RawMaterialOrderPoFiles_RawMaterialOrders_RawMaterialOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_RawMaterialOrderProgressFiles_RawMaterialOrders_RawMaterialOrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_Users_Roles" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_SubcontCapabilities_Vendors_VendorCode" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_Vendors_SubcontCategories_SubcontCategoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTracking.FK_SubcontComponentCapabilities_Vendors_VendorCode" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

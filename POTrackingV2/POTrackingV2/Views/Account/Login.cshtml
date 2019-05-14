@@ -1,0 +1,53 @@
+﻿@model POTrackingV2.Models.LoginView
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/login.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="login-conatainer">
+        @using (Html.BeginForm(null, null, new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @*<form>*@
+            <img src="~/Content/images/patria-logo.png" class="login-logo" />
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.UserName)
+                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group password-input">
+                @Html.LabelFor(model => model.Password)
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
+            </div>
+            <br />
+            <button class="login-button btn" type="submit">Login</button>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @*</form>*@
+        }
+    </div>
+    <script src="~/Scripts/feather-4.7.3.min.js"></script>
+    <script type="text/javascript">
+        feather.replace();
+        function showHidePassword() {
+            var x = document.getElementById("Password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>
