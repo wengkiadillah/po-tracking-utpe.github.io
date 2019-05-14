@@ -328,3 +328,7 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+
+!PO Tracking V2\POTrackingV2\POTrackingV2\Properties\PublishProfiles\CustomProfile.pubxml
+!PO Tracking V2\POTrackingV2\POTrackingV2\Properties\PublishProfiles\CustomProfile.pubxml.user
