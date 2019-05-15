@@ -31,19 +31,19 @@ namespace POTracking.Controllers
         }
 
         // GET: ReasonSubCont/getById/5
-        [HttpGet]
-        public JsonResult getById(int id) {
-            if (id == null)
-            {
-                return Json(new { status = false}, JsonRequestBehavior.AllowGet);
-            }
+        //[HttpGet]
+        //public JsonResult getById(int id) {
+        //    if (id == null)
+        //    {
+        //        return Json(new { status = false}, JsonRequestBehavior.AllowGet);
+        //    }
 
-            using (POTrackingEntities db = new POTrackingEntities())
-            {
-                var result = db.SequencesProgressReasons.Where(z => z.ID == id).FirstOrDefault();
-                return Json(new { result.PurchasingDocumentItems1}, JsonRequestBehavior.AllowGet);
-            }
-        }
+        //    using (POTrackingEntities db = new POTrackingEntities())
+        //    {
+        //        var result = db.SequencesProgressReasons.Where(z => z.ID == id).FirstOrDefault();
+        //        return Json(new { result.PurchasingDocumentItems1}, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
         // GET: ReasonSubCont/Create
         public ActionResult Create()
@@ -76,13 +76,16 @@ namespace POTracking.Controllers
                     db.SaveChanges();
                 }
 
-                return Json(new { status = true, data = sequencesProgress.Name });
+                return RedirectToAction("Index");
+                //return Json(new { status = true, data = sequencesProgress.Name });
             }
-            catch (Exception ex)
+            catch
             {
-                DateTime now = DateTime.Now;
-                string userName = User.Identity.Name;
-                return Json(new { status = false, textMessage = ex.Message, data = sequencesProgress, username = userName, now = now });
+
+                return View();
+                //DateTime now = DateTime.Now;
+                //string userName = User.Identity.Name;
+                //return Json(new { status = false, textMessage = ex.Message, data = sequencesProgress, username = userName, now = now });
             }   
         }
 
