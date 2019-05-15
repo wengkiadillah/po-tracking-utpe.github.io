@@ -68,7 +68,6 @@ namespace POTrackingV2.Models
         public string CreatedBy { get; set; }
         public System.DateTime LastModified { get; set; }
         public string LastModifiedBy { get; set; }
-        public Nullable<bool> Shipment_HasInbound { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ETAHistory> ETAHistories { get; set; }
