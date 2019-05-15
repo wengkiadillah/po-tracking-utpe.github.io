@@ -13,11 +13,11 @@
             </div>
             <div class="user-info__avatar" id="userAvatar"></div>
             <a href="@Url.Action("LogOut", "Account")" class="user-info__logout">
-                <img src="/Images/logout.png" alt="log-out-icon" />
+                <img src="~/Images/logout.png" alt="log-out-icon" />
             </a>
 
         </div>
-        <p class="user-info__name" id="userName">@User.Identity.Name, role : @myRole.Roles, role type : @myRole.RolesType, vendor code : @myRole.VendorCode!</p>
+        <p class="user-info__name" id="userName">@User.Identity.Name @*, role : @myRole.Roles, role type : @myRole.RolesType, vendor code : @myRole.VendorCode*@!</p>
     </text>
 }
 else
