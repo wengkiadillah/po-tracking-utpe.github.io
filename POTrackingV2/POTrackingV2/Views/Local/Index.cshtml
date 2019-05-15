@@ -1,0 +1,2423 @@
+﻿@model PagedList.IPagedList<POTracking.Models.PO>
+@*model POTracking.ViewModels.IndexLocalViewModel*@
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Local PO tracking";
+}
+
+@section styles {
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" />
+}
+<h1 class="page-title">PO Tracking Local System<span class="page-subtitle">History</span><span class="page-subtitle"><a href="/Local?role=procurement">Procurement</a></span></h1>
+<div class="filter-row">
+    @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    {
+        <div class="form-group mr-4">
+            <input name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchData" />
+            <i class="fas fa-search form-type-icon hint"></i>
+        </div>
+        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentSearchFilterBy">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+        <div class="form-group mr-0">
+            <label for="startPODate">PO Date</label>
+            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <div class="form-group">
+            <label for="endPODate">to</label>
+            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <input name="role" type="hidden" value="@ViewBag.CurrentRole" />
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        @Html.ActionLink("Clear", "Index", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+    }
+    <div class="stage-pagination-container">
+        <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
+        <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
+            <li class="pagination-list__item" onclick="paginationShow(1)">1</li>
+            <li class="pagination-list__item" onclick="paginationShow(2)">2</li>
+            <li class="pagination-list__item" onclick="paginationShow(3)">2a</li>
+            <li class="pagination-list__item" onclick="paginationShow(4)">3</li>
+            <li class="pagination-list__item" onclick="paginationShow(5)">4</li>
+            <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
+            <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
+            <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
+            @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
+        </ul>
+    </div>
+</div>
+@foreach (var pO in Model)
+{
+    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
+
+    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+
+    if (Request.QueryString["role"] == "procurement")
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
+    }
+
+    <ul class="list-unstyled po-list">
+        <li class="po-item-container">
+            <div class="po-item-section po-item-sticky">
+                <div class="po-item-section-header">
+                    <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">No. PO</span>
+                        <span>@pO.Number</span>
+                    </div>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">PO Date</span>
+                        <span>@pO.Date.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                    <div class="pop-up-notification">
+                        <table>
+                            <tr>
+                                <td class="secondary-text">No. PO</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Number</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Date</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Date.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Vendor</td>
+                                <td>&nbsp;</td>
+                                @if (pO.Vendor != null)
+                                {
+                                    <td>@pO.Vendor.Name</td>
+                                }
+                                else
+                                {
+                                    <td>Vendor not in Database</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Vendor Code</td>
+                                <td>&nbsp;</td>
+                                @if (pO.Vendor != null)
+                                {
+                                    <td>@pO.Vendor.Code</td>
+                                }
+                                else
+                                {
+                                    <td>Vendor not in Database</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Creator</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.PurchaseOrderCreator</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Release PO Date</td>
+                                <td>&nbsp;</td>
+                                @if (pO.ReleaseDate != null)
+                                {
+                                    <td>@pO.ReleaseDate.Value.ToString("dd/MM/yyyy")</td>
+                                }
+                                else
+                                {
+                                    <td>Tidak Ada di Database</td>
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text item-id">Item ID</span>
+                        <span class="po-item-data-header__text material">Material</span>
+                        <span class="po-item-data-header__text description">Item Description</span>
+                        <span class="po-item-data-header__text po-progress">Progress</span>
+                    </div>
+                    @{
+                        var row = 1;
+                        //var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
+                    }
+                    @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                    {
+                        var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                        var childRow = 1;
+                        <div class="po-item-data-content row-@row">
+                            <div class="po-item-data-content__outer">
+                                <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
+                                <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
+                                @if (purchasingDocumentItem.ConfirmedItem != false)
+                                {
+                                    <div class="po-item-data-header__column po-progress">
+                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                             data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    int donutProgress = 100;
+
+                                    <div class="po-item-data-header__column po-progress">
+                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                             data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div>Cancel</div>
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="po-item-data-content__child">
+                                @if (childPurchasingDocumentItems.Count() > 0)
+                                {
+                                    foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                    {
+                                        <div class="po-item-data-content row-@row-@childRow mt-customize" row="@row" child="@childRow">
+                                            <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
+                                            <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
+                                            <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
+                                            @if (childPurchasingDocumentItem.ConfirmedItem != false)
+                                            {
+                                                <div class="po-item-data-header__column po-progress">
+                                                    <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                         data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/12</span></div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                int donutProgress = 100;
+
+                                                <div class="po-item-data-header__column po-progress">
+                                                    <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                         data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div>Cancel</div>
+                                                </div>
+                                            }
+                                        </div>
+                                        childRow++;
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        row++;
+                    }
+                </div>
+            </div>
+            <div class="custom-scrollbar po-item-scrollable">
+                <div class="po-item-section information">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Information</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text quantity">Qty</span>
+                            <span class="po-item-data-header__text currency">Curr</span>
+                            <span class="po-item-data-header__text price">Price</span>
+                            @*<span class="po-item-data-header__text material">Material</span>*@
+                            <span class="po-item-data-header__text delivery">Delivery Date</span>
+                        </div>
+                        @{
+                            var rowInformation = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            <div class="po-item-data-content row-@rowInformation">
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity</span>
+                                    <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
+                                    <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
+                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")</span>
+                                </div>
+                            </div>
+
+                            rowInformation++;
+
+                        }
+                    </div>
+                </div>
+                <!--
+                    start stage 1
+
+                -->
+                <div class="po-item-section stage-1">
+                    <div class="po-item-section-header stage-checkbox-header">
+                        @{
+                            var st1CheckboxAll = "st1-checkbox-all";
+                            var st1AcceptAll = "st1-accept-all-po";
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                st1CheckboxAll = "st1-checkbox-all-proc";
+                                st1AcceptAll = "st1-accept-all-po-proc";
+                            }
+                        }
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom @st1CheckboxAll" type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <p class="mb-0">Stage 1</p>
+                        </div>
+                        <div>
+                            <input class="btn btn-positive confirm-all-po @st1AcceptAll" type="submit" value="Accept All" />
+                        </div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text confirm-delivery-date">Confirm Delivery Date</span>
+                            <span class="po-item-data-header__text delivery-option">Delivery Method</span>
+                            <span class="po-item-data-header__text quantity-form">Quantity</span>
+                        </div>
+                        @{
+                            var rowStage1 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage1 = 1;
+                            var latestConfirmedDate = purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var latestConfirmedQuantity = purchasingDocumentItem.Quantity;
+
+                            if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                            {
+                                latestConfirmedDate = purchasingDocumentItem.ConfirmedDateView;
+                            }
+
+                            if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                            {
+                                latestConfirmedQuantity = purchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault();
+                            }
+
+                            //if (childPurchasingDocumentItems.Count() > 0)
+                            //{
+                            //    latestConfirmedDate = childPurchasingDocumentItems.OrderBy(x => x.ConfirmedDate).LastOrDefault().ConfirmedDateView;
+                            //}
+                            //else
+                            //{
+                            //    latestConfirmedDate = purchasingDocumentItem.ConfirmedDateView;
+                            //}
+                            var st1ItemID = "st1-pd-item-id";
+                            var st1ItemIDInner = "st1-pd-item-id-inner";
+                            var st1ItemQuantity = "st1-pd-item-max-qty";
+                            var st1ItemDeliveryDate = "st1-pd-item-delivery-date";
+                            var st1ItemIsEdit = "st1-pd-item-is-edit";
+                            var st1CheckboxItem = "st1-checkbox-item";
+                            var st1ConfirmedDate = "st1-confirmed-date";
+                            var st1DeliveryMethod = "st1-delivery-method";
+                            var st1PartialConfirmQuantity = "st1-partial-confirm-qty";
+                            var st1PartialDate = "st1-partial-date";
+                            var st1AcceptItem = "st1-accept-item";
+                            var st1CancelItem = "st1-cancel-item";
+                            var st1AddRow = "st1-add-row";
+                            var st1DelRow = "st1-del-row";
+                            var st1EditRow = "st1-edit-row";
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                st1ItemID = "st1-pd-item-id-proc";
+                                st1ItemIDInner = "st1-pd-item-id-inner-proc";
+                                st1ItemQuantity = "st1-pd-item-max-qty-proc";
+                                st1ItemDeliveryDate = "st1-pd-item-delivery-date-proc";
+                                st1ItemIsEdit = "st1-pd-item-is-edit-proc";
+                                st1CheckboxItem = "st1-checkbox-item-proc";
+                                st1ConfirmedDate = "st1-confirmed-date-proc";
+                                st1DeliveryMethod = "st1-delivery-method-proc";
+                                st1PartialConfirmQuantity = "st1-partial-confirm-qty-proc";
+                                st1PartialDate = "st1-partial-date-proc";
+                                st1AcceptItem = "st1-accept-item-proc";
+                                st1CancelItem = "st1-cancel-item-proc";
+                                st1AddRow = "st1-add-row-proc";
+                                st1DelRow = "st1-del-row-proc";
+                                st1EditRow = "st1-edit-row-proc";
+                            }
+
+                            var disabledInputCheckbox = "";
+                            var disabledInputConfirmedDate = "disabled";
+                            var disabledInputDeliveryMethod = "disabled";
+                            var disabledInputQuantity = "disabled";
+                            var disabledInputDate = "disabled";
+                            var disabledButtonConfirm = "disabled";
+                            var disabledButtonCancel = "disabled";
+                            var selectedButtonConfirm = "";
+                            var selectedButtonCancel = "";
+                            var hideChildButton = "style=visibility:hidden";
+                            var hideButtonEdit = "style=visibility:hidden";
+                            var hideCheckbox = "style=visibility:hidden";
+                            var isChecked = "";
+                            var isPartial = "";
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                hideCheckbox = "";
+                                hideChildButton = "";
+
+                                if (purchasingDocumentItem.ConfirmedItem == true)
+                                {
+                                    disabledInputCheckbox = "disabled";
+                                    selectedButtonConfirm = "selected";
+                                    isChecked = "checked";
+                                    hideButtonEdit = "style=visibility:display";
+                                }
+                                else if (purchasingDocumentItem.ConfirmedItem == false)
+                                {
+                                    disabledInputCheckbox = "disabled";
+                                    selectedButtonCancel = "selected-negative";
+                                    isChecked = "checked";
+                                    hideButtonEdit = "style=visibility:display";
+
+                                    if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (purchasingDocumentItem.ConfirmedItem == false)
+                                {
+                                    disabledInputCheckbox = "disabled";
+                                    selectedButtonCancel = "selected-negative";
+
+                                }
+                                else if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                {
+                                    disabledInputCheckbox = "disabled";
+                                    isChecked = "checked";
+                                    selectedButtonConfirm = "selected";
+                                    hideButtonEdit = "";
+                                }
+
+                                if (purchasingDocumentItem.ActiveStage != "1" || childPurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
+                                {
+                                    hideButtonEdit = "style=visibility:hidden";
+                                }
+                            }
+
+                            if (childPurchasingDocumentItems.Count() > 0)
+                            {
+                                isPartial = "selected";
+                            }
+                            <form class="po-form-item-st1">
+                                <div class="po-item-data-content row-@rowStage1" row="@rowStage1">
+                                    <div class="po-item-data-content__outer">
+                                        <div class="po-item-data-header__column confirm-delivery-date">
+                                            <div class="form-inline">
+                                                <input type="hidden" class="@st1ItemID" value="@purchasingDocumentItem.ID">
+                                                <input type="hidden" class="@st1ItemQuantity" value="@purchasingDocumentItem.Quantity">
+                                                <input type="hidden" class="@st1ItemDeliveryDate" value="@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")">
+                                                <input type="hidden" class="@st1ItemIsEdit" value="false">
+                                                <div class="input-group">
+                                                    <label class="checkbox-custom__label">
+                                                        <input class="checkbox-custom @st1CheckboxItem" @isChecked type="checkbox" @disabledInputCheckbox>
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-date with-icon @st1ConfirmedDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" placeholder="dd/mm/yyyy" @disabledInputConfirmedDate value="@latestConfirmedDate">
+                                                        <i class="fas fa-calendar-alt form-type-icon"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="po-item-data-header__column delivery-option">
+                                            <div class="form-group">
+                                                <select class="form-control @st1DeliveryMethod" @disabledInputDeliveryMethod>
+                                                    <option value="full">Full</option>
+                                                    <option value="partial" @isPartial>Partial</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="po-item-data-header__column quantity-form">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control @st1PartialConfirmQuantity" autofocus required pattern="[0-9]" min="1" placeholder="Qty available @purchasingDocumentItem.Quantity" value="@latestConfirmedQuantity" @disabledInputQuantity>
+                                            </div>
+                                        </div>
+                                        <div class="po-item-data-header__column">
+                                            <div class="form-inline">
+                                                <input type="hidden" class="@st1ItemIDInner" value="@purchasingDocumentItem.ID">
+                                                <div class="input-group mr-2">
+                                                    <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" value="@latestConfirmedDate" @disabledInputDate>
+                                                    <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
+                                                    <div class="input-group-prepend">
+                                                        <button type="submit" class="btn btn-positive @st1AcceptItem @selectedButtonConfirm" @disabledButtonConfirm>Yes</button>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-negative @st1CancelItem @selectedButtonCancel" @disabledButtonCancel>No</button>
+                                            </div>
+                                        </div>
+                                        <div class="po-item-data-header__column">
+                                            <div class="form-inline">
+                                                <a href="#" class="btn-icon @st1AddRow" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                                <a href="#" class="btn-icon @st1DelRow" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
+                                                <a href="#" class="btn-icon @st1EditRow" @hideButtonEdit><i class="far fa-edit"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                        {
+                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                            {
+                                                latestConfirmedDate = childPurchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                                                latestConfirmedQuantity = childPurchasingDocumentItem.Quantity;
+
+                                                if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
+                                                {
+                                                    latestConfirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
+                                                }
+
+                                                if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                {
+                                                    latestConfirmedQuantity = childPurchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault();
+                                                }
+
+                                                disabledInputCheckbox = "";
+                                                disabledInputConfirmedDate = "disabled";
+                                                disabledInputDeliveryMethod = "disabled";
+                                                disabledInputQuantity = "disabled";
+                                                disabledInputDate = "disabled";
+                                                disabledButtonConfirm = "disabled";
+                                                disabledButtonCancel = "disabled";
+                                                selectedButtonConfirm = "";
+                                                selectedButtonCancel = "";
+                                                hideButtonEdit = "style=visibility:hidden";
+                                                isChecked = "";
+                                                isPartial = "";
+
+                                                if (Request.QueryString["role"] == "procurement")
+                                                {
+                                                    if (childPurchasingDocumentItem.ConfirmedItem == true)
+                                                    {
+                                                        disabledInputCheckbox = "disabled";
+                                                        selectedButtonConfirm = "selected";
+                                                        isChecked = "checked";
+                                                        hideButtonEdit = "style=visibility:display";
+                                                    }
+                                                    else if (childPurchasingDocumentItem.ConfirmedItem == false)
+                                                    {
+                                                        disabledInputCheckbox = "disabled";
+                                                        selectedButtonCancel = "selected-negative";
+                                                        isChecked = "checked";
+                                                        hideButtonEdit = "style=visibility:display";
+
+                                                        if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                        {
+                                                            hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (childPurchasingDocumentItem.ConfirmedItem == false)
+                                                    {
+                                                        disabledInputCheckbox = "disabled";
+                                                        selectedButtonCancel = "selected-negative";
+
+                                                    }
+                                                    else if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                    {
+                                                        disabledInputCheckbox = "disabled";
+                                                        isChecked = "checked";
+                                                        selectedButtonConfirm = "selected";
+                                                        hideButtonEdit = "style=visibility:hidden";
+                                                    }
+
+                                                    if (childPurchasingDocumentItem.ActiveStage != "1")
+                                                    {
+                                                        hideButtonEdit = "style=visibility:hidden";
+                                                    }
+                                                }
+                                                <div class="po-item-data-content row-@rowStage1-@childRowStage1" row="@rowStage1" child="@childRowStage1">
+                                                    <div class="po-item-data-header__column confirm-delivery-date" @hideCheckbox>
+                                                        <div class="form-inline">
+                                                            <div class="input-group">
+                                                                <label class="checkbox-custom__label">
+                                                                    <input class="checkbox-custom @st1CheckboxItem" @isChecked type="checkbox" @disabledInputCheckbox>
+                                                                    <span class="checkmark"></span>
+                                                                </label>
+                                                                <div class="form-group tes" style="visibility:hidden">
+                                                                    <input type="text" class="form-control form-date with-icon" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" disabled>
+                                                                    <i class="fas fa-calendar-alt form-type-icon"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="po-item-data-header__column delivery-option" style="visibility:hidden">
+                                                        <div class="form-inline">
+                                                            <div class="form-group">
+                                                                <select class="form-control" disabled>
+                                                                    <option value="full">Full</option>
+                                                                    <option value="partial">Partial</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="po-item-data-header__column quantity-form">
+                                                        <div class="form-inline">
+                                                            <input type="number" class="form-control @st1PartialConfirmQuantity" autofocus required pattern="[0-9]" min="1" placeholder="Qty available @purchasingDocumentItem.Quantity" value="@latestConfirmedQuantity" @disabledInputQuantity>
+                                                        </div>
+                                                    </div>
+                                                    <div class="po-item-data-header__column">
+                                                        <div class="form-inline">
+                                                            <input type="hidden" class="@st1ItemIDInner" value="@childPurchasingDocumentItem.ID">
+                                                            <div class="input-group mr-2">
+                                                                <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" value="@latestConfirmedDate" @disabledInputDate>
+                                                                <i class="fas fa-calendar-alt form-type-icon icon-prepend" @hideChildButton></i>
+                                                                <div class="input-group-prepend" @hideChildButton>
+                                                                    <button type="submit" class="btn btn-positive @st1AcceptItem @selectedButtonConfirm" @disabledButtonConfirm>Yes</button>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-negative @st1CancelItem @selectedButtonCancel" @disabledButtonCancel @hideChildButton>No</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="po-item-data-header__column">
+                                                        <div class="form-inline">
+                                                            <a href="#" class="btn-icon" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                                            <a href="#" class="btn-icon" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
+                                                            <a href="#" class="btn-icon @st1EditRow" @hideButtonEdit><i class="far fa-edit"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                childRowStage1++;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </form>
+                            rowStage1++;
+                        }
+                    </div>
+                </div>
+                <!--
+                        END STAGE 1
+                -->
+                <div class="po-item-section stage-2">
+                    @if (Request.QueryString["role"] == "procurement")
+                    {
+                        <div class="po-item-section-header stage-checkbox-header">
+                            <div>
+                                <label class="checkbox-custom__label mr-0">
+                                    <input class="checkbox-custom st2-proc-checkbox-all" type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div><p class="mb-0">Stage 2</p></div>
+                            <div>
+                                <input class="btn btn-positive st2-proc-accept-first-eta-all" type="submit" value="Save All" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="po-item-section-header stage-checkbox-header">
+                            <div>
+                                <label class="checkbox-custom__label mr-0">
+                                    <input class="checkbox-custom st2-checkbox-all" type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div><p class="mb-0">Stage 2</p></div>
+                            <div>
+                                <input class="btn btn-positive st2-confirm-first-eta-all" type="submit" value="Save All" />
+                            </div>
+                        </div>
+                    }
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text stage2-confirm-eta">Confirm ETA</span>
+                        </div>
+                        @{
+                            var rowStage2 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage2 = 1;
+
+                            var st2CheckboxItem = "st2-checkbox-item";
+                            var st2ItemId = "st2-pd-item-id";
+                            var st2FirstEtaDate = "st2-first-eta-date";
+                            var st2ConfirmFirstEta = "st2-confirm-first-eta";
+                            var st2EditRow = "edit-row-st2";
+                            var st2ProcAcceptFirstEta = "";
+                            var st2ProcDeclineFirstEta = "";
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                st2CheckboxItem = "st2-proc-checkbox-item";
+                                st2ItemId = "st2-proc-pd-item-id";
+                                st2FirstEtaDate = "st2-proc-first-eta-date";
+                                st2ConfirmFirstEta = "st2-proc-confirm-first-eta";
+                                st2ProcAcceptFirstEta = "st2-proc-accept-first-eta";
+                                st2ProcDeclineFirstEta = "st2-proc-decline-first-eta";
+                                st2EditRow = "edit-row-st2-proc";
+                            }
+
+                            var selectedButtonAccept = "";
+                            var selectedButtonDecline = "";
+                            var disabledInputCheckbox = "disabled";
+                            var disabledInputFirstEtaDate = "disabled";
+                            var disabledButtonConfirmEtaDate = "disabled";
+                            var disabledButtonAccept = "disabled";
+                            var disabledButtonDecline = "disabled";
+                            var selectedButtonConfirm = "";
+                            var visibilityCheckbox = "";
+                            var hideButtonEdit = "style=visibility:hidden";
+                            var hiddenButtonConfirmEtaDate = "";
+                            var hiddenButtonAcceptDecline = "hidden";
+                            var isChecked = "";
+
+                            var valueInputFirstEtaDate = "";
+
+                            if (purchasingDocumentItem.HasETAHistory)
+                            {
+                                valueInputFirstEtaDate = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                            }
+                            else if (purchasingDocumentItem.ConfirmedItem == true)
+                            {
+                                valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
+                            }
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                hiddenButtonConfirmEtaDate = "hidden";
+                                hiddenButtonAcceptDecline = "";
+
+                                if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.HasETAHistory && purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                {
+                                    disabledInputCheckbox = "";
+                                }
+                                else if (purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == true)
+                                {
+                                    isChecked = "checked";
+                                    selectedButtonAccept = "selected";
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    {
+                                        hideButtonEdit = "style=visibility:display";
+                                    }
+                                }
+                                else if (purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == false)
+                                {
+                                    isChecked = "checked";
+                                    selectedButtonDecline = "selected-negative";
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    {
+                                        hideButtonEdit = "style=visibility:display";
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                hiddenButtonConfirmEtaDate = "";
+                                hiddenButtonAcceptDecline = "hidden";
+
+                                if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
+                                {
+                                    disabledInputCheckbox = "";
+                                }
+                                else if (purchasingDocumentItem.HasETAHistory)
+                                {
+                                    isChecked = "checked";
+                                    selectedButtonConfirm = "selected";
+
+                                    if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                    {
+                                        hideButtonEdit = "style=visibility:display";
+                                    }
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@rowStage2" row="@rowStage2" style="display:block;">
+                                <div class="po-item-data-content__outer">
+                                    <form class="d-flex po-form-item-st2">
+                                        <div class="po-item-data-header__column stage2-confirm-eta">
+                                            <div class="form-inline">
+                                                <label class="checkbox-custom__label" @visibilityCheckbox>
+                                                    <input class="checkbox-custom @st2CheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <div class="form-group mr-2">
+                                                    <input type="hidden" class="@st2ItemId" value="@purchasingDocumentItem.ID">
+                                                    <input type="text" class="form-control form-date with-icon @st2FirstEtaDate" value="@valueInputFirstEtaDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" mindate="@purchasingDocumentItem.ConfirmedDateView" placeholder="dd/mm/yyyy" autocomplete="off" @disabledInputFirstEtaDate>
+                                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                                </div>
+                                                <button class="btn btn-positive @st2ConfirmFirstEta @selectedButtonConfirm" @disabledButtonConfirmEtaDate @hiddenButtonConfirmEtaDate>Save</button>
+                                                <button class="btn btn-positive @st2ProcAcceptFirstEta @selectedButtonAccept mr-2" @disabledButtonAccept @hiddenButtonAcceptDecline>Yes</button>
+                                                <button class="btn btn-negative @st2ProcDeclineFirstEta @selectedButtonDecline" @disabledButtonDecline @hiddenButtonAcceptDecline>No</button>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="btn-icon @st2EditRow ml-1" @hideButtonEdit><i class="far fa-edit"></i></a>
+                                    </form>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+
+                                            selectedButtonAccept = "";
+                                            selectedButtonDecline = "";
+                                            disabledInputCheckbox = "disabled";
+                                            disabledInputFirstEtaDate = "disabled";
+                                            disabledButtonConfirmEtaDate = "disabled";
+                                            disabledButtonAccept = "disabled";
+                                            disabledButtonDecline = "disabled";
+                                            selectedButtonConfirm = "";
+                                            visibilityCheckbox = "";
+                                            hideButtonEdit = "style=visibility:hidden";
+                                            hiddenButtonConfirmEtaDate = "";
+                                            hiddenButtonAcceptDecline = "hidden";
+                                            isChecked = "";
+
+                                            valueInputFirstEtaDate = "";
+
+                                            if (childPurchasingDocumentItem.HasETAHistory)
+                                            {
+                                                valueInputFirstEtaDate = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
+                                            }
+                                            else if (childPurchasingDocumentItem.ConfirmedItem == true)
+                                            {
+                                                valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
+                                            }
+
+                                            if (Request.QueryString["role"] == "procurement")
+                                            {
+                                                hiddenButtonConfirmEtaDate = "hidden";
+                                                hiddenButtonAcceptDecline = "";
+
+                                                if (childPurchasingDocumentItem.ActiveStage == "2" && childPurchasingDocumentItem.HasETAHistory && childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                                {
+                                                    disabledInputCheckbox = "";
+                                                }
+                                                else if (childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == true)
+                                                {
+                                                    isChecked = "checked";
+                                                    selectedButtonAccept = "selected";
+
+                                                    if (childPurchasingDocumentItem.ActiveStage == "2a")
+                                                    {
+                                                        hideButtonEdit = "style=visibility:display";
+                                                    }
+                                                }
+                                                else if (childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == false)
+                                                {
+                                                    isChecked = "checked";
+                                                    selectedButtonDecline = "selected-negative";
+
+                                                    if (childPurchasingDocumentItem.ActiveStage == "2a")
+                                                    {
+                                                        hideButtonEdit = "style=visibility:display";
+                                                    }
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                hiddenButtonConfirmEtaDate = "";
+                                                hiddenButtonAcceptDecline = "hidden";
+
+                                                if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
+                                                {
+                                                    disabledInputCheckbox = "";
+                                                }
+                                                else if (childPurchasingDocumentItem.HasETAHistory)
+                                                {
+                                                    isChecked = "checked";
+                                                    selectedButtonConfirm = "selected";
+
+                                                    if (childPurchasingDocumentItem.ActiveStage == "2" && childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                                    {
+                                                        hideButtonEdit = "style=visibility:display";
+                                                    }
+                                                }
+                                            }
+
+                                            <div class="po-item-data-content row-@rowStage2-@childRowStage2" row="@rowStage2" child="@childRowStage2">
+                                                <form class="d-flex po-form-item-st2">
+                                                    <div class="po-item-data-header__column stage2-confirm-eta">
+                                                        <div class="form-inline">
+                                                            <label class="checkbox-custom__label" @visibilityCheckbox>
+                                                                <input class="checkbox-custom @st2CheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                                <span class="checkmark"></span>
+                                                            </label>
+                                                            <div class="form-group mr-2">
+                                                                <input type="hidden" class="@st2ItemId" value="@childPurchasingDocumentItem.ID">
+                                                                <input type="text" class="form-control form-date with-icon @st2FirstEtaDate" value="@valueInputFirstEtaDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" mindate="@childPurchasingDocumentItem.ConfirmedDateView" placeholder="dd/mm/yyyy" autocomplete="off" @disabledInputFirstEtaDate>
+                                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                                            </div>
+                                                            <button class="btn btn-positive @st2ConfirmFirstEta @selectedButtonConfirm" @disabledButtonConfirmEtaDate @hiddenButtonConfirmEtaDate>Save</button>
+                                                            <button class="btn btn-positive @st2ProcAcceptFirstEta @selectedButtonAccept mr-2" @disabledButtonAccept @hiddenButtonAcceptDecline>Yes</button>
+                                                            <button class="btn btn-negative @st2ProcDeclineFirstEta @selectedButtonDecline" @disabledButtonDecline @hiddenButtonAcceptDecline>No</button>
+                                                        </div>
+                                                    </div>
+                                                    <a href="#" class="btn-icon @st2EditRow ml-1" @hideButtonEdit><i class="far fa-edit"></i></a>
+                                                </form>
+                                            </div>
+                                            childRowStage2++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage2++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-3">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 2a</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Upload Proforma Invoice</span>
+                        </div>
+                        @{
+                            var rowStage2a = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage2a = 1;
+
+                            var st2aItemId = "st2a-item-id";
+                            var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
+                            var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
+                            var st2aApproveProforma = "st2a-approve-proforma-proc";
+                            var st2aDisApproveProforma = "st2a-disapprove-proforma-proc";
+                            var st2aDownloadProforma = "st2a-download-proforma";
+                            var st2aVendorSkipPI = "st2a-vendor-skip-PI";
+
+                            var disabledFileProformaInvoice = "";
+                            var disabledUploadProformaInvoice = "";
+                            var disabledApproveProforma = "disabled";
+                            var disabledDisApproveProforma = "disabled";
+                            var disabledVendorSkipPI = "";
+                            var selectedApproveProforma = "";
+                            var selectedDisApproveProforma = "";
+                            var selectedVendorSkipPI = "";
+                            var hiddenApproveProforma = "hidden";
+                            var hiddenDisApproveProforma = "hidden";
+                            var hiddenInputDiv = "";
+                            var hiddenUploadedDiv = "hidden";
+                            //var hiddenVendorSkipPI = "";
+                            var downloadPath = "";
+
+                            if (purchasingDocumentItem.ProformaInvoiceDocument == null)
+                            {
+                                if (purchasingDocumentItem.ActiveStage == "2a")
+                                {
+                                    if (Request.QueryString["role"] == "procurement")
+                                    {
+                                        disabledFileProformaInvoice = "disabled";
+                                        disabledUploadProformaInvoice = "disabled";
+                                        disabledVendorSkipPI = "disabled";
+
+                                    }
+                                    else
+                                    {
+                                        disabledFileProformaInvoice = "";
+                                        disabledUploadProformaInvoice = "";
+                                        disabledVendorSkipPI = "";
+                                    }
+                                }
+                                else if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 2)
+                                {
+                                    disabledFileProformaInvoice = "disabled";
+                                    disabledUploadProformaInvoice = "disabled";
+                                    disabledVendorSkipPI = "disabled";
+                                    //hiddenVendorSkipPI = "hidden";
+                                    selectedVendorSkipPI = "selected-negative";
+
+
+
+
+                                }
+                                else
+                                {
+                                    disabledFileProformaInvoice = "disabled";
+                                    disabledUploadProformaInvoice = "disabled";
+                                    disabledVendorSkipPI = "disabled";
+                                    //hiddenVendorSkipPI = "hidden";
+                                    selectedVendorSkipPI = "";
+
+
+                                }
+                            }
+
+                            if (purchasingDocumentItem.ProformaInvoiceDocument != null)
+                            {
+                                hiddenInputDiv = "hidden";
+                                hiddenUploadedDiv = "";
+                                disabledVendorSkipPI = "disabled";
+
+
+                                downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+
+                                if (Request.QueryString["role"] == "procurement")
+                                {
+                                    disabledApproveProforma = "";
+                                    disabledDisApproveProforma = "";
+                                    hiddenApproveProforma = "";
+                                    hiddenDisApproveProforma = "";
+                                    disabledVendorSkipPI = "disabled";
+
+                                    if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                    {
+                                        disabledApproveProforma = "disabled";
+                                        disabledDisApproveProforma = "disabled";
+                                        selectedApproveProforma = "selected";
+                                    }
+                                    else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                    {
+                                        disabledApproveProforma = "disabled";
+                                        disabledDisApproveProforma = "disabled";
+                                        selectedDisApproveProforma = "selected-negative";
+                                    }
+                                }
+                                else
+                                {
+                                    if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                    {
+                                        disabledApproveProforma = "disabled";
+                                        disabledDisApproveProforma = "disabled";
+                                        selectedApproveProforma = "selected";
+                                    }
+                                    else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                    {
+                                        hiddenInputDiv = "";
+                                        hiddenUploadedDiv = "hidden";
+                                    }
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@rowStage2a">
+                                <div class="po-item-data-content__outer">
+                                    <form class="po-form-item-st2a">
+                                        <div class="po-item-data-header__column">
+                                            <div class="form-inline" @hiddenInputDiv>
+                                                <div class="form-group mr-2">
+                                                    <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
+                                                    <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
+                                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                                </div>
+                                                <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @disabledUploadProformaInvoice>Save</button>
+                                                <button class="btn btn-negative @st2aVendorSkipPI @selectedVendorSkipPI" @disabledVendorSkipPI>Skip</button>
+                                            </div>
+
+                                            <div class="form-inline" @hiddenUploadedDiv>
+                                                <div class="form-group mr-2">
+                                                    <p class="mt-2 mb-0">
+                                                        <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                    </p>
+                                                </div>
+                                                <div class="form-group mr-2">
+                                                    <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
+                                                    <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
+                                                    <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+
+                                            disabledFileProformaInvoice = "";
+                                            disabledUploadProformaInvoice = "";
+                                            disabledApproveProforma = "disabled";
+                                            disabledDisApproveProforma = "disabled";
+                                            disabledVendorSkipPI = "";
+
+                                            selectedApproveProforma = "";
+                                            selectedDisApproveProforma = "";
+                                            selectedVendorSkipPI = "";
+                                            hiddenApproveProforma = "hidden";
+                                            hiddenDisApproveProforma = "hidden";
+                                            //hiddenVendorSkipPI = "hidden";
+                                            hiddenInputDiv = "";
+                                            hiddenUploadedDiv = "hidden";
+                                            downloadPath = "";
+
+                                            if (childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+                                            {
+                                                if (childPurchasingDocumentItem.ActiveStage == "2a")
+                                                {
+                                                    if (Request.QueryString["role"] == "procurement")
+                                                    {
+                                                        disabledFileProformaInvoice = "disabled";
+                                                        disabledUploadProformaInvoice = "disabled";
+                                                        disabledVendorSkipPI = "disabled";
+
+                                                    }
+                                                    else
+                                                    {
+                                                        disabledFileProformaInvoice = "";
+                                                        disabledUploadProformaInvoice = "";
+
+                                                        disabledVendorSkipPI = "";
+                                                    }
+                                                }
+                                                else if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 2)
+                                                {
+                                                    disabledFileProformaInvoice = "disabled";
+                                                    disabledUploadProformaInvoice = "disabled";
+                                                    disabledVendorSkipPI = "disabled";
+                                                    //hiddenVendorSkipPI = "hidden";
+                                                    selectedVendorSkipPI = "selected-negative";
+
+                                                }
+                                                else
+                                                {
+                                                    disabledFileProformaInvoice = "disabled";
+                                                    disabledUploadProformaInvoice = "disabled";
+                                                    disabledVendorSkipPI = "disabled";
+                                                    //hiddenVendorSkipPI = "hidden";
+                                                    selectedVendorSkipPI = "";
+
+
+                                                }
+                                            }
+
+                                            if (childPurchasingDocumentItem.ProformaInvoiceDocument != null)
+                                            {
+                                                disabledVendorSkipPI = "disabled";
+                                                hiddenInputDiv = "hidden";
+                                                hiddenUploadedDiv = "";
+
+                                                downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+
+                                                if (Request.QueryString["role"] == "procurement")
+                                                {
+                                                    disabledVendorSkipPI = "disabled";
+                                                    disabledApproveProforma = "";
+                                                    disabledDisApproveProforma = "";
+                                                    hiddenApproveProforma = "";
+                                                    hiddenDisApproveProforma = "";
+
+                                                    if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                                    {
+                                                        disabledApproveProforma = "disabled";
+                                                        disabledDisApproveProforma = "disabled";
+                                                        selectedApproveProforma = "selected";
+                                                    }
+                                                    else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                                    {
+                                                        disabledApproveProforma = "disabled";
+                                                        disabledDisApproveProforma = "disabled";
+                                                        selectedDisApproveProforma = "selected-negative";
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                                    {
+                                                        disabledApproveProforma = "disabled";
+                                                        disabledDisApproveProforma = "disabled";
+                                                        selectedApproveProforma = "selected";
+                                                    }
+                                                    else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                                    {
+                                                        hiddenInputDiv = "";
+                                                        hiddenUploadedDiv = "hidden";
+                                                        //selectedVendorSkipPI = "selected";
+                                                    }
+                                                }
+                                            }
+
+                                            <div class="po-item-data-content row-@rowStage2a-@childRowStage2a" row="@rowStage2a" child="@childRowStage2a">
+                                                <form class="po-form-item-st2a">
+                                                    <div class="po-item-data-header__column">
+                                                        <div class="form-inline" @hiddenInputDiv>
+                                                            <div class="form-group mr-2">
+                                                                <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
+                                                                <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
+                                                                <i class="fas fa-paperclip form-type-icon"></i>
+                                                            </div>
+                                                            <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @disabledUploadProformaInvoice>Save</button>
+                                                            <button class="btn btn-negative @st2aVendorSkipPI @selectedVendorSkipPI" @disabledVendorSkipPI>Skip</button>
+                                                        </div>
+
+                                                        <div class="form-inline" @hiddenUploadedDiv>
+                                                            <div class="form-group mr-2">
+                                                                <p class="mt-2 mb-0">
+                                                                    <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                                </p>
+                                                            </div>
+                                                            <div class="form-group mr-2">
+                                                                <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
+                                                                <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
+                                                                <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            childRowStage2a++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage2a++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-4">
+                    @if (Request.QueryString["role"] == "procurement")
+                    {
+                        <div class="po-item-section-header justify-content-center">
+                            <p class="mb-0">Stage 3</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="po-item-section-header stage-checkbox-header">
+                            <div>
+                                <label class="checkbox-custom__label mr-0">
+                                    <input class="checkbox-custom st3-checkbox-all" type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div><p class="mb-0">Stage 3</p></div>
+                            <div>
+                                <input class="btn btn-positive st3-confirm-payment-all" type="submit" value="Save All" />
+                            </div>
+                        </div>
+                    }
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Confirm Payment Received</span>
+                        </div>
+                        @{
+                            var rowStage3 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage3 = 1;
+
+                            var st3CheckboxItem = "st3-checkbox-item";
+                            var st3ItemID = "st3-item-id";
+                            var st3ItemConfirmPaymentDate = "st3-item-confirm-payment-date";
+                            var st3ConfirmPaymentSubmit = "st3-confirm-payment-submit";
+                            var st3ConfirmPaymentSkip = "st3-confirm-payment-skip";
+                            var st3EditRow = "edit-row-st3";
+
+                            var disabledCheckboxItem = "disabled";
+                            var disabledConfirmPaymentDate = "disabled";
+                            var disabledConfirmPaymentSubmit = "disabled";
+                            var disabledConfirmPaymentSkip = "disabled";
+                            var selectedConfirmPaymentSubmit = "";
+                            var selectedConfirmPaymentSkip = "";
+                            var hiddenEditButton = "style=visibility:hidden";
+                            var hiddenConfirmPaymentSkip = "";
+                            var hiddenCheckbox = "";
+                            var isChecked = "";
+
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                hiddenCheckbox = "style=visibility:hidden";
+                                hiddenConfirmPaymentSkip = "hidden";
+                            }
+                            else
+                            {
+                                if (purchasingDocumentItem.ActiveStage == "3")
+                                {
+                                    disabledCheckboxItem = "";
+                                }
+                                else if (purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                {
+                                    isChecked = "checked";
+                                    selectedConfirmPaymentSubmit = "selected";
+
+                                    if (purchasingDocumentItem.ActiveStage == "4")
+                                    {
+                                        hiddenEditButton = "";
+                                    }
+                                }
+                                else if (!purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                {
+                                    if (purchasingDocumentItem.ActiveStageView != "2a")
+                                    {
+                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 3)
+                                        {
+                                            isChecked = "checked";
+                                            selectedConfirmPaymentSkip = "selected-negative";
+                                        }
+
+                                        if (purchasingDocumentItem.ActiveStage == "4")
+                                        {
+                                            hiddenEditButton = "";
+                                        }
+                                    }
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@rowStage3">
+                                <div class="po-item-data-content__outer">
+                                    <form class="po-form-item-st3">
+                                        <div class="po-item-data-header__column">
+                                            <div class="form-inline">
+                                                <label class="checkbox-custom__label" @hiddenCheckbox>
+                                                    <input class="checkbox-custom @st3CheckboxItem" @isChecked type="checkbox" @disabledCheckboxItem>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <div class="form-group mr-2">
+                                                    <input type="hidden" class="@st3ItemID" value="@purchasingDocumentItem.ID" />
+                                                    <input type="text" class="form-control form-date with-icon @st3ItemConfirmPaymentDate" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" value="@purchasingDocumentItem.ConfirmReceivedPaymentDateView" @disabledConfirmPaymentDate>
+                                                    <i class="far fa-calendar-alt form-type-icon"></i>
+                                                </div>
+                                                <button type="submit" class="btn btn-positive @st3ConfirmPaymentSubmit @selectedConfirmPaymentSubmit mr-2" @disabledConfirmPaymentSubmit>Received</button>
+                                                <button class="btn btn-negative @st3ConfirmPaymentSkip @selectedConfirmPaymentSkip" @disabledConfirmPaymentSkip @hiddenConfirmPaymentSkip>Skip</button>
+                                                <a href="#" class="btn-icon @st3EditRow ml-1" @hiddenEditButton><i class="far fa-edit"></i></a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            disabledCheckboxItem = "disabled";
+                                            disabledConfirmPaymentDate = "disabled";
+                                            disabledConfirmPaymentSubmit = "disabled";
+                                            disabledConfirmPaymentSkip = "disabled";
+                                            selectedConfirmPaymentSubmit = "";
+                                            selectedConfirmPaymentSkip = "";
+                                            hiddenEditButton = "style=visibility:hidden";
+                                            hiddenConfirmPaymentSkip = "";
+                                            hiddenCheckbox = "";
+                                            isChecked = "";
+
+                                            if (Request.QueryString["role"] == "procurement")
+                                            {
+                                                hiddenCheckbox = "style=visibility:hidden";
+                                            }
+                                            else
+                                            {
+                                                if (childPurchasingDocumentItem.ActiveStage == "3")
+                                                {
+                                                    disabledCheckboxItem = "";
+                                                }
+                                                else if (childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                                {
+                                                    isChecked = "checked";
+                                                    selectedConfirmPaymentSubmit = "selected";
+
+                                                    if (childPurchasingDocumentItem.ActiveStage == "4")
+                                                    {
+                                                        hiddenEditButton = "";
+                                                    }
+                                                }
+                                                else if (!childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                                {
+                                                    if (childPurchasingDocumentItem.ActiveStageView != "2a")
+                                                    {
+                                                        if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStageView) > 3)
+                                                        {
+                                                            isChecked = "checked";
+                                                            selectedConfirmPaymentSkip = "selected-negative";
+                                                        }
+
+                                                        if (childPurchasingDocumentItem.ActiveStage == "4")
+                                                        {
+                                                            hiddenEditButton = "";
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            <div class="po-item-data-content row-@rowStage3-@childRowStage3" row="@rowStage3" child="@childRowStage3">
+                                                <form class="po-form-item-st3">
+                                                    <div class="po-item-data-header__column">
+                                                        <div class="form-inline">
+                                                            <label class="checkbox-custom__label" @hiddenCheckbox>
+                                                                <input class="checkbox-custom @st3CheckboxItem" @isChecked type="checkbox" @disabledCheckboxItem>
+                                                                <span class="checkmark"></span>
+                                                            </label>
+                                                            <div class="form-group mr-2">
+                                                                <input type="hidden" class="@st3ItemID" value="@childPurchasingDocumentItem.ID" />
+                                                                <input type="text" class="form-control form-date with-icon @st3ItemConfirmPaymentDate" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" value="@childPurchasingDocumentItem.ConfirmReceivedPaymentDateView" @disabledConfirmPaymentDate>
+                                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-positive @st3ConfirmPaymentSubmit @selectedConfirmPaymentSubmit mr-2" @disabledConfirmPaymentSubmit>Received</button>
+                                                            <button class="btn btn-negative @st3ConfirmPaymentSkip @selectedConfirmPaymentSkip" @disabledConfirmPaymentSkip @hiddenConfirmPaymentSkip>Skip</button>
+                                                            <a href="#" class="btn-icon @st3EditRow ml-1" @hiddenEditButton><i class="far fa-edit"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            childRowStage3++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage3++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-5 info-stage">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 4</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text col-md-8 mr-5 pl-0">ETA Confirmation</span>
+                            <span class="po-item-data-header__text col-md-3 pl-0 mr-0">Upload Photo</span>
+                            <span class="po-item-data-header__text">info</span>
+                        </div>
+                        @{
+                            var rowStage4 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage4 = 1;
+
+                            var st4ItemId = "st4-item-id";
+                            var st4ItemIdInner = "st4-item-id-inner";
+                            var st4UpdateEtaDateOnTime = "st4-update-eta-date-on-time";
+                            var st4UpdateEtaDateOnTimeConfirm = "st4-update-eta-date-on-time-confirm";
+                            var st4UpdateEtaDateDelay = "st4-update-eta-date-delay";
+                            var st4UpdateEtaDateDelayConfirm = "st4-update-eta-date-delay-confirm";
+                            var st4UploadProgressPhotoes = "st4-upload-progress-photoes";
+                            var st4UploadProgressPhotoesConfirm = "st4-upload-progress-photoes-confirm";
+                            var st4DelayReason = "st4-delay-reason";
+
+                            var disabledInputUpdateEtaDateOnTime = "disabled";
+                            var disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                            var disabledInputUpdateEtaDateDelay = "disabled";
+                            var disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                            var disabledInputUploadProgressPhotoes = "disabled";
+                            var disabledInputUploadProgressPhotoesConfirm = "disabled";
+                            var disabledDelayReason = "disabled";
+
+                            var selectedInputUpdateEtaDateOnTime = "";
+                            var selectedInputUpdateEtaDateDelay = "";
+
+                            var valueInputUpdateEtaDateOnTime = "";
+                            var valueInputUpdateEtaDateDelay = "";
+                            var valueDelayReason = 0;
+
+                            if (purchasingDocumentItem.HasETAHistory)
+                            {
+                                valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                            }
+
+                            if (purchasingDocumentItem.LastETAHistory.DelayReasonID != null)
+                            {
+                                valueDelayReason = purchasingDocumentItem.LastETAHistory.DelayReasonID.GetValueOrDefault();
+                            }
+
+                            if (purchasingDocumentItem.ActiveStage == "4")
+                            {
+                                if (Request.QueryString["role"] != "procurement")
+                                {
+                                    if (purchasingDocumentItem.ETAHistories.Count < 2)
+                                    {
+                                        disabledInputUpdateEtaDateOnTime = "disabled";
+                                        disabledInputUpdateEtaDateOnTimeConfirm = "";
+                                        disabledInputUpdateEtaDateDelay = "";
+                                        disabledInputUpdateEtaDateDelayConfirm = "";
+                                        disabledDelayReason = "";
+                                        //disabledInputUploadProgressPhotoes = "disabled";
+                                        //disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                        valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
+
+                                        if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                        {
+                                            disabledInputUploadProgressPhotoes = "";
+                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                        }
+                                        else
+                                        {
+                                            disabledInputUploadProgressPhotoes = "disabled";
+                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        disabledInputUpdateEtaDateOnTime = "disabled";
+                                        disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                        disabledInputUpdateEtaDateDelay = "disabled";
+                                        disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                        //disabledInputUploadProgressPhotoes = "";
+                                        //disabledInputUploadProgressPhotoesConfirm = "";
+
+                                        if (purchasingDocumentItem.IsDelayed)
+                                        {
+                                            valueInputUpdateEtaDateOnTime = "";
+                                            valueInputUpdateEtaDateDelay = purchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                            selectedInputUpdateEtaDateDelay = "selected-negative";
+                                        }
+                                        else
+                                        {
+                                            valueInputUpdateEtaDateOnTime = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                            valueInputUpdateEtaDateDelay = "";
+
+                                            selectedInputUpdateEtaDateOnTime = "selected";
+                                        }
+
+                                        if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                        {
+                                            disabledInputUploadProgressPhotoes = "";
+                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                        }
+                                        else
+                                        {
+                                            disabledInputUploadProgressPhotoes = "disabled";
+                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                    disabledInputUploadProgressPhotoes = "disabled";
+                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                    if (purchasingDocumentItem.ETAHistories.Count > 1)
+                                    {
+
+                                        if (purchasingDocumentItem.IsDelayed)
+                                        {
+                                            valueInputUpdateEtaDateOnTime = "";
+                                            valueInputUpdateEtaDateDelay = purchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                            selectedInputUpdateEtaDateDelay = "selected-negative";
+                                        }
+                                        else
+                                        {
+                                            valueInputUpdateEtaDateOnTime = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                            valueInputUpdateEtaDateDelay = "";
+
+                                            selectedInputUpdateEtaDateOnTime = "selected";
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (purchasingDocumentItem.ETAHistories.Count < 2)
+                                {
+                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                    disabledInputUploadProgressPhotoes = "disabled";
+                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                    valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
+
+                                    if (Request.QueryString["role"] == "procurement")
+                                    {
+                                        disabledInputUploadProgressPhotoes = "disabled";
+                                        disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                    }
+                                }
+                                else
+                                {
+                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                    disabledInputUploadProgressPhotoes = "disabled";
+                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                    if (Request.QueryString["role"] != "procurement")
+                                    {
+                                        if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                        {
+                                            disabledInputUploadProgressPhotoes = "";
+                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                        }
+                                        else
+                                        {
+                                            disabledInputUploadProgressPhotoes = "disabled";
+                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        disabledInputUploadProgressPhotoes = "disabled";
+                                        disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                       
+                                    }
+
+                                    if (purchasingDocumentItem.IsDelayed)
+                                    {
+                                        valueInputUpdateEtaDateOnTime = "";
+                                        valueInputUpdateEtaDateDelay = purchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                        selectedInputUpdateEtaDateDelay = "selected-negative";
+                                    }
+                                    else
+                                    {
+                                        valueInputUpdateEtaDateOnTime = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                        valueInputUpdateEtaDateDelay = "";
+
+                                        selectedInputUpdateEtaDateOnTime = "selected";
+                                    }
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@rowStage4">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <div class="form-inline">
+                                            <input type="hidden" class="@st4ItemId" value="@purchasingDocumentItem.ID" />
+                                            <div class="form-group mr-2">
+                                                <input type="text" class="form-control form-date with-icon @st4UpdateEtaDateOnTime" value="@valueInputUpdateEtaDateOnTime" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" mindate="@purchasingDocumentItem.FirstETAHistory.ETADateView" placeholder="dd/mm/yyyy" autocomplete="off" @disabledInputUpdateEtaDateOnTime>
+                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-positive mr-3 @st4UpdateEtaDateOnTimeConfirm @selectedInputUpdateEtaDateOnTime" @disabledInputUpdateEtaDateOnTimeConfirm>On Time</button>
+                                            <div class="form-group mr-2">
+                                                <input type="text" class="form-control form-date with-icon @st4UpdateEtaDateDelay" value="@valueInputUpdateEtaDateDelay" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" mindate="@purchasingDocumentItem.FirstETAHistory.ETADateView" placeholder="dd/mm/yyyy" autocomplete="off" @disabledInputUpdateEtaDateDelay>
+                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                            </div>
+                                            <div class="form-group mr-2">
+                                                <select id="delayReason" name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
+                                                    <option value="0">select reason</option>
+                                                    @foreach (var delayReason in ViewBag.DelayReasons)
+                                                    {
+                                                        <option value="@delayReason.ID">@delayReason.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-negative mr-3 @st4UpdateEtaDateDelayConfirm @selectedInputUpdateEtaDateDelay" @disabledInputUpdateEtaDateDelayConfirm>Delay</button>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column">
+                                        <div class="form-inline">
+                                            <div class="form-group mr-2">
+                                                <input type="hidden" class="@st4ItemIdInner" value="@purchasingDocumentItem.ID" />
+                                                <input type="file" class="form-control with-icon @st4UploadProgressPhotoes" @disabledInputUploadProgressPhotoes multiple>
+                                                <i class="fas fa-paperclip form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-positive @st4UploadProgressPhotoesConfirm" @disabledInputUploadProgressPhotoesConfirm>Save</button>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column info">
+                                        <div class="form-inline">
+                                            <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
+                                            <div class="pop-up-notification">
+                                                <span class="mr-2"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" width="50px" height="50px"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*//Parent Image*@
+                                @*<div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <div class="form-inline" style="visibility:hidden;">
+                                            <div class="form-group mr-2">
+                                                <input type="text" class="form-control form-date with-icon">
+                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-positive mr-3">On Time</button>
+                                            <div class="form-group mr-2">
+                                                <input type="text" class="form-control form-date with-icon">
+                                                <i class="far fa-calendar-alt form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-negative mr-3">Delay</button>
+                                            <div class="form-group mr-2">
+                                                <select id="delayReason" name="delayReason" class="form-control form-control-lg">
+                                                    <option value="0">select reason</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column mt-3">
+                                        <div class="form-inline">
+                                            @if (purchasingDocumentItem.ProgressPhotoes.Count > 0)
+                                            {
+                                                for (int i = 0; i < purchasingDocumentItem.ProgressPhotoes.Count; i++)
+                                                {
+                                                    var progressPhoto = purchasingDocumentItem.ProgressPhotoes.ToList()[i];
+
+                                                    <span class="mr-2"><img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px"></span>
+
+                                                    if (i == 2)
+                                                    {
+                                                        i = purchasingDocumentItem.ProgressPhotoes.Count + 1;
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>*@
+                                @*//Parent Image*@
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            disabledInputUpdateEtaDateOnTime = "disabled";
+                                            disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                            disabledInputUpdateEtaDateDelay = "disabled";
+                                            disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                            disabledInputUploadProgressPhotoes = "disabled";
+                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                            disabledDelayReason = "disabled";
+
+                                            selectedInputUpdateEtaDateOnTime = "";
+                                            selectedInputUpdateEtaDateDelay = "";
+
+                                            valueInputUpdateEtaDateOnTime = "";
+                                            valueInputUpdateEtaDateDelay = "";
+                                            valueDelayReason = 0;
+
+                                            if (childPurchasingDocumentItem.HasETAHistory)
+                                            {
+                                                valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
+                                            }
+
+                                            if (childPurchasingDocumentItem.LastETAHistory.DelayReasonID != null)
+                                            {
+                                                valueDelayReason = childPurchasingDocumentItem.LastETAHistory.DelayReasonID.GetValueOrDefault();
+                                            }
+
+                                            if (childPurchasingDocumentItem.ActiveStage == "4")
+                                            {
+                                                if (Request.QueryString["role"] != "procurement")
+                                                {
+                                                    if (childPurchasingDocumentItem.ETAHistories.Count < 2)
+                                                    {
+                                                        disabledInputUpdateEtaDateOnTime = "disabled";
+                                                        disabledInputUpdateEtaDateOnTimeConfirm = "";
+                                                        disabledInputUpdateEtaDateDelay = "";
+                                                        disabledInputUpdateEtaDateDelayConfirm = "";
+                                                        disabledDelayReason = "";
+                                                        //disabledInputUploadProgressPhotoes = "disabled";
+                                                        //disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                                        valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
+
+                                                        if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "";
+                                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                                        }
+                                                        else
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "disabled";
+                                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        disabledInputUpdateEtaDateOnTime = "disabled";
+                                                        disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                        disabledInputUpdateEtaDateDelay = "disabled";
+                                                        disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                        //disabledInputUploadProgressPhotoes = "";
+                                                        //disabledInputUploadProgressPhotoesConfirm = "";
+
+                                                        if (childPurchasingDocumentItem.IsDelayed)
+                                                        {
+                                                            valueInputUpdateEtaDateOnTime = "";
+                                                            valueInputUpdateEtaDateDelay = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                                            selectedInputUpdateEtaDateDelay = "selected-negative";
+                                                        }
+                                                        else
+                                                        {
+                                                            valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+                                                            valueInputUpdateEtaDateDelay = "";
+
+                                                            selectedInputUpdateEtaDateOnTime = "selected";
+                                                        }
+
+                                                        if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "";
+                                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                                        }
+                                                        else
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "disabled";
+                                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        }
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                    disabledInputUploadProgressPhotoes = "disabled";
+                                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                                    if (purchasingDocumentItem.ETAHistories.Count > 1)
+                                                    {
+
+                                                        if (childPurchasingDocumentItem.IsDelayed)
+                                                        {
+                                                            valueInputUpdateEtaDateOnTime = "";
+                                                            valueInputUpdateEtaDateDelay = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                                            selectedInputUpdateEtaDateDelay = "selected-negative";
+                                                        }
+                                                        else
+                                                        {
+                                                            valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+                                                            valueInputUpdateEtaDateDelay = "";
+
+                                                            selectedInputUpdateEtaDateOnTime = "selected";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (childPurchasingDocumentItem.ETAHistories.Count < 2)
+                                                {
+                                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                    disabledInputUploadProgressPhotoes = "disabled";
+                                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                                    valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
+
+                                                    if (Request.QueryString["role"] == "procurement")
+                                                    {
+                                                        disabledInputUploadProgressPhotoes = "disabled";
+                                                        disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    disabledInputUpdateEtaDateOnTime = "disabled";
+                                                    disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                    disabledInputUpdateEtaDateDelay = "disabled";
+                                                    disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                    disabledInputUploadProgressPhotoes = "disabled";
+                                                    disabledInputUploadProgressPhotoesConfirm = "disabled";
+
+                                                    if (Request.QueryString["role"] != "procurement")
+                                                    {
+                                                        if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "";
+                                                            disabledInputUploadProgressPhotoesConfirm = "";
+                                                        }
+                                                        else
+                                                        {
+                                                            disabledInputUploadProgressPhotoes = "disabled";
+                                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        disabledInputUploadProgressPhotoes = "disabled";
+                                                        disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        
+                                                    }
+
+                                                    if (childPurchasingDocumentItem.IsDelayed)
+                                                    {
+                                                        valueInputUpdateEtaDateOnTime = "";
+                                                        valueInputUpdateEtaDateDelay = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+
+                                                        selectedInputUpdateEtaDateDelay = "selected-negative";
+                                                    }
+                                                    else
+                                                    {
+                                                        valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.LastETAHistory.ETADateView;
+                                                        valueInputUpdateEtaDateDelay = "";
+
+                                                        selectedInputUpdateEtaDateOnTime = "selected";
+                                                    }
+                                                }
+                                            }
+
+                                            <div class="po-item-data-content row-@rowStage4-@childRowStage4" row="@rowStage4" child="@childRowStage4">
+                                                <div class="po-item-data-header__column">
+                                                    <div class="form-inline">
+                                                        <input type="hidden" class="@st4ItemId" value="@childPurchasingDocumentItem.ID" />
+                                                        <div class="form-group mr-2">
+                                                            <input type="text" class="form-control form-date with-icon @st4UpdateEtaDateOnTime" value="@valueInputUpdateEtaDateOnTime" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" placeholder="dd/mm/yyyy" mindate="@childPurchasingDocumentItem.FirstETAHistory.ETADateView" autocomplete="off" @disabledInputUpdateEtaDateOnTime>
+                                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                                        </div>
+                                                        <button class="btn btn-positive mr-3 @st4UpdateEtaDateOnTimeConfirm @selectedInputUpdateEtaDateOnTime" @disabledInputUpdateEtaDateOnTimeConfirm>On Time</button>
+                                                        <div class="form-group mr-2">
+                                                            <input type="text" class="form-control form-date with-icon @st4UpdateEtaDateDelay" value="@valueInputUpdateEtaDateDelay" required="" autofocus="" pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" placeholder="dd/mm/yyyy" mindate="@childPurchasingDocumentItem.FirstETAHistory.ETADateView" autocomplete="off" @disabledInputUpdateEtaDateDelay>
+                                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                                        </div>
+                                                        <div class="form-group mr-2">
+                                                            <select id="delayReason" name="delayReason" class="form-control form-control-lg @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
+                                                                <option value="0">select reason</option>
+                                                                @foreach (var delayReason in ViewBag.DelayReasons)
+                                                                {
+                                                                    <option value="@delayReason.ID">@delayReason.Name</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <button class="btn btn-negative mr-3 @st4UpdateEtaDateDelayConfirm @selectedInputUpdateEtaDateDelay" @disabledInputUpdateEtaDateDelayConfirm>Delay</button>
+                                                    </div>
+                                                </div>
+                                                <div class="po-item-data-header__column">
+                                                    <div class="form-inline">
+                                                        <div class="form-group mr-2">
+                                                            <input type="hidden" class="@st4ItemIdInner" value="@childPurchasingDocumentItem.ID" />
+                                                            <input type="file" class="form-control with-icon @st4UploadProgressPhotoes" @disabledInputUploadProgressPhotoes multiple>
+                                                            <i class="fas fa-paperclip form-type-icon"></i>
+                                                        </div>
+                                                        <button class="btn btn-positive @st4UploadProgressPhotoesConfirm" @disabledInputUploadProgressPhotoesConfirm>Save</button>
+                                                    </div>
+                                                </div>
+                                                <div class="po-item-data-header__column info">
+                                                    <div class="form-inline">
+                                                        <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
+                                                        <div class="pop-up-notification">
+                                                            <span class="mr-2"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" width="50px" height="50px"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            childRowStage4++;
+
+                                            //Child Image
+                                            @*<div class="po-item-data-content__outer">
+                                                <div class="po-item-data-header__column">
+                                                    <div class="form-inline" style="visibility:hidden;">
+                                                        <div class="form-group mr-2">
+                                                            <input type="text" class="form-control form-date with-icon">
+                                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                                        </div>
+                                                        <button class="btn btn-positive mr-3">On Time</button>
+                                                        <div class="form-group mr-2">
+                                                            <input type="text" class="form-control form-date with-icon">
+                                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                                        </div>
+                                                        <button class="btn btn-negative mr-3">Delay</button>
+                                                        <div class="form-group mr-2">
+                                                            <select id="delayReason" name="delayReason" class="form-control form-control-lg">
+                                                                <option value="0">select reason</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="po-item-data-header__column">
+                                                    <div class="form-inline">
+                                                        @if (childPurchasingDocumentItem.ProgressPhotoes.Count > 0)
+                                                        {
+                                                            for (int i = 0; i < childPurchasingDocumentItem.ProgressPhotoes.Count; i++)
+                                                            {
+                                                                var progressPhoto = childPurchasingDocumentItem.ProgressPhotoes.ToList()[i];
+
+                                                                <span class="mr-2"><img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px"></span>
+
+                                                                if (i == 2)
+                                                                {
+                                                                    i = childPurchasingDocumentItem.ProgressPhotoes.Count + 1;
+                                                                }
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>*@
+                                            //Child Image
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage4++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-6 info-stage">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 5</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text gr-date">GR Date</span>
+                            <span class="po-item-data-header__text gr-qty">Qty</span>
+                            <span class="po-item-data-header__text gr-complete">GR Completed</span>
+                            <span class="po-item-data-header__text">info</span>
+                        </div>
+                        @{
+                            var rowstage5 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childrowstage5 = 1;
+
+                            var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var isComplete = "No";
+                            if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            {
+                                isComplete = "Yes";
+                            }
+
+                            <div class="po-item-data-content row-@rowstage5">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
+                                    <div class="po-item-data-header__column gr-qty">
+                                        <div>@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                    </div>
+                                    <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                    <span class="po-item-data-header__text info">
+                                        <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                        <div class="pop-up-notification">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>GR / Inspection Date</td>
+                                                        <td>&nbsp;</td>
+                                                        <td>Qty</td>
+                                                    </tr>
+                                                    @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
+                                                    {
+                                                        grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                                        <tr>
+                                                            <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            grDateNewDateFormat = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                            isComplete = "No";
+                                            if (childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= childPurchasingDocumentItem.ConfirmedQuantity)
+                                            {
+                                                isComplete = "Yes";
+                                            }
+
+                                            <div class="po-item-data-content row-@rowstage5-@childrowstage5 mt-customize" row="@rowstage5" child="@childrowstage5">
+                                                <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
+                                                <div class="po-item-data-header__column gr-qty">
+                                                    <div>@childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                                </div>
+                                                <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                                <span class="po-item-data-header__text info">
+                                                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                                    <div class="pop-up-notification">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>GR / Inspection Date</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Qty</td>
+                                                                </tr>
+                                                                @foreach (var pdih in childPurchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
+                                                                {
+                                                                    grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                                                    <tr>
+                                                                        <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                        <td>&nbsp;</td>
+                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                            childrowstage5++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowstage5++;
+                        }
+                    </div>
+                </div>
+                @*<div class="po-item-section stage-7">
+                        <div class="po-item-section-header stage-checkbox-header">
+                            <div>
+                                <label class="checkbox-custom__label mr-0">
+                                    <input class="checkbox-custom st2-checkbox-all" type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div><p class="mb-0">Stage 6</p></div>
+                            <div>
+                            </div>
+                        </div>
+                        <div class="po-item-section-body">
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                            </div>
+                            @{
+                            var rowStage6 = 1;
+                            }
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                            {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage6 = 1;
+
+                            <div class="po-item-data-content row-@rowStage6">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column invoice-method">
+                                        <div class="form-inline">
+                                            <label class="checkbox-custom__label">
+                                                <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <div class="form-group mr-2">
+                                                <select class="form-control">
+                                                    <option>Choose One</option>
+                                                    <option>Full</option>
+                                                    <option>Partial by GR</option>
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-positive">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                    foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                    {
+                                    <div class="po-item-data-content row-@rowStage6-@childRowStage6" row="@rowStage6" child="@childRowStage6">
+                                        <div class="po-item-data-header__column invoice-method">
+                                            <div class="form-inline">
+                                                <label class="checkbox-custom__label">
+                                                    <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <div class="form-group mr-2">
+                                                    <select class="form-control">
+                                                        <option>Choose One</option>
+                                                        <option>Full</option>
+                                                        <option>Partial by GR</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-positive">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    childRowStage6++;
+                                    }
+                                    }
+                                </div>
+                            </div>
+                            rowStage6++;
+                            }
+                        </div>
+                    </div>*@
+                <div class="po-item-section stage-7">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 6</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Upload Invoice</span>
+                        </div>
+                        @{
+                            var rowStage6 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childrowStage6 = 1;
+
+                            var st6ItemID = "st6-item-id";
+                            var st6FormUpload = "st6-form-upload";
+                            var st6FormUploaded = "st6-form-uploaded";
+                            var st6FileInvoice = "st6-file-invoice";
+                            var st6FileInvoiceUpload = "st6-file-invoice-upload";
+                            var st6FileInvoiceRemove = "st6-file-invoice-remove";
+                            var st6FileInvoiceDownload = "st6-file-invoice-download";
+
+                            var disabledFileInvoice = "disabled";
+                            var disabledFileInvoiceUpload = "disabled";
+                            var hiddenFormUploading = "";
+                            var hiddenFormUploaded = "hidden";
+                            var invoiceDownloadPath = "";
+
+                            if (purchasingDocumentItem.InvoiceDocument != null)
+                            {
+                                invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                hiddenFormUploading = "hidden";
+                                hiddenFormUploaded = "";
+                            }
+                            else
+                            {
+                                if (Request.QueryString["role"] != "procurement")
+                                {
+                                    if (purchasingDocumentItem.ActiveStage != "2a")
+                                    {
+                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 5)
+                                        {
+                                            disabledFileInvoice = "";
+                                            disabledFileInvoiceUpload = "";
+                                        }
+                                    }
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@rowStage6">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <input hidden class="@st6ItemID" value="@purchasingDocumentItem.ID" />
+                                        <div class="form-inline @st6FormUpload" @hiddenFormUploading>
+                                            <div class="form-group mr-2">
+                                                <input type="file" class="form-control with-icon @st6FileInvoice" @disabledFileInvoice>
+                                                <i class="fas fa-paperclip form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-positive @st6FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
+                                        </div>
+                                        <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
+                                            <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                            <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            disabledFileInvoice = "disabled";
+                                            disabledFileInvoiceUpload = "disabled";
+                                            hiddenFormUploading = "";
+                                            hiddenFormUploaded = "hidden";
+                                            invoiceDownloadPath = "";
+
+                                            if (childPurchasingDocumentItem.InvoiceDocument != null)
+                                            {
+                                                invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", childPurchasingDocumentItem.InvoiceDocument);
+                                                hiddenFormUploading = "hidden";
+                                                hiddenFormUploaded = "";
+                                            }
+                                            else
+                                            {
+                                                if (Request.QueryString["role"] != "procurement")
+                                                {
+                                                    if (purchasingDocumentItem.ActiveStage != "2a")
+                                                    {
+                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 5)
+                                                        {
+                                                            disabledFileInvoice = "";
+                                                            disabledFileInvoiceUpload = "";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            <div class="po-item-data-content row-@rowStage6-@childrowStage6" row="@rowStage6" child="@childrowStage6">
+                                                <div class="po-item-data-header__column">
+                                                    <input hidden class="@st6ItemID" value="@childPurchasingDocumentItem.ID" />
+                                                    <div class="form-inline @st6FormUpload" @hiddenFormUploading>
+                                                        <div class="form-group mr-2">
+                                                            <input type="file" class="form-control with-icon @st6FileInvoice" @disabledFileInvoice>
+                                                            <i class="fas fa-paperclip form-type-icon"></i>
+                                                        </div>
+                                                        <button class="btn btn-positive @st6FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
+                                                    </div>
+                                                    <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
+                                                        <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                        <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            childrowStage6++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage6++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-8">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Parking Date</span>
+                            <span class="po-item-data-header__text delivery">Term Date</span>
+                        </div>
+                        @{
+                            var rowStage7 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage7 = 1;
+
+                            <div class="po-item-data-content row-@rowStage7">
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column document_number">m</span>
+                                    <span class="po-item-data-header__column delivery">n</span>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
+                                                <span class="po-item-data-header__column document_number">m</span>
+                                                <span class="po-item-data-header__column delivery">n</span>
+                                            </div>
+                                            childRowStage7++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            rowStage7++;
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </li>
+    </ul>
+}
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, role = Request.QueryString["role"] }))
+@section scripts {
+    <script src="~/Scripts/datepicker.min.js"></script>
+    <script src="~/Scripts/donutty-jquery.min.js"></script>
+    <script src="~/Scripts/Local/stage1-procurement.js"></script>
+    <script src="~/Scripts/Local/stage1-vendor.js"></script>
+    <script src="~/Scripts/Local/stage2-vendor.js"></script>
+    <script src="~/Scripts/Local/stage2-procurement.js"></script>
+    <script src="~/Scripts/Local/Stage2a-procurement.js"></script>
+    <script src="~/Scripts/Local/Stage2a-invoice-vendor.js"></script>
+    <script src="~/Scripts/Local/stage3-vendor.js"></script>
+    <script src="~/Scripts/Local/stage4-vendor.js"></script>
+    <script src="~/Scripts/Local/Stage6-vendor.js"></script>
+
+    <script type="text/javascript">
+        var scrollLength = [];
+        $(document).ready(function () {
+            $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+            $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            //$('#InputETAHistory_ETADate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date(Date.now()) >= date) ? false : true; } });
+            //$('#InputPurchasingDocumentItem_ConfirmReceivedPaymentDate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+            $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+
+            //stage scrollbar fixed
+            var chooseStagePosition = $('.filter-row').offset();
+
+            $(".main-container").scroll(function () {
+                if ($(".main-container").scrollTop() > chooseStagePosition.top) {
+                    //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
+                    $('.filter-row').addClass("freeze");
+                } else {
+                    //$('.stage-pagination-container').css('position', 'static');
+                    $('.filter-row').removeClass("freeze");
+                }
+            });
+
+
+            var tempArray = [];
+            var tempMaxHeight = 0;
+            var tempMaxWidth = 0;
+
+
+            $(".po-item-container").each(function (index) {
+                var rowExist = 1;
+
+                while (rowExist > 0) {
+                    if ($(this).find(".row-" + rowExist).length > 0) {
+                        tempArray = [];
+                        tempMaxHeight = 0;
+                        $(this).find(".row-" + rowExist).each(function () {
+                            tempArray.push($(this).height());
+                        });
+                        tempMaxHeight = Math.max(...tempArray);
+                        $(this).find(".row-" + rowExist).height(tempMaxHeight);
+                        rowExist++;
+                    } else {
+                        rowExist = -1;
+                    }
+                }
+            });
+
+            tempArray = [];
+            $(".po-item-section.information").each(function () {
+                tempArray.push($(this).outerWidth(true));
+            });
+            tempMaxWidth = Math.max(...tempArray);
+            $(".po-item-section.information").width(tempMaxWidth);
+            scrollLength.push(tempMaxWidth + 1.5);
+
+            for (var i = 1; i <= 8; i++) {
+                tempArray = [];
+                $(".po-item-section.stage-" + i).each(function () {
+                    tempArray.push($(this).outerWidth(true));
+                });
+                tempMaxWidth = Math.max(...tempArray);
+                $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                scrollLength.push(tempMaxWidth + 1.5);
+            }
+
+            var totalDistance = 0;
+            for (var i = 0; i < scrollLength.length; i++) {
+                scrollLength[i] += totalDistance;
+                totalDistance = scrollLength[i];
+            }
+        });
+
+
+
+        function paginationShow(destination) {
+            $(".po-item-scrollable").animate({ scrollLeft: scrollLength[destination - 1] }, 500);
+        }
+
+        function poItemCollapse(row) {
+            row.closest("li").toggleClass("collapse-row");
+        }
+                ///////////////////////////////////////////////////////////////////////////////
+        function reverseDayMonth(monthDayYearDate) {
+            var dateParts = monthDayYearDate.split("/");
+            return new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+        }
+
+        // Fill Delay Reason with selected value
+
+        $(".st4-delay-reason").each(function (index) {
+            var delayReasonID = $(this).attr("value");
+
+            $(this).get(0).selectedIndex = delayReasonID;
+        });
+
+    </script>
+}
