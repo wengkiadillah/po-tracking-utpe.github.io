@@ -8,7 +8,7 @@ namespace POTrackingV2.Constants
     public class LoginConstants
     {
         public const int UserTypeInternal = 1;
-        public const string RoleAdministrator = "Administrator";
+        public const string RoleAdministrator = "1";
 
         //page
         public const int PageSize = 10;
