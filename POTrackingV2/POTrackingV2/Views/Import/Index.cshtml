@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<POTracking.Models.PO>
+﻿@model PagedList.IPagedList<POTrackingV2.Models.PO>
 
 @using PagedList.Mvc;
 @{
@@ -7,7 +7,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title"><a href="/Import">PO Tracking System</a> <span class="page-subtitle">History</span> <span class="page-subtitle"><a href="/Import?role=procurement">Procurement</a></span></h1>
+<h1 class="page-title"><a href="/Import">PO Tracking System</a> <span class="page-subtitle">History</span> <span class="page-subtitle"><a href="/Import/index?role=procurement">Procurement</a></span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -2365,7 +2365,7 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage8 = 1;
 
-                            var shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
+                            List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
                             var maxCount = 0;
 
                             if (shipmentInboundNumbers != null)
@@ -2672,7 +2672,7 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage11 = 1;
 
-                            var parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
                             var termDateViews = purchasingDocumentItem.TermDateViews;
                             var maxCount = 0;
 

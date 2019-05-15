@@ -1,6 +1,6 @@
 ﻿using PagedList;
-using POTracking.Models;
-using POTracking.ViewModels;
+using POTrackingV2.Models;
+using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -79,7 +79,7 @@ namespace POTrackingV2.Controllers
             }
             #endregion
 
-            return View(pOes.ToPagedList(page ?? 1, Constants.PageSize));
+            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         #region STAGE 1

@@ -9,5 +9,8 @@ namespace POTrackingV2.Constants
     {
         public const int UserTypeInternal = 1;
         public const string RoleAdministrator = "Administrator";
+
+        //page
+        public const int PageSize = 10;
     }
 }

@@ -1,4 +1,5 @@
-﻿using POTracking.Models;
+﻿using POTrackingV2.Models;
+using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using PagedList;
 using System.Globalization;
-using POTracking.ViewModels;
 using System.IO;
 
 namespace POTrackingV2.Controllers
@@ -88,7 +88,7 @@ namespace POTrackingV2.Controllers
             //indexLocalViewModel.POes = pOes.ToPagedList(page ?? 1, Constants.PageSize);
             //indexLocalViewModel.InputPurchasingDocumentItem = new PurchasingDocumentItem();
 
-            return View(pOes.ToPagedList(page ?? 1, Constants.PageSize));
+            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         

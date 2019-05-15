@@ -5,8 +5,8 @@ using System.Linq;
 using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
-using POTracking.Models;
-using POTracking.ViewModels;
+using POTrackingV2.Models;
+using POTrackingV2.ViewModels;
 using System.Globalization;
 using System.IO;
 
@@ -74,7 +74,7 @@ namespace POTrackingV2.Controllers
                 }
                 #endregion
                 //return (RedirectToAction("Index", "Error", new { ErrorList = "hi there!" }));
-                return View(pOes.ToPagedList(page ?? 1, Constants.PageSize));
+                return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
             }
             catch (Exception ex)
             {
@@ -110,7 +110,7 @@ namespace POTrackingV2.Controllers
             }
 
             int pageNumber = (page ?? 1);
-            return View(viewModels.ToPagedList(pageNumber, Constants.PageSize));
+            return View(viewModels.ToPagedList(pageNumber, Constants.LoginConstants.PageSize));
         }
         #endregion
 
