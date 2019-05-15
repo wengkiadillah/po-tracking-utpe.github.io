@@ -1,0 +1,51 @@
+﻿@model IEnumerable<POTracking.Models.PO>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+        </tr>
+        foreach (var subitem in item.PurchasingDocumentItems)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelitem => subitem.ItemNumber)
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+
+@Html.ActionLink("MAKE ACTIVE!", "MakeAllActiveStageto0")
+@Html.ActionLink("COUNT!", "MakeAllActiveStageto0")

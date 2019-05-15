@@ -1,0 +1,651 @@
+﻿@model PagedList.IPagedList<POTracking.Models.PO>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Template";
+}
+
+@section styles {
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" />
+}
+<h1 class="page-title">PO Subcontractor Template<span class="page-subtitle">History</span></h1>
+<div class="filter-row">
+    @using (Html.BeginForm("Template", "Subcont", FormMethod.Get))
+    {
+        <div class="filter-form-container form-inline">
+            <div class="form-group mr-4">
+                <input type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.CurrentPONumber">
+                <i class="fas fa-search form-type-icon hint"></i>
+            </div>
+            <div class="form-group mr-0">
+                <label for="startPODate">PO Date</label>
+                <input type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate">
+                <i class="far fa-calendar-alt form-type-icon"></i>
+            </div>
+            <div class="form-group">
+                <label for="endPODate">to</label>
+                <input type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate">
+                <i class="far fa-calendar-alt form-type-icon"></i>
+            </div>
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "Template", null, new { @class = "btn btn-info mr-3" })
+        </div>
+    }
+    <div class="stage-pagination-container">
+        <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
+        <ul class="list-unstyled pagination-list mb-0">
+            <li class="pagination-list__item" onclick="paginationShow(1)">1</li>
+            <li class="pagination-list__item" onclick="paginationShow(2)">2</li>
+            <li class="pagination-list__item" onclick="paginationShow(3)">3</li>
+            <li class="pagination-list__item" onclick="paginationShow(4)">4</li>
+            <li class="pagination-list__item" onclick="paginationShow(5)">5</li>
+            <li class="pagination-list__item" onclick="paginationShow(6)">6</li>
+            <li class="pagination-list__item" onclick="paginationShow(7)">7</li>
+            <li class="pagination-list__item" onclick="paginationShow(8)">8</li>
+        </ul>
+    </div>
+</div>
+@foreach (var pO in Model)
+{
+    <ul class="list-unstyled po-list">
+        <li class="po-item-container">
+            <div class="po-item-section po-item-sticky">
+                <div class="po-item-section-header">
+                    <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">No. PO</span>
+                        <span>@pO.Number</span>
+                    </div>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">PO Date</span>
+                        <span>@pO.Date.ToShortDateString()</span>
+                    </div>
+                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                    <div class="pop-up-notification">
+                        <table>
+                            <tr>
+                                <td class="secondary-text">No. PO</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Number</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Date</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Date</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Vendor</td>
+                                <td>&nbsp;</td>
+                                @if (pO.Vendor != null)
+                                {
+                                    <td>@pO.Vendor.Name</td>
+                                }
+                                else
+                                {
+                                    <td>Vendor not in Database</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Creator</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.PurchaseOrderCreator</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Release PO Date</td>
+                                <td>&nbsp;</td>
+                                @if (pO.ReleaseDate != null)
+                                {
+                                    <td>@pO.ReleaseDate.Value.ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text item-id">Item ID</span>
+                        <span class="po-item-data-header__text description">Item Description</span>
+                        <span class="po-item-data-header__text po-progress">Progress</span>
+                    </div>
+                    @{
+                        var row = 1;
+                    }
+                    @foreach (var purchasingDocumentItem in pO.PurchasingDocumentItems)
+                    {
+                        double donutProgress;
+
+                        if (!String.IsNullOrEmpty(purchasingDocumentItem.ActiveStage))
+                        {
+                            donutProgress = Convert.ToDouble(purchasingDocumentItem.ActiveStage) * 16.66;
+                        }
+                        else
+                        {
+                            donutProgress = 0;
+                        }
+
+                        <div class="po-item-data-content row-@row">
+                            <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
+                            <span class="po-item-data-header__column description">
+                                @purchasingDocumentItem.Description
+                            </span>
+                            <div class="po-item-data-header__column po-progress">
+                                <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                     data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                <div>@purchasingDocumentItem.ActiveStage<span class="secondary-text">/6</span></div>
+                            </div>
+                        </div>
+
+                        row++;
+                    }
+                </div>
+            </div>
+            <div class="custom-scrollbar po-item-scrollable">
+                <div class="po-item-section information">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Information</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text quantity">Qty</span>
+                            <span class="po-item-data-header__text currency">Curr</span>
+                            <span class="po-item-data-header__text price">Price</span>
+                            <span class="po-item-data-header__text material">Material</span>
+                            <span class="po-item-data-header__text delivery">Delivery Date</span>
+                        </div>
+                        @{
+                            var rowInformation = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in pO.PurchasingDocumentItems)
+                        {
+                            <div class="po-item-data-content row-@rowInformation">
+                                <span class="po-item-data-header__column quantity">@purchasingDocumentItem.ConfirmedQuantity</span>
+                                <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
+                                <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPrice,00</span>
+                                <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                <span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate</span>
+                            </div>
+
+                            rowInformation++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-1">
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom" type="checkbox" checked="" />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <p class="mb-0">Stage 1</p>
+                        </div>
+                        <div>
+                            @*<input class="btn btn-positive" type="submit" value="Save All" />*@
+                        </div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Confirm PO</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            <div class="po-item-data-header__column">
+                                <div class="form-inline">
+                                    <label class="checkbox-custom__label">
+                                        <input class="checkbox-custom" type="checkbox" checked="" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <button class="btn btn-positive mr-2">Yes</button>
+                                    <div class="input-group mr-2">
+                                        <input type="text" class="form-control" placeholder="Qty available">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-positive">Yes</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-negative">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-2">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 2</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Define Sequences</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            <div class="po-item-data-header__column">
+                                <button class="btn btn-positive" data-toggle="modal" data-target="#sequencesModal">Define Sequences</button>
+                                <a href="#" class="btn-icon"><i class="far fa-edit"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-3">
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom" type="checkbox" unchecked />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <p class="mb-0">Stage 3</p>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text confirm-eta">Confirm ETA</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            <div class="po-item-data-header__column confirm-eta">
+                                <div class="form-inline">
+                                    <label class="checkbox-custom__label">
+                                        <input class="checkbox-custom" type="checkbox" unchecked />
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="form-group mr-2">
+                                        <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                        <i class="fas fa-calendar-alt form-type-icon"></i>
+                                    </div>
+                                    <button class="btn btn-positive">Save</button>
+                                    <a href="#" class="btn-icon ml-2"><i class="far fa-edit"></i></a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-4">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 4</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Sequences Progress</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            <div class="po-item-data-header__column">
+                                <button class="btn btn-positive" data-toggle="modal" data-target="#inputProgressModal">Input Progress</button>
+
+                                @*<div class="form-inline">
+                                        <div class="form-group mr-2">
+                                            <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                        </div>
+                                        <button class="btn btn-positive">Received</button>
+                                    </div>*@
+                                <div class="checkbox-custom-list">
+                                    <label class="checkbox-custom__label">
+                                        Order raw material
+                                        <input class="checkbox-custom" type="checkbox" unchecked />
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <label class="checkbox-custom__label">
+                                        Painting
+                                        <input class="checkbox-custom" type="checkbox" unchecked />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <button class="btn btn-positive">Edit Progress</button>
+                                    <button class="btn btn-positive">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-5">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 5</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text delivery">GR Date</span>
+                            <span class="po-item-data-header__text quantity">Qty</span>
+                            <span class="po-item-data-header__text completion">GR Completed</span>
+                        </div>
+
+                        <div class="po-item-data-content row-1">
+                            <span class="po-item-data-header__column quantity delivery">m</span>
+                            <span class="po-item-data-header__column quantity">n</span>
+                            <span class="po-item-data-header__column completion">h</span>
+
+                            @*<div class="po-item-data-header__column">
+                                    <div class="form-inline">
+                                        <div class="form-group mr-2">
+                                            <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                        </div>
+                                        <button class="btn btn-positive mr-3">On Time</button>
+                                        <div class="form-group mr-2">
+                                            <input type="text" class="form-control form-date with-icon" placeholder="dd/mm/yyyy">
+                                            <i class="far fa-calendar-alt form-type-icon"></i>
+                                        </div>
+                                        <button class="btn btn-negative mr-3">Delay</button>
+                                    </div>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-6">
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom" type="checkbox" unchecked />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <p class="mb-0">Stage 6</p>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            <div class="po-item-data-header__column invoice-method">
+                                <div class="form-inline">
+                                    <label class="checkbox-custom__label">
+                                        <input class="checkbox-custom" type="checkbox" unchecked />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <div class="form-group mr-2">
+                                        <select class="form-control">
+                                            <option>Choose One</option>
+                                            <option>Full</option>
+                                            <option>Partial by GR</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-positive">Save</button>
+                                    <a href="#" class="btn-icon ml-2"><i class="far fa-edit"></i></a>
+                                </div>
+
+                            </div>
+                            @*<div class="po-item-data-header__column">
+                                    <div>7<span class="secondary-text">/10</span></div>
+                                </div>
+                                <span class="po-item-data-header__column">No</span>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-7">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Upload Invoice</span>
+                        </div>
+                        <div class="po-item-data-content row-1">
+                            @*<div class="po-item-data-header__column invoice-method">
+                                    <div class="form-inline">
+                                        <div class="form-group mr-2">
+                                            <select class="form-control">
+                                                <option>Choose One</option>
+                                                <option>Full</option>
+                                                <option>Partial by GR</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-positive">Save</button>
+                                    </div>
+                                </div>*@
+                            <div class="po-item-data-header__column">
+                                <div class="form-inline">
+                                    <div class="form-group mr-2">
+                                        <input type="file" class="form-control with-icon">
+                                        <i class="fas fa-paperclip form-type-icon"></i>
+                                    </div>
+                                    <button class="btn btn-positive">Save</button>
+                                </div>
+                                <div class="file-uploaded">
+                                    <p class="mb-0">Invoice uploaded <i class="fas fa-check-circle success-icon"></i></p>
+                                    <a href="#" class="danger-link">Remove?</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-item-section stage-8">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 8</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Document Number</span>
+                            <span class="po-item-data-header__text delivery">Date</span>
+                        </div>
+
+                        <div class="po-item-data-content row-1">
+                            <span class="po-item-data-header__column document_number">m</span>
+                            <span class="po-item-data-header__column delivery">n</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+                            }
+
+<div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Define Sequences</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="clearfix">
+                    <p class="float-right">Lead Time: 56 days</p>
+                </div>
+                <div>
+                    <div class="po-item-data-header__column mb-1">
+                        <form method="post">
+                            <div class="form-inline">
+                                <p class="col-7 mb-0">Order Raw Material</p>
+                                <input type="text" class="col-3 form-control">
+                                <p class="col-2 mb-0">days</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div>
+                    <div class="po-item-data-header__column mb-1">
+                        <form method="post">
+                            <div class="form-inline mb-1">
+                                <a class="col-7 mb-0" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    Painting
+                                </a>
+                                <input type="text" class="col-3 form-control">
+                                <p class="col-2 mb-0">days</p>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                                <div class="">
+                                    <div class="po-item-data-header__column mb-1">
+                                        <div class="form-inline">
+                                            <p class="col-7 mb-0">Blasting</p>
+                                            <input type="text" class="col-3 form-control">
+                                            <p class="col-2 mb-0">days</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="po-item-data-header__column mb-1">
+                                        <div class="form-inline">
+                                            <p class="col-7 mb-0">Top coat</p>
+                                            <input type="text" class="col-3 form-control">
+                                            <p class="col-2 mb-0">days</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-positive w-100">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="inputProgressModal" tabindex="-1" role="dialog" aria-labelledby="inputProgressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inputProgressModalLabel">Sequences Progress</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                    </div>
+                </div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="order-tab" data-toggle="tab" href="#order" role="tab" aria-controls="order" aria-selected="true">Order Raw Material</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Painting</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="order" role="tabpanel" aria-labelledby="order-tab">
+                        <p>ITEMS</p>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label>Nama Raw Material</label>
+                                <input type="text" class="form-control" placeholder="Nama Raw Material">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Qty</label>
+                                <input type="number" class="form-control" placeholder="Qty">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="invisible">Add item</label>
+                                <button class="btn btn-positive">Add Item</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="estimationDate">Estimasi Tanggal Selesai</label>
+                                <input type="text" class="form-control with-icon" placeholder="dd/mm/yyyy" id="estimationDate">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="actualDate">Aktual Tanggal Selesai</label>
+                                <input type="text" class="form-control with-icon" placeholder="dd/mm/yyyy" id="actualDate">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputEmail4">Upload Foto Progress</label>
+                                <input type="file" class="form-control with-icon">
+                                <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="invisible">Upload</label>
+                                <button class="btn btn-positive">Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-positive w-100">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Template",
+    new { page, searchPoNumber = ViewBag.CurrentPONumber, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+@section scripts {
+    <script src="~/Scripts/datepicker.min.js"></script>
+    <script type="text/javascript">
+        var scrollLength = [];
+        $(document).ready(function () {
+            $('#startPODate').datepicker({ autoHide: true });
+            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            $('#estimationDate').datepicker({ autoHide: true });
+            $('#actualDate').datepicker({ autoHide: true });
+            $('.form-date').datepicker({ autoHide: true });
+
+            var tempArray = [];
+            var tempMaxHeight = 0;
+            var tempMaxWidth = 0;
+            var rowExist = 1;
+
+            while (rowExist > 0) {
+                if ($(".row-" + rowExist).length > 0) {
+                    tempArray = [];
+                    tempMaxHeight = 0;
+                    $(".row-" + rowExist).each(function () {
+                        tempArray.push($(this).height());
+                    });
+                    tempMaxHeight = Math.max(...tempArray);
+                    $(".row-" + rowExist).height(tempMaxHeight);
+                    rowExist++;
+                    console.log(rowExist);
+
+                } else {
+                    rowExist = -1;
+                }
+            }
+            console.log(rowExist);
+
+            tempArray = [];
+            $(".po-item-section.information").each(function () {
+                tempArray.push($(this).outerWidth(true));
+            });
+            tempMaxWidth = Math.max(...tempArray);
+            $(".po-item-section.information").width(tempMaxWidth);
+            scrollLength.push(tempMaxWidth + 1.5);
+
+            for (var i = 1; i <= 8; i++) {
+                tempArray = [];
+                $(".po-item-section.stage-" + i).each(function () {
+                    tempArray.push($(this).outerWidth(true));
+                }); 
+                tempMaxWidth = Math.max(...tempArray);
+                $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                scrollLength.push(tempMaxWidth + 1.5);
+            }
+
+            var totalDistance = 0;
+            for (var i = 0; i < scrollLength.length; i++) {
+                scrollLength[i] += totalDistance;
+                totalDistance = scrollLength[i];
+            }
+        });
+
+        function paginationShow(destination) {
+            $(".po-item-scrollable").animate({ scrollLeft: scrollLength[destination - 1] }, 500);
+        }
+
+        function poItemCollapse(row) {
+            row.closest("li").toggleClass("collapse-row");
+        }
+    </script>
+}

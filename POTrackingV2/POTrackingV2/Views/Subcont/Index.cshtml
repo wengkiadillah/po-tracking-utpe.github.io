@@ -1,0 +1,2999 @@
+﻿@*@model IEnumerable<POTracking.Controllers.SubcontController.POPurchasingDocumentItemViewModel>*@
+@*@model PagedList.IPagedList<POTracking.Controllers.SubcontController.POPurchasingDocumentItemViewModel>*@
+@*@model PagedList.IPagedList<POTracking.ViewModels.POPurchasingDocumentItemViewModel>*@
+@*@model PagedList.IPagedList<POTracking.Models.PO>*@
+@model PagedList.IPagedList<POTrackingV2.Models.PO>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@*@model IEnumerable<POTracking.Models.POSubcont>*@
+@{
+    ViewBag.Title = "PO Subcont";
+    ViewBag.Role = Request.QueryString["role"];
+    ViewBag.FilterBy = Request.QueryString["filterBy"];
+    if (ViewBag.Role == null)
+    {
+        ViewBag.Role = "vendor";
+    }
+}
+@section styles {
+    <link href="~/Content/datepicker.min.css" rel="stylesheet" />
+}
+<h1 class="page-title"><a href="/SubCont?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="/SubCont?role=procurement" class="page-subtitle">Procurement</a></span></h1>
+<div class="filter-row">
+    @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    {
+        @*<div class="filter-form-container form-inline">*@
+        @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
+        <div class="form-group mr-4">
+            <input id="searchData" name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.CurrentData" />
+            <i class="fas fa-search form-type-icon hint"></i>
+        </div>
+        <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.FilterBy">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+        <div class="form-group mr-0">
+            <label for="startPODate">PO Date</label>
+            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+
+        <div class="form-group">
+            <label for="endPODate">to</label>
+            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
+        @*</div>*@
+    }
+    <div class="stage-pagination-container">
+        <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
+        <ul class="list-unstyled pagination-list mb-0">
+            <li class="pagination-list__item" onclick="paginationShow(1)">1</li>
+            <li class="pagination-list__item" onclick="paginationShow(2)">2</li>
+            <li class="pagination-list__item" onclick="paginationShow(3)">3</li>
+            <li class="pagination-list__item" onclick="paginationShow(4)">4</li>
+            <li class="pagination-list__item" onclick="paginationShow(5)">5</li>
+            <li class="pagination-list__item" onclick="paginationShow(6)">6</li>
+            <li class="pagination-list__item" onclick="paginationShow(7)">7</li>
+            @*<li class="pagination-list__item" onclick="paginationShow(8)">8</li>*@
+        </ul>
+    </div>
+</div>
+@foreach (var pO in Model)
+{
+    <ul class="list-unstyled po-list">
+        <li class="po-item-container">
+            <div class="po-item-section po-item-sticky">
+                <div class="po-item-section-header">
+                    <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">No. PO</span>
+                        <span>@pO.Number</span>
+                    </div>
+                    <div class="po-item-section-header-text">
+                        <span class="po-item-section-header-text__label">PO Date</span>
+                        <span>@pO.Date.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                    <div class="pop-up-notification">
+                        <table>
+                            <tr>
+                                <td class="secondary-text">No. PO</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Number</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Date</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.Date.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Vendor</td>
+                                <td>&nbsp;</td>
+                                @if (pO.Vendor != null)
+                                {
+                                    <td>@pO.Vendor.Name</td>
+                                }
+                                else
+                                {
+                                    <td>Vendor not in Database</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Vendor Code</td>
+                                <td>&nbsp;</td>
+                                @if (pO.Vendor != null)
+                                {
+                                    <td>@pO.Vendor.Code</td>
+                                }
+                                else
+                                {
+                                    <td>Vendor not in Database</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">PO Creator</td>
+                                <td>&nbsp;</td>
+                                <td>@pO.PurchaseOrderCreator</td>
+                            </tr>
+                            <tr>
+                                <td class="secondary-text">Release PO Date</td>
+                                <td>&nbsp;</td>
+                                @if (pO.ReleaseDate != null)
+                                {
+                                    <td>@pO.ReleaseDate.Value.ToString("dd/MM/yyyy")</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="po-item-section-body">
+                    <div class="po-item-data-header">
+                        <span class="po-item-data-header__text item-id">Item ID</span>
+                        <span class="po-item-data-header__text material">Material</span>
+                        <span class="po-item-data-header__text description">Item Description</span>
+                        <span class="po-item-data-header__text po-progress">Progress</span>
+                    </div>
+                    @{
+                        var row = 1;
+                        var rowChild = 1;
+                        var purchasingDocumentItems = pO.PurchasingDocumentItems;
+                        var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
+                        if (ViewBag.Role == "procurement")
+                        {
+                            //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || x.ConfirmedItem == false).ToList();
+                            purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                        }
+                        else
+                        {
+                            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                        }
+                    }
+                    @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                    {
+                        //double donutProgressValue = Convert.ToDouble(purchasingDocumentItem.ActiveStageToNumber) * ;
+                        double donutProgressValue = Convert.ToDouble(purchasingDocumentItem.ActiveStageToNumber) / 7 * 100;
+
+                        <div class="po-item-data-content row-@row">
+                            <div class="po-item-data-content__outer">
+                                <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
+                                <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                <span class="po-item-data-header__column description">
+                                    @purchasingDocumentItem.Description
+                                </span>
+                                @if (purchasingDocumentItem.ConfirmedItem != false)
+                                {
+                                    <div class="po-item-data-header__column po-progress">
+                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                             data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    int donutProgress = 100;
+                                    <div class="po-item-data-header__column po-progress">
+                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                             data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div>Cancel</div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="po-item-data-content__child">
+                                @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => purchasingDocumentItem.ID == x.ParentID))
+                                {
+                                    var isChild = "style=visibility:hidden";
+                                    donutProgressValue = Convert.ToDouble(purchasingDocumentItemChild.ActiveStageToNumber) / 7 * 100;
+
+                                    <div class="po-item-data-content row-@row-rowChild mt-customize" row="@row" child="@rowChild">
+                                        <span class="po-item-data-header__column item-id" @isChild>@purchasingDocumentItemChild.ItemNumber</span>
+                                        <span class="po-item-data-header__column material" @isChild>@purchasingDocumentItemChild.Material</span>
+                                        <span class="po-item-data-header__column description" @isChild>
+                                            @purchasingDocumentItemChild.Description
+                                        </span>
+                                        @if (purchasingDocumentItemChild.ConfirmedItem != false)
+                                        {
+                                            <div class="po-item-data-header__column po-progress">
+                                                <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                     data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                <div><span class="mark-donut">@purchasingDocumentItemChild.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            int donutProgress = 100;
+                                            <div class="po-item-data-header__column po-progress">
+                                                <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                     data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                <div>Cancel</div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        row++;
+                    }
+                </div>
+            </div>
+            <div class="custom-scrollbar po-item-scrollable">
+                <div class="po-item-section information">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Information</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text quantity">Qty</span>
+                            <span class="po-item-data-header__text currency">Curr</span>
+                            <span class="po-item-data-header__text price">Price</span>
+                            <span class="po-item-data-header__text delivery">Delivery Date</span>
+                        </div>
+                        @{
+                            var rowInformation = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var isChild = "";
+                            if (purchasingDocumentItem.ParentID != null)
+                            {
+                                isChild = "style=visibility:hidden";
+                            }
+
+                            <div class="po-item-data-content row-@rowInformation information" @isChild>
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity</span>
+                                    <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
+                                    <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPrice,00</span>
+                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <div class="po-item-data-content__child"></div>
+                            </div>
+
+                            rowInformation++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-1">
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            @*<input class="checkbox-all" type="checkbox" />*@
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom checkbox-all" type="checkbox" />
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <p class="mb-0">Stage 1</p>
+                        </div>
+                        <div>
+                            @*@Html.ActionLink("Save", "SavePO", new { searchData = Request.QueryString["searchData"], searchStartPODate = Request.QueryString["searchStartPODate"], searchEndPODate = Request.QueryString["searchEndPODate"], page = Request.QueryString["page"] }, new { @style = "margin-right: 130px;" })*@
+                            <input class="btn btn-positive confirm-all-po" type="submit" value="Save All" />
+                        </div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text confirm-delivery-date">Confirm Delivery Date</span>
+                            <span class="po-item-data-header__text delivery-option">Delivery Method</span>
+                            <span class="po-item-data-header__text quantity-form">Quantity</span>
+                        </div>
+                        @{
+                            rowInformation = 1;
+                            var rowInformationChild = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var confirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var latestConfirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var checkChild = purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault();
+                            if (checkChild != null)
+                            {
+                                latestConfirmedDate = checkChild.ConfirmedDate.HasValue ? checkChild.ConfirmedDate.Value.ToString("dd/MM/yyyy") : "";
+                            }
+
+                            int currentStage = purchasingDocumentItem.ActiveStageToNumber;
+                            var hideChildCheckedConfirmBtn = "";
+                            var hideEditButton = "";
+                            var disabledInputQty = "";
+                            var disabledBtnConfirmCancel = "";
+                            var disabledCheckbox = "";
+                            var selectedBtnConfirm = "";
+                            var selectedBtnCancel = "";
+                            var checkItem = "";
+                            var isPartial = "";
+                            var quantity = purchasingDocumentItem.ConfirmedQuantity > 0 ? purchasingDocumentItem.ConfirmedQuantity : purchasingDocumentItem.Quantity;
+
+
+
+                            if (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Count() > 0)
+                            {
+                                isPartial = "selected";
+                            }
+
+                            if (ViewBag.Role == "vendor")
+                            {
+                                hideChildCheckedConfirmBtn = "style=visibility:hidden";
+                                disabledInputQty = "disabled";
+                                if (purchasingDocumentItem.ConfirmedItem == false)
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                    disabledCheckbox = "disabled";
+                                    selectedBtnCancel = "selected-negative";
+                                    checkItem = "checked";
+                                }
+                                else if (purchasingDocumentItem.ConfirmedQuantity.ToString() == "" || purchasingDocumentItem.ConfirmedQuantity == 0)
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                }
+                                else
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                    disabledCheckbox = "disabled";
+                                    selectedBtnConfirm = "selected";
+                                    checkItem = "checked";
+                                }
+                            }
+                            else if (ViewBag.Role == "procurement")
+                            {
+                                disabledInputQty = "disabled";
+                                if (purchasingDocumentItem.ConfirmedItem == true)
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                    disabledCheckbox = "disabled";
+                                    selectedBtnConfirm = "selected";
+                                    checkItem = "checked";
+                                }
+                                else if (purchasingDocumentItem.ConfirmedItem == false)
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                    disabledCheckbox = "disabled";
+                                    selectedBtnCancel = "selected-negative";
+                                    checkItem = "checked";
+                                }
+                                else
+                                {
+                                    disabledBtnConfirmCancel = "disabled";
+                                }
+                            }
+
+                            if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.Role != "vendor" || purchasingDocumentItem.ConfirmedQuantity != 0)
+                            //if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
+                            {
+                                hideEditButton = "style=visibility:hidden";
+                            }
+                            else if (ViewBag.Role == "procurement" && purchasingDocumentItem.ActiveStage != "2")
+                            {
+                                hideEditButton = "style=visibility:hidden";
+                            }
+                            @*<form>*@
+                            <div class="po-item-data-content row-@rowInformation" row="@rowInformation">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column confirm-delivery-date">
+                                        <div class="form-inline">
+                                            <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
+                                            <div class="input-group">
+                                                <label class="checkbox-custom__label">
+                                                    <input class="checkbox-custom checkbox-item" @checkItem type="checkbox" @disabledCheckbox>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control form-date confirmed-date with-icon" required autofocus pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" @disabledInputQty value="@latestConfirmedDate">
+                                                    <i class="fas fa-calendar-alt form-type-icon"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column delivery-option">
+                                        <div class="form-group">
+                                            <select class="form-control delivery-method" @disabledInputQty>
+                                                <option value="full">Full</option>
+                                                <option value="partial" @isPartial>Partial</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column quantity-form">
+                                        <div class="form-group">
+                                            <input type="number" class="form-control pd-item-confirm-qty" autofocus required pattern="[0-9]" min="1" placeholder="Qty available @purchasingDocumentItem.Quantity" value="@quantity" @disabledInputQty>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column">
+                                        <div class="form-inline">
+                                            <div class="input-group mr-2">
+                                                <input type="text" class="form-control form-date partial-date with-icon" autofocus required pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" @disabledInputQty value="@confirmedDate">
+                                                <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-positive @selectedBtnConfirm" @disabledBtnConfirmCancel>Yes</button>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-negative st1-vendor-cancel-item @selectedBtnCancel" @disabledBtnConfirmCancel>No</button>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-header__column">
+                                        <div class="form-inline">
+                                            <a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                            <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
+                                            <a href="#" class="btn-icon edit-row" @hideEditButton><i class="far fa-edit"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @*put the child here*@
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        var comfirmPartialDateChild = purchasingDocumentItemChild.ConfirmedDate.HasValue ? purchasingDocumentItemChild.ConfirmedDate.Value.ToString("dd/MM/yyyy") : "";
+                                        var selectedCheckboxChild = "";
+                                        var disabledChild = "";
+                                        var selectedBtnConfirmChild = "";
+                                        var selectedBtnCancelChild = "";
+                                        var disabledBtnConfirmCancelChild = "disabled";
+                                        var hideEditBtnChild = "";
+
+                                        if (purchasingDocumentItemChild.ConfirmedItem != null)
+                                        {
+                                            if (purchasingDocumentItemChild.ConfirmedItem == true)
+                                            {
+                                                selectedBtnConfirmChild = "selected";
+                                            }
+                                            else
+                                            {
+                                                selectedBtnCancelChild = "selected-negative";
+                                            }
+
+                                            selectedCheckboxChild = "checked";
+                                            disabledChild = "disabled";
+                                        }
+
+                                        //if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.Role != "vendor" || purchasingDocumentItem.ConfirmedQuantity != 0)
+                                        ////if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
+                                        //{
+                                        //    hideEditButton = "style=visibility:hidden";
+                                        //}
+                                        //else
+                                        if (ViewBag.Role == "vendor" || purchasingDocumentItemChild.ActiveStageToNumber != 2)
+                                        {
+                                            hideEditBtnChild = "style=visibility:hidden";
+                                        }
+
+
+                                        <div class="po-item-data-content row-@rowInformation-@rowInformationChild" row="@rowInformation" child="@rowInformationChild">
+                                            <div class="po-item-data-header__column confirm-delivery-date">
+                                                <div class="form-inline">
+                                                    <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
+                                                    <input type="hidden" class="pd-item-parent-id" value="@purchasingDocumentItem.ID">
+                                                    <div class="input-group">
+                                                        <label class="checkbox-custom__label" @hideChildCheckedConfirmBtn>
+                                                            <input class="checkbox-custom checkbox-item" @selectedCheckboxChild @disabledChild type="checkbox">
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                        <div class="form-group" style="visibility:hidden">
+                                                            <input type="text" class="form-control form-date confirmed-date with-icon" placeholder="dd/mm/yyyy">
+                                                            <i class="fas fa-calendar-alt form-type-icon"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="po-item-data-header__column quantity-form">
+                                                <div class="form-inline">
+                                                    <div class="form-group">
+                                                        <select class="form-control delivery-method-child" style="visibility:hidden">
+                                                            <option value="full">Full</option>
+                                                            <option value="partial" selected>Partial</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="po-item-data-header__column delivery-option">
+                                                <div class="form-inline">
+                                                    <input type="number" class="form-control pd-item-confirm-qty" min="1" autofocus="" required="" pattern="[0-9]" value="@purchasingDocumentItemChild.ConfirmedQuantity" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="po-item-data-header__column">
+                                                <div class="form-inline">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-date partial-date with-icon" autofocus="" required="" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="@comfirmPartialDateChild" disabled>
+                                                        <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
+                                                        <div class="input-group-prepend">
+                                                            <button class="btn btn-positive @selectedBtnConfirmChild" @disabledBtnConfirmCancelChild @hideChildCheckedConfirmBtn>Yes</button>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-negative st1-vendor-cancel-item @selectedBtnCancelChild" @disabledBtnConfirmCancelChild @hideChildCheckedConfirmBtn>No</button>
+                                                </div>
+                                            </div>
+                                            <div class="po-item-data-header__column">
+                                                <div class="form-inline">
+                                                    <a href="#" class="btn-icon edit-row" @hideEditBtnChild><i class="far fa-edit"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        rowInformationChild++;
+                                    }
+                                </div>
+                            </div>
+                            @*</form>*@
+                            rowInformation++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-2">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 2</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Define Sequences</span>
+                        </div>
+                        @{
+                            rowInformation = 1;
+                            rowInformationChild = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var disableDefineSequences = "";
+                            if (purchasingDocumentItem.ActiveStageToNumber < 2)
+                            {
+                                disableDefineSequences = "disabled";
+                            }
+                            <div class="po-item-data-content row-@rowInformation" row="@rowInformation">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
+                                        <button class="btn btn-positive sequences-modal" @disableDefineSequences data-toggle="modal" data-target="#sequencesModal">Define Sequences</button>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @*put the child here*@
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        disableDefineSequences = "";
+
+                                        //if ((purchasingDocumentItemChild.ActiveStage != null && Convert.ToInt32(purchasingDocumentItemChild.ActiveStage) < 2) || purchasingDocumentItemChild.ActiveStage == null)
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 2)
+                                        {
+                                            disableDefineSequences = "disabled";
+                                        }
+
+                                        <div class="po-item-data-content row-@rowInformation-@rowInformationChild" row="@rowInformation" child="@rowInformationChild">
+                                            <div class="po-item-data-header__column">
+                                                <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
+                                                <button class="btn btn-positive sequences-modal" @disableDefineSequences data-toggle="modal" data-target="#sequencesModal">Define Sequences</button>
+                                            </div>
+                                        </div>
+
+                                        rowInformationChild++;
+                                    }
+                                </div>
+                            </div>
+                            rowInformation++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-3">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 3</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text">Sequences Progress</span>
+                        </div>
+                        @{
+                            rowInformation = 1;
+                            rowInformationChild = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var disabledProgress = "";
+
+                            if (purchasingDocumentItem.ActiveStageToNumber < 3)
+                            {
+                                disabledProgress = "disabled";
+                            }
+
+                            <div class="po-item-data-content row-@rowInformation" row="@rowInformation">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
+                                        <button class="btn btn-positive input-progress" data-toggle="modal" data-target="#inputProgressModal" @disabledProgress>Input Progress</button>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        disabledProgress = "";
+
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 3)
+                                        {
+                                            disabledProgress = "disabled";
+                                        }
+
+                                        <div class="po-item-data-content row-@rowInformation-@rowInformationChild" row="@rowInformation" child="@rowInformationChild">
+                                            <div class="po-item-data-header__column">
+                                                <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
+                                                <button class="btn btn-positive input-progress" data-toggle="modal" data-target="#inputProgressModal" @disabledProgress>Input Progress</button>
+                                            </div>
+                                        </div>
+                                        rowInformationChild++;
+                                    }
+                                </div>
+                            </div>
+                            rowInformation++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-4 info-stage">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 4</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text gr-date">GR Date</span>
+                            <span class="po-item-data-header__text gr-qty">Qty</span>
+                            <span class="po-item-data-header__text gr-complete">GR Completed</span>
+                            @*<span class="po-item-data-header__text">Inspection Date</span>
+                            <span class="po-item-data-header__text">Qty</span>*@
+                            <span class="po-item-data-header__text">info</span>
+
+                        </div>
+                        @{
+                            row = 1;
+                            rowChild = 1;
+                        }
+
+                        @*@if (ViewBag.Role != "adfadsfasd")*@
+
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            if (ViewBag.Role == "procurement" || purchasingDocumentItem.ActiveStageToNumber > 3)
+                            {
+                                var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                var isComplete = "No";
+                                if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                                {
+                                    isComplete = "Yes";
+                                }
+                                <div class="po-item-data-content row-@row" row="@row">
+                                    <div class="po-item-data-content__outer">
+                                        <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                        <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
+                                        <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                        @*<span class="po-item-data-header__column inspection-date"></span>
+                                        <span class="po-item-data-header__column inspecton-qty"></span>*@
+                                        <span class="po-item-data-header__text info">
+                                            <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                            <div class="pop-up-notification">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>GR / Inspection Date</td>
+                                                            <td>&nbsp;</td>
+                                                            <td>Qty</td>
+                                                        </tr>
+                                                        @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
+                                                        {
+                                                            grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                                            <tr>
+                                                                <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                <td>&nbsp;</td>
+                                                                <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </span>
+
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                        {
+                                            isComplete = "No";
+                                            if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                            {
+                                                isComplete = "Yes";
+                                            }
+                                            grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
+                                                <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                                <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
+                                                <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                                @*<span class="po-item-data-header__column inspection-date"></span>
+                                                <span class="po-item-data-header__column qty"></span>*@
+                                                <span class="po-item-data-header__text info">
+                                                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                                    <div class="pop-up-notification">
+                                                        <table>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>GR / Inspection Date</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Qty</td>
+                                                                </tr>
+                                                                @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
+                                                                {
+                                                                    grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                                    <tr>
+                                                                        <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                        <td>&nbsp;</td>
+                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                            rowChild++;
+                                        }
+                                    </div>
+                                </div>
+                                row++;
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-5">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 5</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                        </div>
+                        @{
+                            row = 1;
+                            rowChild = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var isDisabled = "";
+                            var isFull = "";
+                            var isPartial = "";
+
+                            var checkStageProgressItem = false;
+                            if (purchasingDocumentItem.ActiveStageToNumber > 3 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ActiveStageToNumber > 3).Count() > 0)
+                            {
+                                checkStageProgressItem = true;
+                            }
+
+                            if (checkStageProgressItem==false)
+                            {
+                                isDisabled = "disabled";
+                            }
+
+                            if (purchasingDocumentItem.InvoiceMethod == "full")
+                            {
+                                isFull = "selected";
+                                isDisabled = "disabled";
+                            }
+                            else if (purchasingDocumentItem.InvoiceMethod == "partial")
+                            {
+                                isPartial = "selected";
+                                isDisabled = "disabled";
+                            }
+
+                            <div class="po-item-data-content row-@row" row="@row">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column invoice-method">
+                                        <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
+                                        <div class="form-inline">
+                                            <div class="form-group mr-2">
+                                                <select class="form-control invoice-method-parent" @isDisabled>
+                                                    <option value="">Choose One</option>
+                                                    <option value="full" @isFull>Full</option>
+                                                    <option value="partial" @isPartial>Partial by GR</option>
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-positive save-invoice-method-parent" @isDisabled>Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @*@foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                        {
+                                            <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild">
+                                                <div class="po-item-data-header__column invoice-method">
+                                                    <div class="form-inline">
+                                                        <div class="form-group mr-2">
+                                                            <select class="form-control">
+                                                                <option>Choose One</option>
+                                                                <option>Full</option>
+                                                                <option>Partial by GR</option>
+                                                            </select>
+                                                        </div>
+                                                        <button class="btn btn-positive">Save</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            rowChild++;
+                                        }*@
+                                </div>
+                                @*<div class="po-item-data-header__column">
+                                        <div>7<span class="secondary-text">/10</span></div>
+                                    </div>
+                                    <span class="po-item-data-header__column">No</span>*@
+                            </div>
+                            row++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-6">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 6</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text invoice-method">Upload Invoice</span>
+                        </div>
+                        @{
+                            row = 1;
+                            rowChild = 1;
+
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var disabledFileInvoice = "";
+                            var disabledFileInvoiceUpload = "";
+                            var hiddenFormUploading = "";
+                            var hiddenFormUploaded = "hidden";
+                            var invoiceDownloadPath = "";
+
+                            if (purchasingDocumentItem.InvoiceDocument != null)
+                            {
+                                invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                hiddenFormUploading = "hidden";
+                                hiddenFormUploaded = "";
+                            }
+                            else
+                            {
+                                if (Request.QueryString["role"] == "procurement" || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument!=null) || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity))
+                                {
+                                    disabledFileInvoice = "disabled";
+                                    disabledFileInvoiceUpload = "disabled";
+                                }
+                            }
+
+                            <div class="po-item-data-content row-@row" row="@row">
+                                <div class="po-item-data-content__outer">
+                                    <div class="po-item-data-header__column">
+                                        <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
+                                        <div class="form-inline form-upload" @hiddenFormUploading>
+                                            <div class="form-group mr-2">
+                                                <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                <i class="fas fa-paperclip form-type-icon"></i>
+                                            </div>
+                                            <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                        </div>
+                                        <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
+                                            <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                            <a href="#" class="danger-link file-invoice-remove">Remove?</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        disabledFileInvoice = "";
+                                        disabledFileInvoiceUpload = "";
+                                        hiddenFormUploading = "";
+                                        hiddenFormUploaded = "hidden";
+                                        invoiceDownloadPath = "";
+
+                                        if (purchasingDocumentItemChild.InvoiceDocument != null)
+                                        {
+                                            invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItemChild.InvoiceDocument);
+                                            hiddenFormUploading = "hidden";
+                                            hiddenFormUploaded = "";
+                                        }
+                                        else
+                                        {
+                                            if (Request.QueryString["role"] == "procurement" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            {
+                                                disabledFileInvoice = "disabled";
+                                                disabledFileInvoiceUpload = "disabled";
+                                            }
+                                        }
+
+                                        if(purchasingDocumentItemChild.InvoiceMethod == "full")
+                                        {
+                                            hiddenFormUploading = "hidden";
+                                            hiddenFormUploaded = "hidden";
+                                        }
+
+                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >
+                                            <div class="po-item-data-header__column">
+                                                <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
+                                                <div class="form-inline form-upload" @hiddenFormUploading>
+                                                    <div class="form-group mr-2">
+                                                        <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                        <i class="fas fa-paperclip form-type-icon"></i>
+                                                    </div>
+                                                    <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                                </div>
+                                                <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
+                                                    <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                    <a href="#" class="danger-link file-invoice-remove">Remove?</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        rowChild++;
+                                    }
+                                </div>
+                            </div>
+                            row++;
+                        }
+                    </div>
+                </div>
+                <div class="po-item-section stage-7">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document-number">Document Number</span>
+                            <span class="po-item-data-header__text gr-date">Date</span>
+                        </div>
+                        @{
+                            row = 1;
+                            rowChild = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var grDateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                            <div class="po-item-data-content row-@row" row="@row">
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column document-number">@purchasingDocumentItem.LatestDocumentInvoices.DocumentNumber</span>
+                                    <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        grDateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
+                                            <span class="po-item-data-header__column document-number">@purchasingDocumentItemChild.LatestDocumentInvoices.DocumentNumber</span>
+                                            <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                        </div>
+                                        rowChild++;
+                                    }
+                                </div>
+                            </div>
+                            row++;
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+                            }
+<div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Define Sequences</h5>
+                <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Lead Time: <span id="LeadTime"></span> days</p>
+                <p style="display:none">Total: <span id="Total"></span> days</p>
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                        <form method="post">
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">PB</p>
+                                <input id="PB" type="number" min="0" autofocus required class="form-control define-sequences-days mr-1">
+                                <span>days</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                        <form method="post">
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">Setting</p>
+                                <input id="Setting" type="number" min="0" autofocus required class="form-control define-sequences-days mr-1">
+                                <span>days</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                        <form method="post">
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">FullWeld / Assy</p>
+                                <input id="Fullweld" type="number" min="0" autofocus required class="form-control define-sequences-days mr-1">
+                                <span>days</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                        <form method="post">
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">Primer / QC</p>
+                                <input id="Primer" type="number" min="0" autofocus required class="form-control define-sequences-days mr-1">
+                                <span>days</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @if (ViewBag.Role == "vendor")
+            {
+                <div class="modal-footer">
+                    <input type="hidden" id="item-id-sequences">
+                    <button id="btnEditDefineSequences" type="button" class="btn btn-positive w-100">Edit</button>
+                    <button id="btnSaveDefineSequences" type="button" class="btn btn-positive w-100">Save changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="inputProgressModal" tabindex="-1" role="dialog" aria-labelledby="inputProgressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inputProgressModalLabel">Sequences Progress</h5>
+                <button id="close-input-progress" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="po-item-data-content">
+                    <div class="po-item-data-header__column">
+                    </div>
+                </div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="pb-tab" data-toggle="tab" href="#pb" role="tab" aria-controls="pb" aria-selected="true">PB</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="setting-tab" data-toggle="tab" href="#setting" role="tab" aria-controls="setting" aria-selected="false">Setting</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="fullweld-tab" data-toggle="tab" href="#fullweld" role="tab" aria-controls="fullweld" aria-selected="false">FullWeld / Assy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="primer-tab" data-toggle="tab" href="#primer" role="tab" aria-controls="primer" aria-selected="false">Primer / QC</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="pb" role="tabpanel" aria-labelledby="pb-tab">
+                        @*<div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label>Nama Raw Material</label>
+                                    <input type="text" class="form-control" placeholder="Nama Raw Material">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label>Qty</label>
+                                    <input type="number" class="form-control" placeholder="Qty">
+                                </div>
+                                <div class="form-group col-md-1">
+                                    <label></label>
+                                    <button class="btn btn-positive">Add Item</button>
+                                </div>
+                            </div>*@
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Estimasi Tanggal Selesai</label>
+                                <input type="text" id="ETAPB" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
+                                <input type="hidden" id="PBDays">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Aktual Tanggal Selesai</label>
+                                <input type="text" id="ATAPB" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Alasan</label>
+                                @*<button class="btn btn-positive">Upload</button>*@
+                                <select class="form-control" id="ATAPBReasonID" disabled>
+                                    <option value="0" selected>Choose One</option>
+                                    <option value="1">Problem Teknis</option>
+                                    <option value="2">Perubahan DWG(Drawing)</option>
+                                    <option value="3">Material Tidak Ada Dipasaran</option>
+                                    <option value="4">Mesin Rusak</option>
+                                    <option value="5">Switching Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputFilePB">Upload Foto Progress</label>
+                                <input type="file" class="form-control with-icon" id="inputFilePB" multiple>
+                                <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="dvPreview">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Estimasi Tanggal Selesai</label>
+                                <input type="text" id="ETASetting" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
+                                <input type="hidden" id="SettingDays">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Aktual Tanggal Selesai</label>
+                                <input type="text" id="ATASetting" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Alasan</label>
+                                @*<button class="btn btn-positive">Upload</button>*@
+                                <select class="form-control" id="ATASettingReasonID" disabled>
+                                    <option value="0" selected>Choose One</option>
+                                    <option value="1">Problem Teknis</option>
+                                    <option value="2">Perubahan DWG(Drawing)</option>
+                                    <option value="3">Material Tidak Ada Dipasaran</option>
+                                    <option value="4">Mesin Rusak</option>
+                                    <option value="5">Switching Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputFileSetting">Upload Foto Progress</label>
+                                <input type="file" class="form-control with-icon" id="inputFileSetting" multiple>
+                                <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="fullweld" role="tabpanel" aria-labelledby="fullweld-tab">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Estimasi Tanggal Selesai</label>
+                                <input type="text" id="ETAFullweld" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
+                                <input type="hidden" id="FullweldDays">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Aktual Tanggal Selesai</label>
+                                <input type="text" id="ATAFullweld" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Alasan</label>
+                                @*<button class="btn btn-positive">Upload</button>*@
+                                <select class="form-control" id="ATAFullweldReasonID" disabled>
+                                    <option value="0" selected>Choose One</option>
+                                    <option value="1">Problem Teknis</option>
+                                    <option value="2">Perubahan DWG(Drawing)</option>
+                                    <option value="3">Material Tidak Ada Dipasaran</option>
+                                    <option value="4">Mesin Rusak</option>
+                                    <option value="5">Switching Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputFileFullweld">Upload Foto Progress</label>
+                                <input type="file" class="form-control with-icon" id="inputFileFullweld" multiple>
+                                <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="primer" role="tabpanel" aria-labelledby="primer-tab">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label>Estimasi Tanggal Selesai</label>
+                                <input type="text" id="ETAPrimer" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
+                                <input type="hidden" id="PrimerDays">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Aktual Tanggal Selesai</label>
+                                <input type="text" id="ATAPrimer" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
+                                <i class="fas fa-calendar-alt form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Alasan</label>
+                                @*<button class="btn btn-positive">Upload</button>*@
+                                <select class="form-control" id="ATAPrimerReasonID" disabled>
+                                    <option value="0" selected>Choose One</option>
+                                    <option value="1">Problem Teknis</option>
+                                    <option value="2">Perubahan DWG(Drawing)</option>
+                                    <option value="3">Material Tidak Ada Dipasaran</option>
+                                    <option value="4">Mesin Rusak</option>
+                                    <option value="5">Switching Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputFilePrimer">Upload Foto Progress</label>
+                                <input type="file" class="form-control with-icon" id="inputFilePrimer" multiple>
+                                <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="SaveSequencesProgress" class="btn btn-positive w-100">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, role = ViewBag.Role, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+@section scripts {
+    <script src="~/Scripts/datepicker.min.js"></script>
+    <script src="~/Scripts/donutty-jquery.min.js"></script>
+    <script type="text/javascript">
+        var scrollLength = [];
+        $(document).ready(function () {
+            $("#filterBy option").each(function () {
+                if ($(this).attr("value") == $(this).parent().attr("value")) {
+                    $(this).attr("selected", "selected");
+                    $("#searchData").attr("placeholder", "Search " + $(this).text())
+                }
+            });
+            //javasript date format mm/dd/yy
+            String.prototype.replaceDayMonth = function () {
+                return this.substr(3, 2) + this.substr(2, 1) + this.substr(0, 2) + this.substr(5)
+            }
+
+            Date.prototype.newDateFormat = function () {
+                var dd = this.getDate();
+
+                var mm = this.getMonth() + 1;
+                var yyyy = this.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd;
+                }
+
+                if (mm < 10) {
+                    mm = '0' + mm;
+                }
+                return dd + "/" + mm + "/" + yyyy;
+            }
+
+            function sortDate() {
+
+            }
+
+
+            //stage scrollbar fixed
+            var chooseStagePosition = $('.filter-row').offset();
+
+            $(".main-container").scroll(function () {
+                if ($(".main-container").scrollTop() > chooseStagePosition.top) {
+                    //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
+                    $('.filter-row').addClass("freeze");
+                } else {
+                    //$('.stage-pagination-container').css('position', 'static');
+                    $('.filter-row').removeClass("freeze");
+                }
+            });
+
+
+            $('#startPODate').datepicker({ autoHide: true });
+            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+
+            var tempArray = [];
+            var tempMaxHeight = 0;
+            var tempMaxWidth = 0;
+            var rowExist = 1;
+
+
+            $(".po-item-container").each(function (idx) {
+                rowExist = 1;
+                poItemContainer = $(this);
+                while (rowExist > 0) {
+                    if ($(".row-" + rowExist).length > 0) {
+                        tempArray = [];
+                        tempMaxHeight = 0;
+                        poItemContainer.find(".row-" + rowExist).each(function () {
+                            tempArray.push($(this).height());
+                            //console.log("row-" + rowExist);
+                            //console.log(tempArray);
+                        });
+                        tempMaxHeight = Math.max(...tempArray);
+                        poItemContainer.find(".row-" + rowExist).height(tempMaxHeight);
+                        rowExist++;
+
+                    } else {
+                        rowExist = -1;
+                    }
+                }
+            });
+
+            tempArray = [];
+            $(".po-item-section.information").each(function () {
+                tempArray.push($(this).outerWidth(true));
+            });
+            tempMaxWidth = Math.max(...tempArray);
+            $(".po-item-section.information").width(tempMaxWidth);
+            scrollLength.push(tempMaxWidth + 1.5);
+
+            for (var i = 1; i <= 7; i++) {
+                tempArray = [];
+                $(".po-item-section.stage-" + i).each(function () {
+                    tempArray.push($(this).outerWidth(true));
+                });
+                tempMaxWidth = Math.max(...tempArray);
+                $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                scrollLength.push(tempMaxWidth + 1.5);
+            }
+
+            var totalDistance = 0;
+            for (var i = 0; i < scrollLength.length; i++) {
+                scrollLength[i] += totalDistance;
+                totalDistance = scrollLength[i];
+            }
+            setCustomValidation();
+        });
+
+        var rowHeights = [];
+        var totalRowHeight = 0;
+
+        function resetRowHeight(rowPOItemDataContent) {
+            var tempNewArray = [];
+            var tempNewMaxHeight = 0;
+            var newRowExist = 1;
+
+            while (newRowExist > 0) {
+                if (rowPOItemDataContent.find(".row-" + newRowExist).length > 0) {
+                    tempNewArray = [];
+                    tempNewMaxHeight = 0;
+                    rowPOItemDataContent.find(".row-" + newRowExist).each(function () {
+                        tempNewArray.push($(this).height());
+                    });
+                    tempNewMaxHeight = Math.max(...tempNewArray);
+                    rowPOItemDataContent.find(".row-" + newRowExist).height(tempNewMaxHeight);
+                    newRowExist++;
+                } else {
+                    newRowExist = -1;
+                }
+            }
+            tempNewArray = [];
+            totalRowHeight = 0;
+        }
+
+        function increaseRowHeight(rowPOItemDataContent) {
+            var tempNewArray = [];
+            var tempNewMaxHeight = 0;
+            var newRowExist = 1;
+
+            while (newRowExist > 0) {
+                if (rowPOItemDataContent.find(".row-" + newRowExist).length > 0) {
+                    tempNewArray = [];
+                    tempNewMaxHeight = 0;
+                    rowPOItemDataContent.find(".row-" + newRowExist).each(function () {
+                        tempNewArray.push($(this).height());
+                    });
+                    tempNewMaxHeight = Math.max(...tempNewArray);
+                    rowPOItemDataContent.find(".row-" + newRowExist).height(tempNewMaxHeight);
+                    newRowExist++;
+                } else {
+                    newRowExist = -1;
+                }
+            }
+            tempNewArray = [];
+            totalRowHeight = 0;
+        }
+
+        function decreaseRowHeight(rowPOItemDataContent) {
+            var tempNewArray = [];
+            var tempNewMinHeight = 0;
+            var newRowExist = 1;
+
+            while (newRowExist > 0) {
+                if (rowPOItemDataContent.find(".row-" + newRowExist).length > 0) {
+                    tempNewArray = [];
+                    rowPOItemDataContent.find(".row-" + newRowExist).each(function () {
+                        tempNewArray.push($(this).height());
+                    });
+                    tempNewMinHeight = Math.min(...tempNewArray);
+                    rowPOItemDataContent.find(".row-" + newRowExist).height(tempNewMinHeight);
+                    newRowExist++;
+                } else {
+                    newRowExist = -1;
+                }
+            }
+            tempNewArray = [];
+            totalRowHeight = 0;
+        }
+
+        //if item unchecked or delivery method change to full
+        function resetRowItem(itemDataContent) {
+            var currentRowHeight = itemDataContent.height();
+            var newChildHeight = itemDataContent.find(".po-item-data-content__child").height();
+            totalRowHeight = currentRowHeight - newChildHeight;
+            console.log(totalRowHeight);
+            itemDataContent.find(".po-item-data-content__child").empty();
+            itemDataContent.closest(".custom-scrollbar").find(".po-item-section.stage-2 [child]").remove();
+            itemDataContent.find(".po-item-data-content__outer .add-row").attr("style", "visibility:hidden");
+            itemDataContent.find(".po-item-data-content__outer .del-row").attr("style", "visibility:hidden");
+            itemDataContent.find(".po-item-data-content__child").empty();
+            itemDataContent.closest(".custom-scrollbar").find(".po-item-section.stage-2 [child]").empty();
+
+            itemDataContent.closest(".po-item-container").find(".delivery-method").val("full");
+            itemDataContent.height(totalRowHeight);
+
+            //var currentRowHeight = $(this).closest(".po-item-data-content").height();
+            //var newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").height();
+            //totalRowHeight = currentRowHeight - newChildHeight;
+            //console.log(totalRowHeight);
+            //$(this).closest(".po-item-data-content").find(".po-item-data-content__child").empty();
+            //$(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 [child]").remove();
+            //$(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:hidden");
+            //$(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:hidden");
+            //$(this).closest(".po-item-data-content").find(".po-item-data-content__child").empty();
+            //$(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 [child]").empty();
+
+            //$(this).closest(".po-item-container").find(".delivery-method").val("full");
+            //$(this).closest(".po-item-data-content").height(totalRowHeight);
+        }
+
+        function resetRowHeightToFull(rowPOItemDataContent) {
+            var tempNewArray = [];
+            var tempNewMinHeight = 0;
+            var newRowExist = 1;
+
+            while (newRowExist > 0) {
+                if (rowPOItemDataContent.find(".row-" + newRowExist).length > 0) {
+                    tempNewArray = [];
+                    rowPOItemDataContent.find(".row-" + newRowExist).each(function () {
+                        tempNewArray.push($(this).height());
+                    });
+                    tempNewMinHeight = Math.min(...tempNewArray);
+                    rowPOItemDataContent.find(".row-" + newRowExist).height(tempNewMinHeight);
+                    newRowExist++;
+                } else {
+                    newRowExist = -1;
+                }
+            }
+            tempNewArray = [];
+            totalRowHeight = 0;
+        }
+
+        //    while (newRowExist > 0) {
+        //        if ($(".row-" + newRowExist).length > 0) {
+        //            var currPosition = $(".row-" + newRowExist);
+
+        //            //step 1
+        //            currentHeight = $(currPosition).height();
+
+        //            var newChild = $(currPosition).find(".po-item-data-content__child").children(".po-item-data-content").last();
+        //            console.log($(newChild).height());
+        //            $(currPosition).each(function () {
+        //                //step 2
+        //                rowHeightArr.push(currentHeight);
+        //                //step 3
+        //                newHeightArr.push($(newChild).height());
+        //            });
+        //            //console.log(rowHeightArr);
+
+        //            //step 4
+        //            maxChildHeight = Math.max(...newHeightArr);
+
+        //            for (var i = 0; i < newRowExist; i++) {
+        //                heightBaru = rowHeightArr[i] + maxChildHeight;
+        //                console.log("rowHeightArr[i] " + rowHeightArr[i]);
+        //            }
+        //            console.log(maxChildHeight);
+        //            console.log(heightBaru);
+        //            $(currPosition).height(heightBaru);
+        //            newRowExist++;
+        //        } else {
+        //            newRowExist = -1;
+        //        }
+        //    }
+        //}
+
+        /*-----------------------------------------------------------------Stage 1------------------------------------------------------------------------------*/
+        $(".confirmed-date").on("change", function (obj) {
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage1Outer = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            //var stage1Child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child");
+            //var currentRowChild = stage1Child.find(".po-item-data-content").last().attr("child");
+            var confirmedDate = stage1Outer.find(".confirmed-date").val();
+            var newDate = confirmedDate.replaceDayMonth();
+            if (!isNaN(Date.parse(newDate))) {
+                var maxDate = new Date(newDate);
+                var date = new Date(newDate);
+                //if (currentRowChild > 0) {
+                //    for (i = currentRowChild; i > 0; i--) {
+                //        //$(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date").val(date.newDateFormat());
+                //        $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date").attr("max", maxDate.newDateFormat());
+                //    }
+                //    $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + currentRowChild + " .partial-date").datepicker('setDate', date.newDateFormat());
+                //} else {
+                stage1Outer.find(".partial-date").datepicker('setDate', date.newDateFormat());
+                stage1Outer.find(".partial-date").attr("max", date.newDateFormat());
+                //}
+            }
+        });
+
+        //delivery method onchange
+        $(".delivery-method").on("change", function (obj) {
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var confirmedDate = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .confirmed-date").val();
+
+            if ($(this).val() == "partial") {
+                var stage1 = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child");
+                var stage2 = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 .po-item-data-content.row-" + row + " .po-item-data-content__child");
+                var itemID = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .pd-item-id").val();
+                var newDate = confirmedDate.replaceDayMonth();
+
+                //if (!isNaN(Date.parse(newDate))) {
+                //    var date = new Date(newDate);
+                //    date.setDate(date.getDate() - 10);
+                //    $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").datepicker('setDate', date.newDateFormat());
+                //}
+
+                //$(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").removeAttr("disabled");
+                var currentRow = 1;
+                $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
+                $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
+
+                $(stage1).append("<div class='po-item-data-content row-" + row + "-" + currentRow + "' row='" + row + "' child='" + currentRow + "'>" +
+                    "<div class='po-item-data-header__column' style='visibility:hidden'>" +
+                    "<div class='form-inline'>" +
+                    "<input type='hidden' class='pd-item-id' value='" + itemID + "'>" +
+                    "<input type='hidden' class='pd-item-parent-id' value='" + itemID + "'>" +
+                    "<div class='input-group'>" +
+                    "<label class='checkbox-custom__label'>" +
+                    //"<input class='checkbox-custom checkbox-item' checked='' type='checkbox' disabled=''>" +
+                    "<input class='checkbox-custom checkbox-item' type='checkbox'>" +
+                    "<span class='checkmark'></span>" +
+                    "</label>" +
+                    "<div class='form-group'>" +
+                    "<input type='text' class='form-control form-date confirmed-date with-icon' placeholder='dd/mm/yyyy'>" +
+                    "<i class='fas fa-calendar-alt form-type-icon'></i>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='po-item-data-header__column'>" +
+                    "<div class='form-inline'>" +
+                    "<div class='form-group'>" +
+                    "<select class='form-control' style='visibility:hidden'>" +
+                    "<option>Full</option>" +
+                    "<option>Partial</option>" +
+                    "</select>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='po-item-data-header__column'>" +
+                    "<div class='form-inline'>" +
+                    //"<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
+                    "<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='po-item-data-header__column'>" +
+                    "<div class='form-inline'>" +
+                    "<div class='input-group mr-2'>" +
+                    //"<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy' value='" + confirmedDate + "' max='" + confirmedDate + "' disabled>" +
+                    "<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy'>" +
+                    "<i class='fas fa-calendar-alt form-type-icon'></i>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>");
+
+                $(stage2).append("<div class='po-item-data-content row-" + row + "-" + row + "' child='" + currentRow + "'>" +
+                    "<div class='po-item-data-header__column'>" +
+                    "<input type='hidden' class='pd-item-id' value='" + itemID + "'>" +
+                    "<button class='btn btn-positive sequences-modal' disabled data-toggle='modal' data-target='#sequencesModal'>Define Sequences</button>" +
+                    "</div>" +
+                    "</div>");
+
+                $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+
+                var currentRowHeight = $(this).closest(".po-item-data-content").height();
+                var newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").outerHeight(true);
+                rowHeights.push(currentRowHeight);
+                var initialHeight = rowHeights[0];
+                totalRowHeight = initialHeight + newChildHeight;
+                $(this).closest(".po-item-data-content").height(totalRowHeight);
+                resetRowHeight($(this).closest(".po-item-container"));
+
+            } else {
+                $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").val(confirmedDate);
+                $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").attr("disabled", "disabled");
+                resetRowItem($(this).closest(".po-item-data-content"));
+                $(this).closest(".po-item-data-content").height(rowHeights[0]);
+                resetRowHeightToFull($(this).closest(".po-item-container"));
+            }
+            setCustomValidation();
+        });
+
+        //add rows
+        $(".add-row").on("click", function (obj) {
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage1Outer = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage1Child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child");
+            var stage2 = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 .po-item-data-content.row-" + row + "").children(".po-item-data-content__child");
+            var currentRowChild = stage1Child.find(".po-item-data-content").last().attr("child");
+            var itemID = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .pd-item-id").val();
+            var confirmedDate = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .confirmed-date").val();
+            $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .partial-date").removeAttr("disabled");
+
+            var newDate = confirmedDate.replaceDayMonth();
+            //if (!isNaN(Date.parse(newDate))) {
+            //if (currentRowChild > 0) {
+            //    var date = new Date(newDate);
+            //    date.setDate(date.getDate() - 10);
+            //    for (i = currentRowChild; i > 0; i--) {
+            //        $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date").val(date.newDateFormat());
+            //        date.setDate(date.getDate() - 10);
+            //    }
+            //    stage1Outer.find(".partial-date").val(date.newDateFormat());
+            //}
+            //if (currentRowChild > 0) {
+            //    var date = new Date(newDate);
+            //    //$(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + currentRowChild + " .partial-date").val(date.newDateFormat());
+            //    $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + currentRowChild + " .partial-date").datepicker('setDate', date.newDateFormat());
+            //}
+            //}
+
+            if (typeof (currentRowChild) === "undefined" || typeof (currentRowChild) === "NaN") {
+                currentRowChild = 1;
+            } else {
+                currentRowChild++;
+            }
+
+            $(stage1Child).append("<div class='po-item-data-content row-" + row + "-" + currentRowChild + "' row='" + row + "' child='" + currentRowChild + "'>" +
+                "<div class='po-item-data-header__column' style='visibility:hidden'>" +
+                "<div class='form-inline'>" +
+                "<input type='hidden' class='pd-item-id' value='" + itemID + "'>" +
+                "<input type='hidden' class='pd-item-parent-id' value='" + itemID + "'>" +
+                "<div class='input-group'>" +
+                "<label class='checkbox-custom__label'>" +
+                //"<input class='checkbox-custom checkbox-item' checked='' type='checkbox' disabled=''>" +
+                "<input class='checkbox-custom checkbox-item' type='checkbox'>" +
+                "<span class='checkmark'></span>" +
+                "</label>" +
+                "<div class='form-group'>" +
+                "<input type='text' class='form-control form-date confirmed-date with-icon' placeholder='dd/mm/yyyy'>" +
+                "<i class='fas fa-calendar-alt form-type-icon'></i>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "<div class='po-item-data-header__column'>" +
+                "<div class='form-inline'>" +
+                "<div class='form-group'>" +
+                "<select class='form-control' style='visibility:hidden'>" +
+                "<option>Full</option>" +
+                "<option>Partial</option>" +
+                "</select>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "<div class='po-item-data-header__column'>" +
+                "<div class='form-inline'>" +
+                //"<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
+                "<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
+                "</div>" +
+                "</div>" +
+                "<div class='po-item-data-header__column'>" +
+                "<div class='form-inline'>" +
+                "<div class='input-group mr-2'>" +
+                //"<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy' value='" + confirmedDate + "' max='" + confirmedDate + "' disabled>" +
+                "<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy'>" +
+                "<i class='fas fa-calendar-alt form-type-icon'></i>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+
+            $(stage2).append("<div class='po-item-data-content row-" + row + "-" + row + "' child='" + currentRowChild + "'>" +
+                "<div class='po-item-data-header__column'>" +
+                "<input type='hidden' class='pd-item-id' value='" + itemID + "'>" +
+                "<button class='btn btn-positive sequences-modal' disabled data-toggle='modal' data-target='#sequencesModal'>Define Sequences</button>" +
+                "</div>" +
+                "</div>");
+
+            $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+
+            var currentRowHeight = $(this).closest(".po-item-data-content").outerHeight(true);
+            var newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").outerHeight(true);
+            rowHeights.push(currentRowHeight);
+            var initialHeight = rowHeights[0];
+            totalRowHeight = initialHeight + newChildHeight;
+            $(this).closest(".po-item-data-content").height(totalRowHeight);
+            resetRowHeight($(this).closest(".po-item-container"));
+            setCustomValidation();
+        });
+
+        //del row
+        $(".del-row").on("click", function (obj) {
+            var currentRowHeight;
+            var newChildHeight;
+            var initialHeight;
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage1Outer = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage1Child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child");
+            var stage2Child = $(this).closest(".custom-scrollbar").find(".stage-2 .po-item-data-content.row-" + row + " .po-item-data-content__child");
+            var lastRowStage1 = stage1Child.find(".po-item-data-content").last();
+            var lastRowStage2 = stage2Child.find(".po-item-data-content").last();
+
+            var currentRowChild = stage1Child.find(".po-item-data-content").last().attr("child");
+
+            if (lastRowStage1.attr("child") > 1) {
+                if (currentRowChild > 1) {
+                    stage1Outer.find(".partial-date").val($(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + 1 + " .partial-date").val());
+                    for (i = 1; i < currentRowChild; i++) {
+                        var child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date");
+                        var nextChild = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + (i + 1) + " .partial-date");
+                        child.val(nextChild.val()).change();
+                        if (i == currentRowChild - 1) {
+                            child.attr("disabled", "disabled");
+                        }
+                    }
+                }
+
+                lastRowStage1.remove();
+                lastRowStage2.remove();
+
+                currentRowHeight = $(this).closest(".po-item-data-content").outerHeight(true);
+                console.log(currentRowHeight);
+                newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").outerHeight(true);
+                rowHeights.push(currentRowHeight);
+                initialHeight = rowHeights[0];
+                rowHeightDifference = currentRowHeight - (initialHeight + newChildHeight);
+                console.log(newChildHeight);
+                console.log(rowHeightDifference);
+                decreasedHeight = currentRowHeight - rowHeightDifference;
+                $(this).closest(".po-item-data-content").height(decreasedHeight);
+                decreaseRowHeight($(this).closest(".po-item-container"));
+            }
+        });
+
+        //Check All PO Items
+        $(".checkbox-all").on("change", function (obj) {
+            var confirmAll = $(this);
+            $(this).closest(".po-item-section").find("input.checkbox-item").each(function (index) {
+                if (confirmAll.prop("checked") == true && $(this).attr("disabled") != "disabled") {
+                    $(this).prop("checked", true).change();
+                } else if ($(this).attr("disabled") != "disabled") {
+                    $(this).prop("checked", false).change();
+                }
+            });
+        });
+
+        //Confirm All PO
+        $(".confirm-all-po").on("click", function (obj) {
+            //alert($("#role").val());
+            var saveAll = $(this);
+            var role = $("#role").val();
+            var dataPurchasingDocumentItems = [];
+            var dataPurchasingItemChilds = [];
+            var isValidDate = true;
+            var isValidQty = true;
+            var isNullChecked = false;
+            var stage2 = $(this).closest(".custom-scrollbar").find(".stage-2");
+
+            $(this).closest(".stage-1").find(".po-item-data-content__outer").each(function (index) {
+                //console.log(index + ": " + $(this).html());
+                var total = 0;
+                var checkedItemParent = $(this).find(".checkbox-item");
+                var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
+                var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+                var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
+                var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
+                //var pDItemID = $(this).find(".pd-item-id").val();
+                var pdiIdParent = $(this).find(".pd-item-id");
+                var confirmedDate = $(this).find(".confirmed-date");
+                var partialDateOuter = $(this).find(".partial-date");
+                var confirmedQtyParent = $(this).find(".pd-item-confirm-qty");
+                var btnConfirmPO = $(this).find(".btn-positive");
+                var btnCancelPO = $(this).find(".btn-negative");
+                var btnEditItem = $(this).find(".edit-row");
+                var btnAddItem = $(this).find(".add-row");
+                var btnDellItem = $(this).find(".del-row");
+
+                if (checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true) {
+                    if (confirmedDate.val().length == 10 && partialDateOuter.val().length == 10) {
+                        var newConfirmedDate = confirmedDate.val().replaceDayMonth();
+                        var newPartialDate = partialDateOuter.val().replaceDayMonth();
+                        //if (!isNaN(Date.parse(newPartialDate)) && newPartialDate <= newConfirmedDate) {
+                        if (!isNaN(Date.parse(newPartialDate))) {
+                            dataPurchasingDocumentItems.push({
+                                ID: pdiIdParent.val(),
+                                ConfirmedQuantity: confirmedQtyParent.val(),
+                                ConfirmedDate: newPartialDate
+                            });
+                            confirmedDate.addClass("isUpdated");
+                            partialDateOuter.addClass("isUpdated");
+                            deliveryMethod.addClass("isUpdated");
+                            checkedItemParent.addClass("isUpdated");
+                            confirmedQtyParent.addClass("isUpdated");
+                            btnConfirmPO.addClass("isUpdated buttonClicked");
+                            btnCancelPO.addClass("isUpdated");
+                            btnEditItem.addClass("editable");
+                            if (role == "procurement") {
+                                stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
+                            }
+
+                        } else {
+                            partialDateOuter.focus();
+                            isValidDate = false;
+                            obj.preventDefault();
+                        }
+                    } else {
+                        partialDateOuter.focus();
+                        isValidDate = false;
+                        obj.preventDefault();
+                    }
+                    if (!isNaN(parseInt($(this).find(".pd-item-confirm-qty").val()))) {
+                        total += parseInt($(this).find(".pd-item-confirm-qty").val());
+                    } else {
+                        isNullChecked = true;
+                        $(this).find(".pd-item-confirm-qty").focus();
+                    }
+                }
+
+                //if ((confirmedQtyParent.attr("disabled") !== typeof undefined && confirmedQtyParent.attr("disabled") !== false && role == "vendor") || (role == "procurement")){
+                if ((role == "vendor" && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == "procurement"))) {
+                    //if ((role == "vendor")){
+                    $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").each(function (index) {
+                        var checkedItemChild = $(this).find(".checkbox-item");
+                        //console.log(checkedItemChild.attr("disabled"));
+                        //alert(checkedItem.prop("checked"));
+                        if (role == "vendor" || (role == "procurement" && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
+                            var pDItemID = $(this).find(".pd-item-id").val();
+                            var pDItemParentID = $(this).find(".pd-item-parent-id").val();
+                            var confirmedQtyChild = $(this).find(".pd-item-confirm-qty");
+                            var confirmedEtaDate = $(this).find(".partial-date");
+
+                            var arrayDate = arrayDate = $(this).closest(".po-item-data-content__child").parent().find(".partial-date").map(function () {
+                                return $(this).val();
+                            }).get().join(", ");
+                            var re = new RegExp(confirmedEtaDate.val(), 'g');
+                            var dateCount = (arrayDate.match(re) || []).length;
+                            if (dateCount > 1) {
+                                isValidDate = false;
+                                confirmedEtaDate.focus();
+                                return;
+                            }
+
+                            if (confirmedEtaDate.val().length == 10) {
+                                var newConfirmedDate = confirmedDate.val().replaceDayMonth();
+                                var newPartialDate = confirmedEtaDate.val().replaceDayMonth();
+                                //if (!isNaN(Date.parse(newPartialDate)) && newPartialDate <= newConfirmedDate) {
+                                if (!isNaN(Date.parse(newPartialDate))) {
+                                    dataPurchasingItemChilds.push({
+                                        ID: pDItemID,
+                                        ParentID: pDItemParentID,
+                                        ConfirmedQuantity: confirmedQtyChild.val(),
+                                        ConfirmedDate: newPartialDate//,
+                                        //ParentID: confirmedEtaDate.val(),
+                                        //ItemNumber:
+                                        //Currency:
+                                        //Quantity:
+                                        //NetPrice:
+                                        //NetValue:
+                                        //Material:
+                                        //Description:
+                                    });
+
+                                    if (role == "procurement") {
+                                        $(this).find(".checkbox-item").addClass("isUpdated");
+                                        $(this).find(".btn-positive").addClass("buttonClicked");
+                                        $(this).find(".btn").addClass("isUpdated");
+                                        $(this).find(".edit-row").addClass("editable");
+                                        stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + "-" + $(this).closest(".po-item-data-content").attr("child") + " .sequences-modal").addClass("enableButton");
+
+                                    }
+
+                                    confirmedEtaDate.addClass("isUpdated");
+                                    confirmedQtyChild.addClass("isUpdated");
+                                } else {
+                                    confirmedEtaDate.focus();
+                                    isValidDate = false;
+                                    obj.preventDefault();
+                                }
+                            } else {
+                                confirmedEtaDate.focus();
+                                isValidDate = false;
+                                obj.preventDefault();
+                            }
+
+                            if (isNaN(parseInt(confirmedQtyChild.val())) || confirmedQtyChild.val() == 0) {
+                                confirmedQtyChild.focus();
+                                isNullChecked = true;
+                                obj.preventDefault();
+                            }
+                            total += parseInt(confirmedQtyChild.val());
+                        }
+                    });
+                }
+
+                if (total > maxQuantity) {
+                    isValidQty = false;
+                    return;
+                }
+            });
+
+            if (isValidQty == false) {
+                obj.preventDefault();
+                alert("Total Quantity is greater than maximum quantity allowed !");
+                //} else if (dataPurchasingDocumentItems.length > 0 && !isNaN(total) && isNullChecked == false && isValidDate == true && isValidQty == true) {
+            } else if (dataPurchasingDocumentItems.length + dataPurchasingItemChilds.length > 0 && isNullChecked == false && isValidDate == true && isValidQty == true) {
+                obj.preventDefault();
+                console.log(dataPurchasingDocumentItems);
+                console.log(dataPurchasingItemChilds);
+                //alert("ok");
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveAllPOItem", "Subcont")",
+                    data: JSON.stringify({ 'role': role, 'purchasingDocumentItems': dataPurchasingDocumentItems, 'purchasingDocumentItemChilds': dataPurchasingItemChilds }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.success == true) {
+                            alert(response.responseText);
+                            $(".isUpdated").attr("disabled", "disabled");
+                            $(".buttonClicked").addClass("selected");
+                            $(".editable").attr("style", "visibility:display");
+                            $(".po-item-data-content").removeClass("isUpdated buttonClicked editable");
+                            $(".enableButton").removeAttr("disabled");
+                            saveAll.closest(".stage-1").find(".add-row").attr("style", "visibility:hidden");
+                            saveAll.closest(".stage-1").find(".del-row").attr("style", "visibility:hidden");
+                        } else {
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            }
+        });
+
+        //Checked Confirm PO
+        $(".checkbox-item").on("change", function (obj) {
+            var role = $("#role").val();
+            //var row = $(this).closest(".input-group.mr-2");
+            var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
+            var row = $(this).closest(".po-item-data-content__outer");
+
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                var parentNumber = $(this).closest(".po-item-data-content").attr("row");
+                var childNumber = $(this).closest(".po-item-data-content").attr("child");
+                row = $(this).closest(".po-item-data-content__child").find(".po-item-data-content.row-" + parentNumber + "-" + childNumber);
+            }
+            var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+
+            if ($(this).prop("checked") == true) {
+                var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
+                var newDate = deliveryDate.replaceDayMonth();
+                if (role == "vendor") {
+                    if (!isNaN(Date.parse(newDate))) {
+                        var date = new Date(newDate);
+                        row.find(".confirmed-date").datepicker('setDate', date.newDateFormat());
+                        row.find(".partial-date").datepicker('setDate', date.newDateFormat());
+                        row.find(".partial-date").attr("max", date.newDateFormat());
+                    }
+
+                    row.find(".pd-item-confirm-qty").removeAttr("disabled");
+                    //row.find(".partial-date").removeAttr("disabled");
+                    row.find(".confirmed-date").removeAttr("disabled");
+                    row.find(".delivery-method").removeAttr("disabled");
+
+                    //if (typeof row.find(".pd-item-confirm-qty").attr("placeholder") !== typeof undefined && row.find(".pd-item-confirm-qty").attr("placeholder") !== false) {
+                    //    row.find(".pd-item-confirm-qty").val(row.find(".pd-item-confirm-qty").attr("placeholder").replace('Qty available ', ''));
+                    //}
+                }
+                row.find(".btn.btn-positive").removeAttr("disabled");
+                row.find(".btn.btn-negative").removeAttr("disabled");
+            } else {
+                if (role == "vendor") {
+                    row.find(".pd-item-confirm-qty").attr("disabled", "disabled");
+                    row.find(".partial-date").attr("disabled", "disabled");
+                    row.find(".confirmed-date").attr("disabled", "disabled");
+                    row.find(".delivery-method").attr("disabled", "disabled");
+                    //row.find(".pd-item-confirm-qty").val("");
+                    //row.find(".partial-date").val("dd/mm/yyyy");
+                    //row.find(".confirmed-date").val("dd/mm/yyyy");
+
+                    resetRowItem($(this).closest(".po-item-data-content"));
+                    resetRowHeightToFull($(this).closest(".po-item-container"));
+                }
+                row.find(".btn.btn-positive").attr("disabled", "disabled");
+                row.find(".btn.btn-negative").attr("disabled", "disabled");
+            }
+
+        });
+
+        //Click Confirm or Cancel button Item Quantity
+        $("button.btn.btn-negative, button.btn.btn-positive").on("click", function (obj) {
+            var role = $("#role").val();
+            var checkedItem = $(this).closest(".po-item-data-content__outer").find(".checkbox-item");
+            var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
+            var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+            var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
+            var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
+            var btnConfirmPO = $(this).closest(".po-item-data-content__outer").find("button.btn.btn-positive");
+            var btnCancelPO = $(this).closest(".po-item-data-content__outer").find("button.btn.btn-negative");
+            var btnEditItem = $(this).closest(".po-item-data-content__outer").find(".edit-row");
+            var btnAddItem = $(this).closest(".po-item-data-content__outer").find(".add-row");
+            var btnDellItem = $(this).closest(".po-item-data-content__outer").find(".del-row");
+            var isCanceledPOItem = false;
+            var stage2 = $(this).closest(".custom-scrollbar").find(".stage-2");
+            var row = $(this);
+
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                deliveryMethod = $(this).closest(".po-item-data-content").find(".delivery-method-child");
+                checkedItem = $(this).closest(".po-item-data-content").find(".checkbox-item");
+                btnConfirmPO = $(this).closest(".po-item-data-content").find("button.btn.btn-positive");
+                btnCancelPO = $(this).closest(".po-item-data-content").find("button.btn.btn-negative");
+                btnEditItem = $(this).closest(".po-item-data-content").find(".edit-row");
+            }
+            //if cancel POItem
+            if ($(this).hasClass("btn-negative")) {
+                isCanceledPOItem = true;
+            }
+            if (deliveryMethod.val() == "full") {
+                var inputQty = $(this).closest(".po-item-data-content__outer").find(".pd-item-confirm-qty");
+                var pdItemID = $(this).closest(".po-item-data-content__outer").find("input.pd-item-id").val();
+                var confirmedItemQty = $(this).closest(".po-item-data-content__outer").find(".pd-item-confirm-qty");
+                var confirmedDate = $(this).closest(".po-item-data-content__outer").find(".confirmed-date");
+
+                if (confirmedDate.val().length == 10 && !isNaN(parseInt(confirmedItemQty.val())) && confirmedItemQty.val() > 0 || isCanceledPOItem == true) {
+                    var newDate = confirmedDate.val().replaceDayMonth();
+                    if (!isNaN(Date.parse(newDate))) {
+                        obj.preventDefault();
+                        //console.log("role = " + role + "pdItemID = " + pdItemID + "confirmedItemQty = " + confirmedItemQty.val() + "confirmedDate = " + newDate + "isCanceledPOItem = " + isCanceledPOItem);
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("SavePOItem", "Subcont")",
+                            data: { 'role': role, 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
+                            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                            //dataType: "json",
+                            success: function (response) {
+                                alert(response.responseText);
+                                confirmedDate.attr("disabled", "disabled");
+                                deliveryMethod.attr("disabled", "disabled");
+                                checkedItem.attr("disabled", "disabled");
+                                btnConfirmPO.attr("disabled", "disabled");
+                                btnCancelPO.attr("disabled", "disabled");
+                                inputQty.attr("disabled", "disabled");
+                                btnEditItem.attr("style", "visibility:display");
+                                if (isCanceledPOItem == true) {
+                                    btnCancelPO.addClass("selected-negative");
+                                } else {
+                                    if (role == "procurement") {
+                                        stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
+                                    }
+                                    btnConfirmPO.addClass("selected");
+                                }
+                                //var result = $(response).find("#rowPlan" + idUnit);
+                                //$("#rowPlan" + idUnit).html(result);
+                                ////calculateLayout();
+                                //$('.loading').addClass('hide');
+
+                                ////$("body").html(response);
+                                //calculateLayout();
+                                //feather.replace();
+                                //$(".tooltip").remove();
+                                //$('[data-toggle="tooltip"]').tooltip();
+                                ////setTimeout(function () {
+                                ////    $(".loading-background").remove();
+                                ////}, 1000);
+                            },
+                            error: function (xhr, status, error) {
+                                alert(xhr.status + " : " + error);
+                            }
+                        });
+                    }
+                }
+            } else if (deliveryMethod.val() == "partial") {
+                if (role == "vendor") {
+                    var dataPurchasingDocumentItems = [];
+                    var total = 0;
+                    var isNullChecked = false;
+                    var isValidDate = true;
+                    var pdiIdParent = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .pd-item-id");
+                    var confirmedQtyParent = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .pd-item-confirm-qty");
+                    var confirmedDate = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .confirmed-date");
+                    var partialDateOuter = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .partial-date");
+
+                    if (confirmedDate.val().length == 10 && partialDateOuter.val().length == 10) {
+                        var newConfirmedDate = confirmedDate.val().replaceDayMonth();
+                        var newPartialDate = partialDateOuter.val().replaceDayMonth();
+                        //if (!isNaN(Date.parse(newPartialDate)) && newPartialDate <= newConfirmedDate) {
+                        if (!isNaN(Date.parse(newPartialDate))) {
+                            dataPurchasingDocumentItems.push({
+                                ID: pdiIdParent.val(),
+                                ConfirmedQuantity: confirmedQtyParent.val(),
+                                ConfirmedDate: newPartialDate
+                            });
+                            confirmedDate.addClass("isUpdated");
+                            partialDateOuter.addClass("isUpdated");
+                            deliveryMethod.addClass("isUpdated");
+                            checkedItem.addClass("isUpdated");
+                            confirmedQtyParent.addClass("isUpdated");
+                            btnConfirmPO.addClass("isUpdated buttonClicked");
+                            btnCancelPO.addClass("isUpdated");
+                            btnEditItem.addClass("editable");
+                        } else {
+                            partialDateOuter.focus();
+                            isValidDate = false;
+                            obj.preventDefault();
+                        }
+                    } else {
+                        partialDateOuter.focus();
+                        isValidDate = false;
+                        obj.preventDefault();
+                    }
+
+                    total += parseInt($(this).closest(".po-item-data-content").find(".po-item-data-content__outer .pd-item-confirm-qty").val());
+
+                    $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").each(function (index) {
+                        //console.log(index + ": " + $(this).html());
+                        var checkedItem = $(this).find(".checkbox-item");
+                        var pDItemID = $(this).find(".pd-item-id").val();
+                        var confirmedQtyChild = $(this).find(".pd-item-confirm-qty");
+                        var confirmedEtaDate = $(this).find(".partial-date");
+
+                        var arrayDate = arrayDate = $(this).closest(".po-item-data-content__child").parent().find(".partial-date").map(function () {
+                            return $(this).val();
+                        }).get().join(", ");
+                        var re = new RegExp(confirmedEtaDate.val(), 'g');
+                        var dateCount = (arrayDate.match(re) || []).length;
+                        if (dateCount > 1) {
+                            isValidDate = false;
+                            confirmedEtaDate.focus();
+                            return;
+                        }
+
+                        if (confirmedEtaDate.val().length == 10) {
+                            var newConfirmedDate = confirmedDate.val().replaceDayMonth();
+                            var newPartialDate = confirmedEtaDate.val().replaceDayMonth();
+                            //if (!isNaN(Date.parse(newPartialDate)) && newPartialDate <= newConfirmedDate) {
+                            if (!isNaN(Date.parse(newPartialDate))) {
+                                dataPurchasingDocumentItems.push({
+                                    ID: pDItemID,
+                                    ParentID: pdiIdParent.val(),
+                                    ConfirmedQuantity: confirmedQtyChild.val(),
+                                    ConfirmedDate: newPartialDate
+                                });
+                                confirmedQtyChild.addClass("isUpdated");
+                                confirmedEtaDate.addClass("isUpdated");
+                            } else {
+                                confirmedEtaDate.focus();
+                                isValidDate = false;
+                                obj.preventDefault();
+                            }
+                        } else {
+                            confirmedEtaDate.focus();
+                            isValidDate = false;
+                            obj.preventDefault();
+                        }
+
+                        if (isNaN(parseInt(confirmedQtyChild.val())) || confirmedQtyChild.val() == 0) {
+                            confirmedQtyChild.focus();
+                            isNullChecked = true;
+                            obj.preventDefault();
+                        }
+                        total += parseInt(confirmedQtyChild.val());
+                    });
+
+                    if (total > maxQuantity) {
+                        obj.preventDefault();
+                        alert("Total Quantity is greater than maximum quantity allowed !");
+                    } else if (dataPurchasingDocumentItems.length > 0 && !isNaN(total) && isNullChecked == false && isValidDate == true) {
+                        obj.preventDefault();
+                        console.log(dataPurchasingDocumentItems);
+                        //alert("ok");
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("SavePartialPurchasingDocumentItems", "Subcont")",
+                            data: JSON.stringify({ 'role': role, 'purchasingDocumentItems': dataPurchasingDocumentItems }),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (response) {
+                                alert(response.responseText);
+                                $(".isUpdated").attr("disabled", "disabled");
+                                $(".buttonClicked").addClass("selected");
+                                $(".editable").attr("style", "visibility:display");
+                                $(".po-item-data-content").removeClass("isUpdated buttonClicked editable");
+                                btnAddItem.attr("style", "visibility:hidden");
+                                btnDellItem.attr("style", "visibility:hidden");
+                            },
+                            error: function (xhr, status, error) {
+                                alert(xhr.status + " : " + error);
+                            }
+                        });
+                    }
+                } else if (role == "procurement") {
+                    obj.preventDefault();
+                    var pdItemID = $(this).closest(".po-item-data-content").find("input.pd-item-id").val();
+                    var confirmedItemQty = $(this).closest(".po-item-data-content").find(".pd-item-confirm-qty");
+                    var confirmedDate = $(this).closest(".po-item-data-content").find(".partial-date");
+                    var newDate = confirmedDate.val().replaceDayMonth();
+                    //console.log("role = " + role + " pdItemID = " + pdItemID + "confirmedItemQty = " + confirmedItemQty.val() + "confirmedDate = " + newDate + "isCanceledPOItem = " + isCanceledPOItem);
+                    //alert("pditemid : " + pdItemID + "confirmQty : " + confirmedItemQty.val() + "confirmedDate : " + newDate + "cancelpo : " + isCanceledPOItem);
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("SavePOItem", "Subcont")",
+                        data: { 'role': role, 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
+                        contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                        //dataType: "json",
+                        success: function (response) {
+                            alert(response.responseText);
+                            checkedItem.attr("disabled", "disabled");
+                            btnConfirmPO.attr("disabled", "disabled");
+                            btnCancelPO.attr("disabled", "disabled");
+                            btnEditItem.attr("style", "visibility:display");
+                            if (isCanceledPOItem == true) {
+                                btnCancelPO.addClass("selected-negative");
+                            } else {
+                                if (role == "procurement") {
+                                    stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
+                                }
+                                btnConfirmPO.addClass("selected");
+                            }
+                            //var result = $(response).find("#rowPlan" + idUnit);
+                            //$("#rowPlan" + idUnit).html(result);
+                            ////calculateLayout();
+                            //$('.loading').addClass('hide');
+
+                            ////$("body").html(response);
+                            //calculateLayout();
+                            //feather.replace();
+                            //$(".tooltip").remove();
+                            //$('[data-toggle="tooltip"]').tooltip();
+                            ////setTimeout(function () {
+                            ////    $(".loading-background").remove();
+                            ////}, 1000);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                }
+            }
+        });
+
+        //edit item Click
+        $(".edit-row").on("click", function (obj) {
+            var role = $("#role").val();
+            var lastRowChild = $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").last();
+            if (role == "vendor") {
+                $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
+                $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
+                $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
+                $(this).closest(".po-item-data-content__outer").find(".delivery-method").removeAttr("disabled");
+                $(this).closest(".po-item-data-content__outer").find(".confirmed-date").removeAttr("disabled");
+                $(this).closest(".po-item-data-content__outer").find(".pd-item-confirm-qty").removeAttr("disabled");
+                $(this).closest(".po-item-data-content__outer").find(".btn").removeAttr("disabled");
+                $(this).closest(".po-item-data-content__outer").find(".btn").removeClass("selected selected-negative");
+
+                if (lastRowChild.attr("child") > 0) {
+                    $(this).closest(".po-item-data-content").find(".po-item-data-content__child .pd-item-confirm-qty").removeAttr("disabled");
+                    $(this).closest(".po-item-data-content").find(".po-item-data-content__child .partial-date").removeAttr("disabled");
+                }
+            } else if (role == "procurement") {
+                if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                    $(this).closest(".po-item-data-content").find(".checkbox-item").removeAttr("disabled");
+                    $(this).closest(".po-item-data-content").find(".btn").removeAttr("disabled");
+                    $(this).closest(".po-item-data-content").find(".btn").removeClass("selected selected-negative");
+                } else {
+                    $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
+                    $(this).closest(".po-item-data-content__outer").find(".btn").removeAttr("disabled");
+                    $(this).closest(".po-item-data-content__outer").find(".btn").removeClass("selected selected-negative");
+                }
+
+
+            }
+
+            $(this).parent().find("button").removeAttr("disabled");
+            $(this).parent().find("button").removeClass("selected selected-negative");
+            //alert($(this).parent().find("button").html());
+            //$(this).closest(".input-group").find("button.btn-positive").removeAttr("disabled");
+        })
+
+        /*-----------------------------------------------------------------Stage 2------------------------------------------------------------------------------*/
+
+        //Define Sequence Click
+        $(".sequences-modal").on("click", function (obj) {
+            var pdItemID = $(this).parent().find(".pd-item-id").val();
+
+            $("#sequencesModal").attr("row", $(this).closest(".po-item-data-content").attr("row"));
+            if (typeof ($(this).closest(".po-item-data-content").attr("child")) === "undefined" || typeof ($(this).closest(".po-item-data-content").attr("child")) === "NaN") {
+                $("#sequencesModal").removeAttr("child");
+            } else {
+                $("#sequencesModal").attr("child", $(this).closest(".po-item-data-content").attr("child"));
+            }
+
+            //$(this).addClass("open-edit-sequences");
+
+            $("#item-id-sequences").val(pdItemID);
+            //alert(pdItemID);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetSequenceData", "Subcont")",
+                data: { 'pdItemID': pdItemID },
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                //dataType: "json",
+                success: function (response) {
+                    $("#LeadTime").text(response.arrayDataTime['LeadTime'])
+
+                    if (response.responseCode == "200") {
+                        console.log(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
+                        $("#PB").val(response.arrayDataTime['PB']);
+                        $("#Setting").val(response.arrayDataTime['Setting']);
+                        $("#Fullweld").val(response.arrayDataTime['Fullweld']);
+                        $("#Primer").val(response.arrayDataTime['Primer']);
+                        console.log(response.isDisabled);
+                    }
+
+                    if (response.isDisabled == true) {
+                        $("#PB").attr("disabled", "disabled");
+                        $("#Setting").attr("disabled", "disabled");
+                        $("#Fullweld").attr("disabled", "disabled");
+                        $("#Primer").attr("disabled", "disabled");
+                    } else {
+                        $("#PB").removeAttr("disabled");
+                        $("#Setting").removeAttr("disabled");
+                        $("#Fullweld").removeAttr("disabled");
+                        $("#Primer").removeAttr("disabled");
+                    }
+                    //console.log("editable : " + response.isEditable + response.responseCode);
+                    if (response.isEditable == true) {
+                        $("#btnEditDefineSequences").show();
+                    } else {
+                        $("#btnEditDefineSequences").hide();
+                    }
+                    //alert(response.responseCode);
+                },
+                error: function (xhr, status, error) {
+                    //alert(xhr.status + " : " + error);
+                }
+            });
+        })
+
+        //close define sequence
+        $("#close-sequence").on("click", function (obj) {
+            $("#PB").val("");
+            $("#Setting").val("");
+            $("#Fullweld").val("");
+            $("#Primer").val("");
+            $("#LeadTime").text(0);
+            $("#Total").text(0);
+            $("#Total").parent().hide();
+            $("#sequencesModal").removeAttr("row");
+            $("#sequencesModal").removeAttr("child");
+        })
+
+        $("#PB, #Setting, #Fullweld, #Primer").on("keyup keypress change", function (obj) {
+            $("#Total").parent().show();
+            var pb = parseInt($("#PB").val());
+            var setting = parseInt($("#Setting").val());
+            var fullweld = parseInt($("#Fullweld").val());
+            var primer = parseInt($("#Primer").val());
+            var totalLeadTime = parseInt($("#LeadTime").text());
+            var total = pb + setting + fullweld + primer;
+
+            $("#Total").text(total);
+        });
+
+        //Edit Define Sequence Vendor or Confirm sequence Procurement
+        $("#btnEditDefineSequences").on("click", function (obj) {
+            $("#PB").removeAttr("disabled");
+            $("#Setting").removeAttr("disabled");
+            $("#Fullweld").removeAttr("disabled");
+            $("#Primer").removeAttr("disabled");
+        });
+
+        //Save Define Sequence Vendor or Confirm sequence Procurement
+        $("#btnSaveDefineSequences").on("click", function (obj) {
+            var stage3 = $(this).closest(".custom-scrollbar").find(".stage-3");
+            var pdItemID = $("#item-id-sequences").val();
+            var pb = parseInt($("#PB").val());
+            var setting = parseInt($("#Setting").val());
+            var fullweld = parseInt($("#Fullweld").val());
+            var primer = parseInt($("#Primer").val());
+            var totalLeadTime = parseInt($("#LeadTime").text());
+            var total = pb + setting + fullweld + primer;
+            
+            if (totalLeadTime == 0) {
+                alert("Data Component Not Found");
+            } else if (total > totalLeadTime) {
+                alert("Total lead time must be equal or less than " + totalLeadTime + " days");
+            } else if ($("#PB").val() != "" && $("#Setting").val() != "" && $("#Fullweld").val() != "" && $("#Primer").val() != "" && $("#LeadTime").text() !=0) {
+                
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveSequenceData", "Subcont")",
+                    data: { 'pdItemID': pdItemID, 'pb': $("#PB").val(), 'setting': $("#Setting").val(), 'fullweld': $("#Fullweld").val(), 'primer': $("#Primer").val() },
+                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                    //dataType: "json",
+                    success: function (response) {
+                        //$(".open-edit-sequences").attr("disabled", "disabled");
+                        //$(".sequences-modal").removeClass("open-edit-sequences");
+                        if (typeof ($("#sequencesModal").attr("child")) === "undefined" || typeof ($("#sequencesModal").attr("child")) === "NaN") {
+                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + " .input-progress").removeAttr("disabled");
+                        } else {
+                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + "-" + $("#sequencesModal").attr("child") + " .input-progress").removeAttr("disabled");
+                        }
+                        $("#close-sequence").click();
+                        alert(response.responseText);
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            }
+        });
+
+        /*-----------------------------------------------------------------Stage 3------------------------------------------------------------------------------*/
+        //Get Progress Data
+        $(".input-progress").on("click", function (obj) {
+            var role = $("#role").val();
+            var pdItemID = $(this).parent().find(".pd-item-id").val();
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            $(this).addClass("open-edit-sequences");
+            $("#inputProgressModalLabel").attr("item-id", pdItemID);
+            $("#inputProgressModalLabel").attr("row", row);
+            if (role == "procurement") {
+                $("#SaveSequencesProgress").hide();
+            }
+
+            console.log(pdItemID);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetProgressData", "Subcont")",
+                data: { 'pdItemID': pdItemID },
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                //dataType: "json",
+                success: function (response) {
+                    if (response.responseCode == "200") {
+                        console.log(response.arrayDataTime);
+                        //alert(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
+
+                        $("#PBDays").val(response.arrayDataTime['PBDays']);
+                        $("#SettingDays").val(response.arrayDataTime['SettingDays']);
+                        $("#FullweldDays").val(response.arrayDataTime['FullweldDays']);
+                        $("#PrimerDays").val(response.arrayDataTime['PrimerDays']);
+
+                        $("#ETAPB").val(response.arrayDataTime['PB']);
+                        $("#ETASetting").val(response.arrayDataTime['Setting']);
+                        $("#ETAFullweld").val(response.arrayDataTime['Fullweld']);
+                        $("#ETAPrimer").val(response.arrayDataTime['Primer']);
+                        $("#ATAPB").val(response.arrayDataTime['ATAPB']);
+                        $("#ATAPBReasonID").val(response.arrayDataTime['ATAPBReasonID']);
+
+                        $("#ATASetting").val(response.arrayDataTime['ATASetting']);
+                        $("#ATASettingReasonID").val(response.arrayDataTime['ATASettingReasonID']);
+
+                        $("#ATAFullweld").val(response.arrayDataTime['ATAFullweld']);
+                        $("#ATAFullweldReasonID").val(response.arrayDataTime['ATAFullweldReasonID']);
+
+                        $("#ATAPrimer").val(response.arrayDataTime['ATAPrimer']);
+                        $("#ATAPrimerReasonID").val(response.arrayDataTime['ATAPrimerReasonID']);
+
+
+                        //    var date = new Date(newDate);
+                        //    date.setDate(date.getDate() - 10);
+
+                        if ($("#ATAPB").val()) {
+                            var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
+                            ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
+                            $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
+                        } else {
+                            $("#ATAPB").removeAttr("disabled");
+                        }
+
+                        if ($("#ATASetting").val()) {
+                            var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
+                            ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
+                            $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
+                        } else {
+                            $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                        }
+
+                        if ($("#ATAFullweld").val()) {
+                            var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
+                            ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
+                            $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
+                        } else {
+                            $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                        }
+
+                        if ($("#ATAPrimer").val()){
+                            $("#ATAPrimer").attr("disabled", "disabled");
+                        } else {
+                            $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                        }
+
+                        $("#ATAPB").attr("min", $("#ETAPB").val());
+                        $("#ATASetting").attr("min", $("#ETASetting").val());
+                        $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
+                        $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
+                        //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat())) : $("#ATAPB").removeAttr("disabled");
+                        //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                        //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                        //$("#ATAPrimer").val() ? $("#ATAPrimer").attr("disabled", "disabled") : $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                    }
+                    //alert(response.responseCode);
+                },
+                error: function (xhr, status, error) {
+                    //alert(xhr.status + " : " + error);
+                }
+            });
+        });
+
+        //Save Progress Data
+        $("#SaveSequencesProgress").on("click", function (obj) {
+            var pdItemID = $("#inputProgressModalLabel").attr("item-id");
+            var row = $("#inputProgressModalLabel").attr("row");
+            var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
+
+            var isValid = true;
+            var errorMessage = "";
+
+            var PBActualDate = $("#ATAPB").val();
+            var settingActualDate = $("#ATASetting").val();
+            var fullweldActualDate = $("#ATAFullweld").val();
+            var primerActualDate = $("#ATAPrimer").val();
+
+            var newPBActualDate = PBActualDate.replaceDayMonth();
+            var newSettingActualDate = settingActualDate.replaceDayMonth();
+            var newFullweldActualDate = fullweldActualDate.replaceDayMonth();
+            var newPrimerActualDate = primerActualDate.replaceDayMonth();
+
+            var newPBActualReason = $("#ATAPBReasonID").val() == 0 ? null : $("#ATAPBReasonID").val();
+            var newSettingActualReason = $("#ATASettingReasonID").val() == 0 ? null : $("#ATASettingReasonID").val();
+            var newFullweldActualReason = $("#ATAFullweldReasonID").val() == 0 ? null : $("#ATAFullweldReasonID").val();
+            var newPrimerActualReason = $("#ATAPrimerReasonID").val() == 0 ? null : $("#ATAPrimerReasonID").val();
+
+            var ETADate = $("#ETAPB").val().replaceDayMonth();
+            var ATADate = $("#ATAPB").val().replaceDayMonth();
+            var ATALate = $("#ATAPBReasonID").val() == 0 ? null : $("#ATAPBReasonID").val();
+            var fileUploadATA = inputFilePB;
+
+            if ($("#ATASetting").attr("disabled") != "disabled") {
+                ETADate = $("#ETASetting").val().replaceDayMonth();
+                ATADate = $("#ATASetting").val().replaceDayMonth();
+                ATALate = $("#ATASettingReasonID").val() == 0 ? null : $("#ATASettingReasonID").val();
+                fileUploadATA = inputFileSetting;
+            }
+            else if ($("#ATAFullweld").attr("disabled") != "disabled") {
+                ETADate = $("#ETAFullweld").val().replaceDayMonth();
+                ATADate = $("#ATAFullweld").val().replaceDayMonth();
+                ATALate = $("#ATAFullweldReasonID").val() == 0 ? null : $("#ATAFullweldReasonID").val();
+                fileUploadATA = inputFileFullweld;
+            } else if ($("#ATAPrimer").attr("disabled") != "disabled") {
+                ETADate = $("#ETAPrimer").val().replaceDayMonth();
+                ATADate = $("#ATAPrimer").val().replaceDayMonth();
+                ATALate = $("#ATAPrimerReasonID").val() == 0 ? null : $("#ATAPrimerReasonID").val();
+                fileUploadATA = inputFilePrimer;
+            }
+
+            //var newETADate = new Date(ETADate);
+            //var newATADate;
+
+            //if (ATADate == null) {
+            //    errorMessage += "- Actual Date Must Be Filled\n";
+            //    isValid = false;
+            //}
+            //else
+            //{
+            //    newATADate = new Date(ATADate);
+            //    alert(newATADate);
+            //    if (newETADate < newATADate && ATALate == "") {
+            //        errorMessage += "- Reason Must Be Filled\n";
+            //        isValid = false;
+            //    }
+            //}
+
+            if (ETADate < ATADate && ATALate == null) {
+                errorMessage += "- Reason Must Be Filled\n";
+                isValid = false;
+            }
+
+            if (fileUploadATA.files.length == 0) {
+                errorMessage += "- Progress Photos Must Be Filled\n";
+                isValid = false;
+            }
+
+            if (isValid) {
+                if (!isNaN(Date.parse(ATADate))) { //&& newETADate < newATADate
+                    var formData = new FormData();
+                    for (var i = 0; i < fileUploadATA.files.length; i++) {
+                        var file = fileUploadATA.files[i];
+
+                        formData.append("pdItemID", pdItemID);
+                        formData.append("PBActualDate", newPBActualDate);
+                        formData.append("settingActualDate", newSettingActualDate);
+                        formData.append("fullweldActualDate", newFullweldActualDate);
+                        formData.append("primerActualDate", newPrimerActualDate);
+                        formData.append("PBActualReason", newPBActualReason);
+                        formData.append("settingActualReason", newSettingActualReason);
+                        formData.append("fullweldActualReason", newFullweldActualReason);
+                        formData.append("primerActualReason", newPrimerActualReason);
+                        formData.append("invoices", file);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("SaveSequencesProgress", "Subcont")",
+                        data: formData, //{ 'pdItemID': pdItemID, 'PBActualDate': newPBActualDate, 'settingActualDate': newSettingActualDate, 'fullweldActualDate': newFullweldActualDate, 'primerActualDate': newPrimerActualDate, 'PBActualReason': newPBActualReason, 'settingActualReason': newSettingActualReason, 'fullweldActualReason': newFullweldActualReason, 'primerActualReason': newPrimerActualReason, 'invoices': fileUploadATA },
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.responseCode == "200") {
+                                alert(response.responseText);
+
+                                if ($("#ATAPB").val()) {
+                                    var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
+                                    ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
+                                    $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
+                                } else {
+                                    $("#ATAPB").removeAttr("disabled");
+                                }
+
+                                if ($("#ATASetting").val()) {
+                                    var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
+                                    ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
+                                    $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
+                                } else {
+                                    $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                                }
+
+                                if ($("#ATAFullweld").val()) {
+                                    var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
+                                    ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
+                                    $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
+                                } else {
+                                    $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                                }
+
+                                if ($("#ATAPrimer").val()) {
+                                    $("#ATAPrimer").attr("disabled", "disabled");
+                                    $("#ATAPrimerReasonID").attr("disabled", "disabled");
+                                    stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
+                                    stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    $("#close-input-progress").click();
+                                } else {
+                                    $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                                }
+
+                                $("#ATAPB").attr("min", $("#ETAPB").val());
+                                $("#ATASetting").attr("min", $("#ETASetting").val());
+                                $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
+                                $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
+                                //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ATAPBReason").attr("disabled", "disabled"), $("#ETASetting").val($("#ATAPB").val()), $("#ATASetting").attr("min", $("#ATAPB").val())) : $("#ATAPB").removeAttr("disabled");
+                                //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ATASettingReason").attr("disabled", "disabled"), $("#ETAFullweld").val($("#ATASetting").val()), $("#ATAFullweld").attr("min", $("#ATASetting").val())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                                //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ATAFullweldReason").attr("disabled", "disabled"), $("#ETAPrimer").val($("#ATAFullweld").val()), $("#ATAPrimer").attr("min", $("#ATAFullweld").val())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                                //$("#ATAPrimer").val() ? ($("#ATAPrimer").attr("disabled", "disabled"), $("#ATAPrimerReason").attr("disabled", "disabled")) : $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                } else {
+                    $("#inputProgressModal .form-date[disabled!='disabled']").focus();
+                }
+            }
+            else
+            {
+                alert(errorMessage);
+            }
+
+        });
+
+        /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
+        $(".invoice-method-parent").on("change", function (obj) {
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
+
+            if ($(this).val() == "partial") {
+                stage6Child.show();
+            } else {
+                stage6Child.hide();
+            }
+        });
+
+        $(".save-invoice-method-parent").on("click", function (obj) {
+            var saveButton = $(this);
+            var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
+            var invoiceMethod = $(this).closest(".form-inline").find(".invoice-method-parent");
+            var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
+
+            if (invoiceMethod.val() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveInvoiceMethod", "Subcont")",
+                    data: { 'pdItemID': pdItemID, 'invoiceMethod': invoiceMethod.val()},
+                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                    //dataType: "json",
+                    success: function (response) {
+                        saveButton.attr("disabled", "disabled");
+                        invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
+                        alert(response.responseText);
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            }
+        });
+
+        /*---------------------------------------------------------------------------------- Stage 6 ----------------------------------------------------------------------------*/
+
+        $(".save-invoice").on("click", function (obj) {
+            var saveButton = $(this);
+            var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
+            var row = $(this).closest(".po-item-data-content__outer").attr("row");
+
+            var fileInvoice = $(this).closest(".po-item-data-header__column").find(".file-invoice");
+            var fileInvoiceDOM = $(this).closest(".po-item-data-header__column").find(".file-invoice").get(0);
+            var formUploaded = $(this).closest(".po-item-data-header__column").find(".form-uploaded");
+            var formUploading = $(this).closest(".po-item-data-header__column").find(".form-upload");
+
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                pdItemID = $(this).closest(".po-item-data-content").find(".pd-item-id").val();
+                row = $(this).closest(".po-item-data-content").attr("row");
+            }
+
+            var formData = new FormData();
+            for (var i = 0; i < fileInvoiceDOM.files.length; i++) {
+                var file = fileInvoiceDOM.files[i];
+
+                formData.append("fileInvoice", file);
+                formData.append("inputPurchasingDocumentItemID", pdItemID);
+            }
+
+            if (fileInvoiceDOM.files.length > 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("VendorUploadInvoice", "Subcont")",
+                    data: formData, //{ 'pdItemID': pdItemID, 'PBActualDate': newPBActualDate, 'settingActualDate': newSettingActualDate, 'fullweldActualDate': newFullweldActualDate, 'primerActualDate': newPrimerActualDate, 'PBActualReason': newPBActualReason, 'settingActualReason': newSettingActualReason, 'fullweldActualReason': newFullweldActualReason, 'primerActualReason': newPrimerActualReason, 'invoices': fileUploadATA },
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            alert(response.responseText);
+                            saveButton.attr("disabled", "disabled");
+                            fileInvoice.attr("disabled", "disabled");
+                            formUploading.attr("hidden", true);
+                            formUploaded.removeAttr("hidden");
+
+                            formUploaded.find(".st10-file-invoice-download").attr("href", response.invoiceUrl);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //alert(xhr.status + " : " + error);
+                    }
+                });
+            } else {
+                alert("File failed to upload");
+            }
+        });
+
+        $(".file-invoice-remove").on("click", function (obj) {
+            var saveButton = $(this);
+            var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
+            var row = $(this).closest(".po-item-data-content__outer").attr("row");
+
+            var fileInvoice = $(this).closest(".po-item-data-header__column").find(".file-invoice");
+            var fileInvoiceDOM = $(this).closest(".po-item-data-header__column").find(".file-invoice").get(0);
+            var formUploaded = $(this).closest(".form-uploaded");
+            var formUploading = $(this).closest(".po-item-data-header__column").find(".form-upload");
+
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                pdItemID = $(this).closest(".po-item-data-content").find(".pd-item-id").val();
+                row = $(this).closest(".po-item-data-content").attr("row");
+            }
+
+            var formData = new FormData();
+
+            formData.append("inputPurchasingDocumentItemID", pdItemID);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("VendorRemoveUploadInvoice", "Subcont")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    alert(response.responseText);
+
+                    saveButton.removeAttr("disabled");
+                    fileInvoice.removeAttr("disabled");
+                    formUploaded.attr("hidden", true);
+                    formUploading.removeAttr("hidden");
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr.status + " : " + error);
+                }
+            });
+        });
+
+
+        ///General
+        //Custom Validation
+        function setCustomValidation() {
+            $('.pd-item-confirm-qty').on('input focus', function (e) {
+                //this.setCustomValidity('');
+                this.reportValidity();
+            });
+
+            $('.define-sequences-days').on('input focus', function (e) {
+                //this.setCustomValidity('');
+                this.reportValidity();
+            });
+
+            $('.form-date').on('input focus', function (e) {
+                this.setCustomValidity('');
+
+                if ($(this).val().length == 10) {
+                    var newDate = $(this).val().replaceDayMonth();
+
+                    if (isNaN(Date.parse(newDate))) {
+                        this.setCustomValidity('Please select another date');
+                    }
+
+                    //stage 1 partial
+                    if ($(this).hasClass("partial-date") && !isNaN(Date.parse(newDate))) {
+                        var date = $(this).val();
+                        var arrayDate = arrayDate = $(this).closest(".po-item-data-content__child").parent().find(".partial-date").map(function () {
+                            return $(this).val();
+                        }).get().join(", ");
+                        var re = new RegExp(date, 'g');
+                        var count = (arrayDate.match(re) || []).length;
+                        if (count > 1) {
+                            this.setCustomValidity("Date already exist");
+                        }
+                    }
+
+                    //stage 3 input progress
+                    if (($(this).attr("id") == "ATAPB" || $(this).attr("id") == "ATASetting" || $(this).attr("id") == "ATAFullweld" || $(this).attr("id") == "ATAPrimer") && ($(this).attr("min") && !isNaN(Date.parse(newDate)))) {
+                        var date = new Date(newDate);
+                        var minDate = new Date($(this).attr("min").replaceDayMonth());
+                        //console.log("tgl dipilih" + date);
+                        //console.log("tgl min" + minDate);
+                        console.log($(this).attr("id"));
+                        if (date > minDate) {
+                            //this.setCustomValidity("Date must be greater than " + $(this).attr("min"));
+                            if ($(this).attr("id") == "ATAPB") {
+                                $("#ATAPBReasonID").removeAttr("disabled");
+                            }
+                            if ($(this).attr("id") == "ATASetting") {
+                                $("#ATASettingReasonID").removeAttr("disabled");
+                            }
+                            if ($(this).attr("id") == "ATAFullweld") {
+                                $("#ATAFullweldReasonID").removeAttr("disabled");
+                            }
+                            if ($(this).attr("id") == "ATAPrimer") {
+                                $("#ATAPrimerReasonID").removeAttr("disabled");
+                            }
+                        }
+                        else
+                        {
+                            if ($(this).attr("id") == "ATAPB") {
+                                $("#ATAPBReasonID").attr("disabled", "disabled"); $("#ATAPBReasonID").val(0);
+                            }
+                            if ($(this).attr("id") == "ATASetting") {
+                                $("#ATASettingReasonID").attr("disabled", "disabled"); $("#ATASettingReasonID").val(0);
+                            }
+                            if ($(this).attr("id") == "ATAFullweld") {
+                                $("#ATAFullweldReasonID").attr("disabled", "disabled"); $("#ATAFullweldReasonID").val(0);
+                            }
+                            if ($(this).attr("id") == "ATAPrimer") {
+                                $("#ATAPrimerReasonID").attr("disabled", "disabled"); $("#ATAPrimerReasonID").val(0);
+                            }
+                        }
+                    }
+
+                    //if ($(this).attr("max") && !isNaN(Date.parse(newDate))) {
+                    //    var date = new Date(newDate);
+                    //    var maxDate = new Date($(this).attr("max").replaceDayMonth());
+                    //    if (date > maxDate) {
+                    //        this.setCustomValidity("Value must be less than or equal " + $(this).attr("max"));
+                    //    }
+                    //}
+                } else if ($(this).hasClass("form-control-lg") == false) {
+                    this.setCustomValidity('Please select another date');
+                }
+                //e.target.checkValidity();
+                this.reportValidity();
+            });
+        }
+
+
+        function paginationShow(destination) {
+            $(".po-item-scrollable").animate({ scrollLeft: scrollLength[destination - 1] }, 500);
+        }
+
+        function poItemCollapse(row) {
+            row.closest("li").toggleClass("collapse-row");
+        }
+    </script>
+
+    <!-- Live PReview PIc-->
+    <script language="javascript" type="text/javascript">
+            window.onload = function () {
+                var fileUpload = document.getElementById("inputFilePB");
+                fileUpload.onchange = function () {
+                    if (typeof (FileReader) != "undefined") {
+                        var dvPreview = document.getElementById("dvPreview");
+                        dvPreview.innerHTML = "";
+                        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                        var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                        for (var i = 0; i < fileUpload.files.length; i++) {
+                            var file = fileUpload.files[i];
+
+
+
+                            if (regex.test(file.name.toLowerCase())) {
+                                var reader = new FileReader();
+                                var img = document.createElement("IMG");
+                                img.height = "100";
+                                img.width = "100";
+                                img.title = file.name.toLowerCase();
+                                reader.onload = function (e) {
+
+
+                                    img.src = e.target.result;
+                                    dvPreview.appendChild(img);
+
+                                }
+                                reader.readAsDataURL(file);
+                            } else if (regexOffice.test(file.name.toLowerCase())) {
+
+                                var img = document.createElement("IMG");
+                                img.height = "100";
+                                img.width = "100";
+                                img.title = file.name.toLowerCase();
+
+                                var filename = file.name.toLowerCase();
+
+                                if (filename.includes(".doc") || filename.includes(".docx")) {
+                                    img.src = "/Images/word.png";
+                                }
+                                if (filename.includes(".xls") || filename.includes(".xlsx")) {
+                                    img.src = "/Images/excel.png";
+                                }
+                                if (filename.includes(".ppt") || filename.includes(".pptx")) {
+                                    img.src = "/Images/powerpoint.png";
+                                }
+                                if (filename.includes(".pdf")) {
+                                    img.src = "/Images/pdf.png";
+                                }
+                                dvPreview.appendChild(img);
+
+                            }
+                            else {
+
+                            }
+
+
+                        }
+                    } else {
+                        alert("This browser does not support HTML5 FileReader.");
+                    }
+                }
+            };
+        </script>
+}

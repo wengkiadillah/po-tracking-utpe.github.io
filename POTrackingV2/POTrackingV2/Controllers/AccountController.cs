@@ -16,12 +16,12 @@ namespace POTrackingV2.Controllers
     public class AccountController : Controller
     {
         // GET: Account
+        [Authorize]
         public ActionResult Index()
         {
             return View();
         }
 
-        [HttpGet]
         public ActionResult Login(string ReturnUrl = "")
         {
             ViewBag.ReturnUrl = ReturnUrl;
