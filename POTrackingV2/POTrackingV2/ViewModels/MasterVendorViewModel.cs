@@ -6,7 +6,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
 
-namespace POTracking.ViewModels
+namespace POTrackingV2.ViewModels
 {
     public class MasterVendorViewModel
     {

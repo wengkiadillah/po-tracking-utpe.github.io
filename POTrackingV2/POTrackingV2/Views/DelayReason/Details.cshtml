@@ -1,0 +1,62 @@
+﻿@model POTracking.Models.DelayReason
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@section styles {
+    <link href="~/Content/um-style.css" rel="stylesheet" />
+}
+
+<div class="um">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Vendor Management</li>
+            <li class="breadcrumb-item"><a href="@Url.Action("", "Delay Reason")" ">Delay Reason</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delay Reason Details</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-xl-9 col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    Delay Reason Details
+                </div>
+                <div class="view-data-container">
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.Name)</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.Name)</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.Created)</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.Created)</p>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.CreatedBy)</label>
+                            <p class="view-data__content">  @Html.DisplayFor(model => model.CreatedBy)</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.LastModified)</label>
+                            <p class="view-data__content">@Html.DisplayFor(model => model.LastModified)</p>
+                        </div>
+
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.LastModifiedBy)</label>
+                            <p class="view-data__content">@Html.DisplayFor(model => model.LastModifiedBy)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-between mt-5 detail-btn">
+                    <div class="col-auto">
+                        <a href="@Url.Action("", "DelayReason")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

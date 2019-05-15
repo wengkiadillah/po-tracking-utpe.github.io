@@ -1,0 +1,197 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@*@model IEnumerable<POTracking.Models.SubcontComponentCapability>*@
+@model IPagedList<POTrackingV2.Models.SubcontComponentCapability>
+
+@{
+    ViewBag.Title = "Master Vendor";
+}
+
+@section styles {
+    <link href="~/Content/um-style.css" rel="stylesheet" />
+}
+
+    <div class="um">
+        <h1>Master Data Vendor</h1>
+        <div class="filter-row">
+            @using (Html.BeginForm("Index", "MasterVendor", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+            {
+                <div class="form-group mr-4">
+                    <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchString" />
+                    <i class="fas fa-search form-type-icon hint"></i>
+                </div>
+                <select id="searchBy" name="searchBy" class="form-control form-control-lg mr-4" value="@ViewBag.CurrentSearchFilterBy">
+                    <option value="vendorCode">Vendor Code</option>
+                    <option value="description">Description</option>
+                </select>
+                <button type="submit" class="btn btn-info mr-3">Find</button>
+                @Html.ActionLink("Clear", "Index", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+            }
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-info"><a href="/MasterVendor/Create" style="color:white;">Create New</a></button>
+            </div>
+        </div>
+
+        @*<p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
+        <p>
+            @using (Html.BeginForm("Index", "MasterVendor", FormMethod.Get))
+            {
+                <b>Search By: </b> @Html.RadioButton("searchBy", "VendorCode", true) <text>VendorCode</text>
+                @Html.RadioButton("searchBy", "Description") <text>Description</text> <br />
+                @Html.TextBox("search") <input type="submit" value="Search" />
+            }
+        </p>*@
+        <table class="table table-bordered">
+            <tr style="background-color:#17A2B8;color:white;">
+                <th>
+                    @Html.DisplayNameFor(model => model.First().VendorCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().isNeedSequence)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Material)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().DailyLeadTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().MonthlyLeadTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().PB)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Setting)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Fullweld)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().Primer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().MonthlyCapacity)
+                </th>
+                <th>Action</th>
+            </tr>
+            @if (Model.Count() == 0)
+            {
+                <tr>
+                    <td colspan="12">No rows match search criteria</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                <tr style="background-color:white;">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VendorCode)
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(modelItem => item.isNeedSequence)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Material)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DailyLeadTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MonthlyLeadTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PB)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Setting)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fullweld)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Primer)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MonthlyCapacity)
+                    </td>
+                    <td>
+                        <span>
+                            <a class="col-xs-2" href="@Url.Action("Details", "MasterVendor", new { id = item.ID })" alt="Details">
+                                <i class="fa fa-info-circle fa-lg"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a class="col-xs-2" href="@Url.Action("Edit", "MasterVendor", new { id = item.ID })" alt="Details">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <button class="col-xs-2 special" href="@Url.Action("Delete", "MasterVendor", new { id = item.ID })" data-toggle="modal" data-target="#deleteModal" style="color:orangered;">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </button>
+                        </span>
+                    </td>
+                </tr>
+                }
+            }
+
+        </table>
+
+        @* Modal *@
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                        <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are You Sure To Delete This Item?
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="item-masterVendor">
+                        <button id="" type="button" class="btn btn-positive w-100" style="visibility:hidden;">Edit</button>
+                        <button id="btnDeleteMasterVendor" type="button" class="btn btn-positive w-100">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Modal *@
+
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+            new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
+        </div>
+
+
+    @*<script>
+        #('table tbody').on('click', 'tr td input#item_isNeedSequence', function () {
+            var selected = $(this).val(); // true | false
+            var id = $(this).parent('tbody').find('input#item_id').val();//1 | 2 | 3
+            $.ajax({
+                'url': '',
+                'type': 'POST',
+                'data': ''
+                'success': function () {
+
+                },
+                'error': function () {
+
+                }
+            })
+            //$(this).parent('tr').;
+        });
+    </script>*@

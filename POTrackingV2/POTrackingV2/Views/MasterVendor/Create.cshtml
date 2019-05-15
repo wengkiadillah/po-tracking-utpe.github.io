@@ -1,0 +1,112 @@
+﻿@model POTrackingV2.ViewModels.MasterVendorViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm("Create", "MasterVendor"))
+
+{
+<div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
+    <h2 class="form-sub-header">
+        Create New User Vendor
+    </h2>
+    <hr class="mb-4">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="row  mb-3">
+        <div class="col-lg-6 col-12 custom-form-field">
+            @Html.LabelFor(Model => Model.SelectedName, htmlAttributes: new { @class = "" })
+            @Html.DropDownListFor(Model => Model.SelectedName, Model.ListName, "Select", htmlAttributes: new { @class = "form-control full-width" })
+            @Html.ValidationMessageFor(model => model.SelectedName, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.VendorCode, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.VendorCode, new { htmlAttributes = new { @class = "form-control full-width employee-number text-box single-line", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.subCont.VendorCode, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.Material, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.Material, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.Description, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.Description, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.Description, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.DailyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.MonthlyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.MonthlyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.MonthlyLeadTime, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.PB, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.PB, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.PB, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.Setting, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.Setting, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.Setting, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.Fullweld, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.Fullweld, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.Fullweld, "", new { @class = "field-validation-valid text-danger" }) 
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.DailyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.Primer, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.Primer, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.Primer, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.subCont.MonthlyCapacity, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.subCont.MonthlyCapacity, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.subCont.MonthlyCapacity, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+    </div>
+
+    <div class="row justify-content-between mt-5">
+        <div class="col-auto">
+            <a href="/MasterVendor" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+        </div>
+        <div class="col-auto">
+            <button type="submit" value="Create" class="btn btn-success create-ad-user mr-0 mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> &nbsp; Create</button>
+        </div>
+    </div>
+</div>
+}
+
+@section scripts {
+    <script src="~/Scripts/donutty-jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            $('select#SelectedName').on('change', function () {
+                var code = $(this).val();
+
+                $.ajax({
+                    url: '/MasterVendor/getById?code=' + code,
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data)
+                        $('input#subCont_VendorCode').val(data.vendorCode);
+                    }
+                })
+            })
+        })
+    </script>
+
+}
