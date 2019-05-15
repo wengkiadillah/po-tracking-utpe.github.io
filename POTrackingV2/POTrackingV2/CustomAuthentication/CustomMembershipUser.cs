@@ -17,6 +17,10 @@ namespace POTrackingV2.CustomAuthentication
         public Guid UserId { get; set; }
         public string Name { get; set; }
         public string Roles { get; set; }
+        
+        //public int Roles { get; set; }
+        //public int RolesType { get; set; }
+        //public string VendorCode { get; set; }
 
         #endregion
 
@@ -31,6 +35,9 @@ namespace POTrackingV2.CustomAuthentication
             UserId = user.ID;
             Name = user.Name;
             Roles = user.Role.Name;
+            //Roles = user.RoleID
+            //RolesType = user.RolesTypeID
+            //VendorCode = user.VendorCode
         }
 
         #endregion

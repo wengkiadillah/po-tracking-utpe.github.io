@@ -18,8 +18,11 @@ namespace POTrackingV2.Models
         public string Name { get; set; }
         public string EmployeeNumber { get; set; }
         public string Username { get; set; }
+        public string Password { get; set; }
         public string PIN { get; set; }
         public int RoleID { get; set; }
+        public Nullable<int> RolesTypeID { get; set; }
+        public string VendorCode { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }
         public System.DateTime Created { get; set; }
@@ -28,5 +31,6 @@ namespace POTrackingV2.Models
         public string LastModifiedBy { get; set; }
     
         public virtual Role Role { get; set; }
+        public virtual RolesType RolesType { get; set; }
     }
 }

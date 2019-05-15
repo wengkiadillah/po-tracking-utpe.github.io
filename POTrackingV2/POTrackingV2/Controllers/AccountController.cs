@@ -91,6 +91,10 @@ namespace POTrackingV2.Controllers
                                             UserId = user.UserId,
                                             Name = user.Name,
                                             Roles = user.Roles
+                                            //Roles = user.Roles,
+                                            //RolesType = user.RolesType,
+                                            //VendorCode = user.VendorCode
+
                                         };
 
                                         string userData = JsonConvert.SerializeObject(userModel);

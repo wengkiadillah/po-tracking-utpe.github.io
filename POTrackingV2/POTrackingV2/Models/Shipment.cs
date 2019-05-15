@@ -23,8 +23,7 @@ namespace POTrackingV2.Models
         public string PackingListDocument { get; set; }
         public string InvoiceDocument { get; set; }
         public string AWB { get; set; }
-        public string OriginalShippingDocumentReceipt { get; set; }
-        public Nullable<System.DateTime> DocsAcceptanceLCDate { get; set; }
+        public string CourierName { get; set; }
         public Nullable<System.DateTime> ETADate { get; set; }
         public Nullable<System.DateTime> ATADate { get; set; }
         public System.DateTime Created { get; set; }

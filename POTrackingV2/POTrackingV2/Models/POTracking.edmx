@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="POTracking.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="POTrackingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Capabilities">
           <Key>
             <PropertyRef Name="ID" />
@@ -204,7 +204,6 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastModified" Type="datetime" Nullable="false" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Shipment_HasInbound" Type="bit" />
         </EntityType>
         <EntityType Name="PurchasingDocumentItemHistory">
           <Key>
@@ -213,11 +212,13 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PurchasingDocumentItemID" Type="int" Nullable="false" />
           <Property Name="DeliveryDate" Type="datetime" />
+          <Property Name="PayTerms" Type="varchar" MaxLength="50" />
           <Property Name="GoodsReceiptDate" Type="datetime" />
           <Property Name="GoodsReceiptQuantity" Type="int" />
           <Property Name="MovementType" Type="int" />
           <Property Name="POHistoryCategory" Type="varchar" MaxLength="5" />
           <Property Name="DocumentNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Shipment_InboundNumber" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastModified" Type="datetime" Nullable="false" />
@@ -297,6 +298,13 @@
           <Property Name="LastModified" Type="datetime" Nullable="false" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <EntityType Name="RolesType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="SequencesProgressReasons">
           <Key>
             <PropertyRef Name="ID" />
@@ -321,8 +329,7 @@
           <Property Name="PackingListDocument" Type="varchar(max)" />
           <Property Name="InvoiceDocument" Type="varchar(max)" />
           <Property Name="AWB" Type="varchar" MaxLength="50" />
-          <Property Name="OriginalShippingDocumentReceipt" Type="varchar" MaxLength="50" />
-          <Property Name="DocsAcceptanceLCDate" Type="datetime" />
+          <Property Name="CourierName" Type="varchar" MaxLength="50" />
           <Property Name="ETADate" Type="datetime" />
           <Property Name="ATADate" Type="datetime" />
           <Property Name="Created" Type="datetime" Nullable="false" />
@@ -393,8 +400,11 @@
           <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="EmployeeNumber" Type="varchar" MaxLength="100" />
           <Property Name="Username" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="100" />
           <Property Name="PIN" Type="varchar(max)" Nullable="false" />
           <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="RolesTypeID" Type="int" />
+          <Property Name="VendorCode" Type="varchar" MaxLength="50" />
           <Property Name="Email" Type="varchar" MaxLength="100" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
@@ -713,6 +723,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Users_RolesType_RolesTypeID">
+          <End Role="RolesType" Type="Self.RolesType" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RolesType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="RolesTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Vendors_SubcontCategories_SubcontCategoryID">
           <End Role="SubcontCategories" Type="Self.SubcontCategories" Multiplicity="0..1" />
           <End Role="Vendors" Type="Self.Vendors" Multiplicity="*" />
@@ -725,7 +747,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="POTrackingStoreContainer">
+        <EntityContainer Name="POTrackingModelStoreContainer">
           <EntitySet Name="Capabilities" EntityType="Self.Capabilities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapabilityCategories" EntityType="Self.CapabilityCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DelayReason" EntityType="Self.DelayReason" Schema="dbo" store:Type="Tables" />
@@ -744,6 +766,7 @@
           <EntitySet Name="RawMaterialOrderProgressFiles" EntityType="Self.RawMaterialOrderProgressFiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RawMaterialOrders" EntityType="Self.RawMaterialOrders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RolesType" EntityType="Self.RolesType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SequencesProgressReasons" EntityType="Self.SequencesProgressReasons" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Shipment" EntityType="Self.Shipment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubcontCapabilities" EntityType="Self.SubcontCapabilities" Schema="dbo" store:Type="Tables" />
@@ -848,6 +871,10 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="FK_Users_RolesType_RolesTypeID" Association="Self.FK_Users_RolesType_RolesTypeID">
+            <End Role="RolesType" EntitySet="RolesType" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
           <AssociationSet Name="FK_Vendors_SubcontCategories_SubcontCategoryID" Association="Self.FK_Vendors_SubcontCategories_SubcontCategoryID">
             <End Role="SubcontCategories" EntitySet="SubcontCategories" />
             <End Role="Vendors" EntitySet="Vendors" />
@@ -857,7 +884,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="POTracking" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="POTrackingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Capability">
           <Key>
             <PropertyRef Name="ID" />
@@ -1070,7 +1097,6 @@
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Shipment_HasInbound" Type="Boolean" />
           <NavigationProperty Name="ETAHistories" Relationship="Self.FK_ETAHistory_PurchasingDocumentItem_PurchasingDocumentItemID" FromRole="PurchasingDocumentItem" ToRole="ETAHistory" />
           <NavigationProperty Name="Notifications" Relationship="Self.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" FromRole="PurchasingDocumentItem" ToRole="Notification" />
           <NavigationProperty Name="PO" Relationship="Self.FK_PurchasingDocumentItem_PO_POID" FromRole="PurchasingDocumentItem" ToRole="PO" />
@@ -1092,11 +1118,13 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PurchasingDocumentItemID" Type="Int32" Nullable="false" />
           <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
+          <Property Name="PayTerms" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="GoodsReceiptDate" Type="DateTime" Precision="3" />
           <Property Name="GoodsReceiptQuantity" Type="Int32" />
           <Property Name="MovementType" Type="Int32" />
           <Property Name="POHistoryCategory" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="DocumentNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Shipment_InboundNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
@@ -1186,6 +1214,14 @@
           <Property Name="LastModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Users" Relationship="Self.FK_Users_Roles" FromRole="Roles" ToRole="Users" />
         </EntityType>
+        <EntityType Name="RolesType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_Users_RolesType_RolesTypeID" FromRole="RolesType" ToRole="Users" />
+        </EntityType>
         <EntityType Name="SequencesProgressReason">
           <Key>
             <PropertyRef Name="ID" />
@@ -1214,8 +1250,7 @@
           <Property Name="PackingListDocument" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceDocument" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="AWB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OriginalShippingDocumentReceipt" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DocsAcceptanceLCDate" Type="DateTime" Precision="3" />
+          <Property Name="CourierName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ETADate" Type="DateTime" Precision="3" />
           <Property Name="ATADate" Type="DateTime" Precision="3" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
@@ -1291,8 +1326,11 @@
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="EmployeeNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Username" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="PIN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <Property Name="RolesTypeID" Type="Int32" />
+          <Property Name="VendorCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
@@ -1300,6 +1338,7 @@
           <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LastModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Role" Relationship="Self.FK_Users_Roles" FromRole="Users" ToRole="Roles" />
+          <NavigationProperty Name="RolesType" Relationship="Self.FK_Users_RolesType_RolesTypeID" FromRole="Users" ToRole="RolesType" />
         </EntityType>
         <EntityType Name="Vendor">
           <Key>
@@ -1592,6 +1631,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Users_RolesType_RolesTypeID">
+          <End Role="RolesType" Type="Self.RolesType" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RolesType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="RolesTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubcontCapabilities_Vendors_VendorCode">
           <End Role="Vendors" Type="Self.Vendor" Multiplicity="0..1" />
           <End Role="SubcontCapabilities" Type="Self.SubcontCapability" Multiplicity="*" />
@@ -1628,7 +1679,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="POTrackingEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Capabilities" EntityType="Self.Capability" />
           <EntitySet Name="CapabilityCategories" EntityType="Self.CapabilityCategory" />
           <EntitySet Name="DelayReasons" EntityType="Self.DelayReason" />
@@ -1647,6 +1698,7 @@
           <EntitySet Name="RawMaterialOrderProgressFiles" EntityType="Self.RawMaterialOrderProgressFile" />
           <EntitySet Name="RawMaterialOrders" EntityType="Self.RawMaterialOrder" />
           <EntitySet Name="Roles" EntityType="Self.Role" />
+          <EntitySet Name="RolesTypes" EntityType="Self.RolesType" />
           <EntitySet Name="SequencesProgressReasons" EntityType="Self.SequencesProgressReason" />
           <EntitySet Name="Shipments" EntityType="Self.Shipment" />
           <EntitySet Name="SubcontCapabilities" EntityType="Self.SubcontCapability" />
@@ -1743,6 +1795,10 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
+          <AssociationSet Name="FK_Users_RolesType_RolesTypeID" Association="Self.FK_Users_RolesType_RolesTypeID">
+            <End Role="RolesType" EntitySet="RolesTypes" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
           <AssociationSet Name="FK_SubcontCapabilities_Vendors_VendorCode" Association="Self.FK_SubcontCapabilities_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
             <End Role="SubcontCapabilities" EntitySet="SubcontCapabilities" />
@@ -1761,9 +1817,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="POTrackingStoreContainer" CdmEntityContainer="POTrackingEntities">
+        <EntityContainerMapping StorageEntityContainer="POTrackingModelStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="Capabilities">
-            <EntityTypeMapping TypeName="POTracking.Capability">
+            <EntityTypeMapping TypeName="POTrackingModel.Capability">
               <MappingFragment StoreEntitySet="Capabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1776,7 +1832,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="CapabilityCategories">
-            <EntityTypeMapping TypeName="POTracking.CapabilityCategory">
+            <EntityTypeMapping TypeName="POTrackingModel.CapabilityCategory">
               <MappingFragment StoreEntitySet="CapabilityCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1788,7 +1844,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DelayReasons">
-            <EntityTypeMapping TypeName="POTracking.DelayReason">
+            <EntityTypeMapping TypeName="POTrackingModel.DelayReason">
               <MappingFragment StoreEntitySet="DelayReason">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1800,7 +1856,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ETAHistories">
-            <EntityTypeMapping TypeName="POTracking.ETAHistory">
+            <EntityTypeMapping TypeName="POTrackingModel.ETAHistory">
               <MappingFragment StoreEntitySet="ETAHistory">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -1816,7 +1872,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="KompoCategories">
-            <EntityTypeMapping TypeName="POTracking.KompoCategory">
+            <EntityTypeMapping TypeName="POTrackingModel.KompoCategory">
               <MappingFragment StoreEntitySet="KompoCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1828,7 +1884,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Notifications">
-            <EntityTypeMapping TypeName="POTracking.Notification">
+            <EntityTypeMapping TypeName="POTrackingModel.Notification">
               <MappingFragment StoreEntitySet="Notification">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -1846,7 +1902,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="NotificationStatus">
-            <EntityTypeMapping TypeName="POTracking.NotificationStatu">
+            <EntityTypeMapping TypeName="POTrackingModel.NotificationStatu">
               <MappingFragment StoreEntitySet="NotificationStatus">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1858,7 +1914,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="POes">
-            <EntityTypeMapping TypeName="POTracking.PO">
+            <EntityTypeMapping TypeName="POTrackingModel.PO">
               <MappingFragment StoreEntitySet="PO">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Number" ColumnName="Number" />
@@ -1897,7 +1953,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProductionSequenceDatas">
-            <EntityTypeMapping TypeName="POTracking.ProductionSequenceData">
+            <EntityTypeMapping TypeName="POTrackingModel.ProductionSequenceData">
               <MappingFragment StoreEntitySet="ProductionSequenceData">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -1913,7 +1969,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProgressPhotoes">
-            <EntityTypeMapping TypeName="POTracking.ProgressPhoto">
+            <EntityTypeMapping TypeName="POTrackingModel.ProgressPhoto">
               <MappingFragment StoreEntitySet="ProgressPhoto">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -1927,7 +1983,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PurchasingDocumentItems">
-            <EntityTypeMapping TypeName="POTracking.PurchasingDocumentItem">
+            <EntityTypeMapping TypeName="POTrackingModel.PurchasingDocumentItem">
               <MappingFragment StoreEntitySet="PurchasingDocumentItem">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="POID" ColumnName="POID" />
@@ -1970,21 +2026,22 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
-                <ScalarProperty Name="Shipment_HasInbound" ColumnName="Shipment_HasInbound" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PurchasingDocumentItemHistories">
-            <EntityTypeMapping TypeName="POTracking.PurchasingDocumentItemHistory">
+            <EntityTypeMapping TypeName="POTrackingModel.PurchasingDocumentItemHistory">
               <MappingFragment StoreEntitySet="PurchasingDocumentItemHistory">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
                 <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
+                <ScalarProperty Name="PayTerms" ColumnName="PayTerms" />
                 <ScalarProperty Name="GoodsReceiptDate" ColumnName="GoodsReceiptDate" />
                 <ScalarProperty Name="GoodsReceiptQuantity" ColumnName="GoodsReceiptQuantity" />
                 <ScalarProperty Name="MovementType" ColumnName="MovementType" />
                 <ScalarProperty Name="POHistoryCategory" ColumnName="POHistoryCategory" />
                 <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
+                <ScalarProperty Name="Shipment_InboundNumber" ColumnName="Shipment_InboundNumber" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
@@ -1993,7 +2050,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="QualityControlProgresses">
-            <EntityTypeMapping TypeName="POTracking.QualityControlProgress">
+            <EntityTypeMapping TypeName="POTrackingModel.QualityControlProgress">
               <MappingFragment StoreEntitySet="QualityControlProgress">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
@@ -2007,7 +2064,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderDetails">
-            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderDetail">
+            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderDetail">
               <MappingFragment StoreEntitySet="RawMaterialOrderDetails">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="RawMaterialName" ColumnName="RawMaterialName" />
@@ -2021,7 +2078,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderPoFiles">
-            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderPoFile">
+            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderPoFile">
               <MappingFragment StoreEntitySet="RawMaterialOrderPoFiles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -2034,7 +2091,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderProgressFiles">
-            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderProgressFile">
+            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderProgressFile">
               <MappingFragment StoreEntitySet="RawMaterialOrderProgressFiles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -2047,7 +2104,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrders">
-            <EntityTypeMapping TypeName="POTracking.RawMaterialOrder">
+            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrder">
               <MappingFragment StoreEntitySet="RawMaterialOrders">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentsItemID" ColumnName="PurchasingDocumentsItemID" />
@@ -2061,7 +2118,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roles">
-            <EntityTypeMapping TypeName="POTracking.Role">
+            <EntityTypeMapping TypeName="POTrackingModel.Role">
               <MappingFragment StoreEntitySet="Roles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2072,8 +2129,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="RolesTypes">
+            <EntityTypeMapping TypeName="POTrackingModel.RolesType">
+              <MappingFragment StoreEntitySet="RolesType">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="SequencesProgressReasons">
-            <EntityTypeMapping TypeName="POTracking.SequencesProgressReason">
+            <EntityTypeMapping TypeName="POTrackingModel.SequencesProgressReason">
               <MappingFragment StoreEntitySet="SequencesProgressReasons">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2085,7 +2150,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Shipments">
-            <EntityTypeMapping TypeName="POTracking.Shipment">
+            <EntityTypeMapping TypeName="POTrackingModel.Shipment">
               <MappingFragment StoreEntitySet="Shipment">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2096,8 +2161,7 @@
                 <ScalarProperty Name="PackingListDocument" ColumnName="PackingListDocument" />
                 <ScalarProperty Name="InvoiceDocument" ColumnName="InvoiceDocument" />
                 <ScalarProperty Name="AWB" ColumnName="AWB" />
-                <ScalarProperty Name="OriginalShippingDocumentReceipt" ColumnName="OriginalShippingDocumentReceipt" />
-                <ScalarProperty Name="DocsAcceptanceLCDate" ColumnName="DocsAcceptanceLCDate" />
+                <ScalarProperty Name="CourierName" ColumnName="CourierName" />
                 <ScalarProperty Name="ETADate" ColumnName="ETADate" />
                 <ScalarProperty Name="ATADate" ColumnName="ATADate" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -2108,7 +2172,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontCapabilities">
-            <EntityTypeMapping TypeName="POTracking.SubcontCapability">
+            <EntityTypeMapping TypeName="POTrackingModel.SubcontCapability">
               <MappingFragment StoreEntitySet="SubcontCapabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
@@ -2121,7 +2185,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontCategories">
-            <EntityTypeMapping TypeName="POTracking.SubcontCategory">
+            <EntityTypeMapping TypeName="POTrackingModel.SubcontCategory">
               <MappingFragment StoreEntitySet="SubcontCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2133,7 +2197,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontComponentCapabilities">
-            <EntityTypeMapping TypeName="POTracking.SubcontComponentCapability">
+            <EntityTypeMapping TypeName="POTrackingModel.SubcontComponentCapability">
               <MappingFragment StoreEntitySet="SubcontComponentCapabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
@@ -2156,7 +2220,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="POTracking.sysdiagram">
+            <EntityTypeMapping TypeName="POTrackingModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -2167,14 +2231,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="POTracking.User">
+            <EntityTypeMapping TypeName="POTrackingModel.User">
               <MappingFragment StoreEntitySet="Users">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="EmployeeNumber" ColumnName="EmployeeNumber" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="PIN" ColumnName="PIN" />
                 <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="RolesTypeID" ColumnName="RolesTypeID" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -2185,7 +2252,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Vendors">
-            <EntityTypeMapping TypeName="POTracking.Vendor">
+            <EntityTypeMapping TypeName="POTrackingModel.Vendor">
               <MappingFragment StoreEntitySet="Vendors">
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
