@@ -23,7 +23,7 @@ namespace POTrackingV2.Controllers
             try
             {
                 //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
-                var vendorSubcont = db.SubcontComponentCapabilities.Select(x=> x.VendorCode).Distinct();
+                var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
 
                 var pOes = db.POes.AsQueryable();
 
@@ -35,7 +35,7 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     //pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null)).OrderBy(x => x.Number);
-                    pOes = pOes.Where(po => (po.Type.ToLower()=="zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
 
                 ViewBag.CurrentData = searchData;
@@ -115,7 +115,7 @@ namespace POTrackingV2.Controllers
         #endregion
 
         #region Stage 1
-        
+
         [HttpPost]
         public ActionResult SaveAllPOItem(string role, List<PurchasingDocumentItem> purchasingDocumentItems, List<PurchasingDocumentItem> purchasingDocumentItemChilds)
         {
@@ -145,38 +145,39 @@ namespace POTrackingV2.Controllers
                         {
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == item.PO.VendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
-                            
+
                             Existed_PDI.ConfirmedItem = true;
-                            if (scc.isNeedSequence==true)
+                            if (scc.isNeedSequence == true)
                             {
                                 Existed_PDI.ActiveStage = "2";
                                 notification.Stage = "2";
+                                notification.Role = "vendor";
                             }
                             else
                             {
-                                if(item.ConfirmedQuantity>0 && item.ConfirmedQuantity <= totalItemGR)
+                                if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
                                 {
                                     Existed_PDI.ActiveStage = "5";
                                     notification.Stage = "5";
+                                    notification.Role = "vendor";
                                 }
                                 else
                                 {
                                     Existed_PDI.ActiveStage = "4";
                                     notification.Stage = "4";
+                                    notification.Role = "procurement";
                                 }
                             }
 
-                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
+                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
                             if (Existed_notification != null)
                             {
                                 Existed_notification.isActive = false;
                                 Existed_notification.Modified = now;
                                 Existed_notification.ModifiedBy = User.Identity.Name;
                             }
-                            
-                            notification.Role = "vendor";
                         }
-                        
+
                         Existed_PDI.LastModified = now;
                         Existed_PDI.LastModifiedBy = User.Identity.Name;
 
@@ -185,7 +186,7 @@ namespace POTrackingV2.Controllers
                         notification.CreatedBy = User.Identity.Name;
                         notification.Modified = now;
                         notification.ModifiedBy = User.Identity.Name;
-                        
+
                         if (role == "vendor")
                         {
                             // Child clean-up
@@ -242,7 +243,7 @@ namespace POTrackingV2.Controllers
                             purchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             db.PurchasingDocumentItems.Add(purchasingDocumentItem);
                             //arrayDataChild.Add(purchasingDocumentItem);
-                            
+
                             notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
                             notificationChild.StatusID = 3;
                             notificationChild.Stage = "1";
@@ -250,7 +251,7 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            Notification Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID).FirstOrDefault();
+                            Notification Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 3).FirstOrDefault();
                             if (Existed_notificationChild != null)
                             {
                                 Existed_notificationChild.isActive = false;
@@ -263,11 +264,12 @@ namespace POTrackingV2.Controllers
                             int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                             Existed_child.ConfirmedItem = true;
-                            
+
                             if (scc.isNeedSequence == true)
                             {
                                 Existed_child.ActiveStage = "2";
                                 notificationChild.Stage = "2";
+                                notificationChild.Role = "vendor";
                             }
                             else
                             {
@@ -275,15 +277,15 @@ namespace POTrackingV2.Controllers
                                 {
                                     Existed_child.ActiveStage = "6";
                                     notificationChild.Stage = "6";
+                                    notificationChild.Role = "vendor";
                                 }
                                 else
                                 {
                                     Existed_child.ActiveStage = "4";
-                                    notificationChild.Stage = "2";
+                                    notificationChild.Stage = "4";
+                                    notificationChild.Role = "procurement";
                                 }
                             }
-                            
-                            notificationChild.Role = "vendor";
                         }
 
                         notificationChild.isActive = true;
@@ -332,6 +334,14 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
+                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                            if (Existed_notification != null)
+                            {
+                                Existed_notification.isActive = false;
+                                Existed_notification.Modified = now;
+                                Existed_notification.ModifiedBy = User.Identity.Name;
+                            }
+
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == item.PO.VendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
@@ -341,6 +351,7 @@ namespace POTrackingV2.Controllers
                             {
                                 Existed_PDI.ActiveStage = "2";
                                 notification.Stage = "2";
+                                notification.Role = "vendor";
                             }
                             else
                             {
@@ -348,15 +359,15 @@ namespace POTrackingV2.Controllers
                                 {
                                     Existed_PDI.ActiveStage = "6";
                                     notification.Stage = "6";
+                                    notification.Role = "vendor";
                                 }
                                 else
                                 {
                                     Existed_PDI.ActiveStage = "4";
                                     notification.Stage = "4";
+                                    notification.Role = "procurement";
                                 }
                             }
-                            
-                            notification.Role = "vendor";
                         }
                         Existed_PDI.LastModified = now;
                         Existed_PDI.LastModifiedBy = User.Identity.Name;
@@ -448,6 +459,14 @@ namespace POTrackingV2.Controllers
             {
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
 
+                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                if (Existed_notification != null)
+                {
+                    Existed_notification.isActive = false;
+                    Existed_notification.Modified = now;
+                    Existed_notification.ModifiedBy = User.Identity.Name;
+                }
+
                 Notification notification = new Notification();
                 notification.PurchasingDocumentItemID = Existed_PDI.ID;
 
@@ -481,6 +500,7 @@ namespace POTrackingV2.Controllers
                         {
                             Existed_PDI.ActiveStage = "2";
                             notification.Stage = "2";
+                            notification.Role = "vendor";
                         }
                         else
                         {
@@ -488,15 +508,17 @@ namespace POTrackingV2.Controllers
                             {
                                 Existed_PDI.ActiveStage = "5";
                                 notification.Stage = "5";
+                                notification.Role = "vendor";
                             }
                             else
                             {
                                 Existed_PDI.ActiveStage = "4";
-                                notification.Stage = "2";
+                                notification.Stage = "4";
+                                notification.Role = "procurement";
                             }
                         }
-                        
-                        notification.Role = "vendor";
+
+
                     }
                 }
                 Existed_PDI.LastModified = now;
@@ -530,6 +552,7 @@ namespace POTrackingV2.Controllers
             {
                 PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
                 SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material && x.VendorCode == purchasingDocumentItem.PO.VendorCode).FirstOrDefault();
+
                 bool isDisabled = false;
                 bool isEditable = false;
                 int pb = 0;
@@ -564,10 +587,9 @@ namespace POTrackingV2.Controllers
                     isDisabled = true;
                 }
 
-
                 if (subcontComponentCapability != null)
                 {
-                    return Json(new { success = true, responseCode = "200", responseText = "OK", arrayDataTime = new { LeadTime = leadTime ,PB = pb, Setting = setting, Fullweld = fullweld, Primer = primer }, isDisabled = isDisabled, isEditable = isEditable }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, responseCode = "200", responseText = "OK", arrayDataTime = new { LeadTime = leadTime, PB = pb, Setting = setting, Fullweld = fullweld, Primer = primer }, isDisabled = isDisabled, isEditable = isEditable }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -591,6 +613,14 @@ namespace POTrackingV2.Controllers
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
                 //SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material).FirstOrDefault();
 
+                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                if (Existed_notification != null)
+                {
+                    Existed_notification.isActive = false;
+                    Existed_notification.Modified = now;
+                    Existed_notification.ModifiedBy = User.Identity.Name;
+                }
+
                 Existed_PDI.ActiveStage = "3";
                 Existed_PDI.PB = pb;
                 Existed_PDI.Setting = setting;
@@ -598,6 +628,31 @@ namespace POTrackingV2.Controllers
                 Existed_PDI.Primer = primer;
                 Existed_PDI.LastModified = now;
                 Existed_PDI.LastModifiedBy = User.Identity.Name;
+
+                Notification notificationTaskSubcontDev = new Notification();
+                notificationTaskSubcontDev.PurchasingDocumentItemID = Existed_PDI.ID;
+                notificationTaskSubcontDev.StatusID = 1;
+                notificationTaskSubcontDev.Stage = "3";
+                notificationTaskSubcontDev.Role = "Vendor";
+                notificationTaskSubcontDev.isActive = true;
+                notificationTaskSubcontDev.Created = now;
+                notificationTaskSubcontDev.CreatedBy = User.Identity.Name;
+                notificationTaskSubcontDev.Modified = now;
+                notificationTaskSubcontDev.ModifiedBy = User.Identity.Name;
+                db.Notifications.Add(notificationTaskSubcontDev);
+
+                Notification notificationInfoProcurement = new Notification();
+                notificationInfoProcurement.PurchasingDocumentItemID = Existed_PDI.ID;
+                notificationInfoProcurement.StatusID = 1;
+                notificationInfoProcurement.Stage = "2";
+                notificationInfoProcurement.Role = "procurement";
+                notificationInfoProcurement.isActive = true;
+                notificationInfoProcurement.Created = now;
+                notificationInfoProcurement.CreatedBy = User.Identity.Name;
+                notificationInfoProcurement.Modified = now;
+                notificationInfoProcurement.ModifiedBy = User.Identity.Name;
+                db.Notifications.Add(notificationInfoProcurement);
+
                 db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
@@ -628,7 +683,7 @@ namespace POTrackingV2.Controllers
                 int primer = purchasingDocumentItem.PB.HasValue ? purchasingDocumentItem.PB.Value : 0;
 
                 int leadTime = subcontComponentCapability != null ? (subcontComponentCapability.PB + subcontComponentCapability.Setting + subcontComponentCapability.Fullweld + subcontComponentCapability.Primer) : 0;
-                
+
                 int fullweldDays = primer;
                 int settingDays = fullweld + fullweldDays;
                 int pbDays = setting + settingDays;
@@ -651,7 +706,7 @@ namespace POTrackingV2.Controllers
 
                 if (purchasingDocumentItem != null)
                 {
-                    return Json(new { success = true, responseCode = "200", responseText = "OK", arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID} }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, responseCode = "200", responseText = "OK", arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID } }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -674,8 +729,15 @@ namespace POTrackingV2.Controllers
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).SingleOrDefault();
                 int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
                 //List<ProgressPhoto> Existed_Attachments = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID).ToList();
-
                 //SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material).FirstOrDefault();
+
+                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                if (Existed_notification != null)
+                {
+                    Existed_notification.isActive = false;
+                    Existed_notification.Modified = now;
+                    Existed_notification.ModifiedBy = User.Identity.Name;
+                }
 
                 foreach (var invoice in invoices)
                 {
@@ -712,7 +774,7 @@ namespace POTrackingV2.Controllers
                     progress.LastModified = now;
                     progress.LastModifiedBy = User.Identity.Name;
                     progress.ProcessName = processName;
-                    
+
                     db.ProgressPhotoes.Add(progress);
                 }
 
@@ -731,11 +793,59 @@ namespace POTrackingV2.Controllers
                 //{
                 if (Existed_PDI.ConfirmedQuantity == totalItemGR && (Existed_PDI.PBActualDate != null && Existed_PDI.SettingActualDate != null && Existed_PDI.FullweldActualDate != null && Existed_PDI.PrimerActualDate != null))
                 {
+                    Notification notification = new Notification();
+                    notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                    notification.StatusID = 3;
+                    notification.Stage = "6";
+                    notification.Role = "vendor";
+                    notification.isActive = true;
+                    notification.Created = now;
+                    notification.CreatedBy = User.Identity.Name;
+                    notification.Modified = now;
+                    notification.ModifiedBy = User.Identity.Name;
+                    db.Notifications.Add(notification);
                     Existed_PDI.ActiveStage = "6";
                 }
-                else if(Existed_PDI.PBActualDate != null && Existed_PDI.SettingActualDate != null && Existed_PDI.FullweldActualDate != null && Existed_PDI.PrimerActualDate != null)
+                else if (Existed_PDI.PBActualDate != null && Existed_PDI.SettingActualDate != null && Existed_PDI.FullweldActualDate != null && Existed_PDI.PrimerActualDate != null)
                 {
+                    Notification notification = new Notification();
+                    notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                    notification.StatusID = 3;
+                    notification.Stage = "4";
+                    notification.Role = "procurement";
+                    notification.isActive = true;
+                    notification.Created = now;
+                    notification.CreatedBy = User.Identity.Name;
+                    notification.Modified = now;
+                    notification.ModifiedBy = User.Identity.Name;
+                    db.Notifications.Add(notification);
                     Existed_PDI.ActiveStage = "4";
+                }
+                else
+                {
+                    Notification notificationInfoProcurement = new Notification();
+                    notificationInfoProcurement.PurchasingDocumentItemID = Existed_PDI.ID;
+                    notificationInfoProcurement.StatusID = 1;
+                    notificationInfoProcurement.Stage = "3";
+                    notificationInfoProcurement.Role = "procurement";
+                    notificationInfoProcurement.isActive = true;
+                    notificationInfoProcurement.Created = now;
+                    notificationInfoProcurement.CreatedBy = User.Identity.Name;
+                    notificationInfoProcurement.Modified = now;
+                    notificationInfoProcurement.ModifiedBy = User.Identity.Name;
+                    db.Notifications.Add(notificationInfoProcurement);
+
+                    Notification notification = new Notification();
+                    notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                    notification.StatusID = 3;
+                    notification.Stage = "3";
+                    notification.Role = "Vendor";
+                    notification.isActive = true;
+                    notification.Created = now;
+                    notification.CreatedBy = User.Identity.Name;
+                    notification.Modified = now;
+                    notification.ModifiedBy = User.Identity.Name;
+                    db.Notifications.Add(notification);
                 }
                 //}
 
@@ -788,7 +898,7 @@ namespace POTrackingV2.Controllers
             {
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).SingleOrDefault();
                 List<PurchasingDocumentItem> Existed_PDIChilds = db.PurchasingDocumentItems.Where(x => x.ParentID == pdItemID).ToList();
-                
+
                 Existed_PDI.InvoiceMethod = invoiceMethod;
                 Existed_PDI.LastModified = now;
                 Existed_PDI.LastModifiedBy = User.Identity.Name;
@@ -799,7 +909,19 @@ namespace POTrackingV2.Controllers
                     existed_PDIChild.LastModified = now;
                     existed_PDIChild.LastModifiedBy = User.Identity.Name;
                 }
-                
+
+                Notification notification = new Notification();
+                notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                notification.StatusID = 1;
+                notification.Stage = "5";
+                notification.Role = "procurement";
+                notification.isActive = true;
+                notification.Created = now;
+                notification.CreatedBy = User.Identity.Name;
+                notification.Modified = now;
+                notification.ModifiedBy = User.Identity.Name;
+                db.Notifications.Add(notification);
+
                 db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
@@ -894,52 +1016,52 @@ namespace POTrackingV2.Controllers
             {
                 //if (databasePurchasingDocumentItem.ActiveStage != "2a")
                 //{
-                    if (databasePurchasingDocumentItem.ActiveStageToNumber > 3)
+                if (databasePurchasingDocumentItem.ActiveStageToNumber > 3)
+                {
+                    if (databasePurchasingDocumentItem.InvoiceDocument != null)
                     {
-                        if (databasePurchasingDocumentItem.InvoiceDocument != null)
+                        string user = User.Identity.Name;
+
+                        string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/Invoice"), databasePurchasingDocumentItem.InvoiceDocument);
+
+                        System.IO.File.Delete(pathWithfileName);
+
+                        databasePurchasingDocumentItem.InvoiceDocument = null;
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
+                        foreach (var previousNotification in previousNotifications)
                         {
-                            string user = User.Identity.Name;
-
-                            string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/Invoice"), databasePurchasingDocumentItem.InvoiceDocument);
-
-                            System.IO.File.Delete(pathWithfileName);
-
-                            databasePurchasingDocumentItem.InvoiceDocument = null;
-                            databasePurchasingDocumentItem.LastModified = now;
-                            databasePurchasingDocumentItem.LastModifiedBy = user;
-
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID==3).ToList();
-                            foreach (var previousNotification in previousNotifications)
-                            {
-                                previousNotification.isActive = false;
-                            }
-
-                            Notification notification = new Notification();
-                            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 2;
-                            notification.Stage = "6";
-                            notification.Role = "procurement";
-                            notification.isActive = true;
-                            notification.Created = now;
-                            notification.CreatedBy = User.Identity.Name;
-                            notification.Modified = now;
-                            notification.ModifiedBy = User.Identity.Name;
-
-                            db.Notifications.Add(notification);
-
-                            db.SaveChanges();
-
-                            return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
+                            previousNotification.isActive = false;
                         }
-                        else
-                        {
-                            return Json(new { responseText = $"File not uploaded 4" }, JsonRequestBehavior.AllowGet);
-                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 2;
+                        notification.Stage = "6";
+                        notification.Role = "procurement";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        db.SaveChanges();
+
+                        return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {
-                        return Json(new { responseText = $"File not uploaded 5" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
                     }
+                }
+                else
+                {
+                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                }
                 //}
                 //else
                 //{

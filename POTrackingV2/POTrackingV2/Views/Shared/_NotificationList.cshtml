@@ -247,25 +247,35 @@
                                 /*-------------------------------------------------------------BEGIN SUBCONT----------------------------------------------------------*/
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
-                                }else if (stage == "1") {
+                                } else if (stage == "1") {
                                     //if (confirmedItem == true) {
                                     //    message += " asked to update ETA for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     //} else
                                     if (confirmedItem == false) {
                                         message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
-                                    }else if (POQty != null) {
+                                    } else if (POQty != null) {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     }
-                                } else if(stage == "2"){
-                                    message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
-                                } else if (stage == "3") {
+                                } else if (stage == "2") {
                                     if (statusID == 3) {
                                         message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     } else {
                                         message += " has updated Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
+                                } else if (stage == "3") {
+                                    if (statusID == 3) {
+                                        message += " asked to update Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    } else {
+                                        assignedFrom = "";
+                                        message += " has updated Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    }
                                 } else if (stage == "4") {
-                                    message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    if (statusID == 3) {
+                                        message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    }
+                                    //else {
+                                    //    message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    //}
                                 } else if (stage == "5") {
                                     if (statusID == 3) {
                                         message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
