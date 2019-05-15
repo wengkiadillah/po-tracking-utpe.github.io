@@ -2430,7 +2430,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         //$(".open-edit-sequences").attr("disabled", "disabled");
                         //$(".sequences-modal").removeClass("open-edit-sequences");
                         if (typeof ($("#sequencesModal").attr("child")) === "undefined" || typeof ($("#sequencesModal").attr("child")) === "NaN") {
-                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + " .input-progress").removeAttr("disabled");
+                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
                         } else {
                             stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + "-" + $("#sequencesModal").attr("child") + " .input-progress").removeAttr("disabled");
                         }
