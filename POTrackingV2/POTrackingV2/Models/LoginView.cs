@@ -26,10 +26,10 @@ namespace POTrackingV2.Models
     {
         public Guid UserId { get; set; }
         public string Name { get; set; }
-        public string Roles { get; set; }
-        //public int Roles { get; set; }
-        //public int RolesType { get; set; }
-        //public string VendorCode { get; set; }
+        //public string Roles { get; set; }
+        public int Roles { get; set; }
+        public int RolesType { get; set; }
+        public string VendorCode { get; set; }
 
     }
 
