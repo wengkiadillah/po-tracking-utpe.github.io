@@ -450,6 +450,7 @@
     <Content Include="Views\ReasonSubCont\Details.cshtml" />
     <Content Include="Views\ReasonSubCont\Edit.cshtml" />
     <Content Include="Views\ReasonSubCont\Index.cshtml" />
+    <Content Include="Views\DelayReason\IndexDelay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

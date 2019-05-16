@@ -56,7 +56,7 @@ $(".st7-on-airport-confirm").on("click", function (obj) {
         if (inputATAOnAirport.val() !== '' && !isNaN(ataOnAirport.getTime())) {
             $.ajax({
                 type: "POST",
-                url: "/Import/ProcurementConfirmOnAirport",
+                url: "ProcurementConfirmOnAirport",
                 data: JSON.stringify({ 'inputShipments': inputShipments }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -145,7 +145,7 @@ $(".st7-confirm-all-on-airport").on("click", function (obj) {
     if (inputShipments.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementConfirmOnAirport",
+            url: "ProcurementConfirmOnAirport",
             data: JSON.stringify({ 'inputShipments': inputShipments }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

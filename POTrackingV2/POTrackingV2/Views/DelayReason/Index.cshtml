@@ -4,147 +4,37 @@
     ViewBag.Title = "Index";
 }
 
-@section styles {
-    <link href="~/Content/um-style.css" rel="stylesheet" />
-}
+<h2>DelayReason</h2>
 
-    <div class="um">
-        <h1>Delay Reason</h1>
-        <div class="filter-row  mt-0">
-            <div class="form-group mr-4" style="visibility:hidden;">
-                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" />
-                <i class="fas fa-search form-type-icon hint"></i>
-            </div>
-            <select id="searchBy" name="searchBy" class="form-control form-control-lg mr-4" style="visibility:hidden;" value="@ViewBag.CurrentSearchFilterBy">
-                <option value="vendorCode">Vendor Code</option>
-                <option value="description">Description</option>
-            </select>
-            <button type="submit" class="btn btn-info mr-3" style="visibility:hidden;">Find</button>
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#createModal" onclick="addDelay()"><a href="#" style="color:white;">Create New</a></button>
-            </div>
-        </div>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>Action</th>
+    </tr>
 
-        <table id="tableDelayReason" class="table table-striped table-bordered" style="width:100%">
-            @*<tr style="background-color:#17A2B8;color:white;">*@
-                <th>
-                    No
-                </th>
-                <th>
-                    Nama
-                </th>
-                <th>Action</th>
-            </tr>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+        </td>
+    </tr>
+    }
 
-            @foreach (var item in Model)
-            {
-                <tr style="background-color:white;">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        <span>
-                            <a class="col-xs-2" href="@Url.Action("Details", "DelayReason", new { id = item.ID })" alt="Details">
-                                <i class="fa fa-info-circle fa-lg"></i>
-                            </a>
-                        </span>
-                        <span>
-                            <button class="col-xs-2 special" href="@Url.Action("Delete", "DelayReason", new { id = item.ID })" data-toggle="modal" data-target="#editModal">
-                                <i class="fa fa-edit fa-lg"></i>
-                            </button>
-                        </span>
-                        <span>
-                            <button class="col-xs-2 special" href="@Url.Action("Delete", "DelayReason", new { id = item.ID })" data-toggle="modal" data-target="#deleteModal" style="color:orangered;">
-                                <i class="fa fa-trash fa-lg"></i>
-                            </button>
-                        </span>
-                    </td>
-                </tr>
-            }
-
-        </table>
-
-
-        @* Create Modal *@
-        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    @using (Html.BeginForm("Create", "DelayReason", FormMethod.Post, new { @id = "formsubmit" }))
-                    {
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Create New Item</h5>
-                            <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <label for="name" class="col-md-3 mr-3"> Name  </label>
-                                <input type="text" class="col-md-8" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="hidden" id="item-CreateDelayReason">
-                            <button id="" type="button" class="btn btn-positive w-100" style="visibility:hidden;">Edit</button>
-                            <button id="btnCreateDelayReason" type="submit" class="btn btn-positive w-100">Create</button>
-                        </div>
-
-                    }
-                </div>
-            </div>
-        </div>
-        @* Create Modal *@
-
-        @* Edit Modal *@
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
-                        <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <label for="name" class="col-md-3 mr-3"> Name  </label>
-                            <input type="text" class="col-md-8" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" id="item-EditDelayReason">
-                        <button id="" type="button" class="btn btn-positive w-100" style="visibility:hidden;">Edit</button>
-                        <button id="btnEditDelayReason" type="button" class="btn btn-positive w-100">Update</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @* Edit Modal *@
-
-        @* Delete Modal *@
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
-                        <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are You Sure To Delete This Item?
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" id="item-deleteDelayReason">
-                        <button id="" type="button" class="btn btn-positive w-100" style="visibility:hidden;">Edit</button>
-                        <button id="btnDeleteDelayReason" type="button" class="btn btn-positive w-100">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @* Delete Modal *@
-    </div>
-
+</table>

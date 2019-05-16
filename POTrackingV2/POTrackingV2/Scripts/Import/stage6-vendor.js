@@ -22,7 +22,7 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
 
     $.ajax({
         type: "POST",
-        url: "/Import/GetShippingInformation",
+        url: "GetShippingInformation",
         data: JSON.stringify({ 'myPurchasingDocumentItemId': myPurchasingDocumentItemId }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {
@@ -182,7 +182,7 @@ $(".st6-fill-the-form").on("click", function (obj) {
                             if (!isNaN(docsAcceptanceLCDate.getTime()) && inputDocsAcceptanceLCDate.val() !== '') {
                                 $.ajax({
                                     type: "POST",
-                                    url: "/Import/VendorFillInShipmentForm",
+                                    url: "VendorFillInShipmentForm",
                                     data: formData,
                                     cache: false,
                                     contentType: false,

@@ -86,7 +86,7 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
         if (shipBookingDate <= maxDate) {
             $.ajax({
                 type: "POST",
-                url: "/Import/VendorConfirmShipmentBookingDate",
+                url: "VendorConfirmShipmentBookingDate",
                 data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -151,7 +151,7 @@ $(".st5-ATD-confirm").on("click", function (obj) {
 
         $.ajax({
             type: "POST",
-            url: "/Import/VendorConfirmATD",
+            url: "VendorConfirmATD",
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -263,7 +263,7 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentBookDates.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorConfirmShipmentBookingDate",
+            url: "VendorConfirmShipmentBookingDate",
             data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -290,7 +290,7 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentATDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorConfirmATD",
+            url: "VendorConfirmATD",
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
