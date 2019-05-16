@@ -221,7 +221,3 @@ $(".edit-row-st2").on("click", function (obj) {
 
 // Helper
 
-function reverseDayMonth(monthDayYearDate) {
-    var dateParts = monthDayYearDate.split("/");
-    return new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
-}
