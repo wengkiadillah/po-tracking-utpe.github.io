@@ -126,7 +126,7 @@
                             var shipmentCopyBLDate = jsonObj[k]['ShipmentCopyBLDate'];
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
                             created = new Date(created);
-                            var url = "/"+POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                            var url = "~/"+POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                             message = "";
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
