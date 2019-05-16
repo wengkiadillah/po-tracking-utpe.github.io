@@ -191,7 +191,9 @@ $(".st1-accept-item").on("click", function (obj) {
         if (validateMinQuantity === true) {
             if (validateDate === true) {
                 if (isEdit === "false") {
-                    $.ajax({
+                    $.
+                        
+                        ({
                         type: "POST",
                         url: "VendorConfirmItem",
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
