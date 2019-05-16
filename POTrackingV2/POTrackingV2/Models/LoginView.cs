@@ -8,9 +8,6 @@ namespace POTrackingV2.Models
 {
     public class LoginView
     {
-        [Required]
-        [Display(Name = "User Type")]
-        public int UserType { get; set; }
 
         [Required]
         [Display(Name = "User Name")]

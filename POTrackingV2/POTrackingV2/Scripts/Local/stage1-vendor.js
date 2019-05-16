@@ -248,7 +248,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
     if (inputPurchasingDocumentItems.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Local/VendorConfirmQuantity",
+            url: "VendorConfirmQuantity",
             data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -409,7 +409,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 if (isEdit === "false") {
                     $.ajax({
                         type: "POST",
-                        url: "/Local/VendorConfirmQuantity",
+                        url: "VendorConfirmQuantity",
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -446,7 +446,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 else {
                     $.ajax({
                         type: "POST",
-                        url: "/Local/VendorEditItem",
+                        url: "VendorEditItem",
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -518,7 +518,7 @@ $(".st1-cancel-item").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Local/CancelItem",
+        url: "CancelItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {

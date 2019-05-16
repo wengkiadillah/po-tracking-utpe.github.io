@@ -64,7 +64,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/ProcurementConfirmItem",
+        url: "ProcurementConfirmItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -159,7 +159,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/ProcurementConfirmItem",
+        url: "ProcurementConfirmItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -212,7 +212,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/CancelItem",
+        url: "CancelItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {
