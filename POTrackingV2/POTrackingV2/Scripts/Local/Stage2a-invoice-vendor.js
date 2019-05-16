@@ -22,7 +22,7 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
     if (inputFileProformaInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Local/VendorUploadInvoice",
+            url: "VendorUploadInvoice",
             data: formData,
             processData: false,
             contentType: false,
@@ -71,7 +71,7 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
     if (itemID !== null) {
         $.ajax({
             type: "POST",
-            url: "/Local/VendorSkipPI",
+            url: "VendorSkipPI",
             data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
