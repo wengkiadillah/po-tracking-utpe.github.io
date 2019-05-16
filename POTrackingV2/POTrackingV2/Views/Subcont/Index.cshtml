@@ -2333,7 +2333,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 //dataType: "json",
                 success: function (response) {
                     $("#LeadTime").text(response.arrayDataTime['LeadTime'])
-
                     if (response.responseCode == "200") {
                         console.log(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
                         $("#PB").val(response.arrayDataTime['PB']);

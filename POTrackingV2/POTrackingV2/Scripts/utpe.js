@@ -14,6 +14,9 @@ userAvatar = userNameWords.reduce((accumulator, currentValue, currentIndex, arra
 //menu item selected
 var path = window.location.pathname;
 if (path.split('/').length > 2) {
+    if (path.indexOf("/potracking")>-1) {
+        path = path.replace("/potracking","");
+    }
     path = path.replace("/" + path.split('/')[2],"");
 }
 
