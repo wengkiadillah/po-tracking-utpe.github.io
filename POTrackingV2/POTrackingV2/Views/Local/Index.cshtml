@@ -52,6 +52,7 @@
         </ul>
     </div>
 </div>
+
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
@@ -158,7 +159,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">0/7</span></div>
                                     </div>
                                 }
                                 else
