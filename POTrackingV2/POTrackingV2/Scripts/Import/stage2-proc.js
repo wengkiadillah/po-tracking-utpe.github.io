@@ -53,7 +53,7 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementAcceptFirstEta",
+            url: "ProcurementAcceptFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -128,7 +128,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
     if (inputPurchasingDocumentItemIDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementAcceptFirstEta",
+            url: "ProcurementAcceptFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -175,7 +175,7 @@ $(".st2-proc-decline-first-eta").on("click", function (obj) {
     if (etaDate !== '') {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementDeclineFirstEta",
+            url: "ProcurementDeclineFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

@@ -83,7 +83,7 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
     if (shipBookingDate >= minDate) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorConfirmShipmentBookingDate",
+            url: "VendorConfirmShipmentBookingDate",
             data: JSON.stringify({ 'inputShipment': inputShipment }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -128,7 +128,7 @@ $(".st5-ATD-confirm").on("click", function (obj) {
     if (atdDate >= minDate) {
         //$.ajax({
         //    type: "POST",
-        //    url: "/Import/",
+        //    url: "",
         //    data: JSON.stringify({ 'inputShipment': inputShipment }),
         //    contentType: "application/json; charset=utf-8",
         //    success: function (response) {

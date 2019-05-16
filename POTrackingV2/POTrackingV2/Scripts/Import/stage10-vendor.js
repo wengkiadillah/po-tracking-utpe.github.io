@@ -23,7 +23,7 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
     if (inputFileInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorUploadInvoice",
+            url: "VendorUploadInvoice",
             data: formData,
             processData: false,
             contentType: false,
@@ -65,7 +65,7 @@ $(".st10-file-invoice-remove").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/VendorRemoveUploadInvoice",
+        url: "VendorRemoveUploadInvoice",
         data: formData,
         processData: false,
         contentType: false,
