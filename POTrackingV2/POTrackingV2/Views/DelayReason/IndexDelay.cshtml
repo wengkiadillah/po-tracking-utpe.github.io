@@ -1,0 +1,91 @@
+﻿@model IEnumerable<POTrackingV2.Models.DelayReason>
+
+@{
+    ViewBag.Title = "IndexDelay";
+}
+
+<h2>IndexDelay</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+@section scripts {
+    <script>
+        $('#Form-Create').submit(function (e) {
+            e.preventDefault();
+            var form = $(this).serializeArray();
+            console.log(form)
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("/Create", "ReasonSubCont")",
+                data: form,
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success: function (response) {
+                    console.log(response)
+                    // location.reload();
+                },
+                error: function (error) {
+                    console.error(error)
+                }
+            })
+        });
+
+        $('table tbody').on('click', 'tr td button#btn-edit', function (event) {
+            var id = $(this).data('id');
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("getByID", "ReasonSubCont")/" + id,
+                contentType: 'application/json; charset=uft-8',
+                datatype : "json",
+                success: function (response) {
+                    console.log(response);
+                    alert(response);
+                    $('#editModal').modal('show');
+                },
+                error: function (error) {
+                    console.error(error)
+                }
+            })
+        })
+
+        $('table tbody').on('click', 'tr td button#btn-delete', function (event) {
+            var id = $(this).data('id');
+            $.ajax({
+                type: "GET",
+                url: "ReasonSubCont/Delete/"+id,
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (error) {
+                    console.error(error)
+                }
+            })
+        })
+    </script>
+}
