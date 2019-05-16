@@ -1979,7 +1979,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 row = $(this).closest(".po-item-data-content__child").find(".po-item-data-content.row-" + parentNumber + "-" + childNumber);
             }
             var rowNumber = $(this).closest(".po-item-data-content").attr("row");
-
             if ($(this).prop("checked") == true) {
                 var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var newDate = deliveryDate.replaceDayMonth();
@@ -1990,7 +1989,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         row.find(".partial-date").datepicker('setDate', date.newDateFormat());
                         row.find(".partial-date").attr("max", date.newDateFormat());
                     }
-
                     row.find(".pd-item-confirm-qty").removeAttr("disabled");
                     //row.find(".partial-date").removeAttr("disabled");
                     row.find(".confirmed-date").removeAttr("disabled");
