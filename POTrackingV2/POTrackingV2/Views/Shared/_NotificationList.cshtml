@@ -1,7 +1,9 @@
-﻿@if (Request.IsAuthenticated)
+﻿
+@if (Request.IsAuthenticated)
 {
     ViewBag.Role = Model;
-    <input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
+    <input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
+    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" />
     <script type="text/javascript">
         Date.prototype.newDateFormatMMDD = function () {
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -41,7 +43,15 @@
         }
 
         $(document).ready(function () {
-            var role = $("#role").val();
+            //var role = $("#role").val();
+            var role = $("#roleNotification").val();
+            if (role == 1) {
+               $("#role").val("admin")
+            } else if (role == 2) {
+                $("#role").val("procurement")
+            } else if (role == 3) {
+                $("#role").val("vendor")
+            }
             var url = window.location;
             var objectURL = parseURLParams(window.location.toString());
             //if (typeof (objectURL['activeStage']) === "undefined" || typeof (objectURL['activeStage']) === "NaN") {

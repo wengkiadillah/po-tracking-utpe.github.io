@@ -15,6 +15,8 @@ namespace POTrackingV2.Controllers
 {
     public class AccountController : Controller
     {
+        POTrackingEntities db = new POTrackingEntities();
+
         // GET: Account
         [Authorize]
         public ActionResult Index()
@@ -36,8 +38,10 @@ namespace POTrackingV2.Controllers
                 string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
+                int roleVendor = Convert.ToInt32(LoginConstants.RoleVendor);
+                bool isExternal = db.Users.Any(x => x.Username == loginView.UserName && x.RoleID == roleVendor && x.IsActive == true);
 
-                if (loginView.UserType != LoginConstants.UserTypeInternal)
+                if (isExternal)
                 {
                     if (Membership.ValidateUser(loginView.UserName, loginView.Password))
                     {
