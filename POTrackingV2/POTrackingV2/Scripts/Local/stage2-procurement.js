@@ -12,7 +12,7 @@ $("input.st2-proc-checkbox-all").on("change", function (obj) {
 
 //Checked Button Confirm PO -- Undisabling Controller
 $(".st2-proc-checkbox-item").on("change", function (obj) {
-    var row = $(this).closest(".po-item-data-header__column.confirm-eta");
+    var row = $(this).closest(".po-item-data-header__column.stage2-confirm-eta");
 
     if ($(this).prop("checked") === true) {
         row.find("button.st2-proc-accept-first-eta").removeAttr("disabled");

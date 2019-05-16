@@ -73,7 +73,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-    if (etaDate !== '') {
+    if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",
