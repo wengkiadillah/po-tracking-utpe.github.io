@@ -52,6 +52,7 @@
         </ul>
     </div>
 </div>
+
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
