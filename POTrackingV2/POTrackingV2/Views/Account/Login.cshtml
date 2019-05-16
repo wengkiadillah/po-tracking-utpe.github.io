@@ -36,11 +36,6 @@
                 <img src="~/Images/patria-logo-login.png" class="login-logo">
                 <div class="form-container">
                     <div class="form-group">
-                        @Html.LabelFor(model => model.UserType)
-                        @Html.DropDownListFor(model => model.UserType, listItems, "-- Select User Type--", htmlAttributes: new { @class = "form -control" })
-                        @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="form-group">
                         @Html.LabelFor(model => model.UserName)
                         @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
