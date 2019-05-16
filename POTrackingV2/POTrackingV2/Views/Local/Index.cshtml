@@ -2279,21 +2279,50 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage7 = 1;
 
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
+
+                            if (parkingDateViews != null)
+                            {
+                                maxCount = parkingDateViews.Count;
+                            }
+
+                            var count = 0;
+
                             <div class="po-item-data-content row-@rowStage7">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column document_number">m</span>
-                                    <span class="po-item-data-header__column delivery">n</span>
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                        <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+                                        <span class="po-item-data-header__column delivery">-</span>
+                                    }
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @if (childPurchasingDocumentItems.Count() > 0)
                                     {
+                                        count++;
                                         foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
                                             <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
-                                                <span class="po-item-data-header__column document_number">m</span>
-                                                <span class="po-item-data-header__column delivery">n</span>
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                                    <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+                                                    <span class="po-item-data-header__column delivery">-</span>
+                                                }
                                             </div>
                                             childRowStage7++;
+                                            count++;
                                         }
                                     }
                                 </div>
