@@ -8,7 +8,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title">PO Tracking Local System<span class="page-subtitle">History</span><span class="page-subtitle"><a href="~/Local/index?role=procurement">Procurement</a></span></h1>
+<h1 class="page-title"><a href="~/Local/index">PO Tracking Local System</a><span class="page-subtitle">History</span><span class="page-subtitle"><a href="~/Local/index?role=procurement">Procurement</a></span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -52,7 +52,6 @@
         </ul>
     </div>
 </div>
-
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
@@ -188,7 +187,7 @@
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                          data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/12</span></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -727,7 +726,9 @@
 
                                 if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
                                 {
+                                    
                                     disabledInputCheckbox = "";
+                                    
                                 }
                                 else if (purchasingDocumentItem.HasETAHistory)
                                 {
@@ -830,7 +831,7 @@
                                                 hiddenButtonConfirmEtaDate = "";
                                                 hiddenButtonAcceptDecline = "hidden";
 
-                                                if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
+                                                if (childPurchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
                                                 {
                                                     disabledInputCheckbox = "";
                                                 }

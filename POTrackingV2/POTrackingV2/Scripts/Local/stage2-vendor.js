@@ -32,7 +32,7 @@ $(".st2-checkbox-item").on("change", function (obj) {
         row.find("button.st2-confirm-first-eta").removeAttr("disabled");
     } else {
         row.find("input.st2-first-eta-date").attr("disabled", "disabled");
-        row.find("input.st2-first-eta-date").val("");
+        //row.find("input.st2-first-eta-date").val("");
         row.find("button.st2-confirm-first-eta").attr("disabled", "disabled");
     }
 });
@@ -73,7 +73,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-    if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
+    if (etaDate !== '') {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",

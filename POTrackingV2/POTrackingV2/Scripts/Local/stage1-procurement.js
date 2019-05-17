@@ -73,7 +73,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-                
+            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");    
             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
             buttonEditItem.attr("style", "visibility:display");
