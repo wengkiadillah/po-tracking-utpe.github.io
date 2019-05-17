@@ -70,7 +70,7 @@
                     </a>
                 </li>
                 <li class="main-menu-item">
-                    <a href="~/Local/index?role=vendor" class="main-menu__link" data-menu="PO Lokal">
+                    <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
                         <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
                     </a>
                 </li>
@@ -108,7 +108,7 @@
         <div class="notification-header">
             <i class="far fa-bell"></i>
             <p class="notification__title">Notifications</p>
-            <img class="notification__close" src="/Images/close.png" alt="close-icon" onclick="toggleNotification()" />
+            <img class="notification__close" src="~/Images/close.png" alt="close-icon" onclick="toggleNotification()" />
         </div>
         <ul class="list-unstyled notification-list">
             @*<li class="notification-list-item">
@@ -188,7 +188,7 @@
                     </div>
                 </li>*@
         </ul>
-        <a href="#" class="notification-see-all third-text">See All</a>
+        @*<a href="#" class="notification-see-all third-text">See All</a>*@
     </div>
     <div class="main-container custom-scrollbar">
         @RenderBody()

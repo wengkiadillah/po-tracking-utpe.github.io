@@ -12,7 +12,7 @@ $("input.st2-proc-checkbox-all").on("change", function (obj) {
 
 //Checked Button Confirm PO -- Undisabling Controller
 $(".st2-proc-checkbox-item").on("change", function (obj) {
-    var row = $(this).closest(".po-item-data-header__column.confirm-eta");
+    var row = $(this).closest(".po-item-data-header__column.stage2-confirm-eta");
 
     if ($(this).prop("checked") === true) {
         row.find("button.st2-proc-accept-first-eta").removeAttr("disabled");
@@ -53,11 +53,13 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementAcceptFirstEta",
+            url: "ProcurementAcceptFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
                 alert(response.responseText);
+
+                console.log(response.imageSources);
 
                 buttonAcceptFirstEta.attr("disabled", "disabled").addClass("selected");
                 buttonDeclineFirstEta.attr("disabled", "disabled");
@@ -128,7 +130,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
     if (inputPurchasingDocumentItemIDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementAcceptFirstEta",
+            url: "ProcurementAcceptFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -175,7 +177,7 @@ $(".st2-proc-decline-first-eta").on("click", function (obj) {
     if (etaDate !== '') {
         $.ajax({
             type: "POST",
-            url: "/Import/ProcurementDeclineFirstEta",
+            url: "ProcurementDeclineFirstEta",
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

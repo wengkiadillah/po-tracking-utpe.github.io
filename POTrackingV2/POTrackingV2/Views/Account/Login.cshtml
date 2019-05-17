@@ -33,23 +33,21 @@
             @Html.AntiForgeryToken()
             <form action="/utpe-patria/" method="post">
                 <input name="__RequestVerificationToken" type="hidden" value="1F_VZ9gQnAVhieDi9pRV76_uVf3XE5VhXpXcY18B9YQD0ohm7yhjZ_wMnMxrMp-Lqc0UuuFoAEo4Q-nNHg7H3UY-U18IC5JPi13BwDBtUrY1">
-                <img src="~/Images/patria-logo-login.png" class="login-logo">
                 <div class="form-container">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.UserType)
-                        @Html.DropDownListFor(model => model.UserType, listItems, "-- Select User Type--", htmlAttributes: new { @class = "form -control" })
-                        @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
-                    </div>
+                    <img src="~/Images/patria-logo-login.png" class="login-logo">
                     <div class="form-group">
                         @Html.LabelFor(model => model.UserName)
                         @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
                     </div>
                     <div class="form-group password-input">
-                        @Html.LabelFor(model => model.Password)
-                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                        <div class="pass-container">
+                            @Html.LabelFor(model => model.Password)
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                            <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
+
+                        </div>
                         @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                        <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
                     </div>
                     <br>
                     <button class="login-button btn" type="submit">Login</button>
@@ -116,8 +114,21 @@
         text-align: left;
     }
 
-    .password-input {
+    .pass-container{
         position: relative;
+    }
+
+    .show-hide-password {
+      position: absolute;
+      bottom: 7px;
+      right: 11px;
+      cursor: pointer;
+    }
+
+    svg{
+        overflow: hidden;
+        vertical-align: middle;
+        color: black;
     }
 
     .footer-text {
@@ -143,7 +154,15 @@
 
     .form-container {
         padding: 2em;
+        position: relative;
     }
+
+        .form-container img {
+            width:100%;
+            height: auto;
+            text-align: center;
+
+        }
 </style>
 
 <script src="~/Scripts/feather-4.7.3.min.js"></script>

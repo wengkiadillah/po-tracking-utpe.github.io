@@ -66,14 +66,14 @@ $(".st1-accept-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Local/ProcurementConfirmItem",
+        url: "ProcurementConfirmItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
             alert(response.responseText);
 
-                
+            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");    
             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
             buttonEditItem.attr("style", "visibility:display");
@@ -158,7 +158,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Local/ProcurementConfirmItem",
+        url: "ProcurementConfirmItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -211,7 +211,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Local/CancelItem",
+        url: "CancelItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {

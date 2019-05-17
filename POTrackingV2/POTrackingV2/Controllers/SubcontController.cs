@@ -9,6 +9,8 @@ using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
 using System.Globalization;
 using System.IO;
+using POTrackingV2.CustomAuthentication;
+using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
@@ -18,8 +20,11 @@ namespace POTrackingV2.Controllers
         POTrackingEntities db = new POTrackingEntities();
         DateTime now = DateTime.Now;
         // GET: POSubcont
-        public ActionResult Index(string role, string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
         {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            int roleID = myUser.Roles;
+
             try
             {
                 //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
@@ -27,7 +32,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                if (role == "procurement")
+                if (roleID == 2)
                 {
                     //pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null)).OrderBy(x => x.Number);
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
@@ -38,6 +43,7 @@ namespace POTrackingV2.Controllers
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
 
+                ViewBag.CurrentRoleID = roleID;
                 ViewBag.CurrentData = searchData;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
@@ -117,8 +123,10 @@ namespace POTrackingV2.Controllers
         #region Stage 1
 
         [HttpPost]
-        public ActionResult SaveAllPOItem(string role, List<PurchasingDocumentItem> purchasingDocumentItems, List<PurchasingDocumentItem> purchasingDocumentItemChilds)
+        public ActionResult SaveAllPOItem(List<PurchasingDocumentItem> purchasingDocumentItems, List<PurchasingDocumentItem> purchasingDocumentItemChilds)
         {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            int roleID = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -131,8 +139,7 @@ namespace POTrackingV2.Controllers
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = Existed_PDI.ID;
                         notification.StatusID = 3;
-
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -143,30 +150,40 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == item.PO.VendorCode && x.Material == item.Material).FirstOrDefault();
+                            string vendorCode = db.POes.Where(x=>x.ID == item.POID).Select(x=>x.VendorCode).FirstOrDefault();
+                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                             Existed_PDI.ConfirmedItem = true;
-                            if (scc.isNeedSequence == true)
+                            if (scc != null)
                             {
-                                Existed_PDI.ActiveStage = "2";
-                                notification.Stage = "2";
-                                notification.Role = "vendor";
-                            }
-                            else
-                            {
-                                if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                if (scc.isNeedSequence == true)
                                 {
-                                    Existed_PDI.ActiveStage = "5";
-                                    notification.Stage = "5";
+                                    Existed_PDI.ActiveStage = "2";
+                                    notification.Stage = "2";
                                     notification.Role = "vendor";
                                 }
                                 else
                                 {
-                                    Existed_PDI.ActiveStage = "4";
-                                    notification.Stage = "4";
-                                    notification.Role = "procurement";
+                                    if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                    {
+                                        Existed_PDI.ActiveStage = "5";
+                                        notification.Stage = "5";
+                                        notification.Role = "vendor";
+                                    }
+                                    else
+                                    {
+                                        Existed_PDI.ActiveStage = "4";
+                                        notification.Stage = "4";
+                                        notification.Role = "procurement";
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                Existed_PDI.ActiveStage = "2";
+                                notification.Stage = "2";
+                                notification.Role = "vendor";
                             }
 
                             Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
@@ -187,7 +204,7 @@ namespace POTrackingV2.Controllers
                         notification.Modified = now;
                         notification.ModifiedBy = User.Identity.Name;
 
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             // Child clean-up
                             List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
@@ -220,7 +237,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notificationChild = new Notification();
 
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
                             purchasingDocumentItem.POID = parent.POID;
@@ -258,34 +275,45 @@ namespace POTrackingV2.Controllers
                                 Existed_notificationChild.Modified = now;
                                 Existed_notificationChild.ModifiedBy = User.Identity.Name;
                             }
-
                             PurchasingDocumentItem Existed_child = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
-                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == item.PO.VendorCode && x.Material == item.Material).FirstOrDefault();
+
+                            string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
+                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                             Existed_child.ConfirmedItem = true;
 
-                            if (scc.isNeedSequence == true)
+                            if (scc != null)
                             {
-                                Existed_child.ActiveStage = "2";
-                                notificationChild.Stage = "2";
-                                notificationChild.Role = "vendor";
-                            }
-                            else
-                            {
-                                if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                if (scc.isNeedSequence == true)
                                 {
-                                    Existed_child.ActiveStage = "6";
-                                    notificationChild.Stage = "6";
+                                    Existed_child.ActiveStage = "2";
+                                    notificationChild.Stage = "2";
                                     notificationChild.Role = "vendor";
                                 }
                                 else
                                 {
-                                    Existed_child.ActiveStage = "4";
-                                    notificationChild.Stage = "4";
-                                    notificationChild.Role = "procurement";
+                                    if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                    {
+                                        Existed_child.ActiveStage = "6";
+                                        notificationChild.Stage = "6";
+                                        notificationChild.Role = "vendor";
+                                    }
+                                    else
+                                    {
+                                        Existed_child.ActiveStage = "4";
+                                        notificationChild.Stage = "4";
+                                        notificationChild.Role = "procurement";
+                                    }
                                 }
                             }
+                            else
+                            {
+                                Existed_child.ActiveStage = "4";
+                                notificationChild.Stage = "4";
+                                notificationChild.Role = "procurement";
+                            }
+                            
                         }
 
                         notificationChild.isActive = true;
@@ -305,11 +333,14 @@ namespace POTrackingV2.Controllers
             {
                 return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
             }
+            //return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult SavePartialPurchasingDocumentItems(string role, List<PurchasingDocumentItem> purchasingDocumentItems)
+        public ActionResult SavePartialPurchasingDocumentItems(List<PurchasingDocumentItem> purchasingDocumentItems)
         {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            int roleID = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -323,7 +354,7 @@ namespace POTrackingV2.Controllers
 
                     if (purchasingDocumentItems.First() == item)
                     {
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
@@ -342,31 +373,41 @@ namespace POTrackingV2.Controllers
                                 Existed_notification.ModifiedBy = User.Identity.Name;
                             }
 
-                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == item.PO.VendorCode && x.Material == item.Material).FirstOrDefault();
+                            string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
+                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                             Existed_PDI.ConfirmedItem = true;
 
-                            if (scc.isNeedSequence == true)
+                            if (scc != null)
                             {
-                                Existed_PDI.ActiveStage = "2";
-                                notification.Stage = "2";
-                                notification.Role = "vendor";
-                            }
-                            else
-                            {
-                                if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                if (scc.isNeedSequence == true)
                                 {
-                                    Existed_PDI.ActiveStage = "6";
-                                    notification.Stage = "6";
+                                    Existed_PDI.ActiveStage = "2";
+                                    notification.Stage = "2";
                                     notification.Role = "vendor";
                                 }
                                 else
                                 {
-                                    Existed_PDI.ActiveStage = "4";
-                                    notification.Stage = "4";
-                                    notification.Role = "procurement";
+                                    if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                    {
+                                        Existed_PDI.ActiveStage = "6";
+                                        notification.Stage = "6";
+                                        notification.Role = "vendor";
+                                    }
+                                    else
+                                    {
+                                        Existed_PDI.ActiveStage = "4";
+                                        notification.Stage = "4";
+                                        notification.Role = "procurement";
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                Existed_PDI.ActiveStage = "4";
+                                notification.Stage = "4";
+                                notification.Role = "procurement";
                             }
                         }
                         Existed_PDI.LastModified = now;
@@ -378,7 +419,7 @@ namespace POTrackingV2.Controllers
                         notification.Modified = now;
                         notification.ModifiedBy = User.Identity.Name;
 
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             // Child clean-up
                             List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
@@ -402,7 +443,7 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        if (role == "vendor")
+                        if (roleID == 3)
                         {
                             Notification notificationChild = new Notification();
 
@@ -452,8 +493,10 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult SavePOItem(string role, int pdItemID, int confirmedItemQty, DateTime confirmedDate, bool isCanceledPOItem)
+        public ActionResult SavePOItem(int pdItemID, int confirmedItemQty, DateTime confirmedDate, bool isCanceledPOItem)
         {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            int roleID = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -475,12 +518,12 @@ namespace POTrackingV2.Controllers
                     Existed_PDI.ConfirmedItem = false;
                     notification.StatusID = 2;
                     notification.Stage = "1";
-                    notification.Role = role != "vendor" ? role : "procurement";
+                    notification.Role = roleID != 3 ? "vendor" : "procurement";
                 }
                 else
                 {
                     notification.StatusID = 3;
-                    if (role == "vendor")
+                    if (roleID == 3)
                     {
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;
@@ -491,34 +534,42 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == Existed_PDI.PO.VendorCode && x.Material == Existed_PDI.Material).FirstOrDefault();
+                        string vendorCode = db.POes.Where(x => x.ID == Existed_PDI.POID).Select(x => x.VendorCode).FirstOrDefault();
+                        SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == Existed_PDI.Material).FirstOrDefault();
                         int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                         Existed_PDI.ConfirmedItem = true;
 
-                        if (scc.isNeedSequence == true)
+                        if (scc != null)
                         {
-                            Existed_PDI.ActiveStage = "2";
-                            notification.Stage = "2";
-                            notification.Role = "vendor";
-                        }
-                        else
-                        {
-                            if (Existed_PDI.ConfirmedQuantity > 0 && Existed_PDI.ConfirmedQuantity <= totalItemGR)
+                            if (scc.isNeedSequence == true)
                             {
-                                Existed_PDI.ActiveStage = "5";
-                                notification.Stage = "5";
+                                Existed_PDI.ActiveStage = "2";
+                                notification.Stage = "2";
                                 notification.Role = "vendor";
                             }
                             else
                             {
-                                Existed_PDI.ActiveStage = "4";
-                                notification.Stage = "4";
-                                notification.Role = "procurement";
+                                if (Existed_PDI.ConfirmedQuantity > 0 && Existed_PDI.ConfirmedQuantity <= totalItemGR)
+                                {
+                                    Existed_PDI.ActiveStage = "5";
+                                    notification.Stage = "5";
+                                    notification.Role = "vendor";
+                                }
+                                else
+                                {
+                                    Existed_PDI.ActiveStage = "4";
+                                    notification.Stage = "4";
+                                    notification.Role = "procurement";
+                                }
                             }
                         }
-
-
+                        else
+                        {
+                            Existed_PDI.ActiveStage = "4";
+                            notification.Stage = "4";
+                            notification.Role = "procurement";
+                        }
                     }
                 }
                 Existed_PDI.LastModified = now;
@@ -884,7 +935,7 @@ namespace POTrackingV2.Controllers
             {
                 //string errorMessage = ex.Message + " --- " + ex.StackTrace;
                 //return View(errorMessage);
-                return Json(new { success = true, responseCode = "400", responseText = ex.Message }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, responseCode = "400", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

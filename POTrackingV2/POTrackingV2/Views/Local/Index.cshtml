@@ -8,7 +8,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title">PO Tracking Local System<span class="page-subtitle">History</span><span class="page-subtitle"><a href="~/Local/index?role=procurement">Procurement</a></span></h1>
+<h1 class="page-title"><a href="~/Local/index">PO Tracking Local System</a><span class="page-subtitle">History</span><span class="page-subtitle"><a href="~/Local/index?role=procurement">Procurement</a></span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -187,7 +187,7 @@
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                          data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/12</span></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -726,7 +726,9 @@
 
                                 if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
                                 {
+                                    
                                     disabledInputCheckbox = "";
+                                    
                                 }
                                 else if (purchasingDocumentItem.HasETAHistory)
                                 {
@@ -829,7 +831,7 @@
                                                 hiddenButtonConfirmEtaDate = "";
                                                 hiddenButtonAcceptDecline = "hidden";
 
-                                                if (purchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
+                                                if (childPurchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
                                                 {
                                                     disabledInputCheckbox = "";
                                                 }
@@ -2180,7 +2182,7 @@
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
-                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 5)
+                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
                                         {
                                             disabledFileInvoice = "";
                                             disabledFileInvoiceUpload = "";
@@ -2229,7 +2231,7 @@
                                                 {
                                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                                     {
-                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 5)
+                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
                                                         {
                                                             disabledFileInvoice = "";
                                                             disabledFileInvoiceUpload = "";
@@ -2279,21 +2281,50 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage7 = 1;
 
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
+
+                            if (parkingDateViews != null)
+                            {
+                                maxCount = parkingDateViews.Count;
+                            }
+
+                            var count = 0;
+
                             <div class="po-item-data-content row-@rowStage7">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column document_number">m</span>
-                                    <span class="po-item-data-header__column delivery">n</span>
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                        <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+                                        <span class="po-item-data-header__column delivery">-</span>
+                                    }
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @if (childPurchasingDocumentItems.Count() > 0)
                                     {
+                                        count++;
                                         foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
                                             <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
-                                                <span class="po-item-data-header__column document_number">m</span>
-                                                <span class="po-item-data-header__column delivery">n</span>
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                                    <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+                                                    <span class="po-item-data-header__column delivery">-</span>
+                                                }
                                             </div>
                                             childRowStage7++;
+                                            count++;
                                         }
                                     }
                                 </div>

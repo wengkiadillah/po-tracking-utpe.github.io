@@ -25,14 +25,14 @@ $("input.st2-checkbox-all").on("change", function (obj) {
 
 //Checked Button Confirm PO -- Undisabling Controller
 $(".st2-checkbox-item").on("change", function (obj) {
-    var row = $(this).closest(".po-item-data-header__column.confirm-eta");
+    var row = $(this).closest(".po-item-data-header__column.stage2-confirm-eta");
 
     if ($(this).prop("checked") === true) {
         row.find("input.st2-first-eta-date").removeAttr("disabled");
         row.find("button.st2-confirm-first-eta").removeAttr("disabled");
     } else {
         row.find("input.st2-first-eta-date").attr("disabled", "disabled");
-        row.find("input.st2-first-eta-date").val("");
+        //row.find("input.st2-first-eta-date").val("");
         row.find("button.st2-confirm-first-eta").attr("disabled", "disabled");
     }
 });
@@ -77,7 +77,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",
-                url: "/Local/VendorConfirmFirstETA",
+                url: "VendorConfirmFirstETA",
                 data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -181,7 +181,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
     if (inputETAHistories.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Local/VendorConfirmFirstETA",
+            url: "VendorConfirmFirstETA",
             data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -221,7 +221,3 @@ $(".edit-row-st2").on("click", function (obj) {
 
 // Helper
 
-function reverseDayMonth(monthDayYearDate) {
-    var dateParts = monthDayYearDate.split("/");
-    return new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
-}
