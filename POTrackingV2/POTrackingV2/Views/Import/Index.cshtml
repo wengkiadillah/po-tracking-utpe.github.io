@@ -35,7 +35,7 @@
         </div>
         <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
         <button type="submit" class="btn btn-info mr-3">Find</button>
-        @Html.ActionLink("Clear", "Index", null ,new { @class = "btn btn-info mr-3" })
+        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
     }
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
@@ -66,6 +66,11 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+
+    if (ViewBag.CurrentSearchFilterBy == "material" && !string.IsNullOrEmpty(ViewBag.CurrentSearchData))
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.Contains(ViewBag.CurrentSearchData) || x.Description.Contains(ViewBag.CurrentSearchData));
+    }
 
     if (roleID == 2)
     {
