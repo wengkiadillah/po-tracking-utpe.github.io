@@ -290,6 +290,12 @@
     <Content Include="Content\styles.css" />
     <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
+    <Content Include="Files\Import\Invoice\donotdelete.txt" />
+    <Content Include="Files\Import\Proformainvoice\donotdelete.txt" />
+    <Content Include="Files\Import\ProgressPhotos\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\CopyBL\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\Invoice\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\PackingList\donotdelete.txt" />
     <Content Include="fonts\AvenirLTStd-Black.svg" />
     <Content Include="fonts\AvenirLTStd-Book.svg" />
     <Content Include="fonts\AvenirLTStd-Heavy.svg" />
@@ -454,10 +460,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Files\Import\Invoice\" />
-    <Folder Include="Files\Import\Proformainvoice\" />
-    <Folder Include="Files\Import\ProgressPhotos\" />
-    <Folder Include="Files\Import\Shipping\" />
     <Folder Include="Files\Local\Invoice\" />
     <Folder Include="Files\Local\ProformaInvoice\" />
     <Folder Include="Files\Local\ProgressProforma\" />
