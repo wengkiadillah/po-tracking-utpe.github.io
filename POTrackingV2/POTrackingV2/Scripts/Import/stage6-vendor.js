@@ -206,22 +206,22 @@ $(".st6-fill-the-form").on("click", function (obj) {
                     }
                 }
                 else {
-                    alert("Dokumen Invoice cannot be empty");
+                    alert("Invoice Document cannot be empty");
                     inputPackingInvoiceDocument.focus();
                 }
             }
             else {
-                alert("Dokumen Packing List cannot be empty");
+                alert("Packing List Document cannot be empty");
                 inputPackingListDocument.focus();
             }
         }
         else {
-            alert("Dokumen Copy BL cannot be empty");
+            alert("BL Copy Document cannot be empty");
             inputCopyBLDocument.focus();
         }
     }
     else {
-        alert("Tanggal Copy BL is not valid");
+        alert("BL Copy Date is not valid");
         inputCopyBLDate.focus();
     }
 });

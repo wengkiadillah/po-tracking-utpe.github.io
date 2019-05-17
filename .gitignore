@@ -330,37 +330,37 @@ ASALocalRun/
 .mfractor/
 
 
-/POTracking/Files/*
-!/POTracking/Files/Import
-!/POTracking/Files/Local
+/POTrackingV2/Files/*
+!/POTrackingV2/Files/Import
+!/POTrackingV2/Files/Local
 
-/POTracking/Files/Import/*
-!/POTracking/Files/Import/ProformaInvoice
-!/POTracking/Files/Import/ProgressPhotos
-!/POTracking/Files/Import/Shipping
-!/POTracking/Files/Import/Invoice
-!/POTracking/Files/Local/ProformaInvoice
+/POTrackingV2/Files/Import/*
+!/POTrackingV2/Files/Import/ProformaInvoice
+!/POTrackingV2/Files/Import/ProgressPhotos
+!/POTrackingV2/Files/Import/Shipping
+!/POTrackingV2/Files/Import/Invoice
+!/POTrackingV2/Files/Local/ProformaInvoice
 
-/POTracking/Files/Import/ProformaInvoice/*
-!/POTracking/Files/Import/ProformaInvoice/donotdelete.txt
+/POTrackingV2/Files/Import/ProformaInvoice/*
+!/POTrackingV2/Files/Import/ProformaInvoice/donotdelete.txt
 
-/POTracking/Files/Import/ProgressPhotos/*
-!/POTracking/Files/Import/ProgressPhotos/donotdelete.txt
+/POTrackingV2/Files/Import/ProgressPhotos/*
+!/POTrackingV2/Files/Import/ProgressPhotos/donotdelete.txt
 
-/POTracking/Files/Import/Invoice/*
-!/POTracking/Files/Import/Invoice/donotdelete.txt
+/POTrackingV2/Files/Import/Invoice/*
+!/POTrackingV2/Files/Import/Invoice/donotdelete.txt
 
-/POTracking/Files/Import/Shipping/*
-!/POTracking/Files/Import/Shipping/CopyBL
-!/POTracking/Files/Import/Shipping/Invoice
-!/POTracking/Files/Import/Shipping/PackingList
+/POTrackingV2/Files/Import/Shipping/*
+!/POTrackingV2/Files/Import/Shipping/CopyBL
+!/POTrackingV2/Files/Import/Shipping/Invoice
+!/POTrackingV2/Files/Import/Shipping/PackingList
 
-/POTracking/Files/Import/Shipping/CopyBL/*
-/POTracking/Files/Import/Shipping/Invoice/*
-/POTracking/Files/Import/Shipping/PackingList/*
-!/POTracking/Files/Import/Shipping/CopyBL/donotdelete.txt
-!/POTracking/Files/Import/Shipping/Invoice/donotdelete.txt
-!/POTracking/Files/Import/Shipping/PackingList/donotdelete.txt
+/POTrackingV2/Files/Import/Shipping/CopyBL/*
+/POTrackingV2/Files/Import/Shipping/Invoice/*
+/POTrackingV2/Files/Import/Shipping/PackingList/*
+!/POTrackingV2/Files/Import/Shipping/CopyBL/donotdelete.txt
+!/POTrackingV2/Files/Import/Shipping/Invoice/donotdelete.txt
+!/POTrackingV2/Files/Import/Shipping/PackingList/donotdelete.txt
 
-/POTracking/Files/Local/ProformaInvoice/*
-!/POTracking/Files/Local/ProformaInvoice/donotdelete.txt
+/POTrackingV2/Files/Local/ProformaInvoice/*
+!/POTrackingV2/Files/Local/ProformaInvoice/donotdelete.txt
