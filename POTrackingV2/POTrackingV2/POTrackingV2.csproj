@@ -290,6 +290,12 @@
     <Content Include="Content\styles.css" />
     <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
+    <Content Include="Files\Import\Invoice\donotdelete.txt" />
+    <Content Include="Files\Import\Proformainvoice\donotdelete.txt" />
+    <Content Include="Files\Import\ProgressPhotos\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\CopyBL\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\Invoice\donotdelete.txt" />
+    <Content Include="Files\Import\Shipping\PackingList\donotdelete.txt" />
     <Content Include="fonts\AvenirLTStd-Black.svg" />
     <Content Include="fonts\AvenirLTStd-Book.svg" />
     <Content Include="fonts\AvenirLTStd-Heavy.svg" />
@@ -386,7 +392,6 @@
     <Content Include="Scripts\Import\stage3-vendor.js" />
     <Content Include="Scripts\Import\stage4-vendor.js" />
     <Content Include="Scripts\Import\stage5-vendor.js" />
-    <Content Include="Scripts\Import\stage5-vendorzzz.js" />
     <Content Include="Scripts\Import\stage6-vendor.js" />
     <Content Include="Scripts\Import\stage7-procurement.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -405,6 +410,7 @@
     <Content Include="Scripts\Local\Stage2a-procurement.js" />
     <Content Include="Scripts\Local\stage3-vendor.js" />
     <Content Include="Scripts\Local\stage4-vendor.js" />
+    <Content Include="Scripts\Local\Stage6-vendor.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
@@ -454,10 +460,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Files\Import\Invoice\" />
-    <Folder Include="Files\Import\Proformainvoice\" />
-    <Folder Include="Files\Import\ProgressPhotos\" />
-    <Folder Include="Files\Import\Shipping\" />
+    <Folder Include="Files\Local\Invoice\" />
     <Folder Include="Files\Local\ProformaInvoice\" />
     <Folder Include="Files\Local\ProgressProforma\" />
     <Folder Include="Files\Subcont\SequencesProgress\" />

@@ -1,13 +1,5 @@
 ﻿// Validations
 $(".st3-item-confirm-payment-date").on('input focus', function (e) {
-    this.setCustomValidity('');
-    var thisDate = $(this).val();
-    var minDate = $(this).attr("mindate");
-    if ((!isNaN(thisDate) || thisDate !== '') && (!isNaN(minDate) || minDate !== '')) {
-        if (reverseDayMonth(thisDate) < reverseDayMonth(minDate)) {
-            this.setCustomValidity("Value must be more than or equal " + $(this).attr("mindate"));
-        }
-    }
     this.reportValidity();
 });
 
@@ -69,7 +61,7 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
         //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmPaymentReceived",
+                url: "/Local/VendorConfirmPaymentReceived",
                 data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -161,7 +153,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "VendorConfirmPaymentReceived",
+        url: "/Local/VendorConfirmPaymentReceived",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -217,7 +209,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: "VendorSkipConfirmPayment",
+            url: "/Local/VendorSkipConfirmPayment",
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

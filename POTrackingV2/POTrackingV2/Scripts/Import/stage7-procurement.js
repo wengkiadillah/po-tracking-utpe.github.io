@@ -56,7 +56,7 @@ $(".st7-on-airport-confirm").on("click", function (obj) {
         if (inputATAOnAirport.val() !== '' && !isNaN(ataOnAirport.getTime())) {
             $.ajax({
                 type: "POST",
-                url: "ProcurementConfirmOnAirport",
+                url: "/Import/ProcurementConfirmOnAirport",
                 data: JSON.stringify({ 'inputShipments': inputShipments }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -75,12 +75,12 @@ $(".st7-on-airport-confirm").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal ATA tidak boleh kosong");
+            alert("ATA Date is not valid");
             inputATAOnAirport.focus();
         }
     }
     else {
-        alert("Tanggal ETA tidak boleh kosong");
+        alert("ETA Date is not valid");
         inputETAOnAirport.focus();
     }
 
@@ -131,12 +131,12 @@ $(".st7-confirm-all-on-airport").on("click", function (obj) {
                     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                 }
                 else {
-                    alert("Tanggal ATA tidak boleh kosong");
+                    alert("ATA Date is not valid");
                     inputATAOnAirport.focus();
                 }
             }
             else {
-                alert("Tanggal ETA tidak boleh kosong");
+                alert("ETA Date is not valid");
                 inputETAOnAirport.focus();
             }
         }
@@ -145,7 +145,7 @@ $(".st7-confirm-all-on-airport").on("click", function (obj) {
     if (inputShipments.length > 0) {
         $.ajax({
             type: "POST",
-            url: "ProcurementConfirmOnAirport",
+            url: "/Import/ProcurementConfirmOnAirport",
             data: JSON.stringify({ 'inputShipments': inputShipments }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

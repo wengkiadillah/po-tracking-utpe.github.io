@@ -24,7 +24,7 @@ $(".st2a-approve-proforma-proc").on("click", function (obj) {
     if (itemID !== null) {
         $.ajax({
             type: "POST",
-            url: "ProcurementApprovePI",
+            url: "/Import/ProcurementApprovePI",
             data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -61,7 +61,7 @@ $(".st2a-disapprove-proforma-proc").on("click", function (obj) {
     if (proformaInvoiceItemID !== null) {
         $.ajax({
             type: "POST",
-            url: "ProcurementDisapprovePI",
+            url: "/Import/ProcurementDisapprovePI",
             data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

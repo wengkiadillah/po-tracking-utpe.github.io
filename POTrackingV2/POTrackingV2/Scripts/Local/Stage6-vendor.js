@@ -1,14 +1,14 @@
 ﻿//Vendor upload one Proforma Invoice
-$(".st10-file-invoice-upload").on("click", function (obj) {
+$(".st6-file-invoice-upload").on("click", function (obj) {
     obj.preventDefault();
 
     var buttonUploadInvoice = $(this);
-    var inputFileInvoice = $(this).closest(".form-inline").find(".st10-file-invoice");
+    var inputFileInvoice = $(this).closest(".form-inline").find(".st6-file-invoice");
     var inputFileInvoiceDOM = inputFileInvoice.get(0);
-    var formUploading = $(this).closest(".st10-form-upload");
-    var formUploaded = $(this).closest(".po-item-data-header__column").find(".st10-form-uploaded");
+    var formUploading = $(this).closest(".st6-form-upload");
+    var formUploaded = $(this).closest(".po-item-data-header__column").find(".st6-form-uploaded");
 
-    var itemID = $(this).closest(".po-item-data-header__column").find(".st10-item-id").val();
+    var itemID = $(this).closest(".po-item-data-header__column").find(".st6-item-id").val();
 
     var formData = new FormData();
 
@@ -23,7 +23,7 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
     if (inputFileInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorUploadInvoice",
+            url: "VendorUploadInvoice_2",
             data: formData,
             processData: false,
             contentType: false,
@@ -35,7 +35,7 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
                 formUploading.attr("hidden", true);
                 formUploaded.removeAttr("hidden");
 
-                formUploaded.find(".st10-file-invoice-download").attr("href", response.invoiceUrl);
+                formUploaded.find(".st6-file-invoice-download").attr("href", response.invoiceUrl);
 
             },
             error: function (xhr, status, error) {
@@ -49,15 +49,15 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
 });
 
 //Vendor upload one Proforma Invoice
-$(".st10-file-invoice-remove").on("click", function (obj) {
+$(".st6-file-invoice-remove").on("click", function (obj) {
     obj.preventDefault();
 
-    var buttonUploadInvoice = $(this).closest(".po-item-data-header__column").find(".st10-file-invoice-upload");
-    var inputFileInvoice = $(this).closest(".po-item-data-header__column").find(".st10-file-invoice");
-    var formUploaded = $(this).closest(".st10-form-uploaded");
-    var formUploading = $(this).closest(".po-item-data-header__column").find(".st10-form-upload");
+    var buttonUploadInvoice = $(this).closest(".po-item-data-header__column").find(".st6-file-invoice-upload");
+    var inputFileInvoice = $(this).closest(".po-item-data-header__column").find(".st6-file-invoice");
+    var formUploaded = $(this).closest(".st6-form-uploaded");
+    var formUploading = $(this).closest(".po-item-data-header__column").find(".st6-form-upload");
 
-    var itemID = $(this).closest(".po-item-data-header__column").find(".st10-item-id").val();
+    var itemID = $(this).closest(".po-item-data-header__column").find(".st6-item-id").val();
 
     var formData = new FormData();
 
@@ -65,7 +65,7 @@ $(".st10-file-invoice-remove").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/VendorRemoveUploadInvoice",
+        url: "VendorRemoveUploadInvoice",
         data: formData,
         processData: false,
         contentType: false,

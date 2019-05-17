@@ -22,7 +22,7 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
     if (inputFileProformaInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadProformaInvoice",
+            url: "/Import/VendorUploadProformaInvoice",
             data: formData,
             processData: false,
             contentType: false,
@@ -76,7 +76,7 @@ $(".st2a-skip-proforma").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: "VendorSkipProformaInvoice",
+            url: "/Import/VendorSkipProformaInvoice",
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

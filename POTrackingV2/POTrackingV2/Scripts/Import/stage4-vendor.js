@@ -41,6 +41,20 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
     var etaOnTime = reverseDayMonth(inputUpdateEtaDateOntime.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-on-time").attr("mindate"));
 
+    // Donut Progress
+    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
+    var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
     var inputETAHistory = {
         PurchasingDocumentItemID: itemID,
         ETADate: etaOnTime
@@ -50,7 +64,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
         if (etaOnTime >= minDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorUpdateETA",
+                url: "/Import/VendorUpdateETA",
                 data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -63,6 +77,11 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
                     buttonEtaDateDelayConfirm.attr("disabled", "disabled");
                     inputUploadProgressPhotoes.removeAttr("disabled");
                     buttonUploadProgressPhotoes.removeAttr("disabled");
+
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+
+                    nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
                 },
                 error: function (xhr, status, error) {
                     alert(xhr.status + " : " + error);
@@ -70,12 +89,12 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 2");
+            alert("The Date cannot be less than the Date agreed on stage 2");
             inputUpdateEtaDateOntime.focus();
         }
     }
     else {
-        alert("Tanggal tidak valid");
+        alert("Date is not valid");
         inputUpdateEtaDateOntime.focus();
     }
 });
@@ -99,61 +118,6 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
     var etaDelay = reverseDayMonth(inputUpdateEtaDateDelay.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-delay").attr("mindate"));
 
-    var inputETAHistory = {
-        PurchasingDocumentItemID: itemID,
-        ETADate: etaDelay,
-        DelayReasonID: delayReasonID
-    };
-
-    if (!isNaN(etaDelay.getTime())) {
-        if (etaDelay > minDate) {
-            if (delayReasonID !== '' && delayReasonID !== '0') {
-                $.ajax({
-                    type: "POST",
-                    url: "VendorUpdateETA",
-                    data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
-                    contentType: "application/json; charset=utf-8",
-                    success: function (response) {
-                        alert(response.responseText);
-
-                        buttonEtaDateDelayConfirm.attr("disabled", "disabled").addClass("selected-negative");
-                        inputUpdateEtaDateDelay.attr("disabled", "disabled");
-                        buttonEtaDateOnTimeConfirm.attr("disabled", "disabled");
-                        inputUpdateEtaDateOntime.attr("disabled", "disabled");
-                        inputDelayReason.attr("disabled", "disabled");
-                        inputUploadProgressPhotoes.removeAttr("disabled");
-                        buttonUploadProgressPhotoes.removeAttr("disabled");
-
-                    },
-                    error: function (xhr, status, error) {
-                        alert(xhr.status + " : " + error);
-                    }
-                });
-            }
-            else {
-                alert("Pilih alasan keterlambatan");
-                inputDelayReason.focus();
-            }
-        }
-        else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 2");
-            inputUpdateEtaDateDelay.focus();
-        }
-    }
-    else {
-        alert("Tanggal tidak valid");
-        inputUpdateEtaDateOntime.focus();
-    }
-});
-
-//Vendor Upload Progress Photoes
-$(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
-    var buttonUploadProgressPhotoesConfirm = $(this);
-    var inputUploadProgressPhotoes = $(this).closest(".form-inline").find(".st4-upload-progress-photoes");
-    var inputUploadProgressPhotoesDOM = inputUploadProgressPhotoes.get(0);
-
-    var itemID = $(this).closest(".form-inline").find(".st4-item-id-inner").val();
-
     // Donut Progress
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
@@ -168,7 +132,68 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
+    var inputETAHistory = {
+        PurchasingDocumentItemID: itemID,
+        ETADate: etaDelay,
+        DelayReasonID: delayReasonID
+    };
+
+    if (!isNaN(etaDelay.getTime())) {
+        if (etaDelay > minDate) {
+            if (delayReasonID !== '' && delayReasonID !== '0') {
+                $.ajax({
+                    type: "POST",
+                    url: "/Import/VendorUpdateETA",
+                    data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        alert(response.responseText);
+
+                        buttonEtaDateDelayConfirm.attr("disabled", "disabled").addClass("selected-negative");
+                        inputUpdateEtaDateDelay.attr("disabled", "disabled");
+                        buttonEtaDateOnTimeConfirm.attr("disabled", "disabled");
+                        inputUpdateEtaDateOntime.attr("disabled", "disabled");
+                        inputDelayReason.attr("disabled", "disabled");
+                        inputUploadProgressPhotoes.removeAttr("disabled");
+                        buttonUploadProgressPhotoes.removeAttr("disabled");
+
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+
+                        nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            }
+            else {
+                alert("Choose a reason for your delay");
+                inputDelayReason.focus();
+            }
+        }
+        else {
+            alert("The Date cannot be less than the Date agreed on stage 2");
+            inputUpdateEtaDateDelay.focus();
+        }
+    }
+    else {
+        alert("Date is not valid");
+        inputUpdateEtaDateOntime.focus();
+    }
+});
+
+//Vendor Upload Progress Photoes
+$(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
+    var buttonUploadProgressPhotoesConfirm = $(this);
+    var inputUploadProgressPhotoes = $(this).closest(".form-inline").find(".st4-upload-progress-photoes");
+    var inputUploadProgressPhotoesDOM = inputUploadProgressPhotoes.get(0);
+
+    var itemID = $(this).closest(".form-inline").find(".st4-item-id-inner").val();
+
     var formData = new FormData();
+
+    var imagesContainer = $(this).closest(".po-item-data-header__column").next().find(".st4-uploaded-form").find(".pop-up-notification");
 
     for (var i = 0; i < inputUploadProgressPhotoesDOM.files.length; i++) {
         var file = inputUploadProgressPhotoesDOM.files[i];
@@ -180,22 +205,24 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
     if (inputUploadProgressPhotoesDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadProgressPhotoes",
+            url: "/Import/VendorUploadProgressPhotoes",
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
                 alert(response.responseText);
 
+                console.log(response.imageSources);
+                var imageSources = response.imageSources;
+
+                imageSources.forEach(function (item, index) {
+                    imagesContainer.append('<span class="mr-2">' +
+                        '<img src="' + item + '" width="50px" height="50px">' +
+                        '</span>');
+                });
+
                 buttonUploadProgressPhotoesConfirm.attr("disabled", "disabled");
                 inputUploadProgressPhotoes.attr("disabled", "disabled");
-
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
-
-                nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
-                nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
