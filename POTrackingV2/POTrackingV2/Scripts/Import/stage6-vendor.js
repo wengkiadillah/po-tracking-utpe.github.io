@@ -178,6 +178,12 @@ $(".st6-fill-the-form").on("click", function (obj) {
                                 success: function (response) {
                                     alert(response.responseText);
 
+                                    inputCopyBLDate.attr("disabled", "disabled");
+                                    inputCopyBLDocument.attr("disabled", "disabled");
+                                    inputPackingListDocument.attr("disabled", "disabled");
+                                    inputPackingInvoiceDocument.attr("disabled", "disabled");
+                                    inputAWB.attr("disabled", "disabled");
+                                    inputCourierName.attr("disabled", "disabled");
                                     buttonFillTheForm.attr("disabled", "disabled").addClass("selected");
 
                                     donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
