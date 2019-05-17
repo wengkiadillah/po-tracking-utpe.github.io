@@ -8,9 +8,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1>@roleID</h1>
-
-<h1 class="page-title"><a href="~/Import/index">PO Tracking System</a> <span class="page-subtitle">History</span> <span class="page-subtitle"><a href="~/Import/index?role=procurement">Procurement</a></span></h1>
+<h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -2811,7 +2809,7 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, role = Request.QueryString["role"] }))
+        new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
     @section scripts {
         <script src="~/Scripts/datepicker.min.js"></script>
         <script src="~/Scripts/donutty-jquery.min.js"></script>
