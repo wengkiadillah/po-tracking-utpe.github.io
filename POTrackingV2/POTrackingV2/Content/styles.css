@@ -409,11 +409,11 @@ body {
     background-color: #fafafa;
     width: 82%;
     left: 335px;
-    justify-content: flex-end;
+    /*justify-content: flex-end;*/
 }
 
     .filter-row.freeze .filter-form-container {
-        display: none;
+        /*display: none;*/
     }
 
 .pagination-list {
