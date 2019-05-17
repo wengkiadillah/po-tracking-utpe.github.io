@@ -2682,7 +2682,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ATAFullweldReason").attr("disabled", "disabled"), $("#ETAPrimer").val($("#ATAFullweld").val()), $("#ATAPrimer").attr("min", $("#ATAFullweld").val())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
                                 //$("#ATAPrimer").val() ? ($("#ATAPrimer").attr("disabled", "disabled"), $("#ATAPrimerReason").attr("disabled", "disabled")) : $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
                             } else {
-                                console.log("another error");
+                                console.log(response.responseCode + response.responseText);
                             }
                         },
                         error: function (xhr, status, error) {

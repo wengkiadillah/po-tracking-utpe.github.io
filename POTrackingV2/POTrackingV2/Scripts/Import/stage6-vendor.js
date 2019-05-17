@@ -22,7 +22,7 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
 
     $.ajax({
         type: "POST",
-        url: "GetShippingInformation",
+        url: "/Import/GetShippingInformation",
         data: JSON.stringify({ 'myPurchasingDocumentItemId': myPurchasingDocumentItemId }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {
@@ -46,10 +46,8 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
 
                 modalContent.find(".st6-AWB").val(response.awb);
                 modalContent.find(".st6-AWB").attr("disabled", "disabled");
-                modalContent.find(".st6-resi-original-shipping").val(response.originalShippingReceipt);
-                modalContent.find(".st6-resi-original-shipping").attr("disabled", "disabled");
-                modalContent.find(".st6-docs-acceptance-lc-date").val(response.docsAcceptanceLCDate);
-                modalContent.find(".st6-docs-acceptance-lc-date").attr("disabled", "disabled");
+                modalContent.find(".st6-courier-name").val(response.courierName);
+                modalContent.find(".st6-courier-name").attr("disabled", "disabled");
 
                 modalContent.find(".st6-fill-the-form").attr("disabled", "disabled");
                 modalContent.find(".st6-fill-the-form").addClass("selected");
@@ -72,12 +70,11 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
 
                 modalContent.find(".st6-AWB").val("");
                 modalContent.find(".st6-AWB").removeAttr("disabled");
-                modalContent.find(".st6-resi-original-shipping").val("");
-                modalContent.find(".st6-resi-original-shipping").removeAttr("disabled");
-                modalContent.find(".st6-docs-acceptance-lc-date").val("");
-                modalContent.find(".st6-docs-acceptance-lc-date").removeAttr("disabled");
+                modalContent.find(".st6-courier-name").val("");
+                modalContent.find(".st6-courier-name").removeAttr("disabled");
 
                 modalContent.find(".st6-fill-the-form").removeAttr("disabled");
+                modalContent.find(".st6-fill-the-form").removeClass("selected");
             }
         },
         error: function (xhr, status, error) {
@@ -95,14 +92,9 @@ $(".st6-AWB").on('input focus', function (e) {
     this.reportValidity();
 });
 
-$(".st6-resi-original-shipping-document").on('input focus', function (e) {
+$(".st6-courier-name").on('input focus', function (e) {
     this.reportValidity();
 });
-
-$(".st6-docs-acceptance-lc-date").on('input focus', function (e) {
-    this.reportValidity();
-});
-
 
 //Vendor click Shipment Book Date
 $(".st6-fill-the-form").on("click", function (obj) {
@@ -117,14 +109,12 @@ $(".st6-fill-the-form").on("click", function (obj) {
     var inputPackingInvoiceDocument = rowModal.find(".st6-invoice-document");
     var inputPackingInvoiceDocumentDOM = inputPackingInvoiceDocument.get(0);
     var inputAWB = rowModal.find(".st6-AWB");
-    var inputResiOriginalShipping = rowModal.find(".st6-resi-original-shipping");
-    var inputDocsAcceptanceLCDate = rowModal.find(".st6-docs-acceptance-lc-date");
+    var inputCourierName = rowModal.find(".st6-courier-name");
 
     var itemID = rowModal.find(".st6-item-id").val();
     var copyBLDate = reverseDayMonth(inputCopyBLDate.val());
     var awb = inputAWB.val();
-    var resiOriginalShipping = inputResiOriginalShipping.val();
-    var docsAcceptanceLCDate = reverseDayMonth(inputDocsAcceptanceLCDate.val());
+    var courierName = inputCourierName.val();
 
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 8 * donutProgressUnit;
@@ -165,8 +155,7 @@ $(".st6-fill-the-form").on("click", function (obj) {
         formData.append("filePackingList", filePackingList);
         formData.append("fileInvoice", fileInvoice);
         formData.append("inputAWB", awb);
-        formData.append("inputResiOriginalShipping", resiOriginalShipping);
-        formData.append("inputDocsAcceptanceLCDate", docsAcceptanceLCDate.toUTCString());
+        formData.append("inputCourierName", courierName);
     }
 
     //for (var key of formData.entries()) {
@@ -178,61 +167,61 @@ $(".st6-fill-the-form").on("click", function (obj) {
             if (inputPackingListDocumentDOM.files.length > 0) {
                 if (inputPackingInvoiceDocumentDOM.files.length > 0) {
                     if (awb !== '' && inputAWB.val() !== '') {
-                        if (resiOriginalShipping !== '' && inputResiOriginalShipping.val() !== '') {
-                            if (!isNaN(docsAcceptanceLCDate.getTime()) && inputDocsAcceptanceLCDate.val() !== '') {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "VendorFillInShipmentForm",
-                                    data: formData,
-                                    cache: false,
-                                    contentType: false,
-                                    processData: false,
-                                    success: function (response) {
-                                        alert(response.responseText);
+                        if (courierName !== '' && inputCourierName.val() !== '') {
+                            $.ajax({
+                                type: "POST",
+                                url: "/Import/VendorFillInShipmentForm",
+                                data: formData,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function (response) {
+                                    alert(response.responseText);
 
-                                        buttonFillTheForm.attr("disabled", "disabled").addClass("selected");
+                                    inputCopyBLDate.attr("disabled", "disabled");
+                                    inputCopyBLDocument.attr("disabled", "disabled");
+                                    inputPackingListDocument.attr("disabled", "disabled");
+                                    inputPackingInvoiceDocument.attr("disabled", "disabled");
+                                    inputAWB.attr("disabled", "disabled");
+                                    inputCourierName.attr("disabled", "disabled");
+                                    buttonFillTheForm.attr("disabled", "disabled").addClass("selected");
 
-                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("7");
+                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("7");
 
-                                    },
-                                    error: function (xhr, status, error) {
-                                        alert(xhr.status + " : " + error);
-                                    }
-                                });
-                            }
-                            else {
-                                alert("Tanggal Docs Acceptance of LC tidak valid");
-                                inputDocsAcceptanceLCDate.focus();
-                            }
+                                },
+                                error: function (xhr, status, error) {
+                                    alert(xhr.status + " : " + error);
+                                }
+                            });
                         }
                         else {
-                            alert("Resi Original Shipping Document tidak boleh kosong");
-                            inputResiOriginalShipping.focus();
+                            alert("Courier Name cannot be empty");
+                            inputCourierName.focus();
                         }
                     }
                     else {
-                        alert("AWB tidak boleh kosong");
+                        alert("AWB cannot be empty");
                         inputAWB.focus();
                     }
                 }
                 else {
-                    alert("Dokumen Invoice tidak boleh kosong");
+                    alert("Invoice Document cannot be empty");
                     inputPackingInvoiceDocument.focus();
                 }
             }
             else {
-                alert("Dokumen Packing List tidak boleh kosong");
+                alert("Packing List Document cannot be empty");
                 inputPackingListDocument.focus();
             }
         }
         else {
-            alert("Dokumen Copy BL tidak boleh kosong");
+            alert("BL Copy Document cannot be empty");
             inputCopyBLDocument.focus();
         }
     }
     else {
-        alert("Tanggal Copy BL tidak valid");
+        alert("BL Copy Date is not valid");
         inputCopyBLDate.focus();
     }
 });

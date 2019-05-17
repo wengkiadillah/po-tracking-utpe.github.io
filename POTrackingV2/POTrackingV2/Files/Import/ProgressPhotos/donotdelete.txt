@@ -1,0 +1,1 @@
+﻿The purpose of this file is to make a directory folder on the cloud server accordingly.
