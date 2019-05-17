@@ -74,6 +74,7 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
                 modalContent.find(".st6-courier-name").removeAttr("disabled");
 
                 modalContent.find(".st6-fill-the-form").removeAttr("disabled");
+                modalContent.find(".st6-fill-the-form").removeClass("selected");
             }
         },
         error: function (xhr, status, error) {
