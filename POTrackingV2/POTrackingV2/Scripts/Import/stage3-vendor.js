@@ -67,7 +67,7 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
         //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorConfirmPaymentReceived",
+            url: "VendorConfirmPaymentReceived",
             data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -167,7 +167,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "/Import/VendorConfirmPaymentReceived",
+        url: "VendorConfirmPaymentReceived",
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -222,7 +222,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorSkipConfirmPayment",
+            url: "VendorSkipConfirmPayment",
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

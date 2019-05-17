@@ -64,7 +64,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
         if (etaOnTime >= minDate) {
             $.ajax({
                 type: "POST",
-                url: "/Import/VendorUpdateETA",
+                url: "VendorUpdateETA",
                 data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -143,7 +143,7 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
             if (delayReasonID !== '' && delayReasonID !== '0') {
                 $.ajax({
                     type: "POST",
-                    url: "/Import/VendorUpdateETA",
+                    url: "VendorUpdateETA",
                     data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
                     contentType: "application/json; charset=utf-8",
                     success: function (response) {
@@ -205,7 +205,7 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
     if (inputUploadProgressPhotoesDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "/Import/VendorUploadProgressPhotoes",
+            url: "VendorUploadProgressPhotoes",
             data: formData,
             processData: false,
             contentType: false,
