@@ -9,6 +9,8 @@ using PagedList;
 using System.Globalization;
 using POTrackingV2.ViewModels;
 using System.IO;
+using POTrackingV2.CustomAuthentication;
+using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
