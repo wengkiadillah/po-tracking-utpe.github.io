@@ -2,8 +2,8 @@
 @if (Request.IsAuthenticated)
 {
     ViewBag.Role = Model;
-    <input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
-    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" />
+    @*<input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
+    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
     <script type="text/javascript">
         Date.prototype.newDateFormatMMDD = function () {
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -43,15 +43,15 @@
         }
 
         $(document).ready(function () {
-            //var role = $("#role").val();
-            var role = $("#roleNotification").val();
-            if (role == 1) {
-               $("#role").val("admin")
-            } else if (role == 2) {
-                $("#role").val("procurement")
-            } else if (role == 3) {
-                $("#role").val("vendor")
-            }
+            var role = $("#role").val();
+            //var role = $("#roleNotification").val();
+            //if (role == 1) {
+            //   $("#role").val("admin")
+            //} else if (role == 2) {
+            //    $("#role").val("procurement")
+            //} else if (role == 3) {
+            //    $("#role").val("vendor")
+            //}
             var url = window.location;
             var objectURL = parseURLParams(window.location.toString());
             //if (typeof (objectURL['activeStage']) === "undefined" || typeof (objectURL['activeStage']) === "NaN") {
@@ -127,7 +127,7 @@
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                            var url = "http://10.48.10.44/potracking/"+POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                            var url = siteUrl + "/"+POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                             message = "";
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
