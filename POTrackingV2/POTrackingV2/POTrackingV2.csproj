@@ -405,6 +405,7 @@
     <Content Include="Scripts\Local\Stage2a-procurement.js" />
     <Content Include="Scripts\Local\stage3-vendor.js" />
     <Content Include="Scripts\Local\stage4-vendor.js" />
+    <Content Include="Scripts\Local\Stage6-vendor.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
@@ -458,6 +459,7 @@
     <Folder Include="Files\Import\Proformainvoice\" />
     <Folder Include="Files\Import\ProgressPhotos\" />
     <Folder Include="Files\Import\Shipping\" />
+    <Folder Include="Files\Local\Invoice\" />
     <Folder Include="Files\Local\ProformaInvoice\" />
     <Folder Include="Files\Local\ProgressProforma\" />
     <Folder Include="Files\Subcont\SequencesProgress\" />

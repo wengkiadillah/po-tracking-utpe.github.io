@@ -18,7 +18,7 @@ namespace POTrackingV2.Controllers
         POTrackingEntities db = new POTrackingEntities();
 
         // GET: Account
-        [Authorize]
+        //[Authorize]
         public ActionResult Index()
         {
             return View();
