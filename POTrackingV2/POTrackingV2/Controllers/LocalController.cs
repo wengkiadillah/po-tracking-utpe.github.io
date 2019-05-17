@@ -1,5 +1,4 @@
 ﻿using POTrackingV2.Models;
-using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using PagedList;
 using System.Globalization;
+using POTrackingV2.ViewModels;
 using System.IO;
 
 namespace POTrackingV2.Controllers

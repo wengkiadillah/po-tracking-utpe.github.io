@@ -67,6 +67,7 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
     cssRow = cssRow.replace(" ", ".");
     cssRow = "." + cssRow;
     donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     if (itemID !== null) {
         $.ajax({
@@ -84,6 +85,7 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
 
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
+                nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);

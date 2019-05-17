@@ -290,6 +290,9 @@
     <Content Include="Content\styles.css" />
     <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
+    <Content Include="Files\Local\Invoice\donotdelete.txt" />
+    <Content Include="Files\Local\ProformaInvoice\donotdelete.txt" />
+    <Content Include="Files\Local\ProgressProforma\donotdelete.txt" />
     <Content Include="fonts\AvenirLTStd-Black.svg" />
     <Content Include="fonts\AvenirLTStd-Book.svg" />
     <Content Include="fonts\AvenirLTStd-Heavy.svg" />
@@ -435,7 +438,6 @@
     <Content Include="Views\Import\WhiteBoard.cshtml" />
     <Content Include="Views\Subcont\Index.cshtml" />
     <Content Include="Views\Subcont\Template.cshtml" />
-    <Content Include="Views\Local\Index.cshtml" />
     <Content Include="Views\DelayReason\Create.cshtml" />
     <Content Include="Views\DelayReason\Delete.cshtml" />
     <Content Include="Views\DelayReason\Details.cshtml" />
@@ -452,6 +454,7 @@
     <Content Include="Views\ReasonSubCont\Edit.cshtml" />
     <Content Include="Views\ReasonSubCont\Index.cshtml" />
     <Content Include="Views\DelayReason\IndexDelay.cshtml" />
+    <Content Include="Views\Local\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -459,9 +462,6 @@
     <Folder Include="Files\Import\Proformainvoice\" />
     <Folder Include="Files\Import\ProgressPhotos\" />
     <Folder Include="Files\Import\Shipping\" />
-    <Folder Include="Files\Local\Invoice\" />
-    <Folder Include="Files\Local\ProformaInvoice\" />
-    <Folder Include="Files\Local\ProgressProforma\" />
     <Folder Include="Files\Subcont\SequencesProgress\" />
   </ItemGroup>
   <ItemGroup>
