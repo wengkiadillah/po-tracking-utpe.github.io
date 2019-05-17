@@ -326,7 +326,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -482,7 +482,7 @@ namespace POTrackingV2.Controllers
                         }
                     }
                 }
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -583,7 +583,7 @@ namespace POTrackingV2.Controllers
 
                 db.Notifications.Add(notification);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -704,7 +704,7 @@ namespace POTrackingV2.Controllers
                 notificationInfoProcurement.ModifiedBy = User.Identity.Name;
                 db.Notifications.Add(notificationInfoProcurement);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -900,7 +900,7 @@ namespace POTrackingV2.Controllers
                 }
                 //}
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
 
                 //if (fileSequencesProgress.ContentLength > 0)
@@ -920,7 +920,7 @@ namespace POTrackingV2.Controllers
                 //    //databasePurchasingDocumentItem.LastModified = now;
                 //    //databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                //    ////db.SaveChanges();
+                //    //db.SaveChanges();
 
                 //    //return Json(new { responseText = $"Item number {databasePurchasingDocumentItem.ItemNumber} affected" }, JsonRequestBehavior.AllowGet);
                 //    return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
@@ -973,7 +973,7 @@ namespace POTrackingV2.Controllers
                 notification.ModifiedBy = User.Identity.Name;
                 db.Notifications.Add(notification);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -1032,7 +1032,7 @@ namespace POTrackingV2.Controllers
 
                             db.Notifications.Add(notification);
 
-                            //db.SaveChanges();
+                            db.SaveChanges();
 
                             string downloadUrl = Path.Combine("..\\Files\\Subcont\\Invoice", fileName);
 
@@ -1100,7 +1100,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notification);
 
-                        //db.SaveChanges();
+                        db.SaveChanges();
 
                         return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
                     }
