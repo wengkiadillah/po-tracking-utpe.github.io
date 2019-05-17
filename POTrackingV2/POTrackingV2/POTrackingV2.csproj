@@ -386,7 +386,6 @@
     <Content Include="Scripts\Import\stage3-vendor.js" />
     <Content Include="Scripts\Import\stage4-vendor.js" />
     <Content Include="Scripts\Import\stage5-vendor.js" />
-    <Content Include="Scripts\Import\stage5-vendorzzz.js" />
     <Content Include="Scripts\Import\stage6-vendor.js" />
     <Content Include="Scripts\Import\stage7-procurement.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
