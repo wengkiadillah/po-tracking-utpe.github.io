@@ -4,7 +4,7 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>Add Sequence Progress Reason</h2>
 <p>@ViewBag.username</p>
 
 @using (Html.BeginForm("Create", "ReasonSubCont")) 
@@ -12,7 +12,6 @@
     @*@Html.AntiForgeryToken()*@
     
     <div class="form-horizontal">
-        <h4>SequencesProgressReason</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
