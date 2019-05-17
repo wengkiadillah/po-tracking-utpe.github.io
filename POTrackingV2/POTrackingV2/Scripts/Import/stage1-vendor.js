@@ -193,7 +193,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 if (isEdit === "false") {
                     $.ajax({
                         type: "POST",
-                        url: "VendorConfirmItem",
+                        url: "/Import/VendorConfirmItem",
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -231,7 +231,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 else {
                     $.ajax({
                         type: "POST",
-                        url: "VendorEditItem",
+                        url: "/Import/VendorEditItem",
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -269,15 +269,15 @@ $(".st1-accept-item").on("click", function (obj) {
                 }
             }
             else {
-                alert("Tanggal tidak boleh sama atau kosong");
+                alert("The Date cannot be the same or empty");
             }
         }
         else {
-            alert("Kuantitas tidak boleh kurang dari 0");
+            alert("Quantity cannot be less than 0");
         }
     }
     else {
-        alert("Kuantitas tidak boleh lebih dari permintaan");
+        alert("Quantity cannot be more than bargained for");
     }
 });
 
@@ -432,15 +432,15 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         }
                     }
                     else {
-                        alert("Tanggal tidak boleh sama atau kosong");
+                        alert("The Date cannot be the same or empty");
                     }
                 }
                 else {
-                    alert("Kuantitas tidak boleh kurang dari 0");
+                    alert("Quantity cannot be less than 0");
                 }
             }
             else {
-                alert("Kuantitas tidak boleh lebih dari permintaan");a
+                alert("Quantity cannot be more than bargained for");
             }
         }
     });
@@ -448,7 +448,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
     if (inputPurchasingDocumentItems.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmItem",
+            url: "/Import/VendorConfirmItem",
             data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -498,7 +498,7 @@ $(".st1-cancel-item").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "CancelItem",
+        url: "/Import/CancelItem",
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {

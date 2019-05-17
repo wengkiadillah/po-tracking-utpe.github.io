@@ -76,7 +76,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmFirstETA",
+                url: "/Import/VendorConfirmFirstETA",
                 data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -100,12 +100,12 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
+            alert("The Date cannot be less than the Date agreed on stage 1");
             inputFirstEtaDate.focus();
         }
     }
     else {
-        alert("Tanggal tidak boleh kosong");
+        alert("Dates cannot be empty");
         inputFirstEtaDate.focus();
     }
 });
@@ -164,12 +164,12 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                     //donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                 }
                 else {
-                    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
+                    alert("The Date cannot be less than the Date agreed on stage 1");
                     inputFirstEtaDate.focus();
                 }
             }
             else {
-                alert("Tanggal tidak boleh kosong");
+                alert("Dates cannot be empty");
                 inputFirstEtaDate.focus();
             }
         }
@@ -178,7 +178,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
     if (inputETAHistories.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmFirstETA",
+            url: "/Import/VendorConfirmFirstETA",
             data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

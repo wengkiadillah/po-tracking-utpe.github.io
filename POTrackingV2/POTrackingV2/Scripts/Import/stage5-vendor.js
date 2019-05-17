@@ -86,7 +86,7 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
         if (shipBookingDate <= maxDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmShipmentBookingDate",
+                url: "/Import/VendorConfirmShipmentBookingDate",
                 data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -106,12 +106,12 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 4");
+            alert("The Date cannot be less than the Date agreed on stage 4");
             inputShipBookingDate.focus();
         }
     }
     else {
-        alert("Tanggal tidak Valid");
+        alert("Date is not valid");
         inputShipBookingDate.focus();
     }
 });
@@ -151,7 +151,7 @@ $(".st5-ATD-confirm").on("click", function (obj) {
 
         $.ajax({
             type: "POST",
-            url: "VendorConfirmATD",
+            url: "/Import/VendorConfirmATD",
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -172,7 +172,7 @@ $(".st5-ATD-confirm").on("click", function (obj) {
         });
     }
     else {
-        alert("Tanggal tidak Valid");
+        alert("Date is not valid");
         inputATD.focus();
     }
 });
@@ -232,7 +232,7 @@ $(".st5-confirm-all").on("click", function (obj) {
                     inputIsShipBooked.addClass("row-updated-status");
                 }
                 else {
-                    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 4");
+                    alert("The Date cannot be less than the Date agreed on stage 4");
                     inputShipBookingDate.focus();
                 }
             }
@@ -263,12 +263,12 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentBookDates.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmShipmentBookingDate",
+            url: "/Import/VendorConfirmShipmentBookingDate",
             data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                count = count + (response.count);
+                count = count + response.count;
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated").removeClass("row-updated");
@@ -290,12 +290,12 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentATDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmATD",
+            url: "/Import/VendorConfirmATD",
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                count = count + (response.count);
+                count = count + response.count;
                 alert(count + " data affected");
 
                 $(".row-updated-ATD").attr("disabled", "disabled");
