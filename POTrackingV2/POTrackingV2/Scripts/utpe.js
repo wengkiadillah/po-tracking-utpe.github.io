@@ -13,6 +13,12 @@ userAvatar = userNameWords.reduce((accumulator, currentValue, currentIndex, arra
 
 //menu item selected
 var path = window.location.pathname;
+var siteUrl = window.location.href;
+if (siteUrl.indexOf("/potracking") > -1) {
+    siteUrl = siteUrl.substring(0, (siteUrl.indexOf("/potracking") + 11));
+} else {
+    siteUrl = siteUrl.substring(0, siteUrl.indexOf(path));
+}
 if (path.split('/').length > 2) {
     if (path.indexOf("/potracking")>-1) {
         path = path.replace("/potracking","");
