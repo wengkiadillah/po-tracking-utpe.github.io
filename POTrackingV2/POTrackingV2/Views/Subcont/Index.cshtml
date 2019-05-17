@@ -8,17 +8,13 @@
 @*@model IEnumerable<POTracking.Models.POSubcont>*@
 @{
     ViewBag.Title = "PO Subcont";
-    ViewBag.Role = Request.QueryString["role"];
-    ViewBag.FilterBy = Request.QueryString["filterBy"];
-    if (ViewBag.Role == null)
-    {
-        ViewBag.Role = "vendor";
-    }
+    var roleID = ViewBag.CurrentRoleID;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>
+@*<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>*@
+<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -148,7 +144,7 @@
                         var rowChild = 1;
                         var purchasingDocumentItems = pO.PurchasingDocumentItems;
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
-                        if (ViewBag.Role == "procurement")
+                        if (ViewBag.CurrentRoleID == 2)
                         {
                             //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || x.ConfirmedItem == false).ToList();
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
@@ -318,7 +314,7 @@
                                 isPartial = "selected";
                             }
 
-                            if (ViewBag.Role == "vendor")
+                            if (ViewBag.CurrentRoleID == 3)
                             {
                                 hideChildCheckedConfirmBtn = "style=visibility:hidden";
                                 disabledInputQty = "disabled";
@@ -341,7 +337,7 @@
                                     checkItem = "checked";
                                 }
                             }
-                            else if (ViewBag.Role == "procurement")
+                            else if (ViewBag.CurrentRoleID == 2)
                             {
                                 disabledInputQty = "disabled";
                                 if (purchasingDocumentItem.ConfirmedItem == true)
@@ -364,12 +360,12 @@
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.Role != "vendor" || purchasingDocumentItem.ConfirmedQuantity != 0)
+                            if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.CurrentRoleID != 3 || purchasingDocumentItem.ConfirmedQuantity != 0)
                             //if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            else if (ViewBag.Role == "procurement" && purchasingDocumentItem.ActiveStage != "2")
+                            else if (ViewBag.CurrentRoleID == 2 && purchasingDocumentItem.ActiveStageToNumber != 2)
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -457,7 +453,7 @@
                                         //    hideEditButton = "style=visibility:hidden";
                                         //}
                                         //else
-                                        if (ViewBag.Role == "vendor" || purchasingDocumentItemChild.ActiveStageToNumber != 2)
+                                        if (ViewBag.CurrentRoleID == 3 || purchasingDocumentItemChild.ActiveStageToNumber != 2)
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }
@@ -650,7 +646,7 @@
 
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            if (ViewBag.Role == "procurement" || purchasingDocumentItem.ActiveStageToNumber > 3)
+                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber > 3)
                             {
                                 var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                 var isComplete = "No";
@@ -854,7 +850,7 @@
                             }
                             else
                             {
-                                if (Request.QueryString["role"] == "procurement" || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument!=null) || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity))
+                                if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument!=null) || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity))
                                 {
                                     disabledFileInvoice = "disabled";
                                     disabledFileInvoiceUpload = "disabled";
@@ -895,7 +891,7 @@
                                         }
                                         else
                                         {
-                                            if (Request.QueryString["role"] == "procurement" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
                                             {
                                                 disabledFileInvoice = "disabled";
                                                 disabledFileInvoiceUpload = "disabled";
@@ -1032,7 +1028,7 @@
                     </div>
                 </div>
             </div>
-            @if (ViewBag.Role == "vendor")
+            @if (ViewBag.CurrentRoleID == 3)
             {
                 <div class="modal-footer">
                     <input type="hidden" id="item-id-sequences">
@@ -1235,7 +1231,8 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, role = ViewBag.Role, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    //new { page, role = ViewBag.CurrentRoleID, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -1826,7 +1823,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
                             btnEditItem.addClass("editable");
-                            if (role == "procurement") {
+                            if (role == 2) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -1849,13 +1846,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 }
 
                 //if ((confirmedQtyParent.attr("disabled") !== typeof undefined && confirmedQtyParent.attr("disabled") !== false && role == "vendor") || (role == "procurement")){
-                if ((role == "vendor" && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == "procurement"))) {
+                if ((role == 3 && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == 2))) {
                     //if ((role == "vendor")){
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").each(function (index) {
                         var checkedItemChild = $(this).find(".checkbox-item");
                         //console.log(checkedItemChild.attr("disabled"));
                         //alert(checkedItem.prop("checked"));
-                        if (role == "vendor" || (role == "procurement" && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
+                        if (role == 3 || (role == 2 && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
                             var pDItemID = $(this).find(".pd-item-id").val();
                             var pDItemParentID = $(this).find(".pd-item-parent-id").val();
                             var confirmedQtyChild = $(this).find(".pd-item-confirm-qty");
@@ -1892,7 +1889,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         //Description:
                                     });
 
-                                    if (role == "procurement") {
+                                    if (role == 2) {
                                         $(this).find(".checkbox-item").addClass("isUpdated");
                                         $(this).find(".btn-positive").addClass("buttonClicked");
                                         $(this).find(".btn").addClass("isUpdated");
@@ -1942,7 +1939,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("SaveAllPOItem", "Subcont")",
-                    data: JSON.stringify({ 'role': role, 'purchasingDocumentItems': dataPurchasingDocumentItems, 'purchasingDocumentItemChilds': dataPurchasingItemChilds }),
+                    data: JSON.stringify({ 'purchasingDocumentItems': dataPurchasingDocumentItems, 'purchasingDocumentItemChilds': dataPurchasingItemChilds }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -1982,7 +1979,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             if ($(this).prop("checked") == true) {
                 var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var newDate = deliveryDate.replaceDayMonth();
-                if (role == "vendor") {
+                if (role == 3) {
                     if (!isNaN(Date.parse(newDate))) {
                         var date = new Date(newDate);
                         row.find(".confirmed-date").datepicker('setDate', date.newDateFormat());
@@ -2001,7 +1998,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 row.find(".btn.btn-positive").removeAttr("disabled");
                 row.find(".btn.btn-negative").removeAttr("disabled");
             } else {
-                if (role == "vendor") {
+                if (role == 3) {
                     row.find(".pd-item-confirm-qty").attr("disabled", "disabled");
                     row.find(".partial-date").attr("disabled", "disabled");
                     row.find(".confirmed-date").attr("disabled", "disabled");
@@ -2057,11 +2054,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var newDate = confirmedDate.val().replaceDayMonth();
                     if (!isNaN(Date.parse(newDate))) {
                         obj.preventDefault();
+                        console.log("masuk sini");
                         //console.log("role = " + role + "pdItemID = " + pdItemID + "confirmedItemQty = " + confirmedItemQty.val() + "confirmedDate = " + newDate + "isCanceledPOItem = " + isCanceledPOItem);
                         $.ajax({
                             type: "POST",
                             url: "@Url.Action("SavePOItem", "Subcont")",
-                            data: { 'role': role, 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
+                            data: { 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
                             contentType: "application/x-www-form-urlencoded; charset=utf-8",
                             //dataType: "json",
                             success: function (response) {
@@ -2076,7 +2074,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
-                                    if (role == "procurement") {
+                                    if (role == 2) {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                     }
                                     btnConfirmPO.addClass("selected");
@@ -2102,7 +2100,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     }
                 }
             } else if (deliveryMethod.val() == "partial") {
-                if (role == "vendor") {
+                if (role == 3) {
                     var dataPurchasingDocumentItems = [];
                     var total = 0;
                     var isNullChecked = false;
@@ -2203,7 +2201,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $.ajax({
                             type: "POST",
                             url: "@Url.Action("SavePartialPurchasingDocumentItems", "Subcont")",
-                            data: JSON.stringify({ 'role': role, 'purchasingDocumentItems': dataPurchasingDocumentItems }),
+                            data: JSON.stringify({ 'purchasingDocumentItems': dataPurchasingDocumentItems }),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function (response) {
@@ -2220,7 +2218,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                         });
                     }
-                } else if (role == "procurement") {
+                } else if (role == 2) {
                     obj.preventDefault();
                     var pdItemID = $(this).closest(".po-item-data-content").find("input.pd-item-id").val();
                     var confirmedItemQty = $(this).closest(".po-item-data-content").find(".pd-item-confirm-qty");
@@ -2231,7 +2229,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $.ajax({
                         type: "POST",
                         url: "@Url.Action("SavePOItem", "Subcont")",
-                        data: { 'role': role, 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
+                        data: { 'pdItemID': pdItemID, 'confirmedItemQty': confirmedItemQty.val(), 'confirmedDate': newDate, 'isCanceledPOItem': isCanceledPOItem },
                         contentType: "application/x-www-form-urlencoded; charset=utf-8",
                         //dataType: "json",
                         success: function (response) {
@@ -2243,7 +2241,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (isCanceledPOItem == true) {
                                 btnCancelPO.addClass("selected-negative");
                             } else {
-                                if (role == "procurement") {
+                                if (role == 2) {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
                                 }
                                 btnConfirmPO.addClass("selected");
@@ -2274,7 +2272,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".edit-row").on("click", function (obj) {
             var role = $("#role").val();
             var lastRowChild = $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").last();
-            if (role == "vendor") {
+            if (role == 3) {
                 $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
@@ -2288,7 +2286,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .pd-item-confirm-qty").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .partial-date").removeAttr("disabled");
                 }
-            } else if (role == "procurement") {
+            } else if (role == 2) {
                 if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                     $(this).closest(".po-item-data-content").find(".checkbox-item").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".btn").removeAttr("disabled");
@@ -2450,7 +2448,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
-            if (role == "procurement") {
+            if (role == 2) {
                 $("#SaveSequencesProgress").hide();
             }
 

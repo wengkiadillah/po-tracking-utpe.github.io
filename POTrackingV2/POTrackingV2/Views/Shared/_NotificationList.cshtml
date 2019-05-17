@@ -2,14 +2,14 @@
 @if (Request.IsAuthenticated)
 {
     ViewBag.Role = Model;
-    <input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
-    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" />
+    @*<input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
+    <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
     <script type="text/javascript">
         Date.prototype.newDateFormatMMDD = function () {
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
             var dd = this.getDate();
 
-            var mm = this.getMonth() + 1;
+            var mm = this.getMonth();
             var yyyy = this.getFullYear();
             if (dd < 10) {
                 dd = '0' + dd;
@@ -43,15 +43,15 @@
         }
 
         $(document).ready(function () {
-            //var role = $("#role").val();
-            var role = $("#roleNotification").val();
-            if (role == 1) {
-               $("#role").val("admin")
-            } else if (role == 2) {
-                $("#role").val("procurement")
-            } else if (role == 3) {
-                $("#role").val("vendor")
-            }
+            var role = $("#role").val();
+            //var role = $("#roleNotification").val();
+            //if (role == 1) {
+            //   $("#role").val("admin")
+            //} else if (role == 2) {
+            //    $("#role").val("procurement")
+            //} else if (role == 3) {
+            //    $("#role").val("vendor")
+            //}
             var url = window.location;
             var objectURL = parseURLParams(window.location.toString());
             //if (typeof (objectURL['activeStage']) === "undefined" || typeof (objectURL['activeStage']) === "NaN") {
@@ -95,11 +95,11 @@
 
                             var POTypeCategory = "";
                             if (jsonObj[k]['POImport'] == true) {
-                                POTypeCategory = "import";
+                                POTypeCategory = "Import";
                             } else if (jsonObj[k]['POLocal'] == true){
-                                POTypeCategory = "local";
+                                POTypeCategory = "Local";
                             } else if (jsonObj[k]['POSubcont'] == true) {
-                                POTypeCategory = "subcont";
+                                POTypeCategory = "Subcont";
                             }
                             var PONumber = jsonObj[k]['PONumber'].toLowerCase();
                             var POQty = jsonObj[k]['POQty'];
@@ -127,11 +127,11 @@
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                            var url = "http://10.48.10.44/potracking/"+POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                            var url = siteUrl + "/"+POTypeCategory + "/Index" + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                             message = "";
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
-                            if (POTypeCategory == "import") {
+                            if (POTypeCategory == "Import") {
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
                                 }else if (stage == "1") {
@@ -191,7 +191,7 @@
                                 }
                                 /*-------------------------------------------------------------END IMPORT-----------------------------------------------------------*/
                             }
-                            else if (POTypeCategory == "local") {
+                            else if (POTypeCategory == "Local") {
                                 /*-------------------------------------------------------------BEGIN LOCAL----------------------------------------------------------*/
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
@@ -254,7 +254,7 @@
                                     message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                 }
                                 /*---------------------------------------------------------------END LOCAL------------------------------------------------------------*/
-                            } else if (POTypeCategory == "subcont") {
+                            } else if (POTypeCategory == "Subcont") {
                                 /*-------------------------------------------------------------BEGIN SUBCONT----------------------------------------------------------*/
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
