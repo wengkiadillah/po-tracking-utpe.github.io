@@ -10,7 +10,7 @@
     
 <div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
     <h2 class="form-sub-header">
-        Edit User Vendor
+        Edit Master Vendor
     </h2>
     <hr class="mb-4">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -71,11 +71,16 @@
             @Html.EditorFor(model => model.MonthlyCapacity, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.MonthlyCapacity, "", new { @class = "field-validation-valid text-danger" })
         </div>
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.isNeedSequence, htmlAttributes: new { @class = "form-custom-label" }) <br />
+            @Html.CheckBoxFor(model => model.isNeedSequence, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.isNeedSequence, "", new { @class = "field-validation-valid text-danger" })
+        </div>
     </div>
 
     <div class="row justify-content-between mt-5">
         <div class="col-auto">
-            <a href="/MasterVendor" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+            <a href="@Url.Action("Index", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
         </div>
         <div class="col-auto">
             <button type="submit" value="Create" class="btn btn-success create-ad-user mr-0 mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> &nbsp; Update</button>

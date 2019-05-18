@@ -43,8 +43,10 @@ $(".st1-checkbox-item").on("change", function (obj) {
 //Checked Button Confirm PO -- Undisabling Controller
 $(".st1-checkbox-item").on("change", function (obj) {
     var row = $(this).closest(".po-item-data-content");
+    var latestDeliveryDate = row.find(".st1-pd-item-delivery-date").val();
+    var itemQuantity = row.find(".st1-pd-item-max-qty").val();
+
     if ($(this).prop("checked") === true) {
-        var latestDeliveryDate = row.find(".st1-pd-item-delivery-date").val();
 
         row.find(".st1-confirmed-date").removeAttr("disabled");
         row.find(".st1-delivery-method").removeAttr("disabled");
@@ -53,6 +55,7 @@ $(".st1-checkbox-item").on("change", function (obj) {
         row.find(".st1-cancel-item").removeAttr("disabled");
         row.find(".st1-confirmed-date").val(latestDeliveryDate);
         row.find(".st1-partial-date").first().val(latestDeliveryDate);
+        row.find(".st1-partial-confirm-qty").first().val(itemQuantity);
 
         if (row.find(".st1-delivery-method").val() === "partial") {
 
@@ -70,8 +73,9 @@ $(".st1-checkbox-item").on("change", function (obj) {
         row.find(".st1-partial-date").attr("disabled", "disabled");
         row.find(".st1-accept-item").attr("disabled", "disabled");
         row.find(".st1-cancel-item").attr("disabled", "disabled");
-        row.find(".st1-confirmed-date").val("");
-        row.find(".st1-partial-date").val("");
+        row.find(".st1-confirmed-date").val(latestDeliveryDate);
+        row.find(".st1-partial-date").first().val(latestDeliveryDate);
+        row.find(".st1-partial-confirm-qty").first().val(itemQuantity);
 
         row.find(".st1-add-row").attr("style", "visibility:hidden");
         row.find(".st1-del-row").attr("style", "visibility:hidden");

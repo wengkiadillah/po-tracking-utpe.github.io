@@ -129,12 +129,24 @@ namespace POTracking.Controllers
         [HttpPost]
         public ActionResult Edit(int id, SubcontComponentCapability subcontComponent)
         {
+            DateTime now = DateTime.Now;
+            var userName = User.Identity.Name;
             try
             {
                 // TODO: Add update logic here
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    db.Entry(subcontComponent).State = EntityState.Modified;
+                    SubcontComponentCapability selectedSubContComponent = db.SubcontComponentCapabilities.SingleOrDefault(x => x.ID == id);
+                    selectedSubContComponent.isNeedSequence = subcontComponent.isNeedSequence;
+                    selectedSubContComponent.Material = subcontComponent.Material;
+                    selectedSubContComponent.Description = subcontComponent.Description;
+                    selectedSubContComponent.DailyLeadTime = subcontComponent.DailyLeadTime;
+                    selectedSubContComponent.MonthlyLeadTime = subcontComponent.MonthlyLeadTime;
+                    selectedSubContComponent.PB = subcontComponent.PB;
+                    selectedSubContComponent.Setting = subcontComponent.Setting;
+                    selectedSubContComponent.Fullweld = subcontComponent.Fullweld;
+                    selectedSubContComponent.Primer = subcontComponent.Primer;
+                    selectedSubContComponent.MonthlyCapacity = subcontComponent.MonthlyCapacity;
                     db.SaveChanges();
                 }
                     return RedirectToAction("Index");

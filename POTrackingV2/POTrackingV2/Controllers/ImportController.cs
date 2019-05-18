@@ -742,11 +742,13 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (databasePurchasingDocumentItem.ActiveStage == "2a")
+                if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
                 {
                     string user = User.Identity.Name;
 
                     databasePurchasingDocumentItem.ActiveStage = "3";
+                    databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+                    databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = null;
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
 
@@ -990,10 +992,11 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (databasePurchasingDocumentItem.ActiveStage == "3")
+                if (databasePurchasingDocumentItem.ActiveStage == "3" || databasePurchasingDocumentItem.ActiveStage == "4")
                 {
                     string user = User.Identity.Name;
 
+                    databasePurchasingDocumentItem.ConfirmReceivedPaymentDate = null;
                     databasePurchasingDocumentItem.ActiveStage = "4";
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
