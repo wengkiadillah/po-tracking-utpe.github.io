@@ -400,7 +400,7 @@ body {
 
 .filter-row.freeze {
     top: 0;
-    z-index: 9999;
+    z-index: 999;
     background-color: #fafafa;
     position: fixed;
     margin: 0;

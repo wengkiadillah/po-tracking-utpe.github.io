@@ -642,97 +642,98 @@
                             rowChild = 1;
                         }
 
-                        @*@if (ViewBag.Role != "adfadsfasd")*@
 
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber > 3)
+                            var hideGR = "";
+                            if (ViewBag.CurrentRoleID != 2 && purchasingDocumentItem.ActiveStageToNumber < 4)
                             {
-                                var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                var isComplete = "No";
-                                if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
-                                {
-                                    isComplete = "Yes";
-                                }
-                                <div class="po-item-data-content row-@row" row="@row">
-                                    <div class="po-item-data-content__outer">
-                                        <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
-                                        <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
-                                        <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                        @*<span class="po-item-data-header__column inspection-date"></span>
-                                        <span class="po-item-data-header__column inspecton-qty"></span>*@
-                                        <span class="po-item-data-header__text info">
-                                            <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                            <div class="pop-up-notification">
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>GR / Inspection Date</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>Qty</td>
-                                                        </tr>
-                                                        @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
-                                                        {
-                                                            grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-
-                                                            <tr>
-                                                                <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                <td>&nbsp;</td>
-                                                                <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </span>
-
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
-                                        {
-                                            isComplete = "No";
-                                            if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
-                                            {
-                                                isComplete = "Yes";
-                                            }
-                                            grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-
-                                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                                <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
-                                                <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
-                                                <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                                @*<span class="po-item-data-header__column inspection-date"></span>
-                                                <span class="po-item-data-header__column qty"></span>*@
-                                                <span class="po-item-data-header__text info">
-                                                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                                    <div class="pop-up-notification">
-                                                        <table>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>GR / Inspection Date</td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>Qty</td>
-                                                                </tr>
-                                                                @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
-                                                                {
-                                                                    grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                                                    <tr>
-                                                                        <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                        <td>&nbsp;</td>
-                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
-                                                                    </tr>
-                                                                }
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            rowChild++;
-                                        }
-                                    </div>
-                                </div>
-                                row++;
+                                hideGR = "style=visibility:hidden";
                             }
+                            var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var isComplete = "No";
+                            if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            {
+                                isComplete = "Yes";
+                            }
+                            <div class="po-item-data-content row-@row" row="@row" @hideGR>
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                    <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
+                                    <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                    @*<span class="po-item-data-header__column inspection-date"></span>
+                                    <span class="po-item-data-header__column inspecton-qty"></span>*@
+                                    <span class="po-item-data-header__text info">
+                                        <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                        <div class="pop-up-notification">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>GR / Inspection Date</td>
+                                                        <td>&nbsp;</td>
+                                                        <td>Qty</td>
+                                                    </tr>
+                                                    @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
+                                                    {
+                                                        grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                                        <tr>
+                                                            <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </span>
+
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        isComplete = "No";
+                                        if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                        {
+                                            isComplete = "Yes";
+                                        }
+                                        grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
+                                            <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
+                                            <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                            @*<span class="po-item-data-header__column inspection-date"></span>
+                                            <span class="po-item-data-header__column qty"></span>*@
+                                            <span class="po-item-data-header__text info">
+                                                <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                                <div class="pop-up-notification">
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>GR / Inspection Date</td>
+                                                                <td>&nbsp;</td>
+                                                                <td>Qty</td>
+                                                            </tr>
+                                                            @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
+                                                            {
+                                                                grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                                <tr>
+                                                                    <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        rowChild++;
+                                    }
+                                </div>
+                            </div>
+                            row++;
                         }
                     </div>
                 </div>
@@ -760,7 +761,7 @@
                                 checkStageProgressItem = true;
                             }
 
-                            if (checkStageProgressItem==false)
+                            if (checkStageProgressItem==false || ViewBag.CurrentRoleID == 2)
                             {
                                 isDisabled = "disabled";
                             }
@@ -841,6 +842,12 @@
                             var hiddenFormUploading = "";
                             var hiddenFormUploaded = "hidden";
                             var invoiceDownloadPath = "";
+                            var grFullFill = "";
+
+                            if(purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            {
+                                grFullFill = "gr-full-fill";
+                            }
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
@@ -850,7 +857,7 @@
                             }
                             else
                             {
-                                if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument!=null) || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity))
+                                if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
                                 {
                                     disabledFileInvoice = "disabled";
                                     disabledFileInvoiceUpload = "disabled";
@@ -863,13 +870,13 @@
                                         <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
                                         <div class="form-inline form-upload" @hiddenFormUploading>
                                             <div class="form-group mr-2">
-                                                <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                <input type="file" class="form-control with-icon file-invoice @grFullFill" @disabledFileInvoice>
                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                             </div>
-                                            <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                            <button class="btn btn-positive save-invoice @grFullFill" @disabledFileInvoiceUpload>Save</button>
                                         </div>
                                         <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
-                                            <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                            <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
                                             <a href="#" class="danger-link file-invoice-remove">Remove?</a>
                                         </div>
                                     </div>
@@ -882,6 +889,12 @@
                                         hiddenFormUploading = "";
                                         hiddenFormUploaded = "hidden";
                                         invoiceDownloadPath = "";
+                                        grFullFill = "";
+
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                        {
+                                            grFullFill = "gr-full-fill";
+                                        }
 
                                         if (purchasingDocumentItemChild.InvoiceDocument != null)
                                         {
@@ -898,24 +911,25 @@
                                             }
                                         }
 
-                                        if(purchasingDocumentItemChild.InvoiceMethod == "full")
+                                        if(purchasingDocumentItemChild.InvoiceMethod == "full" || purchasingDocumentItemChild.InvoiceMethod==null)
                                         {
                                             hiddenFormUploading = "hidden";
                                             hiddenFormUploaded = "hidden";
                                         }
 
-                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >
+                                        @*<div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >*@
+                                        <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild" >
                                             <div class="po-item-data-header__column">
                                                 <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
                                                 <div class="form-inline form-upload" @hiddenFormUploading>
                                                     <div class="form-group mr-2">
-                                                        <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                        <input type="file" class="form-control with-icon file-invoice @grFullFill" @disabledFileInvoice>
                                                         <i class="fas fa-paperclip form-type-icon"></i>
                                                     </div>
-                                                    <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                                    <button class="btn btn-positive save-invoice @grFullFill" @disabledFileInvoiceUpload>Save</button>
                                                 </div>
                                                 <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
-                                                    <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                    <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
                                                     <a href="#" class="danger-link file-invoice-remove">Remove?</a>
                                                 </div>
                                             </div>
@@ -2700,13 +2714,14 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
         /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
         $(".invoice-method-parent").on("change", function (obj) {
+            console.log($(this).val());
             var row = $(this).closest(".po-item-data-content").attr("row");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
-
+            console.log(stage6Child);
             if ($(this).val() == "partial") {
-                stage6Child.show();
+                stage6Child.find(".form-upload").removeAttr("hidden");
             } else {
-                stage6Child.hide();
+                stage6Child.find(".form-upload").attr("hidden", true);
             }
         });
 
@@ -2715,6 +2730,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var invoiceMethod = $(this).closest(".form-inline").find(".invoice-method-parent");
             var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage6Parent = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
 
             if (invoiceMethod.val() != "") {
@@ -2727,6 +2743,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (response) {
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
+                        stage6Parent.find(".gr-full-fill").removeAttr("disabled");
+                        stage6Child.find(".gr-full-fill").removeAttr("disabled");
                         alert(response.responseText);
                     },
                     error: function (xhr, status, error) {
@@ -2760,8 +2778,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 formData.append("fileInvoice", file);
                 formData.append("inputPurchasingDocumentItemID", pdItemID);
             }
-
             if (fileInvoiceDOM.files.length > 0) {
+                
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("VendorUploadInvoice", "Subcont")",
@@ -2776,11 +2794,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             formUploading.attr("hidden", true);
                             formUploaded.removeAttr("hidden");
 
-                            formUploaded.find(".st10-file-invoice-download").attr("href", response.invoiceUrl);
+                            formUploaded.find(".file-invoice-download").attr("href", response.invoiceUrl);
+                        } else {
+                            alert(response.responseCode+response.responseText);
                         }
                     },
                     error: function (xhr, status, error) {
-                        //alert(xhr.status + " : " + error);
+                        alert(xhr.status + " : " + error);
                     }
                 });
             } else {
