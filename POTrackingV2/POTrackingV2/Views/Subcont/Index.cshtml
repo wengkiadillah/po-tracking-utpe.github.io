@@ -2740,17 +2740,17 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         });
 
         /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
-        $(".invoice-method-parent").on("change", function (obj) {
-            console.log($(this).val());
-            var row = $(this).closest(".po-item-data-content").attr("row");
-            var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
-            console.log(stage6Child);
-            if ($(this).val() == "partial") {
-                stage6Child.find(".form-upload").removeAttr("hidden");
-            } else {
-                stage6Child.find(".form-upload").attr("hidden", true);
-            }
-        });
+        //$(".invoice-method-parent").on("change", function (obj) {
+        //    console.log($(this).val());
+        //    var row = $(this).closest(".po-item-data-content").attr("row");
+        //    var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
+        //    //console.log(stage6Child);
+        //    if ($(this).val() == "partial") {
+        //        stage6Child.find(".form-upload").removeAttr("hidden");
+        //    } else {
+        //        stage6Child.find(".form-upload").attr("hidden", true);
+        //    }
+        //});
 
         $(".save-invoice-method-parent").on("click", function (obj) {
             var saveButton = $(this);
@@ -2770,6 +2770,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (response) {
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
+                        if (invoiceMethod.val() == "partial") {
+                            stage6Child.find(".form-upload").removeAttr("hidden");
+                        } else {
+                            stage6Child.find(".form-upload").attr("hidden", true);
+                        }
                         stage6Parent.find(".gr-full-fill").removeAttr("disabled");
                         stage6Child.find(".gr-full-fill").removeAttr("disabled");
                         alert(response.responseText);
