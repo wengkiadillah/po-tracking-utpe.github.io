@@ -236,6 +236,7 @@ namespace POTrackingV2.Controllers
                         PurchasingDocumentItem parent = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
 
                         Notification notificationChild = new Notification();
+                        notificationChild.StatusID = 3;
 
                         if (roleID == 3)
                         {
@@ -262,7 +263,6 @@ namespace POTrackingV2.Controllers
                             //arrayDataChild.Add(purchasingDocumentItem);
 
                             notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                            notificationChild.StatusID = 3;
                             notificationChild.Stage = "1";
                             notificationChild.Role = "procurement";
                         }
@@ -282,6 +282,7 @@ namespace POTrackingV2.Controllers
                             int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                             Existed_child.ConfirmedItem = true;
+                            notificationChild.PurchasingDocumentItemID = Existed_child.ID;
 
                             if (scc != null)
                             {
@@ -309,9 +310,9 @@ namespace POTrackingV2.Controllers
                             }
                             else
                             {
-                                Existed_child.ActiveStage = "4";
-                                notificationChild.Stage = "4";
-                                notificationChild.Role = "procurement";
+                                Existed_child.ActiveStage = "2";
+                                notificationChild.Stage = "2";
+                                notificationChild.Role = "vendor";
                             }
                             
                         }

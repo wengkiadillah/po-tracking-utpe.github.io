@@ -360,8 +360,12 @@
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.CurrentRoleID != 3 || purchasingDocumentItem.ConfirmedQuantity != 0)
-                            //if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
+                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0)
+                            {
+                                hideEditButton = "style=visibility:hidden";
+                            }
+                            if (ViewBag.CurrentRoleID == 3 && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem !=null)))
+                            //if (ViewBag.CurrentRoleID == 3 && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -369,6 +373,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
+
                             @*<form>*@
                             <div class="po-item-data-content row-@rowInformation" row="@rowInformation">
                                 <div class="po-item-data-content__outer">
@@ -2678,8 +2683,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAPrimer").val()) {
                                     $("#ATAPrimer").attr("disabled", "disabled");
                                     $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                    stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
-                                    stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
+                                        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
+                                        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    }
                                     $("#close-input-progress").click();
                                 } else {
                                     $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
