@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using POTrackingV2.CustomAuthentication;
 using System.Web.Security;
+using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
@@ -45,6 +46,7 @@ namespace POTrackingV2.Controllers
 
                 ViewBag.CurrentRoleID = roleID;
                 ViewBag.CurrentData = searchData;
+                ViewBag.CurrentFilter = filterBy;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
 
@@ -755,10 +757,48 @@ namespace POTrackingV2.Controllers
                 int ATAFullweldReasonID = purchasingDocumentItem.FullweldLateReasonID.HasValue ? purchasingDocumentItem.FullweldLateReasonID.Value : 0;
                 int ATAPrimerReasonID = purchasingDocumentItem.PremierLateReasonID.HasValue ? purchasingDocumentItem.PremierLateReasonID.Value : 0;
 
+                var filePB = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "PB").Select(x =>
+                new
+                {
+                    id = x.ID,
+                    fileName = x.FileName,
+                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                });
+
+                var fileSetting = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Setting").Select(x =>
+                new
+                {
+                    id = x.ID,
+                    fileName = x.FileName,
+                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                    //@Path.Combine("..\\Files\\Subcont\\SequencesProgress", x.FileName)
+                });
+
+                var fileFullweld = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Fullweld").Select(x =>
+                new
+                {
+                    id = x.ID,
+                    fileName = x.FileName,
+                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                });
+
+                var filePrimer = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Primer").Select(x =>
+                new
+                {
+                    id = x.ID,
+                    fileName = x.FileName,
+                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                });
+
 
                 if (purchasingDocumentItem != null)
                 {
-                    return Json(new { success = true, responseCode = "200", responseText = "OK", arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID } }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, responseCode = "200", responseText = "OK",
+                        arrayDataFilePB = JsonConvert.SerializeObject(filePB),
+                        arrayDataFileSetting = JsonConvert.SerializeObject(fileSetting),
+                        arrayDataFileFullweld = JsonConvert.SerializeObject(fileFullweld),
+                        arrayDataFilePrimer = JsonConvert.SerializeObject(filePrimer),
+                        arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID } }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
