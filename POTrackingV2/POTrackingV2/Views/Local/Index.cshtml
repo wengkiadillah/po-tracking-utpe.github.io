@@ -3,6 +3,7 @@
 @using PagedList.Mvc;
 @{
     ViewBag.Title = "Local PO tracking";
+    var roleID = ViewBag.CurrentRoleID;
 }
 
 @section styles {
@@ -33,9 +34,9 @@
                    placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
-        <input name="role" type="hidden" value="@ViewBag.CurrentRole" />
+        <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
         <button type="submit" class="btn btn-info mr-3">Find</button>
-        @Html.ActionLink("Clear", "Index", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
     }
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
@@ -58,7 +59,7 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-    if (Request.QueryString["role"] == "procurement")
+    if (roleID == 2)
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
@@ -253,7 +254,7 @@
                             var st1CheckboxAll = "st1-checkbox-all";
                             var st1AcceptAll = "st1-accept-all-po";
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 st1CheckboxAll = "st1-checkbox-all-proc";
                                 st1AcceptAll = "st1-accept-all-po-proc";
@@ -322,7 +323,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
                                 st1ItemIDInner = "st1-pd-item-id-inner-proc";
@@ -356,7 +357,7 @@
                             var isChecked = "";
                             var isPartial = "";
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
@@ -493,7 +494,7 @@
                                                 isChecked = "";
                                                 isPartial = "";
 
-                                                if (Request.QueryString["role"] == "procurement")
+                                                if (roleID == 2)
                                                 {
                                                     if (childPurchasingDocumentItem.ConfirmedItem == true)
                                                     {
@@ -601,7 +602,7 @@
                         END STAGE 1
                 -->
                 <div class="po-item-section stage-2">
-                    @if (Request.QueryString["role"] == "procurement")
+                    @if (roleID == 2)
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -652,7 +653,7 @@
                             var st2ProcAcceptFirstEta = "";
                             var st2ProcDeclineFirstEta = "";
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 st2CheckboxItem = "st2-proc-checkbox-item";
                                 st2ItemId = "st2-proc-pd-item-id";
@@ -688,7 +689,7 @@
                                 valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 hiddenButtonConfirmEtaDate = "hidden";
                                 hiddenButtonAcceptDecline = "";
@@ -795,7 +796,7 @@
                                                 valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
                                             }
 
-                                            if (Request.QueryString["role"] == "procurement")
+                                            if (roleID == 2)
                                             {
                                                 hiddenButtonConfirmEtaDate = "hidden";
                                                 hiddenButtonAcceptDecline = "";
@@ -920,7 +921,7 @@
                             {
                                 if (purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    if (Request.QueryString["role"] == "procurement")
+                                    if (roleID == 2)
                                     {
                                         disabledFileProformaInvoice = "disabled";
                                         disabledUploadProformaInvoice = "disabled";
@@ -967,7 +968,7 @@
 
                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
-                                if (Request.QueryString["role"] == "procurement")
+                                if (roleID == 2)
                                 {
                                     disabledApproveProforma = "";
                                     disabledDisApproveProforma = "";
@@ -1059,7 +1060,7 @@
                                             {
                                                 if (childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    if (Request.QueryString["role"] == "procurement")
+                                                    if (roleID == 2)
                                                     {
                                                         disabledFileProformaInvoice = "disabled";
                                                         disabledUploadProformaInvoice = "disabled";
@@ -1103,7 +1104,7 @@
 
                                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
-                                                if (Request.QueryString["role"] == "procurement")
+                                                if (roleID == 2)
                                                 {
                                                     disabledVendorSkipPI = "disabled";
                                                     disabledApproveProforma = "";
@@ -1179,7 +1180,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (Request.QueryString["role"] == "procurement")
+                    @if (roleID == 2)
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1261,7 +1262,7 @@
                                 }
                             }
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (roleID == 2)
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1335,7 +1336,7 @@
                                                 }
                                             }
 
-                                            if (Request.QueryString["role"] == "procurement")
+                                            if (roleID == 2)
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -1425,7 +1426,7 @@
 
                             if (purchasingDocumentItem.ActiveStage == "4")
                             {
-                                if (Request.QueryString["role"] != "procurement")
+                                if (roleID == 3)
                                 {
                                     if (purchasingDocumentItem.ETAHistories.Count < 2)
                                     {
@@ -1528,7 +1529,7 @@
 
                                     valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                    if (Request.QueryString["role"] == "procurement")
+                                    if (roleID == 2)
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1544,7 +1545,7 @@
                                     disabledInputUploadProgressPhotoes = "disabled";
                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                    if (Request.QueryString["role"] != "procurement")
+                                    if (roleID == 3)
                                     {
                                         if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
                                         {
@@ -1666,7 +1667,7 @@
 
                                             if (childPurchasingDocumentItem.ActiveStage == "4")
                                             {
-                                                if (Request.QueryString["role"] != "procurement")
+                                                if (roleID == 3)
                                                 {
                                                     if (childPurchasingDocumentItem.ETAHistories.Count < 2)
                                                     {
@@ -1770,7 +1771,7 @@
 
                                                     valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                                    if (Request.QueryString["role"] == "procurement")
+                                                    if (roleID == 2)
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1786,7 +1787,7 @@
                                                     disabledInputUploadProgressPhotoes = "disabled";
                                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                                    if (Request.QueryString["role"] != "procurement")
+                                                    if (roleID == 3)
                                                     {
                                                         if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
                                                         {
@@ -2107,7 +2108,7 @@
                             }
                             else
                             {
-                                if (Request.QueryString["role"] != "procurement")
+                                if (roleID == 3)
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
@@ -2156,7 +2157,7 @@
                                             }
                                             else
                                             {
-                                                if (Request.QueryString["role"] != "procurement")
+                                                if (roleID == 3)
                                                 {
                                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                                     {
@@ -2270,7 +2271,7 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, role = Request.QueryString["role"] }))
+    new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate}))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
