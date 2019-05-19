@@ -8,7 +8,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title"><a href="~/Local/index">PO Tracking Local System</a><span class="page-subtitle">History</span><span class="page-subtitle"><a href="~/Local/index?role=procurement">Procurement</a></span></h1>
+<h1 class="page-title"><a href="#" class="page-subtitle">PO Tracking Local System</a><span class="page-subtitle">History</span></h1>
 <div class="filter-row">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -234,7 +234,7 @@
                                     <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity</span>
                                     <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
                                     <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
-                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")</span>
+                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
                                 </div>
                             </div>
 
@@ -1230,43 +1230,41 @@
                             var hiddenCheckbox = "";
                             var isChecked = "";
 
-                            if (Request.QueryString["role"] == "procurement")
+                            if (purchasingDocumentItem.ActiveStage == "3")
                             {
-                                hiddenCheckbox = "style=visibility:hidden";
-                                hiddenConfirmPaymentSkip = "hidden";
+                                disabledCheckboxItem = "";
                             }
-                            else
+                            else if (purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
                             {
-                                if (purchasingDocumentItem.ActiveStage == "3")
+                                isChecked = "checked";
+                                selectedConfirmPaymentSubmit = "selected";
+
+                                if (purchasingDocumentItem.ActiveStage == "4")
                                 {
-                                    disabledCheckboxItem = "";
+                                    hiddenEditButton = "";
                                 }
-                                else if (purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                            }
+                            else if (!purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                            {
+                                if (purchasingDocumentItem.ActiveStageView != "2a")
                                 {
-                                    isChecked = "checked";
-                                    selectedConfirmPaymentSubmit = "selected";
+                                    if (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 3)
+                                    {
+                                        isChecked = "checked";
+                                        selectedConfirmPaymentSkip = "selected-negative";
+                                    }
 
                                     if (purchasingDocumentItem.ActiveStage == "4")
                                     {
                                         hiddenEditButton = "";
                                     }
                                 }
-                                else if (!purchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
-                                {
-                                    if (purchasingDocumentItem.ActiveStageView != "2a")
-                                    {
-                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 3)
-                                        {
-                                            isChecked = "checked";
-                                            selectedConfirmPaymentSkip = "selected-negative";
-                                        }
+                            }
 
-                                        if (purchasingDocumentItem.ActiveStage == "4")
-                                        {
-                                            hiddenEditButton = "";
-                                        }
-                                    }
-                                }
+                            if (Request.QueryString["role"] == "procurement")
+                            {
+                                hiddenCheckbox = "style=visibility:hidden";
+                                hiddenEditButton = "hidden";
                             }
 
                             <div class="po-item-data-content row-@rowStage3">
@@ -1306,42 +1304,41 @@
                                             hiddenCheckbox = "";
                                             isChecked = "";
 
-                                            if (Request.QueryString["role"] == "procurement")
+                                            if (childPurchasingDocumentItem.ActiveStage == "3")
                                             {
-                                                hiddenCheckbox = "style=visibility:hidden";
+                                                disabledCheckboxItem = "";
                                             }
-                                            else
+                                            else if (childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
                                             {
-                                                if (childPurchasingDocumentItem.ActiveStage == "3")
+                                                isChecked = "checked";
+                                                selectedConfirmPaymentSubmit = "selected";
+
+                                                if (childPurchasingDocumentItem.ActiveStage == "4")
                                                 {
-                                                    disabledCheckboxItem = "";
+                                                    hiddenEditButton = "";
                                                 }
-                                                else if (childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                            }
+                                            else if (!childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
+                                            {
+                                                if (childPurchasingDocumentItem.ActiveStageView != "2a")
                                                 {
-                                                    isChecked = "checked";
-                                                    selectedConfirmPaymentSubmit = "selected";
+                                                    if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStageView) > 3)
+                                                    {
+                                                        isChecked = "checked";
+                                                        selectedConfirmPaymentSkip = "selected-negative";
+                                                    }
 
                                                     if (childPurchasingDocumentItem.ActiveStage == "4")
                                                     {
                                                         hiddenEditButton = "";
                                                     }
                                                 }
-                                                else if (!childPurchasingDocumentItem.ConfirmReceivedPaymentDate.HasValue)
-                                                {
-                                                    if (childPurchasingDocumentItem.ActiveStageView != "2a")
-                                                    {
-                                                        if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStageView) > 3)
-                                                        {
-                                                            isChecked = "checked";
-                                                            selectedConfirmPaymentSkip = "selected-negative";
-                                                        }
+                                            }
 
-                                                        if (childPurchasingDocumentItem.ActiveStage == "4")
-                                                        {
-                                                            hiddenEditButton = "";
-                                                        }
-                                                    }
-                                                }
+                                            if (Request.QueryString["role"] == "procurement")
+                                            {
+                                                hiddenCheckbox = "style=visibility:hidden";
+                                                hiddenEditButton = "hidden";
                                             }
 
                                             <div class="po-item-data-content row-@rowStage3-@childRowStage3" row="@rowStage3" child="@childRowStage3">
@@ -1624,53 +1621,19 @@
                                         <div class="form-inline">
                                             <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
                                             <div class="pop-up-notification">
-                                                <span class="mr-2"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" width="50px" height="50px"></span>
+                                                @if (purchasingDocumentItem.ProgressPhotoes.Count > 0)
+                                                {
+                                                    foreach (var progressPhoto in purchasingDocumentItem.ProgressPhotoes)
+                                                    {
+                                                        <span class="mr-2">
+                                                            <img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">
+                                                        </span>
+                                                    }
+                                                }
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                @*//Parent Image*@
-                                @*<div class="po-item-data-content__outer">
-                                    <div class="po-item-data-header__column">
-                                        <div class="form-inline" style="visibility:hidden;">
-                                            <div class="form-group mr-2">
-                                                <input type="text" class="form-control form-date with-icon">
-                                                <i class="far fa-calendar-alt form-type-icon"></i>
-                                            </div>
-                                            <button class="btn btn-positive mr-3">On Time</button>
-                                            <div class="form-group mr-2">
-                                                <input type="text" class="form-control form-date with-icon">
-                                                <i class="far fa-calendar-alt form-type-icon"></i>
-                                            </div>
-                                            <button class="btn btn-negative mr-3">Delay</button>
-                                            <div class="form-group mr-2">
-                                                <select id="delayReason" name="delayReason" class="form-control form-control-lg">
-                                                    <option value="0">select reason</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="po-item-data-header__column mt-3">
-                                        <div class="form-inline">
-                                            @if (purchasingDocumentItem.ProgressPhotoes.Count > 0)
-                                            {
-                                                for (int i = 0; i < purchasingDocumentItem.ProgressPhotoes.Count; i++)
-                                                {
-                                                    var progressPhoto = purchasingDocumentItem.ProgressPhotoes.ToList()[i];
-
-                                                    <span class="mr-2"><img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px"></span>
-
-                                                    if (i == 2)
-                                                    {
-                                                        i = purchasingDocumentItem.ProgressPhotoes.Count + 1;
-                                                    }
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                </div>*@
-                                @*//Parent Image*@
                                 <div class="po-item-data-content__child">
                                     @if (childPurchasingDocumentItems.Count() > 0)
                                     {
@@ -1874,7 +1837,7 @@
                                                             <i class="far fa-calendar-alt form-type-icon"></i>
                                                         </div>
                                                         <div class="form-group mr-2">
-                                                            <select id="delayReason" name="delayReason" class="form-control form-control-lg @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
+                                                            <select id="delayReason" name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
                                                                 <option value="0">select reason</option>
                                                                 @foreach (var delayReason in ViewBag.DelayReasons)
                                                                 {
@@ -1899,54 +1862,20 @@
                                                     <div class="form-inline">
                                                         <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
                                                         <div class="pop-up-notification">
-                                                            <span class="mr-2"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" width="50px" height="50px"></span>
+                                                            @if (childPurchasingDocumentItem.ProgressPhotoes.Count > 0)
+                                                            {
+                                                                foreach (var progressPhoto in childPurchasingDocumentItem.ProgressPhotoes)
+                                                                {
+                                                                    <span class="mr-2">
+                                                                        <img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">
+                                                                    </span>
+                                                                }
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            childRowStage4++;
-
-                                            //Child Image
-                                            @*<div class="po-item-data-content__outer">
-                                                <div class="po-item-data-header__column">
-                                                    <div class="form-inline" style="visibility:hidden;">
-                                                        <div class="form-group mr-2">
-                                                            <input type="text" class="form-control form-date with-icon">
-                                                            <i class="far fa-calendar-alt form-type-icon"></i>
-                                                        </div>
-                                                        <button class="btn btn-positive mr-3">On Time</button>
-                                                        <div class="form-group mr-2">
-                                                            <input type="text" class="form-control form-date with-icon">
-                                                            <i class="far fa-calendar-alt form-type-icon"></i>
-                                                        </div>
-                                                        <button class="btn btn-negative mr-3">Delay</button>
-                                                        <div class="form-group mr-2">
-                                                            <select id="delayReason" name="delayReason" class="form-control form-control-lg">
-                                                                <option value="0">select reason</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="po-item-data-header__column">
-                                                    <div class="form-inline">
-                                                        @if (childPurchasingDocumentItem.ProgressPhotoes.Count > 0)
-                                                        {
-                                                            for (int i = 0; i < childPurchasingDocumentItem.ProgressPhotoes.Count; i++)
-                                                            {
-                                                                var progressPhoto = childPurchasingDocumentItem.ProgressPhotoes.ToList()[i];
-
-                                                                <span class="mr-2"><img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px"></span>
-
-                                                                if (i == 2)
-                                                                {
-                                                                    i = childPurchasingDocumentItem.ProgressPhotoes.Count + 1;
-                                                                }
-                                                            }
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>*@
-                                            //Child Image
+                                            childRowStage4++;                                           
                                         }
                                     }
                                 </div>

@@ -73,7 +73,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-    if (etaDate !== '') {
+    if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",
@@ -102,12 +102,12 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
+            alert("The Date cannot be less than the Date agreed on stage 1");
             inputFirstEtaDate.focus();
         }
     }
     else {
-        alert("Tanggal tidak boleh kosong");
+        alert("The Date cannot be empty");
         inputFirstEtaDate.focus();
     }
 });
@@ -147,7 +147,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
         var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);*/
 
         if (inputFirstEtaDate.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
-            if (etaDate !== '') {
+            if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
                 if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
                     inputETAHistories.push({
                         PurchasingDocumentItemID: itemID,
@@ -167,12 +167,12 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");*/
                 }
                 else {
-                    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
+                    alert("The Date cannot be less than the Date agreed on stage 1");
                     inputFirstEtaDate.focus();
                 }
             }
             else {
-                alert("Tanggal tidak boleh kosong");
+                alert("The Date cannot be empty");
                 inputFirstEtaDate.focus();
             }
         }
