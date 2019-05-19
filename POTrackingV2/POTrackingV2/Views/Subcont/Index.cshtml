@@ -661,8 +661,8 @@
                             {
                                 isComplete = "Yes";
                             }
-                            <div class="po-item-data-content row-@row" row="@row" @hideGR>
-                                <div class="po-item-data-content__outer">
+                            <div class="po-item-data-content row-@row" row="@row">
+                                <div class="po-item-data-content__outer" @hideGR>
                                     <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
                                     <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
@@ -703,8 +703,13 @@
                                             isComplete = "Yes";
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        hideGR = "";
+                                        if (ViewBag.CurrentRoleID != 2 && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        {
+                                            hideGR = "style=visibility:hidden";
+                                        }
 
-                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
+                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
                                             <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
@@ -2464,6 +2469,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
+            
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                $("#inputProgressModalLabel").attr("child", $(this).closest(".po-item-data-content").attr("child"));
+            } else {
+                $("#inputProgressModalLabel").removeAttr("child");
+            }
+
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
@@ -2560,6 +2572,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var pdItemID = $("#inputProgressModalLabel").attr("item-id");
             var row = $("#inputProgressModalLabel").attr("row");
             var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage4Outer = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage4Child = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__child");
+            
 
             var isValid = true;
             var errorMessage = "";
@@ -2686,6 +2701,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
                                         stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
                                         stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    }
+                                    if ($("#inputProgressModalLabel").attr("child") > 0) {
+                                        stage4Child.find(".po-item-data-content").attr("style", "visibility:display");
+                                    } else {
+                                        stage4Outer.attr("style", "visibility:display");
                                     }
                                     $("#close-input-progress").click();
                                 } else {
