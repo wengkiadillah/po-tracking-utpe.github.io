@@ -1276,13 +1276,6 @@ namespace POTrackingV2.Controllers
         [HttpPost]
         public ActionResult VendorUploadInvoice_2(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
         {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
-            {
-                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-            }
-
-
             PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
             try
@@ -1358,12 +1351,6 @@ namespace POTrackingV2.Controllers
         [HttpPost]
         public ActionResult VendorRemoveUploadInvoice(int inputPurchasingDocumentItemID)
         {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
-            {
-                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-            }
-
             PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
             try
