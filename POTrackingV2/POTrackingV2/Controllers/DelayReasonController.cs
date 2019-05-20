@@ -19,7 +19,16 @@ namespace POTracking.Controllers
                 return View(db.DelayReasons.ToList());
 
             }
-                
+        }
+
+        public JsonResult List()
+        {
+            return Json(db.DelayReasons.ToList());
+        }
+
+        public JsonResult Add(DelayReason delayReason)
+        {
+            return Json(db.DelayReasons.Add(delayReason), JsonRequestBehavior.AllowGet);
         }
 
         // GET: DelayReason/Details/5
@@ -82,12 +91,17 @@ namespace POTracking.Controllers
         [HttpPost]
         public ActionResult Edit(int id, DelayReason delayReason)
         {
+            DateTime now = DateTime.Now;
+            var userName = User.Identity.Name;
             try
             {
                 // TODO: Add update logic here
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    db.Entry(delayReason).State = System.Data.Entity.EntityState.Modified;
+                    DelayReason selectedDelayReason = db.DelayReasons.SingleOrDefault(x => x.ID == id);
+                    selectedDelayReason.Name = delayReason.Name;
+                    selectedDelayReason.LastModified = now;
+                    selectedDelayReason.LastModifiedBy = userName;
                     db.SaveChanges();
                 }
                     return RedirectToAction("Index");

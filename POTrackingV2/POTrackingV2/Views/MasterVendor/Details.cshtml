@@ -60,10 +60,16 @@
                             <p class="view-data__content">@Html.DisplayFor(model => model.MonthlyCapacity)</p>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">@Html.DisplayNameFor(model => model.isNeedSequence)</label>
+                            <p class="view-data__content">@Html.CheckBoxFor(model => model.isNeedSequence, new { @disabled = "disabled" }  )</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="row justify-content-between mt-5 detail-btn">
                     <div class="col-auto">
-                        <a href="@Url.Action("", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+                        <a href="@Url.Action("Index", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
                     </div>
                     <div class="col-auto">
                         <a href="@Url.Action("Edit", "MasterVendor", new { id = Model.ID })" class="btn btn-primary mb-3 detail-btn-edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg> &nbsp; Edit</a>
@@ -73,7 +79,3 @@
         </div>
     </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

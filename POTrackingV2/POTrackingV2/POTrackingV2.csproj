@@ -464,6 +464,7 @@
     <Folder Include="Files\Local\Invoice\" />
     <Folder Include="Files\Local\ProformaInvoice\" />
     <Folder Include="Files\Local\ProgressProforma\" />
+    <Folder Include="Files\Subcont\Invoice\" />
     <Folder Include="Files\Subcont\SequencesProgress\" />
   </ItemGroup>
   <ItemGroup>

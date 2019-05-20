@@ -102,12 +102,17 @@ namespace POTracking.Controllers
         [HttpPost]
         public ActionResult Edit(int id, SequencesProgressReason sequencesProgress)
         {
+            DateTime now = DateTime.Now;
+            var userName = User.Identity.Name;
             try
             {
                 //// TODO: Add update logic here
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    db.Entry(sequencesProgress).State = System.Data.Entity.EntityState.Modified;
+                    SequencesProgressReason selectedSequenceProgress = db.SequencesProgressReasons.SingleOrDefault(x => x.ID == id);
+                    selectedSequenceProgress.Name = sequencesProgress.Name;
+                    selectedSequenceProgress.Modified = now;
+                    selectedSequenceProgress.ModifiedBy = userName;
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");

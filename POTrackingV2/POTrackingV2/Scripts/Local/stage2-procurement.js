@@ -59,6 +59,8 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
+                console.log(response.imageSources);
+
                 buttonAcceptFirstEta.attr("disabled", "disabled").addClass("selected");
                 buttonDeclineFirstEta.attr("disabled", "disabled");
                 checkboxItem.attr("disabled", "disabled");

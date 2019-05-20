@@ -43,8 +43,10 @@ $(".st1-checkbox-item").on("change", function (obj) {
 //Checked Button Confirm PO -- Undisabling Controller
 $(".st1-checkbox-item").on("change", function (obj) {
     var row = $(this).closest(".po-item-data-content");
+    var latestDeliveryDate = row.find(".st1-pd-item-delivery-date").val();
+    var itemQuantity = row.find(".st1-pd-item-max-qty").val();
+
     if ($(this).prop("checked") === true) {
-        var latestDeliveryDate = row.find(".st1-pd-item-delivery-date").val();
 
         row.find(".st1-confirmed-date").removeAttr("disabled");
         row.find(".st1-delivery-method").removeAttr("disabled");
@@ -53,6 +55,7 @@ $(".st1-checkbox-item").on("change", function (obj) {
         row.find(".st1-cancel-item").removeAttr("disabled");
         row.find(".st1-confirmed-date").val(latestDeliveryDate);
         row.find(".st1-partial-date").first().val(latestDeliveryDate);
+        row.find(".st1-partial-confirm-qty").first().val(itemQuantity);
 
         if (row.find(".st1-delivery-method").val() === "partial") {
 
@@ -70,8 +73,9 @@ $(".st1-checkbox-item").on("change", function (obj) {
         row.find(".st1-partial-date").attr("disabled", "disabled");
         row.find(".st1-accept-item").attr("disabled", "disabled");
         row.find(".st1-cancel-item").attr("disabled", "disabled");
-        row.find(".st1-confirmed-date").val("");
-        row.find(".st1-partial-date").val("");
+        row.find(".st1-confirmed-date").val(latestDeliveryDate);
+        row.find(".st1-partial-date").first().val(latestDeliveryDate);
+        row.find(".st1-partial-confirm-qty").first().val(itemQuantity);
 
         row.find(".st1-add-row").attr("style", "visibility:hidden");
         row.find(".st1-del-row").attr("style", "visibility:hidden");
@@ -84,7 +88,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
 
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 7;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
 
     $(this).closest(".po-item-section.stage-1").find(".po-form-item-st1").each(function (index) {
@@ -128,7 +132,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             inputPartialQuantity.focus();
         }
 
-        if (confirmedDate === '' || partialDate === '') {
+        if (confirmedDate === '' || partialDate === '' || isNaN(confirmedDate.getTime()) || isNaN(partialDateObject.getTime())) {
             validateDate = false;
             inputPartialDate.focus();
         }
@@ -136,7 +140,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
         itemPartialPurchasingDocumentItems.push({
             ID: itemID,
             ConfirmedQuantity: partialQuantity,
-            ConfirmedDate: partialDate
+            ConfirmedDate: partialDateObject
         });
 
         dateValidationArray.push({
@@ -163,17 +167,11 @@ $(".st1-accept-all-po").on("click", function (obj) {
                     validateMinQuantity = false;
                     inputChildPartialQuantity.focus();
                 }
-                if (partialDate === '') {
+                if (partialDate === '' || isNaN(partialDateObject.getTime())) {
                     validateDate = false;
                     inputChildPartialDate.focus();
                 }
                 dateValidationArray.forEach(function (item, index) {
-                    console.log(validateDate);
-                    console.log("===");
-                    console.log(partialDate);
-                    console.log("VS");
-                    console.log(item.date);
-                    console.log("===");
                     if (partialDate === item.date) {
                         validateDate = false;
                         inputChildPartialDate.focus();
@@ -183,7 +181,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 itemPartialPurchasingDocumentItems.push({
                     ParentID: itemID,
                     ConfirmedQuantity: partialQuantity,
-                    ConfirmedDate: partialDate
+                    ConfirmedDate: partialDateObject
                 });
 
                 dateValidationArray.push({
@@ -199,7 +197,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             validateMinQuantity = false;
         }
 
-        if (inputPartialQuantity.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
+        if (inputPartialQuantity.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
             if (validateMaxQuantity === true) {
                 if (validateMinQuantity === true) {
                     if (validateDate === true) {
@@ -217,7 +215,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         buttonAcceptItem.addClass("row-updated-button");
                         buttonCancelItem.addClass("row-updated");
                         editButton.addClass("row-updated-link");
-                        donutRow.addClass("row-updated-donut");
+                        donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
                         if (deliveryMethod === "partial") {
                             childRow.find(".po-item-data-content").each(function (index) {
@@ -227,20 +226,23 @@ $(".st1-accept-all-po").on("click", function (obj) {
                                 cssRow = $(this).prop("class");
                                 cssRow = cssRow.replace(" ", ".");
                                 cssRow = "." + cssRow;
-                                $(this).closest(".custom-scrollbar").prev().find(cssRow).addClass("row-updated-donut");
+                                donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+                                donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+                                donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                             });
                         }
                     }
                     else {
-                        alert("Tanggal tidak boleh sama atau kosong");
+                        alert("The Date cannot be the same or empty");
                     }
                 }
                 else {
-                    alert("Kuantitas tidak boleh kurang dari 0");
+                    alert("Quantity cannot be less than 0");
                 }
             }
             else {
-                alert("Kuantitas tidak boleh lebih dari permintaan");
+                alert("Quantity cannot be more than bargained for");
             }
         }
     });
@@ -259,21 +261,22 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
                 $(".row-updated-link").attr("style", "visibility:display");
                 $(".row-updated-link-negative").attr("style", "visibility:hidden");
-                $(".row-updated-donut").find(".donut-chart").find("circle").next().attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut").find(".donut-chart").next().find("span.mark-donut").text("1");
 
                 $(".row-updated").removeClass("selected-negative").removeClass("row-updated");
                 $(".row-updated-button").removeClass("row-updated-button");
                 $(".row-updated-link").removeClass("row-updated-link");
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
+
+                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                $(".row-updated-donut-text").text("1");
                 $(".row-updated-donut").removeClass("row-updated-donut");
+                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
             }
         });
     }
     else {
         alert("No Item affected");
     }
-
 });
 
 //Vendor click Confirm button Item Quantity
@@ -288,7 +291,7 @@ $(".st1-accept-item").on("click", function (obj) {
     var cssRow;
     var partialDateObject;
 
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 7;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
 
     var checkboxItem = $(this).closest(".po-item-data-content__outer").find(".st1-checkbox-item");
@@ -323,7 +326,7 @@ $(".st1-accept-item").on("click", function (obj) {
         inputPartialQuantity.focus();
     }
 
-    if (confirmedDate === '' || partialDate === '') {
+    if (isNaN(confirmedDate.getTime()) || isNaN(partialDateObject.getTime())) {
         validateDate = false;
         inputPartialDate.focus();
     }
@@ -331,7 +334,7 @@ $(".st1-accept-item").on("click", function (obj) {
     inputPurchasingDocumentItems.push({
         ID: itemID,
         ConfirmedQuantity: partialQuantity,
-        ConfirmedDate: partialDate
+        ConfirmedDate: partialDateObject
     });
 
     dateValidationArray.push({
@@ -342,7 +345,10 @@ $(".st1-accept-item").on("click", function (obj) {
     cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
     cssRow = "." + cssRow;
-    $(this).closest(".custom-scrollbar").prev().find(cssRow).addClass("row-updated-donut");
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
     if (deliveryMethod === "partial") {
         childRow.find(".po-item-data-content").each(function (index) {
@@ -358,7 +364,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 validateMinQuantity = false;
                 inputChildPartialQuantity.focus();
             }
-            if (partialDate === '') {
+            if (partialDate === '' || isNaN(partialDateObject.getTime())) {
                 validateDate = false;
                 inputChildPartialDate.focus();
             }
@@ -372,7 +378,7 @@ $(".st1-accept-item").on("click", function (obj) {
             inputPurchasingDocumentItems.push({
                 ParentID: itemID,
                 ConfirmedQuantity: partialQuantity,
-                ConfirmedDate: partialDate
+                ConfirmedDate: partialDateObject
             });
 
             dateValidationArray.push({
@@ -382,11 +388,14 @@ $(".st1-accept-item").on("click", function (obj) {
             cssRow = $(this).closest(".po-item-data-content").prop("class");
             cssRow = cssRow.replace(" ", ".");
             cssRow = "." + cssRow;
-            $(this).closest(".custom-scrollbar").prev().find(cssRow).addClass("row-updated-donut");
+            donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+            donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+            donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
         });
     }
 
-    console.log(inputPurchasingDocumentItems);
+    //console.log(inputPurchasingDocumentItems);
 
     if (allQuantity > maxQuantity) {
         validateMaxQuantity = false;
@@ -434,9 +443,10 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").find(".donut-chart").find("circle").next().attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut").find(".donut-chart").next().find("span.mark-donut").text("1");
+                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                            $(".row-updated-donut-text").text("1");
                             $(".row-updated-donut").removeClass("row-updated-donut");
+                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
@@ -472,9 +482,10 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").find(".donut-chart").find("circle").next().attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut").find(".donut-chart").next().find("span.mark-donut").text("1");
+                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                            $(".row-updated-donut-text").text("1");
                             $(".row-updated-donut").removeClass("row-updated-donut");
+                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
@@ -483,15 +494,15 @@ $(".st1-accept-item").on("click", function (obj) {
                 }
             }
             else {
-                alert("Tanggal tidak boleh sama atau kosong");
+                alert("The Date cannot be the same or empty");
             }
         }
         else {
-            alert("Kuantitas tidak boleh kurang dari 0");
+            alert("Quantity cannot be less than 0");
         }
     }
     else {
-        alert("Kuantitas tidak boleh lebih dari permintaan");
+        alert("Quantity cannot be more than bargained for");
     }
 });
 
@@ -514,7 +525,7 @@ $(".st1-cancel-item").on("click", function (obj) {
         ID: itemID
     };
 
-    console.log(inputPurchasingDocumentItem);
+    //console.log(inputPurchasingDocumentItem);
 
     $.ajax({
         type: "POST",

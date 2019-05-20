@@ -207,7 +207,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
         ID: itemID
     };
 
-    console.log(inputPurchasingDocumentItem);
+    //console.log(inputPurchasingDocumentItem);
 
     $.ajax({
         type: "POST",

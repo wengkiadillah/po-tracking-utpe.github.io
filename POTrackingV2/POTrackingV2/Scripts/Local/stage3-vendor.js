@@ -111,7 +111,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
         var editRow = $(this).find(".edit-row-st3");
 
         var itemID = $(this).find(".st3-item-id").val();
-        var minDateConfirmReceivedPaymentDate = reverseDayMonth(inputConfirmReceivedPaymentDate.attr("mindate"));
+        //var minDateConfirmReceivedPaymentDate = reverseDayMonth(inputConfirmReceivedPaymentDate.attr("mindate"));
         var confirmedReceivedPaymentDate = reverseDayMonth(inputConfirmReceivedPaymentDate.val());
 
         // Donut Progress
@@ -122,30 +122,38 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+        // Next stage Controller
+        cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
         if (inputConfirmReceivedPaymentDate.attr("disabled") !== "disabled" && inputCheckboxItem.prop("checked") === true && inputCheckboxItem.attr("disabled") !== "disabled") {
-            if (inputConfirmReceivedPaymentDate.val() !== '') {
-                if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
-                    inputPurchasingDocumentItems.push({
-                        ID: itemID,
-                        ConfirmReceivedPaymentDate: confirmedReceivedPaymentDate
-                    });
+            if (inputConfirmReceivedPaymentDate.val() !== '' && !isNaN(confirmedReceivedPaymentDate.getTime())) {
+                //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
+                inputPurchasingDocumentItems.push({
+                    ID: itemID,
+                    ConfirmReceivedPaymentDate: confirmedReceivedPaymentDate
+                });
 
-                    inputConfirmReceivedPaymentDate.addClass("row-updated");
-                    inputCheckboxItem.addClass("row-updated");
-                    buttonConfirmPaymentSkip.addClass("row-updated");
-                    buttonConfirmPayment.addClass("row-updated-button");
-                    editRow.addClass("row-updated-link");
+                inputConfirmReceivedPaymentDate.addClass("row-updated");
+                inputCheckboxItem.addClass("row-updated");
+                buttonConfirmPaymentSkip.addClass("row-updated");
+                buttonConfirmPayment.addClass("row-updated-button");
+                editRow.addClass("row-updated-link");
 
-                    donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
-                }
-                else {
-                    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
-                    inputConfirmReceivedPaymentDate.focus();
-                }
+                donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+                donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+
+                nextDataContent.addClass("row-updated-next-content");
+                //}
+                //else {
+                //    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
+                //    inputConfirmReceivedPaymentDate.focus();
+                //}
             }
             else {
-                alert("Tanggal tidak boleh kosong");
+                alert("Date cannot be empty");
                 inputConfirmReceivedPaymentDate.focus();
             }
         }
@@ -175,7 +183,6 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
             $("row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
             $("row-updated-next-content").find(".st4-update-eta-date-delay").first().removeAttr("disabled");
             $("row-updated-next-content").find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
-
         }
     });
 });
@@ -240,4 +247,5 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
 $(".edit-row-st3").on("click", function (obj) {
     $(this).closest(".form-inline").find(".st3-item-confirm-payment-date").removeAttr("disabled");
     $(this).closest(".form-inline").find(".st3-confirm-payment-submit").removeAttr("disabled").removeClass("selected");
+    $(this).closest(".form-inline").find(".st3-confirm-payment-skip").removeAttr("disabled").removeClass("selected-negative");
 });

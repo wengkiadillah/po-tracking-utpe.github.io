@@ -24,7 +24,7 @@
             <input id="searchData" name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.CurrentData" />
             <i class="fas fa-search form-type-icon hint"></i>
         </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.FilterBy">
+        <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
             <option value="poNumber">PO Number</option>
             <option value="vendor">Vendor Name</option>
             <option value="material">Material</option>
@@ -144,15 +144,20 @@
                         var rowChild = 1;
                         var purchasingDocumentItems = pO.PurchasingDocumentItems;
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
+
                         if (ViewBag.CurrentRoleID == 2)
                         {
-                            //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || x.ConfirmedItem == false).ToList();
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                         }
                         else
                         {
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                         }
+                        if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
+                        {
+                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.Contains(ViewBag.CurrentData) || pdi.Description.Contains(ViewBag.CurrentData)).ToList();
+                        }
+
                     }
                     @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                     {
@@ -360,8 +365,12 @@
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.CurrentRoleID != 3 || purchasingDocumentItem.ConfirmedQuantity != 0)
-                            //if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
+                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0)
+                            {
+                                hideEditButton = "style=visibility:hidden";
+                            }
+                            if (ViewBag.CurrentRoleID == 3 && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem !=null)))
+                            //if (ViewBag.CurrentRoleID == 3 && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -369,6 +378,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
+
                             @*<form>*@
                             <div class="po-item-data-content row-@rowInformation" row="@rowInformation">
                                 <div class="po-item-data-content__outer">
@@ -642,97 +652,103 @@
                             rowChild = 1;
                         }
 
-                        @*@if (ViewBag.Role != "adfadsfasd")*@
 
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber > 3)
+                            var hideGR = "";
+                            if (ViewBag.CurrentRoleID != 2 && purchasingDocumentItem.ActiveStageToNumber < 4)
                             {
-                                var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                var isComplete = "No";
-                                if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
-                                {
-                                    isComplete = "Yes";
-                                }
-                                <div class="po-item-data-content row-@row" row="@row">
-                                    <div class="po-item-data-content__outer">
-                                        <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
-                                        <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
-                                        <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                        @*<span class="po-item-data-header__column inspection-date"></span>
-                                        <span class="po-item-data-header__column inspecton-qty"></span>*@
-                                        <span class="po-item-data-header__text info">
-                                            <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                            <div class="pop-up-notification">
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>GR / Inspection Date</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>Qty</td>
-                                                        </tr>
-                                                        @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
-                                                        {
-                                                            grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-
-                                                            <tr>
-                                                                <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                <td>&nbsp;</td>
-                                                                <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </span>
-
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
-                                        {
-                                            isComplete = "No";
-                                            if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
-                                            {
-                                                isComplete = "Yes";
-                                            }
-                                            grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-
-                                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                                <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
-                                                <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
-                                                <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                                @*<span class="po-item-data-header__column inspection-date"></span>
-                                                <span class="po-item-data-header__column qty"></span>*@
-                                                <span class="po-item-data-header__text info">
-                                                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                                    <div class="pop-up-notification">
-                                                        <table>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>GR / Inspection Date</td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>Qty</td>
-                                                                </tr>
-                                                                @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
-                                                                {
-                                                                    grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                                                    <tr>
-                                                                        <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                        <td>&nbsp;</td>
-                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
-                                                                    </tr>
-                                                                }
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </span>
-                                            </div>
-                                            rowChild++;
-                                        }
-                                    </div>
-                                </div>
-                                row++;
+                                hideGR = "style=visibility:hidden";
                             }
+                            var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var isComplete = "No";
+                            if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            {
+                                isComplete = "Yes";
+                            }
+                            <div class="po-item-data-content row-@row" row="@row">
+                                <div class="po-item-data-content__outer" @hideGR>
+                                    <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                    <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
+                                    <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                    @*<span class="po-item-data-header__column inspection-date"></span>
+                                    <span class="po-item-data-header__column inspecton-qty"></span>*@
+                                    <span class="po-item-data-header__text info">
+                                        <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                        <div class="pop-up-notification">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>GR / Inspection Date</td>
+                                                        <td>&nbsp;</td>
+                                                        <td>Qty</td>
+                                                    </tr>
+                                                    @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
+                                                    {
+                                                        grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+
+                                                        <tr>
+                                                            <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </span>
+
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                    {
+                                        isComplete = "No";
+                                        if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                        {
+                                            isComplete = "Yes";
+                                        }
+                                        grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        hideGR = "";
+                                        if (ViewBag.CurrentRoleID != 2 && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        {
+                                            hideGR = "style=visibility:hidden";
+                                        }
+
+                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
+                                            <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
+                                            <span class="po-item-data-header__column gr-complete">@isComplete</span>
+                                            @*<span class="po-item-data-header__column inspection-date"></span>
+                                            <span class="po-item-data-header__column qty"></span>*@
+                                            <span class="po-item-data-header__text info">
+                                                <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                                                <div class="pop-up-notification">
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>GR / Inspection Date</td>
+                                                                <td>&nbsp;</td>
+                                                                <td>Qty</td>
+                                                            </tr>
+                                                            @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
+                                                            {
+                                                                grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                                <tr>
+                                                                    <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        rowChild++;
+                                    }
+                                </div>
+                            </div>
+                            row++;
                         }
                     </div>
                 </div>
@@ -760,7 +776,7 @@
                                 checkStageProgressItem = true;
                             }
 
-                            if (checkStageProgressItem==false)
+                            if (checkStageProgressItem==false || ViewBag.CurrentRoleID == 2)
                             {
                                 isDisabled = "disabled";
                             }
@@ -841,6 +857,12 @@
                             var hiddenFormUploading = "";
                             var hiddenFormUploaded = "hidden";
                             var invoiceDownloadPath = "";
+                            var grFullFill = "";
+
+                            if(purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            {
+                                grFullFill = "gr-full-fill";
+                            }
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
@@ -850,7 +872,7 @@
                             }
                             else
                             {
-                                if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument!=null) || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity))
+                                if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
                                 {
                                     disabledFileInvoice = "disabled";
                                     disabledFileInvoiceUpload = "disabled";
@@ -863,13 +885,13 @@
                                         <input type="hidden" class="pd-item-id" value="@purchasingDocumentItem.ID">
                                         <div class="form-inline form-upload" @hiddenFormUploading>
                                             <div class="form-group mr-2">
-                                                <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                <input type="file" class="form-control with-icon file-invoice @grFullFill" @disabledFileInvoice>
                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                             </div>
-                                            <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                            <button class="btn btn-positive save-invoice @grFullFill" @disabledFileInvoiceUpload>Save</button>
                                         </div>
                                         <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
-                                            <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                            <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
                                             <a href="#" class="danger-link file-invoice-remove">Remove?</a>
                                         </div>
                                     </div>
@@ -882,6 +904,12 @@
                                         hiddenFormUploading = "";
                                         hiddenFormUploaded = "hidden";
                                         invoiceDownloadPath = "";
+                                        grFullFill = "";
+
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                        {
+                                            grFullFill = "gr-full-fill";
+                                        }
 
                                         if (purchasingDocumentItemChild.InvoiceDocument != null)
                                         {
@@ -891,31 +919,32 @@
                                         }
                                         else
                                         {
-                                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            if (ViewBag.CurrentRoleID == 2 || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
                                             {
                                                 disabledFileInvoice = "disabled";
                                                 disabledFileInvoiceUpload = "disabled";
                                             }
                                         }
 
-                                        if(purchasingDocumentItemChild.InvoiceMethod == "full")
+                                        if(purchasingDocumentItemChild.InvoiceMethod == "full" || purchasingDocumentItemChild.InvoiceMethod==null)
                                         {
                                             hiddenFormUploading = "hidden";
                                             hiddenFormUploaded = "hidden";
                                         }
 
-                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >
+                                        @*<div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >*@
+                                        <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild" >
                                             <div class="po-item-data-header__column">
                                                 <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
                                                 <div class="form-inline form-upload" @hiddenFormUploading>
                                                     <div class="form-group mr-2">
-                                                        <input type="file" class="form-control with-icon file-invoice" @disabledFileInvoice>
+                                                        <input type="file" class="form-control with-icon file-invoice @grFullFill" @disabledFileInvoice>
                                                         <i class="fas fa-paperclip form-type-icon"></i>
                                                     </div>
-                                                    <button class="btn btn-positive save-invoice" @disabledFileInvoiceUpload>Save</button>
+                                                    <button class="btn btn-positive save-invoice @grFullFill" @disabledFileInvoiceUpload>Save</button>
                                                 </div>
                                                 <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
-                                                    <p class="mb-0"> <a class="" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                    <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
                                                     <a href="#" class="danger-link file-invoice-remove">Remove?</a>
                                                 </div>
                                             </div>
@@ -934,8 +963,8 @@
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
-                            <span class="po-item-data-header__text document-number">Document Number</span>
-                            <span class="po-item-data-header__text gr-date">Date</span>
+                            <span class="po-item-data-header__text parking-date">Parking Date</span>
+                            <span class="po-item-data-header__text term-date">Term Date</span>
                         </div>
                         @{
                             row = 1;
@@ -943,20 +972,20 @@
                         }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            var grDateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var dateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column document-number">@purchasingDocumentItem.LatestDocumentInvoices.DocumentNumber</span>
-                                    <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                    <span class="po-item-data-header__column parking-date">@dateNewFormat</span>
+                                    <span class="po-item-data-header__column term-date">@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
-                                        grDateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        dateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                            <span class="po-item-data-header__column document-number">@purchasingDocumentItemChild.LatestDocumentInvoices.DocumentNumber</span>
-                                            <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                            <span class="po-item-data-header__column document-number">@dateNewFormat</span>
+                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
                                         </div>
                                         rowChild++;
                                     }
@@ -1112,14 +1141,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFilePB" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
                             <div class="form-group col-md-12">
                                 <b>Live Preview</b>
                                 <br />
-                                <div id="dvPreview">
+                                <div id="filePB" class="dvPreview">
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
@@ -1152,7 +1179,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFileSetting" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="fileSetting" class="dvPreview">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="fullweld" role="tabpanel" aria-labelledby="fullweld-tab">
@@ -1185,7 +1217,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFileFullweld" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="fileFullweld" class="dvPreview">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="primer" role="tabpanel" aria-labelledby="primer-tab">
@@ -1217,6 +1254,12 @@
                                 <label for="inputFilePrimer">Upload Foto Progress</label>
                                 <input type="file" class="form-control with-icon" id="inputFilePrimer" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="filePrimer" class="dvPreview">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2445,6 +2488,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
+            
+            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                $("#inputProgressModalLabel").attr("child", $(this).closest(".po-item-data-content").attr("child"));
+            } else {
+                $("#inputProgressModalLabel").removeAttr("child");
+            }
+
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
@@ -2461,7 +2511,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 //dataType: "json",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        console.log(response.arrayDataTime);
+                        //console.log(response.arrayDataTime);
+                        console.log(response);
                         //alert(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
 
                         $("#PBDays").val(response.arrayDataTime['PBDays']);
@@ -2484,8 +2535,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         $("#ATAPrimer").val(response.arrayDataTime['ATAPrimer']);
                         $("#ATAPrimerReasonID").val(response.arrayDataTime['ATAPrimerReasonID']);
-
-
+                        
                         //    var date = new Date(newDate);
                         //    date.setDate(date.getDate() - 10);
 
@@ -2523,10 +2573,28 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#ATASetting").attr("min", $("#ETASetting").val());
                         $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
                         $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
-                        //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat())) : $("#ATAPB").removeAttr("disabled");
-                        //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
-                        //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
-                        //$("#ATAPrimer").val() ? $("#ATAPrimer").attr("disabled", "disabled") : $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+
+                        var jsonObjFilePB = $.parseJSON(response.arrayDataFilePB);
+                        var jsonObjFileSetting = $.parseJSON(response.arrayDataFileSetting);
+                        var jsonObjFileFullweld = $.parseJSON(response.arrayDataFileFullweld);
+                        var jsonObjFilePrimer = $.parseJSON(response.arrayDataFilePrimer);
+
+                        $("#filePB").empty();
+                        $("#fileSetting").empty();
+                        $("#fileFullweld").empty();
+                        $("#filePrimer").empty();
+                        
+                        for (var k in jsonObjFilePB) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
+                        }
+                        for (var k in jsonObjFileSetting) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileSetting");
+                        }
+                        for (var k in jsonObjFileFullweld) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileFullweld");
+                        } for (var k in jsonObjFilePrimer) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePrimer");
+                        }
                     }
                     //alert(response.responseCode);
                 },
@@ -2541,6 +2609,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var pdItemID = $("#inputProgressModalLabel").attr("item-id");
             var row = $("#inputProgressModalLabel").attr("row");
             var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage4Outer = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
+            var stage4Child = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__child");
+            
 
             var isValid = true;
             var errorMessage = "";
@@ -2664,8 +2735,15 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAPrimer").val()) {
                                     $("#ATAPrimer").attr("disabled", "disabled");
                                     $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                    stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
-                                    stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
+                                        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
+                                        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    }
+                                    if ($("#inputProgressModalLabel").attr("child") > 0) {
+                                        stage4Child.find(".po-item-data-content").attr("style", "visibility:display");
+                                    } else {
+                                        stage4Outer.attr("style", "visibility:display");
+                                    }
                                     $("#close-input-progress").click();
                                 } else {
                                     $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
@@ -2695,18 +2773,18 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             {
                 alert(errorMessage);
             }
-
         });
 
         /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
         $(".invoice-method-parent").on("change", function (obj) {
+            console.log($(this).val());
             var row = $(this).closest(".po-item-data-content").attr("row");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
-
+            //console.log(stage6Child);
             if ($(this).val() == "partial") {
-                stage6Child.show();
+                stage6Child.find(".form-upload").removeAttr("hidden");
             } else {
-                stage6Child.hide();
+                stage6Child.find(".form-upload").attr("hidden", true);
             }
         });
 
@@ -2715,6 +2793,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var invoiceMethod = $(this).closest(".form-inline").find(".invoice-method-parent");
             var row = $(this).closest(".po-item-data-content").attr("row");
+            var stage6Parent = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
 
             if (invoiceMethod.val() != "") {
@@ -2727,6 +2806,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (response) {
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
+                        //if (invoiceMethod.val() == "partial") {
+                        //    stage6Child.find(".form-upload").removeAttr("hidden");
+                        //} else {
+                        //    stage6Child.find(".form-upload").attr("hidden", true);
+                        //}
+                        stage6Parent.find(".gr-full-fill").removeAttr("disabled");
+                        stage6Child.find(".gr-full-fill").removeAttr("disabled");
                         alert(response.responseText);
                     },
                     error: function (xhr, status, error) {
@@ -2760,8 +2846,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 formData.append("fileInvoice", file);
                 formData.append("inputPurchasingDocumentItemID", pdItemID);
             }
-
             if (fileInvoiceDOM.files.length > 0) {
+                
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("VendorUploadInvoice", "Subcont")",
@@ -2776,11 +2862,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             formUploading.attr("hidden", true);
                             formUploaded.removeAttr("hidden");
 
-                            formUploaded.find(".st10-file-invoice-download").attr("href", response.invoiceUrl);
+                            formUploaded.find(".file-invoice-download").attr("href", response.invoiceUrl);
+                        } else {
+                            alert(response.responseCode+response.responseText);
                         }
                     },
                     error: function (xhr, status, error) {
-                        //alert(xhr.status + " : " + error);
+                        alert(xhr.status + " : " + error);
                     }
                 });
             } else {
@@ -2926,71 +3014,109 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         function poItemCollapse(row) {
             row.closest("li").toggleClass("collapse-row");
         }
+
+        function uploadFilePreview(file, elementID) {
+            var fileUpload = document.getElementById(file);
+            fileUpload.onchange = function () {
+                if (typeof (FileReader) != "undefined") {
+                    var dvPreview = document.getElementById(elementID);
+                    dvPreview.innerHTML = "";
+                    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                    var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                    for (var i = 0; i < fileUpload.files.length; i++) {
+                        var file = fileUpload.files[i];
+
+                        if (regex.test(file.name.toLowerCase())) {
+                            var reader = new FileReader();
+                            var img = document.createElement("IMG");
+                            img.height = "100";
+                            img.width = "100";
+                            img.title = file.name.toLowerCase();
+                            reader.onload = function (e) {
+                                img.src = e.target.result;
+                                dvPreview.appendChild(img);
+                            }
+                            reader.readAsDataURL(file);
+                        } else if (regexOffice.test(file.name.toLowerCase())) {
+
+                            var img = document.createElement("IMG");
+                            img.height = "100";
+                            img.width = "100";
+                            img.title = file.name.toLowerCase();
+
+                            var filename = file.name.toLowerCase();
+
+                            if (filename.includes(".doc") || filename.includes(".docx")) {
+                                img.src = siteUrl + "/Images/word.png";
+                            }
+                            if (filename.includes(".xls") || filename.includes(".xlsx")) {
+                                img.src = siteUrl + "/Images/excel.png";
+                            }
+                            if (filename.includes(".ppt") || filename.includes(".pptx")) {
+                                img.src = siteUrl + "/Images/powerpoint.png";
+                            }
+                            if (filename.includes(".pdf")) {
+                                img.src = siteUrl + "/Images/pdf.png";
+                            }
+                            dvPreview.appendChild(img);
+                        }
+                        else {
+
+                        }
+                    }
+                } else {
+                    alert("This browser does not support HTML5 FileReader.");
+                }
+            }
+        }
+
+        function filePreview(fileName, url, elementID) {
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = document.getElementById(elementID);
+                dvPreview.innerHTML = "";
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                   
+                if (regexOffice.test(fileName.toLowerCase())) {
+                    var img = document.createElement("IMG");
+                    img.height = "100";
+                    img.width = "100";
+                    img.title = fileName.toLowerCase();
+
+                    if (fileName.includes(".doc") || fileName.includes(".docx")) {
+                        img.src = siteUrl + "/Images/word.png";
+                    }
+                    if (fileName.includes(".xls") || fileName.includes(".xlsx")) {
+                        img.src = siteUrl + "/Images/excel.png";
+                    }
+                    if (fileName.includes(".ppt") || fileName.includes(".pptx")) {
+                        img.src = siteUrl + "/Images/powerpoint.png";
+                    }
+                    if (fileName.includes(".pdf")) {
+                        img.src = siteUrl + "/Images/pdf.png";
+                    }
+                    dvPreview.appendChild(img);
+                } else {
+                    var img = document.createElement("IMG");
+                    img.height = "100";
+                    img.width = "100";
+                    img.title = fileName.toLowerCase();
+                    img.src = url;
+                }
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        }
+
     </script>
 
     <!-- Live PReview PIc-->
     <script language="javascript" type="text/javascript">
             window.onload = function () {
-                var fileUpload = document.getElementById("inputFilePB");
-                fileUpload.onchange = function () {
-                    if (typeof (FileReader) != "undefined") {
-                        var dvPreview = document.getElementById("dvPreview");
-                        dvPreview.innerHTML = "";
-                        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
-                        var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
-                        for (var i = 0; i < fileUpload.files.length; i++) {
-                            var file = fileUpload.files[i];
-
-
-
-                            if (regex.test(file.name.toLowerCase())) {
-                                var reader = new FileReader();
-                                var img = document.createElement("IMG");
-                                img.height = "100";
-                                img.width = "100";
-                                img.title = file.name.toLowerCase();
-                                reader.onload = function (e) {
-
-
-                                    img.src = e.target.result;
-                                    dvPreview.appendChild(img);
-
-                                }
-                                reader.readAsDataURL(file);
-                            } else if (regexOffice.test(file.name.toLowerCase())) {
-
-                                var img = document.createElement("IMG");
-                                img.height = "100";
-                                img.width = "100";
-                                img.title = file.name.toLowerCase();
-
-                                var filename = file.name.toLowerCase();
-
-                                if (filename.includes(".doc") || filename.includes(".docx")) {
-                                    img.src = "/Images/word.png";
-                                }
-                                if (filename.includes(".xls") || filename.includes(".xlsx")) {
-                                    img.src = "/Images/excel.png";
-                                }
-                                if (filename.includes(".ppt") || filename.includes(".pptx")) {
-                                    img.src = "/Images/powerpoint.png";
-                                }
-                                if (filename.includes(".pdf")) {
-                                    img.src = "/Images/pdf.png";
-                                }
-                                dvPreview.appendChild(img);
-
-                            }
-                            else {
-
-                            }
-
-
-                        }
-                    } else {
-                        alert("This browser does not support HTML5 FileReader.");
-                    }
-                }
+                uploadFilePreview("inputFilePB", "filePB");
+                uploadFilePreview("inputFileSetting", "fileSetting");
+                uploadFilePreview("inputFileFullweld", "fileFullweld");
+                uploadFilePreview("inputFilePrimer", "filePrimer");
             };
         </script>
 }

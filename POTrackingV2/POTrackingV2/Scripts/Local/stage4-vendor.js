@@ -41,6 +41,20 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
     var etaOnTime = reverseDayMonth(inputUpdateEtaDateOntime.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-on-time").attr("mindate"));
 
+    // Donut Progress
+    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
+    var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
     var inputETAHistory = {
         PurchasingDocumentItemID: itemID,
         ETADate: etaOnTime
@@ -63,6 +77,11 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
                     buttonEtaDateDelayConfirm.attr("disabled", "disabled");
                     inputUploadProgressPhotoes.removeAttr("disabled");
                     buttonUploadProgressPhotoes.removeAttr("disabled");
+
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+
+                    nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
                 },
                 error: function (xhr, status, error) {
                     alert(xhr.status + " : " + error);
@@ -70,12 +89,12 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
             });
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 2");
+            alert("The Date cannot be less than the Date agreed on stage 2");
             inputUpdateEtaDateOntime.focus();
         }
     }
     else {
-        alert("Tanggal tidak valid");
+        alert("Date is not valid");
         inputUpdateEtaDateOntime.focus();
     }
 });
@@ -98,6 +117,20 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
     var delayReasonID = inputDelayReason.val();
     var etaDelay = reverseDayMonth(inputUpdateEtaDateDelay.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-delay").attr("mindate"));
+
+    // Donut Progress
+    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
+    var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     var inputETAHistory = {
         PurchasingDocumentItemID: itemID,
@@ -124,6 +157,11 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
                         inputUploadProgressPhotoes.removeAttr("disabled");
                         buttonUploadProgressPhotoes.removeAttr("disabled");
 
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+
+                        nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
+
                     },
                     error: function (xhr, status, error) {
                         alert(xhr.status + " : " + error);
@@ -131,17 +169,17 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
                 });
             }
             else {
-                alert("Pilih alasan keterlambatan");
+                alert("Choose a reason for your delay");
                 inputDelayReason.focus();
             }
         }
         else {
-            alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 2");
+            alert("The Date cannot be less than the Date agreed on stage 2");
             inputUpdateEtaDateDelay.focus();
         }
     }
     else {
-        alert("Tanggal tidak valid");
+        alert("Date is not valid");
         inputUpdateEtaDateOntime.focus();
     }
 });
@@ -190,12 +228,12 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
                 buttonUploadProgressPhotoesConfirm.attr("disabled", "disabled");
                 inputUploadProgressPhotoes.attr("disabled", "disabled");
 
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                /*donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
 
                 nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
                 nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");*/
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
