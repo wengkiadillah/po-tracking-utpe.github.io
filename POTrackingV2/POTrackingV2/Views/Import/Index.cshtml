@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "PO Import";
     var roleID = ViewBag.CurrentRoleID;
+    var poSignRow = 1;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -48,21 +49,19 @@
             <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
             <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
             <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
+            @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
             <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
-            <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
-            <li class="pagination-list__item" onclick="paginationShow(12)">11</li>
+            @if (roleID == 2)
+            {
+                <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
+            }
         </ul>
     </div>
 </div>
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
-
-    if (purchasingDocumentItems.All(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"))
-    {
-        continue;
-    }
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
@@ -76,6 +75,13 @@
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
+
+    if (purchasingDocumentItems.Count() < 1)
+    {
+        continue;
+    }
+
+    purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
     <ul class="list-unstyled po-list">
         <li class="po-item-container">
@@ -161,6 +167,14 @@
                     {
                         var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                         var childRow = 1;
+                        var maximumStage = 10;
+                        var donutProgress = purchasingDocumentItem.DonutProgress;
+
+                        if (roleID == 3)
+                        {
+                            maximumStage = 9;
+                            donutProgress = purchasingDocumentItem.DonutProgressVendor;
+                        }
 
                         <div class="po-item-data-content row-@row">
                             <div class="po-item-data-content__outer">
@@ -171,13 +185,13 @@
                                 {
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                             data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
                                     </div>
                                 }
                                 else
                                 {
-                                    int donutProgress = 100;
+                                    donutProgress = 100;
 
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
@@ -191,6 +205,15 @@
                                 {
                                     foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                     {
+                                        maximumStage = 10;
+                                        donutProgress = childPurchasingDocumentItem.DonutProgress;
+
+                                        if (roleID == 3)
+                                        {
+                                            maximumStage = 9;
+                                            donutProgress = childPurchasingDocumentItem.DonutProgressVendor;
+                                        }
+
                                         <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
                                             <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
                                             <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
@@ -199,13 +222,13 @@
                                             {
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                                         data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
                                                 </div>
                                             }
                                             else
                                             {
-                                                int donutProgress = 100;
+                                                donutProgress = 100;
 
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
@@ -223,7 +246,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -290,7 +313,7 @@
                         {
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage1 = 1;
-                            var latestConfirmedDate = purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var latestConfirmedDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                             var latestConfirmedQuantity = purchasingDocumentItem.Quantity;
 
                             if (purchasingDocumentItem.ConfirmedDate.HasValue)
@@ -418,7 +441,7 @@
                                             <div class="form-inline">
                                                 <input type="hidden" class="@st1ItemID" value="@purchasingDocumentItem.ID">
                                                 <input type="hidden" class="@st1ItemQuantity" value="@purchasingDocumentItem.Quantity">
-                                                <input type="hidden" class="@st1ItemDeliveryDate" value="@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")">
+                                                <input type="hidden" class="@st1ItemDeliveryDate" value="@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")">
                                                 <input type="hidden" class="@st1ItemIsEdit" value="false">
                                                 <div class="input-group">
                                                     <label class="checkbox-custom__label">
@@ -471,7 +494,7 @@
                                         {
                                             foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                             {
-                                                latestConfirmedDate = childPurchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                                                latestConfirmedDate = childPurchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                                 latestConfirmedQuantity = childPurchasingDocumentItem.Quantity;
 
                                                 if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
@@ -903,27 +926,27 @@
                             var st2aItemId = "st2a-item-id";
                             var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
                             var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
-                            var st2aApproveProforma = "";
-                            var st2aDisApproveProforma = "";
+                            //var st2aApproveProforma = "";
+                            //var st2aDisApproveProforma = "";
                             var st2aDownloadProforma = "st2a-download-proforma";
                             var st2aSkipProforma = "st2a-skip-proforma";
 
                             if (roleID == 2)
                             {
-                                st2aApproveProforma = "st2a-approve-proforma-proc";
-                                st2aDisApproveProforma = "st2a-disapprove-proforma-proc";
+                                //st2aApproveProforma = "st2a-approve-proforma-proc";
+                                //st2aDisApproveProforma = "st2a-disapprove-proforma-proc";
                             }
 
                             var disabledFileProformaInvoice = "";
                             var disabledUploadProformaInvoice = "";
-                            var disabledApproveProforma = "disabled";
-                            var disabledDisApproveProforma = "disabled";
+                            //var disabledApproveProforma = "disabled";
+                            //var disabledDisApproveProforma = "disabled";
                             var disabledSkipProforma = "";
-                            var selectedApproveProforma = "";
-                            var selectedDisApproveProforma = "";
+                            //var selectedApproveProforma = "";
+                            //var selectedDisApproveProforma = "";
                             var selectedSkipProforma = "";
-                            var hiddenApproveProforma = "hidden";
-                            var hiddenDisApproveProforma = "hidden";
+                            //var hiddenApproveProforma = "hidden";
+                            //var hiddenDisApproveProforma = "hidden";
                             var hiddenInputDiv = "";
                             var hiddenUploadedDiv = "hidden";
                             var hiddenSkipProforma = "disabled";
@@ -973,31 +996,31 @@
                                 if (roleID == 2)
                                 {
                                     disabledSkipProforma = "disabled";
-                                    disabledApproveProforma = "";
-                                    disabledDisApproveProforma = "";
-                                    hiddenApproveProforma = "";
-                                    hiddenDisApproveProforma = "";
+                                    //disabledApproveProforma = "";
+                                    //disabledDisApproveProforma = "";
+                                    //hiddenApproveProforma = "";
+                                    //hiddenDisApproveProforma = "";
 
                                     if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                     {
-                                        disabledApproveProforma = "disabled";
-                                        disabledDisApproveProforma = "disabled";
-                                        selectedApproveProforma = "selected";
+                                        //disabledApproveProforma = "disabled";
+                                        //disabledDisApproveProforma = "disabled";
+                                        //selectedApproveProforma = "selected";
                                     }
                                     else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                     {
-                                        disabledApproveProforma = "disabled";
-                                        disabledDisApproveProforma = "disabled";
-                                        selectedDisApproveProforma = "selected-negative";
+                                        //disabledApproveProforma = "disabled";
+                                        //disabledDisApproveProforma = "disabled";
+                                        //selectedDisApproveProforma = "selected-negative";
                                     }
                                 }
                                 else
                                 {
                                     if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                     {
-                                        disabledApproveProforma = "disabled";
-                                        disabledDisApproveProforma = "disabled";
-                                        selectedApproveProforma = "selected";
+                                        //disabledApproveProforma = "disabled";
+                                        //disabledDisApproveProforma = "disabled";
+                                        //selectedApproveProforma = "selected";
                                     }
                                     else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                     {
@@ -1027,11 +1050,11 @@
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
                                                     </p>
                                                 </div>
-                                                <div class="form-group mr-2">
-                                                    <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
-                                                    <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
-                                                    <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
-                                                </div>
+                                                @*<div class="form-group mr-2">
+                                                        <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
+                                                        <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
+                                                        <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
+                                                    </div>*@
                                             </div>
                                         </div>
                                     </form>
@@ -1044,14 +1067,14 @@
 
                                             disabledFileProformaInvoice = "";
                                             disabledUploadProformaInvoice = "";
-                                            disabledApproveProforma = "disabled";
-                                            disabledDisApproveProforma = "disabled";
+                                            //disabledApproveProforma = "disabled";
+                                            //disabledDisApproveProforma = "disabled";
                                             disabledSkipProforma = "";
-                                            selectedApproveProforma = "";
-                                            selectedDisApproveProforma = "";
+                                            //selectedApproveProforma = "";
+                                            //selectedDisApproveProforma = "";
                                             selectedSkipProforma = "";
-                                            hiddenApproveProforma = "hidden";
-                                            hiddenDisApproveProforma = "hidden";
+                                            //hiddenApproveProforma = "hidden";
+                                            //hiddenDisApproveProforma = "hidden";
                                             hiddenInputDiv = "";
                                             hiddenUploadedDiv = "hidden";
                                             hiddenSkipProforma = "disabled";
@@ -1101,31 +1124,31 @@
                                                 if (roleID == 2)
                                                 {
                                                     disabledSkipProforma = "disabled";
-                                                    disabledApproveProforma = "";
-                                                    disabledDisApproveProforma = "";
-                                                    hiddenApproveProforma = "";
-                                                    hiddenDisApproveProforma = "";
+                                                    //disabledApproveProforma = "";
+                                                    //disabledDisApproveProforma = "";
+                                                    //hiddenApproveProforma = "";
+                                                    //hiddenDisApproveProforma = "";
 
                                                     if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                                     {
-                                                        disabledApproveProforma = "disabled";
-                                                        disabledDisApproveProforma = "disabled";
-                                                        selectedApproveProforma = "selected";
+                                                        //disabledApproveProforma = "disabled";
+                                                        //disabledDisApproveProforma = "disabled";
+                                                        //selectedApproveProforma = "selected";
                                                     }
                                                     else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                                     {
-                                                        disabledApproveProforma = "disabled";
-                                                        disabledDisApproveProforma = "disabled";
-                                                        selectedDisApproveProforma = "selected-negative";
+                                                        //disabledApproveProforma = "disabled";
+                                                        //disabledDisApproveProforma = "disabled";
+                                                        //selectedDisApproveProforma = "selected-negative";
                                                     }
                                                 }
                                                 else
                                                 {
                                                     if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                                     {
-                                                        disabledApproveProforma = "disabled";
-                                                        disabledDisApproveProforma = "disabled";
-                                                        selectedApproveProforma = "selected";
+                                                        //disabledApproveProforma = "disabled";
+                                                        //disabledDisApproveProforma = "disabled";
+                                                        //selectedApproveProforma = "selected";
                                                     }
                                                     else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                                     {
@@ -1154,11 +1177,11 @@
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
                                                                 </p>
                                                             </div>
-                                                            <div class="form-group mr-2">
-                                                                <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
-                                                                <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
-                                                                <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
-                                                            </div>
+                                                            @*<div class="form-group mr-2">
+                                                                    <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
+                                                                    <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
+                                                                    <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
+                                                                </div>*@
                                                         </div>
                                                     </div>
                                                 </form>
@@ -2355,80 +2378,80 @@
                         }
                     </div>
                 </div>
-                <div class="po-item-section stage-9">
+                @*<div class="po-item-section stage-9">
+                        <div class="po-item-section-header justify-content-center">
+                            <p class="mb-0">Stage 8</p>
+                        </div>
+                        <div class="po-item-section-body">
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text">Inbound Number</span>
+                            </div>
+                            @{
+                                var rowStage8 = 1;
+                            }
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                            {
+                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                                var childRowStage8 = 1;
+
+                                List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
+                                var maxCount = 0;
+
+                                if (shipmentInboundNumbers != null)
+                                {
+                                    maxCount = shipmentInboundNumbers.Count;
+                                }
+
+                                var count = 0;
+
+                                <div class="po-item-data-content row-@rowStage8">
+                                    <div class="po-item-data-content__outer">
+                                        @if (maxCount >= count + 1)
+                                        {
+                                            <span class="po-item-data-header__column">
+                                                @shipmentInboundNumbers[count]
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="po-item-data-header__column">
+                                                -
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                        {
+                                            count++;
+                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                            {
+                                                <div class="po-item-data-content row-@rowStage8-@childRowStage8 mt-customize" row="@rowStage8" child="@childRowStage8">
+                                                    @if (maxCount >= count + 1)
+                                                    {
+                                                        <span class="po-item-data-header__column">
+                                                            @shipmentInboundNumbers[count]
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="po-item-data-header__column">
+                                                            -
+                                                        </span>
+                                                    }
+                                                </div>
+                                                childRowStage8++;
+                                                count++;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                rowStage8++;
+                            }
+                        </div>
+                    </div>*@
+                <div class="po-item-section stage-9 info-stage">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 8</p>
-                    </div>
-                    <div class="po-item-section-body">
-                        <div class="po-item-data-header">
-                            <span class="po-item-data-header__text">Inbound Number</span>
-                        </div>
-                        @{
-                            var rowStage8 = 1;
-                        }
-                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                        {
-                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                            var childRowStage8 = 1;
-
-                            List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
-                            var maxCount = 0;
-
-                            if (shipmentInboundNumbers != null)
-                            {
-                                maxCount = shipmentInboundNumbers.Count;
-                            }
-
-                            var count = 0;
-
-                            <div class="po-item-data-content row-@rowStage8">
-                                <div class="po-item-data-content__outer">
-                                    @if (maxCount >= count + 1)
-                                    {
-                                        <span class="po-item-data-header__column">
-                                            @shipmentInboundNumbers[count]
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="po-item-data-header__column">
-                                            -
-                                        </span>
-                                    }
-                                </div>
-                                <div class="po-item-data-content__child">
-                                    @if (childPurchasingDocumentItems.Count() > 0)
-                                    {
-                                        count++;
-                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                        {
-                                            <div class="po-item-data-content row-@rowStage8-@childRowStage8 mt-customize" row="@rowStage8" child="@childRowStage8">
-                                                @if (maxCount >= count + 1)
-                                                {
-                                                    <span class="po-item-data-header__column">
-                                                        @shipmentInboundNumbers[count]
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="po-item-data-header__column">
-                                                        -
-                                                    </span>
-                                                }
-                                            </div>
-                                            childRowStage8++;
-                                            count++;
-                                        }
-                                    }
-                                </div>
-                            </div>
-                            rowStage8++;
-                        }
-                    </div>
-                </div>
-                <div class="po-item-section stage-10 info-stage">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 9</p>
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
@@ -2452,11 +2475,22 @@
                                 isComplete = "Yes";
                             }
 
+                            var goodsReceiptQuantity = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                            var confirmedQuantity = purchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                            if (purchasingDocumentItem.ActiveStageToNumber < 8)
+                            {
+                                grDateNewDateFormat = "-";
+                                goodsReceiptQuantity = "-";
+                                confirmedQuantity = "-";
+                                isComplete = "-";
+                            }
+
                             <div class="po-item-data-content row-@rowStage9">
                                 <div class="po-item-data-content__outer">
                                     <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                     <div class="po-item-data-header__column gr-qty">
-                                        <div>@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                        <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                     </div>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     <span class="po-item-data-header__text info">
@@ -2472,11 +2506,18 @@
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
                                                     {
                                                         grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                        var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                        if (purchasingDocumentItem.ActiveStageToNumber < 8)
+                                                        {
+                                                            pdihGoodsReceiptQuantity = "-";
+                                                            grDateNewDateFormat = "-";
+                                                        }
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
                                                             <td>&nbsp;</td>
-                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                            <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -2496,10 +2537,21 @@
                                                 isComplete = "Yes";
                                             }
 
+                                            goodsReceiptQuantity = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                                            confirmedQuantity = childPurchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                                            if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
+                                            {
+                                                grDateNewDateFormat = "-";
+                                                goodsReceiptQuantity = "-";
+                                                confirmedQuantity = "-";
+                                                isComplete = "-";
+                                            }
+
                                             <div class="po-item-data-content row-@rowStage9-@childRowStage9 mt-customize" row="@rowStage9" child="@childRowStage9">
                                                 <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                                 <div class="po-item-data-header__column gr-qty">
-                                                    <div>@childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                                    <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                                 </div>
                                                 <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                                 <span class="po-item-data-header__text info">
@@ -2515,11 +2567,18 @@
                                                                 @foreach (var pdih in childPurchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
                                                                 {
                                                                     grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                                    var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                                    if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
+                                                                    {
+                                                                        pdihGoodsReceiptQuantity = "-";
+                                                                        grDateNewDateFormat = "-";
+                                                                    }
 
                                                                     <tr>
                                                                         <td class="secondary-text">@grDateNewDateFormat</td>
                                                                         <td>&nbsp;</td>
-                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                        <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                                     </tr>
                                                                 }
                                                             </tbody>
@@ -2532,13 +2591,14 @@
                                     }
                                 </div>
                             </div>
+
                             rowStage9++;
                         }
                     </div>
                 </div>
-                <div class="po-item-section stage-11">
+                <div class="po-item-section stage-10">
                     <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 10</p>
+                        <p class="mb-0">Stage 9</p>
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
@@ -2600,7 +2660,10 @@
                                         </div>
                                         <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
                                             <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                            @if (roleID == 2)
+                                            {
+                                                <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -2648,7 +2711,10 @@
                                                     </div>
                                                     <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
                                                         <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                        <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                                        @if (roleID == 2)
+                                                        {
+                                                            <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -2661,78 +2727,82 @@
                         }
                     </div>
                 </div>
-                <div class="po-item-section stage-12">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 11</p>
-                    </div>
-                    <div class="po-item-section-body">
-                        <div class="po-item-data-header">
-                            <span class="po-item-data-header__text document_number">Parking Date</span>
-                            <span class="po-item-data-header__text delivery">Term Date</span>
+                @if (roleID == 2)
+                {
+                    <div class="po-item-section stage-11">
+                        <div class="po-item-section-header justify-content-center">
+                            <p class="mb-0">Stage 10</p>
                         </div>
-                        @{
-                            var rowStage11 = 1;
-                        }
-                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                        {
-                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                            var childRowStage11 = 1;
-
-                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                            var termDateViews = purchasingDocumentItem.TermDateViews;
-                            var maxCount = 0;
-
-                            if (parkingDateViews != null)
-                            {
-                                maxCount = parkingDateViews.Count;
-                            }
-
-                            var count = 0;
-
-                            <div class="po-item-data-content row-@rowStage11">
-                                <div class="po-item-data-content__outer">
-                                    @if (maxCount >= count + 1)
-                                    {
-                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
-                                        <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="po-item-data-header__column document_number">-</span>
-                                        <span class="po-item-data-header__column delivery">-</span>
-                                    }
-                                </div>
-                                <div class="po-item-data-content__child">
-                                    @if (childPurchasingDocumentItems.Count() > 0)
-                                    {
-                                        count++;
-                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                        {
-                                            <div class="po-item-data-content row-@rowStage11-@childRowStage11 mt-customize" row="@rowStage11" child="@childRowStage11">
-                                                @if (maxCount >= count + 1)
-                                                {
-                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
-                                                    <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="po-item-data-header__column document_number">-</span>
-                                                    <span class="po-item-data-header__column delivery">-</span>
-                                                }
-                                            </div>
-                                            childRowStage11++;
-                                            count++;
-                                        }
-                                    }
-                                </div>
+                        <div class="po-item-section-body">
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text document_number">Parking Date</span>
+                                <span class="po-item-data-header__text delivery">Term Date</span>
                             </div>
-                            rowStage11++;
-                        }
+                            @{
+                                var rowStage11 = 1;
+                            }
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                            {
+                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                                var childRowStage11 = 1;
+
+                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                                var termDateViews = purchasingDocumentItem.TermDateViews;
+                                var maxCount = 0;
+
+                                if (parkingDateViews != null)
+                                {
+                                    maxCount = parkingDateViews.Count;
+                                }
+
+                                var count = 0;
+
+                                <div class="po-item-data-content row-@rowStage11">
+                                    <div class="po-item-data-content__outer">
+                                        @if (maxCount >= count + 1)
+                                        {
+                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                            <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="po-item-data-header__column document_number">-</span>
+                                            <span class="po-item-data-header__column delivery">-</span>
+                                        }
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                        {
+                                            count++;
+                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                            {
+                                                <div class="po-item-data-content row-@rowStage11-@childRowStage11 mt-customize" row="@rowStage11" child="@childRowStage11">
+                                                    @if (maxCount >= count + 1)
+                                                    {
+                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+                                                        <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="po-item-data-header__column document_number">-</span>
+                                                        <span class="po-item-data-header__column delivery">-</span>
+                                                    }
+                                                </div>
+                                                childRowStage11++;
+                                                count++;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                rowStage11++;
+                            }
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </li>
     </ul>
+    poSignRow++;
 }
 
 <div class="modal fade st6-modal" id="fillForm" tabindex="-1" role="dialog" aria-labelledby="fillFormModalLabel" aria-hidden="true">
@@ -2756,12 +2826,12 @@
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label>BL Copy Document</label>
-                        <div class="input-group st6-group-copy-bl-document">
+                        <div class="form-group st6-group-copy-bl-document">
                             <input type="file" class="form-control with-icon st6-copy-bl-document">
                             <i class="fas fa-paperclip form-type-icon"></i>
-                            <div class="input-group-append">
-                                @*<button class="btn btn-positive" disabled>Upload</button>*@
-                            </div>
+                            @*<div class="input-group-append">
+                                    <button class="btn btn-positive" disabled>Upload</button>
+                                </div>*@
                         </div>
                         <div class="input-group st6-group-copy-bl-document-uploaded" hidden>
                             <a class="st6-copy-bl-document-download" href="">BL Copy </a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
@@ -2903,6 +2973,20 @@
                     scrollLength[i] += totalDistance;
                     totalDistance = scrollLength[i];
                 }
+
+                for (var i = 1; i < 11; i++) {
+                    var lastStatus = 0;
+                    $('.activeStagePo-' + i).each(function (index) {
+                        if (this.id > lastStatus) {
+                            lastStatus = this.id;
+                        }
+                    });
+                    console.log(lastStatus);
+                    if (lastStatus > 0) {
+                        $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                    }   
+                }
+                console.log($('#activeStagePo-1'));
             });
 
             function paginationShow(destination) {

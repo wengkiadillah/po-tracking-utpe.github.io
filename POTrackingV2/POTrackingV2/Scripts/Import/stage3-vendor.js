@@ -64,7 +64,6 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     if (confirmedReceivedPaymentDate !== '' && !isNaN(confirmedReceivedPaymentDate.getTime())) {
-        //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
         $.ajax({
             type: "POST",
             url: "VendorConfirmPaymentReceived",
@@ -91,11 +90,6 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
                 alert(xhr.status + " : " + error);
             }
         });
-        //}
-        //else {
-        //    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
-        //    inputConfirmReceivedPaymentDate.focus();
-        //}
     }
     else {
         alert("Date cannot be empty");

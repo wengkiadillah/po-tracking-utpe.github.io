@@ -105,6 +105,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
+            List<bool> isSameAsProcs = new List<bool>();
 
             try
             {
@@ -115,16 +116,46 @@ namespace POTrackingV2.Controllers
                     {
                         databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
 
+                        List<PurchasingDocumentItem> childPurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == inputPurchasingDocumentItem.ID && x.ID != inputPurchasingDocumentItem.ID).ToList();
+                        if (childPurchasingDocumentItems.Count > 0)
+                        {
+                            //Child Clean Up
+                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                            {
+                                if (childPurchasingDocumentItem.ID != inputPurchasingDocumentItem.ID)
+                                {
+                                    db.PurchasingDocumentItems.Remove(childPurchasingDocumentItem);
+                                }
+                            }
+                        }
+
                         if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                         {
                             //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                            databasePurchasingDocumentItem.ConfirmedItem = null;
                             databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                             databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                            databasePurchasingDocumentItem.ActiveStage = "1";
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             counter++;
+
+                            if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = true;
+                                databasePurchasingDocumentItem.ActiveStage = "2";
+                                isSameAsProcs.Add(true);
+                            }
+                            else
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                databasePurchasingDocumentItem.ActiveStage = "1";
+                                isSameAsProcs.Add(false);
+                            }
+
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            foreach (var previousNotification in previousNotifications)
+                            {
+                                previousNotification.isActive = false;
+                            }
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -155,6 +186,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
@@ -170,7 +204,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -195,6 +229,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
+            List<bool> isSameAsProcs = new List<bool>();
 
             try
             {
@@ -221,14 +256,25 @@ namespace POTrackingV2.Controllers
 
                             if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                             {
-                                databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
                                 databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                                 databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                                databasePurchasingDocumentItem.ActiveStage = "1";
                                 databasePurchasingDocumentItem.LastModified = now;
                                 databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                                 counter++;
+
+                                if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
+                                {
+                                    databasePurchasingDocumentItem.ConfirmedItem = true;
+                                    databasePurchasingDocumentItem.ActiveStage = "2";
+                                    isSameAsProcs.Add(true);
+                                }
+                                else
+                                {
+                                    databasePurchasingDocumentItem.ConfirmedItem = null;
+                                    databasePurchasingDocumentItem.ActiveStage = "1";
+                                    isSameAsProcs.Add(false);
+                                }
                             }
                         }
                         else
@@ -245,6 +291,9 @@ namespace POTrackingV2.Controllers
                                 inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                                 inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                                 inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                                inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                                inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                                inputPurchasingDocumentItem.IsClosed = "";
 
                                 inputPurchasingDocumentItem.ActiveStage = "1";
                                 inputPurchasingDocumentItem.Created = now;
@@ -262,7 +311,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -294,7 +343,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "1")
+                    if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
                         databasePurchasingDocumentItem.ConfirmedItem = true;
                         //databasePurchasingDocumentItem.OpenQuantity = inputPurchasingDocumentItem.OpenQuantity;
@@ -526,7 +575,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)
+                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -596,7 +645,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)
+                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -686,6 +735,7 @@ namespace POTrackingV2.Controllers
                     }
 
                     databasePurchasingDocumentItem.ProformaInvoiceDocument = fileName;
+                    databasePurchasingDocumentItem.ActiveStage = "3";
                     databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = null;
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -952,7 +1002,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 3;
                         notification.Stage = "3";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1009,7 +1059,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 2;
+                    notification.StatusID = 3;
                     notification.Stage = "3";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -1090,7 +1140,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 3;
                         notification.Stage = "4";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1163,7 +1213,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 2;
+                    notification.StatusID = 3;
                     notification.Stage = "4";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -1242,7 +1292,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 3;
                         notification.Stage = "5";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1316,7 +1366,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 3;
                         notification.Stage = "5";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1417,7 +1467,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                    notification.StatusID = 2;
+                    notification.StatusID = 3;
                     notification.Stage = "6";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -1520,7 +1570,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 3;
                         notification.Stage = "7";
                         notification.Role = "vendor";
                         notification.isActive = true;
@@ -1591,7 +1641,7 @@ namespace POTrackingV2.Controllers
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 2;
+                            notification.StatusID = 3;
                             notification.Stage = "10";
                             notification.Role = "procurement";
                             notification.isActive = true;
@@ -1667,7 +1717,7 @@ namespace POTrackingV2.Controllers
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 2;
+                            notification.StatusID = 3;
                             notification.Stage = "10";
                             notification.Role = "procurement";
                             notification.isActive = true;
