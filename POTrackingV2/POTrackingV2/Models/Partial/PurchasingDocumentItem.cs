@@ -170,6 +170,7 @@ namespace POTrackingV2.Models
                 {
                     DateTime? currentGRDate = null;
                     string documentNumber = null;
+                    string payTerms = null;
                     int indexParent = 0;
 
                     foreach (PurchasingDocumentItem purchasingDocumentItem in purchasingDocumentItems)
@@ -182,11 +183,12 @@ namespace POTrackingV2.Models
                                 if (indexParent == indexChild)
                                 {
                                     currentGRDate = pdih.GoodsReceiptDate;
-                                    documentNumber = pdih.DocumentNumber;
+                                    payTerms = pdih.PayTerms;
                                 }
                                 indexChild++;
                             }
                             purchasingDocumentItemHistory.DocumentNumber = documentNumber;
+                            purchasingDocumentItemHistory.PayTerms = payTerms;
                             purchasingDocumentItemHistory.GoodsReceiptDate = currentGRDate;
                         }
                         indexParent++;
