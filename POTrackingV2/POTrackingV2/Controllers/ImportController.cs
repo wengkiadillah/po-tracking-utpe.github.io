@@ -197,14 +197,12 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
 
                             db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
-
-                            isSameAsProcs.Add(false);
                             counter++;
                         }
                     }
                 }
 
-                //db.SaveChanges();
+                db.SaveChanges();
 
                 return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
@@ -231,7 +229,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
-            bool isSameAsProc = false;
+            List<bool> isSameAsProcs = new List<bool>();
 
             try
             {
@@ -259,10 +257,8 @@ namespace POTrackingV2.Controllers
                             if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                             {
                                 //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                                databasePurchasingDocumentItem.ConfirmedItem = null;
                                 databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                                 databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                                databasePurchasingDocumentItem.ActiveStage = "1";
                                 databasePurchasingDocumentItem.LastModified = now;
                                 databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                                 counter++;
@@ -271,7 +267,13 @@ namespace POTrackingV2.Controllers
                                 {
                                     databasePurchasingDocumentItem.ConfirmedItem = true;
                                     databasePurchasingDocumentItem.ActiveStage = "2";
-                                    isSameAsProc = true;
+                                    isSameAsProcs.Add(true);
+                                }
+                                else
+                                {
+                                    databasePurchasingDocumentItem.ConfirmedItem = null;
+                                    databasePurchasingDocumentItem.ActiveStage = "1";
+                                    isSameAsProcs.Add(false);
                                 }
                             }
                         }
@@ -307,9 +309,9 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                //db.SaveChanges();
+                db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProc }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
