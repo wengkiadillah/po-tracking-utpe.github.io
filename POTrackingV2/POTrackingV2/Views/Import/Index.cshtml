@@ -183,7 +183,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                        <div><span class="mark-donut activeStagePo-@poSignRow" id="@purchasingDocumentItem.ActiveStageView">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
                                     </div>
                                 }
                                 else
@@ -211,7 +211,7 @@
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                          data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                                    <div><span class="mark-donut activeStagePo-@poSignRow"  id="@childPurchasingDocumentItem.ActiveStageView">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
                                                 </div>
                                             }
                                             else
@@ -2924,6 +2924,20 @@
                     scrollLength[i] += totalDistance;
                     totalDistance = scrollLength[i];
                 }
+
+                for (var i = 1; i < 11; i++) {
+                    var lastStatus = 0;
+                    $('.activeStagePo-' + i).each(function (index) {
+                        if (this.id > lastStatus) {
+                            lastStatus = this.id;
+                        }
+                    });
+                    console.log(lastStatus);
+                    if (lastStatus > 0) {
+                        $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                    }   
+                }
+                console.log($('#activeStagePo-1'));
             });
 
             function paginationShow(destination) {
