@@ -2973,6 +2973,20 @@
                     scrollLength[i] += totalDistance;
                     totalDistance = scrollLength[i];
                 }
+
+                for (var i = 1; i < 11; i++) {
+                    var lastStatus = 0;
+                    $('.activeStagePo-' + i).each(function (index) {
+                        if (this.id > lastStatus) {
+                            lastStatus = this.id;
+                        }
+                    });
+                    console.log(lastStatus);
+                    if (lastStatus > 0) {
+                        $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                    }   
+                }
+                console.log($('#activeStagePo-1'));
             });
 
             function paginationShow(destination) {
