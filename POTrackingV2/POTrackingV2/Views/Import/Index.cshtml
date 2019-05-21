@@ -167,6 +167,14 @@
                     {
                         var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                         var childRow = 1;
+                        var maximumStage = 10;
+                        var donutProgress = purchasingDocumentItem.DonutProgress;
+
+                        if (roleID == 3)
+                        {
+                            maximumStage = 9;
+                            donutProgress = purchasingDocumentItem.DonutProgressVendor;
+                        }
 
                         <div class="po-item-data-content row-@row">
                             <div class="po-item-data-content__outer">
@@ -177,13 +185,13 @@
                                 {
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                             data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
                                     </div>
                                 }
                                 else
                                 {
-                                    int donutProgress = 100;
+                                    donutProgress = 100;
 
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
@@ -197,6 +205,15 @@
                                 {
                                     foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                     {
+                                        maximumStage = 10;
+                                        donutProgress = childPurchasingDocumentItem.DonutProgress;
+
+                                        if (roleID == 3)
+                                        {
+                                            maximumStage = 9;
+                                            donutProgress = childPurchasingDocumentItem.DonutProgressVendor;
+                                        }
+
                                         <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
                                             <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
                                             <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
@@ -205,13 +222,13 @@
                                             {
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                                         data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
                                                 </div>
                                             }
                                             else
                                             {
-                                                int donutProgress = 100;
+                                                donutProgress = 100;
 
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
@@ -2362,76 +2379,76 @@
                     </div>
                 </div>
                 @*<div class="po-item-section stage-9">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 8</p>
-                    </div>
-                    <div class="po-item-section-body">
-                        <div class="po-item-data-header">
-                            <span class="po-item-data-header__text">Inbound Number</span>
+                        <div class="po-item-section-header justify-content-center">
+                            <p class="mb-0">Stage 8</p>
                         </div>
-                        @{
-                            var rowStage8 = 1;
-                        }
-                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                        {
-                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                            var childRowStage8 = 1;
-
-                            List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
-                            var maxCount = 0;
-
-                            if (shipmentInboundNumbers != null)
-                            {
-                                maxCount = shipmentInboundNumbers.Count;
-                            }
-
-                            var count = 0;
-
-                            <div class="po-item-data-content row-@rowStage8">
-                                <div class="po-item-data-content__outer">
-                                    @if (maxCount >= count + 1)
-                                    {
-                                        <span class="po-item-data-header__column">
-                                            @shipmentInboundNumbers[count]
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="po-item-data-header__column">
-                                            -
-                                        </span>
-                                    }
-                                </div>
-                                <div class="po-item-data-content__child">
-                                    @if (childPurchasingDocumentItems.Count() > 0)
-                                    {
-                                        count++;
-                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                        {
-                                            <div class="po-item-data-content row-@rowStage8-@childRowStage8 mt-customize" row="@rowStage8" child="@childRowStage8">
-                                                @if (maxCount >= count + 1)
-                                                {
-                                                    <span class="po-item-data-header__column">
-                                                        @shipmentInboundNumbers[count]
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="po-item-data-header__column">
-                                                        -
-                                                    </span>
-                                                }
-                                            </div>
-                                            childRowStage8++;
-                                            count++;
-                                        }
-                                    }
-                                </div>
+                        <div class="po-item-section-body">
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text">Inbound Number</span>
                             </div>
-                            rowStage8++;
-                        }
-                    </div>
-                </div>*@
+                            @{
+                                var rowStage8 = 1;
+                            }
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                            {
+                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                                var childRowStage8 = 1;
+
+                                List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
+                                var maxCount = 0;
+
+                                if (shipmentInboundNumbers != null)
+                                {
+                                    maxCount = shipmentInboundNumbers.Count;
+                                }
+
+                                var count = 0;
+
+                                <div class="po-item-data-content row-@rowStage8">
+                                    <div class="po-item-data-content__outer">
+                                        @if (maxCount >= count + 1)
+                                        {
+                                            <span class="po-item-data-header__column">
+                                                @shipmentInboundNumbers[count]
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="po-item-data-header__column">
+                                                -
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                        {
+                                            count++;
+                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                            {
+                                                <div class="po-item-data-content row-@rowStage8-@childRowStage8 mt-customize" row="@rowStage8" child="@childRowStage8">
+                                                    @if (maxCount >= count + 1)
+                                                    {
+                                                        <span class="po-item-data-header__column">
+                                                            @shipmentInboundNumbers[count]
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="po-item-data-header__column">
+                                                            -
+                                                        </span>
+                                                    }
+                                                </div>
+                                                childRowStage8++;
+                                                count++;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                rowStage8++;
+                            }
+                        </div>
+                    </div>*@
                 <div class="po-item-section stage-9 info-stage">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 8</p>
@@ -2458,11 +2475,22 @@
                                 isComplete = "Yes";
                             }
 
+                            var goodsReceiptQuantity = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                            var confirmedQuantity = purchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                            if (purchasingDocumentItem.ActiveStageToNumber < 8)
+                            {
+                                grDateNewDateFormat = "-";
+                                goodsReceiptQuantity = "-";
+                                confirmedQuantity = "-";
+                                isComplete = "-";
+                            }
+
                             <div class="po-item-data-content row-@rowStage9">
                                 <div class="po-item-data-content__outer">
                                     <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                     <div class="po-item-data-header__column gr-qty">
-                                        <div>@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                        <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                     </div>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     <span class="po-item-data-header__text info">
@@ -2478,11 +2506,18 @@
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
                                                     {
                                                         grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                        var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                        if (purchasingDocumentItem.ActiveStageToNumber < 8)
+                                                        {
+                                                            pdihGoodsReceiptQuantity = "-";
+                                                            grDateNewDateFormat = "-";
+                                                        }
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
                                                             <td>&nbsp;</td>
-                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                            <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -2502,10 +2537,21 @@
                                                 isComplete = "Yes";
                                             }
 
+                                            goodsReceiptQuantity = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                                            confirmedQuantity = childPurchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                                            if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
+                                            {
+                                                grDateNewDateFormat = "-";
+                                                goodsReceiptQuantity = "-";
+                                                confirmedQuantity = "-";
+                                                isComplete = "-";
+                                            }
+
                                             <div class="po-item-data-content row-@rowStage9-@childRowStage9 mt-customize" row="@rowStage9" child="@childRowStage9">
                                                 <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                                 <div class="po-item-data-header__column gr-qty">
-                                                    <div>@childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                                    <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                                 </div>
                                                 <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                                 <span class="po-item-data-header__text info">
@@ -2521,11 +2567,18 @@
                                                                 @foreach (var pdih in childPurchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
                                                                 {
                                                                     grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                                    var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                                    if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
+                                                                    {
+                                                                        pdihGoodsReceiptQuantity = "-";
+                                                                        grDateNewDateFormat = "-";
+                                                                    }
 
                                                                     <tr>
                                                                         <td class="secondary-text">@grDateNewDateFormat</td>
                                                                         <td>&nbsp;</td>
-                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                        <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                                     </tr>
                                                                 }
                                                             </tbody>
@@ -2538,6 +2591,7 @@
                                     }
                                 </div>
                             </div>
+
                             rowStage9++;
                         }
                     </div>
@@ -2776,8 +2830,8 @@
                             <input type="file" class="form-control with-icon st6-copy-bl-document">
                             <i class="fas fa-paperclip form-type-icon"></i>
                             @*<div class="input-group-append">
-                                <button class="btn btn-positive" disabled>Upload</button>
-                            </div>*@
+                                    <button class="btn btn-positive" disabled>Upload</button>
+                                </div>*@
                         </div>
                         <div class="input-group st6-group-copy-bl-document-uploaded" hidden>
                             <a class="st6-copy-bl-document-download" href="">BL Copy </a> uploaded<i class="fas fa-check-circle primary ml-2"></i>

@@ -352,7 +352,6 @@ namespace POTrackingV2.Models
 
                 if (!String.IsNullOrEmpty(this.ActiveStage))
                 {
-                    //donutProgress = Convert.ToDouble(this.ActiveStage) * 8.33;
                     donutProgress = Convert.ToInt32(Regex.Replace(this.ActiveStage, "[^.0-9]", ""));
                 }
                 else
@@ -554,15 +553,42 @@ namespace POTrackingV2.Models
                 }
                 else if (this.ActiveStage == "2a")
                 {
-                    donutProgress = Convert.ToDouble(3) * 8.33;
+                    donutProgress = Convert.ToDouble(3) * 9.09;
                 }
                 else if (this.ActiveStage == "1" || this.ActiveStage == "2")
                 {
-                    donutProgress = Convert.ToDouble(this.ActiveStage) * 8.33;
+                    donutProgress = Convert.ToDouble(this.ActiveStage) * 9.09;
                 }
                 else
                 {
-                    donutProgress = (Convert.ToDouble(this.ActiveStage) + 1) * 8.33;
+                    donutProgress = (Convert.ToDouble(this.ActiveStage) + 1) * 9.09;
+                }
+
+                return donutProgress;
+            }
+        }
+
+        public double DonutProgressVendor
+        {
+            get
+            {
+                double donutProgress;
+
+                if (String.IsNullOrEmpty(this.ActiveStage) || this.ActiveStage == "0")
+                {
+                    donutProgress = 0;
+                }
+                else if (this.ActiveStage == "2a")
+                {
+                    donutProgress = Convert.ToDouble(3) * 10;
+                }
+                else if (this.ActiveStage == "1" || this.ActiveStage == "2")
+                {
+                    donutProgress = Convert.ToDouble(this.ActiveStage) * 10;
+                }
+                else
+                {
+                    donutProgress = (Convert.ToDouble(this.ActiveStage) + 1) * 10;
                 }
 
                 return donutProgress;
