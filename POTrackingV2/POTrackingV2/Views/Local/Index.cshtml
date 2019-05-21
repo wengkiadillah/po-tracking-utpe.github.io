@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Local PO tracking";
     var roleID = ViewBag.CurrentRoleID;
+    var poSignRow = 1;
 }
 
 @section styles {
@@ -159,7 +160,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                        <div><span class="mark-donut activeStagePo-@poSignRow" id="@purchasingDocumentItem.ActiveStage">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                                 else
@@ -188,7 +189,7 @@
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                          data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                                    <div><span class="mark-donut activeStagePo-@poSignRow" id="@childPurchasingDocumentItem.ActiveStage">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -212,7 +213,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -2267,6 +2268,7 @@
             </div>
         </li>
     </ul>
+    poSignRow++;
 }
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
@@ -2354,6 +2356,19 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             for (var i = 0; i < scrollLength.length; i++) {
                 scrollLength[i] += totalDistance;
                 totalDistance = scrollLength[i];
+            }
+
+            for (var i = 1; i < 11; i++) {
+                var lastStatus = 0;
+                $('.activeStagePo-' + i).each(function (index) {
+                    if (this.id > lastStatus) {
+                        lastStatus = this.id;
+                    }
+                });
+                console.log(lastStatus);
+                if (lastStatus > 0) {
+                    $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                }
             }
         });
 

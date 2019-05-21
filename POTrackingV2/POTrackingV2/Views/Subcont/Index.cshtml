@@ -20,11 +20,13 @@
     {
         @*<div class="filter-form-container form-inline">*@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
-        <div class="form-group mr-4">
-            <input id="searchData" name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.CurrentData" />
-            <i class="fas fa-search form-type-icon hint"></i>
+        <div class="form-group mr-4 frmSearch">
+            @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
+            <input  id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentData" />
+            <datalist id="data-list"></datalist>
+            @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.FilterBy">
+        <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
             <option value="poNumber">PO Number</option>
             <option value="vendor">Vendor Name</option>
             <option value="material">Material</option>
@@ -144,15 +146,20 @@
                         var rowChild = 1;
                         var purchasingDocumentItems = pO.PurchasingDocumentItems;
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
+
                         if (ViewBag.CurrentRoleID == 2)
                         {
-                            //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || x.ConfirmedItem == false).ToList();
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                         }
                         else
                         {
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                         }
+                        if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
+                        {
+                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.Contains(ViewBag.CurrentData) || pdi.Description.Contains(ViewBag.CurrentData)).ToList();
+                        }
+
                     }
                     @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                     {
@@ -958,8 +965,8 @@
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
-                            <span class="po-item-data-header__text document-number">Document Number</span>
-                            <span class="po-item-data-header__text gr-date">Date</span>
+                            <span class="po-item-data-header__text parking-date">Parking Date</span>
+                            <span class="po-item-data-header__text term-date">Term Date</span>
                         </div>
                         @{
                             row = 1;
@@ -967,20 +974,20 @@
                         }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            var grDateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var dateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column document-number">@purchasingDocumentItem.LatestDocumentInvoices.DocumentNumber</span>
-                                    <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                    <span class="po-item-data-header__column parking-date">@dateNewFormat</span>
+                                    <span class="po-item-data-header__column term-date">@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
-                                        grDateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        dateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                            <span class="po-item-data-header__column document-number">@purchasingDocumentItemChild.LatestDocumentInvoices.DocumentNumber</span>
-                                            <span class="po-item-data-header__column gr-date">@grDateNewFormat</span>
+                                            <span class="po-item-data-header__column document-number">@dateNewFormat</span>
+                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
                                         </div>
                                         rowChild++;
                                     }
@@ -1136,14 +1143,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFilePB" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
                             <div class="form-group col-md-12">
                                 <b>Live Preview</b>
                                 <br />
-                                <div id="dvPreview">
+                                <div id="filePB" class="dvPreview">
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
@@ -1176,7 +1181,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFileSetting" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="fileSetting" class="dvPreview">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="fullweld" role="tabpanel" aria-labelledby="fullweld-tab">
@@ -1209,7 +1219,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFileFullweld" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
-
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="fileFullweld" class="dvPreview">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="primer" role="tabpanel" aria-labelledby="primer-tab">
@@ -1242,6 +1257,12 @@
                                 <input type="file" class="form-control with-icon" id="inputFilePrimer" multiple>
                                 <i class="fas fa-paperclip form-type-icon"></i>
                             </div>
+                            <div class="form-group col-md-12">
+                                <b>Live Preview</b>
+                                <br />
+                                <div id="filePrimer" class="dvPreview">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1263,6 +1284,37 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
     <script type="text/javascript">
         var scrollLength = [];
         $(document).ready(function () {
+            $("#filterBy").on("change", function () {
+                $("#data-list").empty();
+            });
+            $("#searchData").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataFromValue", "Subcont")",
+                    data: { 'filterBy': $("#filterBy").val(), 'value': $("#searchData").val() },
+                    beforeSend: function () {
+                        $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            //console.log(response.data);
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                            }
+                            $("#data-list").html(element);
+                            $("#searchData").css("background", "");
+                        } else {
+                            alert(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            });
+
             $("#filterBy option").each(function () {
                 if ($(this).attr("value") == $(this).parent().attr("value")) {
                     $(this).attr("selected", "selected");
@@ -2469,7 +2521,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
-            
+
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                 $("#inputProgressModalLabel").attr("child", $(this).closest(".po-item-data-content").attr("child"));
             } else {
@@ -2492,7 +2544,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 //dataType: "json",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        console.log(response.arrayDataTime);
+                        //console.log(response.arrayDataTime);
+                        console.log(response);
                         //alert(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
 
                         $("#PBDays").val(response.arrayDataTime['PBDays']);
@@ -2515,7 +2568,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         $("#ATAPrimer").val(response.arrayDataTime['ATAPrimer']);
                         $("#ATAPrimerReasonID").val(response.arrayDataTime['ATAPrimerReasonID']);
-
 
                         //    var date = new Date(newDate);
                         //    date.setDate(date.getDate() - 10);
@@ -2554,10 +2606,28 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#ATASetting").attr("min", $("#ETASetting").val());
                         $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
                         $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
-                        //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat())) : $("#ATAPB").removeAttr("disabled");
-                        //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
-                        //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
-                        //$("#ATAPrimer").val() ? $("#ATAPrimer").attr("disabled", "disabled") : $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+
+                        var jsonObjFilePB = $.parseJSON(response.arrayDataFilePB);
+                        var jsonObjFileSetting = $.parseJSON(response.arrayDataFileSetting);
+                        var jsonObjFileFullweld = $.parseJSON(response.arrayDataFileFullweld);
+                        var jsonObjFilePrimer = $.parseJSON(response.arrayDataFilePrimer);
+
+                        $("#filePB").empty();
+                        $("#fileSetting").empty();
+                        $("#fileFullweld").empty();
+                        $("#filePrimer").empty();
+
+                        for (var k in jsonObjFilePB) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
+                        }
+                        for (var k in jsonObjFileSetting) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileSetting");
+                        }
+                        for (var k in jsonObjFileFullweld) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileFullweld");
+                        } for (var k in jsonObjFilePrimer) {
+                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePrimer");
+                        }
                     }
                     //alert(response.responseCode);
                 },
@@ -2574,7 +2644,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage4Outer = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage4Child = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__child");
-            
+
 
             var isValid = true;
             var errorMessage = "";
@@ -2736,7 +2806,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             {
                 alert(errorMessage);
             }
-
         });
 
         /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
@@ -2811,7 +2880,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 formData.append("inputPurchasingDocumentItemID", pdItemID);
             }
             if (fileInvoiceDOM.files.length > 0) {
-                
+
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("VendorUploadInvoice", "Subcont")",
@@ -2978,71 +3047,109 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         function poItemCollapse(row) {
             row.closest("li").toggleClass("collapse-row");
         }
+
+        function uploadFilePreview(file, elementID) {
+            var fileUpload = document.getElementById(file);
+            fileUpload.onchange = function () {
+                if (typeof (FileReader) != "undefined") {
+                    var dvPreview = document.getElementById(elementID);
+                    dvPreview.innerHTML = "";
+                    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                    var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                    for (var i = 0; i < fileUpload.files.length; i++) {
+                        var file = fileUpload.files[i];
+
+                        if (regex.test(file.name.toLowerCase())) {
+                            var reader = new FileReader();
+                            var img = document.createElement("IMG");
+                            img.height = "100";
+                            img.width = "100";
+                            img.title = file.name.toLowerCase();
+                            reader.onload = function (e) {
+                                img.src = e.target.result;
+                                dvPreview.appendChild(img);
+                            }
+                            reader.readAsDataURL(file);
+                        } else if (regexOffice.test(file.name.toLowerCase())) {
+
+                            var img = document.createElement("IMG");
+                            img.height = "100";
+                            img.width = "100";
+                            img.title = file.name.toLowerCase();
+
+                            var filename = file.name.toLowerCase();
+
+                            if (filename.includes(".doc") || filename.includes(".docx")) {
+                                img.src = siteUrl + "/Images/word.png";
+                            }
+                            if (filename.includes(".xls") || filename.includes(".xlsx")) {
+                                img.src = siteUrl + "/Images/excel.png";
+                            }
+                            if (filename.includes(".ppt") || filename.includes(".pptx")) {
+                                img.src = siteUrl + "/Images/powerpoint.png";
+                            }
+                            if (filename.includes(".pdf")) {
+                                img.src = siteUrl + "/Images/pdf.png";
+                            }
+                            dvPreview.appendChild(img);
+                        }
+                        else {
+
+                        }
+                    }
+                } else {
+                    alert("This browser does not support HTML5 FileReader.");
+                }
+            }
+        }
+
+        function filePreview(fileName, url, elementID) {
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = document.getElementById(elementID);
+                dvPreview.innerHTML = "";
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+
+                if (regexOffice.test(fileName.toLowerCase())) {
+                    var img = document.createElement("IMG");
+                    img.height = "100";
+                    img.width = "100";
+                    img.title = fileName.toLowerCase();
+
+                    if (fileName.includes(".doc") || fileName.includes(".docx")) {
+                        img.src = siteUrl + "/Images/word.png";
+                    }
+                    if (fileName.includes(".xls") || fileName.includes(".xlsx")) {
+                        img.src = siteUrl + "/Images/excel.png";
+                    }
+                    if (fileName.includes(".ppt") || fileName.includes(".pptx")) {
+                        img.src = siteUrl + "/Images/powerpoint.png";
+                    }
+                    if (fileName.includes(".pdf")) {
+                        img.src = siteUrl + "/Images/pdf.png";
+                    }
+                    dvPreview.appendChild(img);
+                } else {
+                    var img = document.createElement("IMG");
+                    img.height = "100";
+                    img.width = "100";
+                    img.title = fileName.toLowerCase();
+                    img.src = url;
+                }
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        }
+
     </script>
 
     <!-- Live PReview PIc-->
     <script language="javascript" type="text/javascript">
-            window.onload = function () {
-                var fileUpload = document.getElementById("inputFilePB");
-                fileUpload.onchange = function () {
-                    if (typeof (FileReader) != "undefined") {
-                        var dvPreview = document.getElementById("dvPreview");
-                        dvPreview.innerHTML = "";
-                        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
-                        var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
-                        for (var i = 0; i < fileUpload.files.length; i++) {
-                            var file = fileUpload.files[i];
-
-
-
-                            if (regex.test(file.name.toLowerCase())) {
-                                var reader = new FileReader();
-                                var img = document.createElement("IMG");
-                                img.height = "100";
-                                img.width = "100";
-                                img.title = file.name.toLowerCase();
-                                reader.onload = function (e) {
-
-
-                                    img.src = e.target.result;
-                                    dvPreview.appendChild(img);
-
-                                }
-                                reader.readAsDataURL(file);
-                            } else if (regexOffice.test(file.name.toLowerCase())) {
-
-                                var img = document.createElement("IMG");
-                                img.height = "100";
-                                img.width = "100";
-                                img.title = file.name.toLowerCase();
-
-                                var filename = file.name.toLowerCase();
-
-                                if (filename.includes(".doc") || filename.includes(".docx")) {
-                                    img.src = "/Images/word.png";
-                                }
-                                if (filename.includes(".xls") || filename.includes(".xlsx")) {
-                                    img.src = "/Images/excel.png";
-                                }
-                                if (filename.includes(".ppt") || filename.includes(".pptx")) {
-                                    img.src = "/Images/powerpoint.png";
-                                }
-                                if (filename.includes(".pdf")) {
-                                    img.src = "/Images/pdf.png";
-                                }
-                                dvPreview.appendChild(img);
-
-                            }
-                            else {
-
-                            }
-
-
-                        }
-                    } else {
-                        alert("This browser does not support HTML5 FileReader.");
-                    }
-                }
-            };
-        </script>
+        window.onload = function () {
+            uploadFilePreview("inputFilePB", "filePB");
+            uploadFilePreview("inputFileSetting", "fileSetting");
+            uploadFilePreview("inputFileFullweld", "fileFullweld");
+            uploadFilePreview("inputFilePrimer", "filePrimer");
+        };
+    </script>
 }
