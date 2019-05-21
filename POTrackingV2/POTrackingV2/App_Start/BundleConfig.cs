@@ -10,10 +10,12 @@ namespace POTrackingV2
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-3.3.1.min.js",
-                        "~/Scripts/utpe.js"));
+                        "~/Scripts/utpe.js",
+                        "~/Scripts/chosen.jquery.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
+
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
@@ -27,7 +29,8 @@ namespace POTrackingV2
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",
                       "~/Content/all.min.css",
-                      "~/Content/styles.css"));
+                      "~/Content/styles.css",
+                      "~/Content/chosen.min.css"));
         }
     }
 }

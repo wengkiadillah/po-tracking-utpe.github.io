@@ -12,21 +12,27 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RolesType
+    public partial class MachineBreakdownDetail
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RolesType()
+        public MachineBreakdownDetail()
         {
-            this.Users = new HashSet<User>();
-            this.UserVendors = new HashSet<UserVendor>();
+            this.MachineBreakdownLogs = new HashSet<MachineBreakdownLog>();
         }
     
         public int ID { get; set; }
-        public string Name { get; set; }
+        public int IssueHeaderID { get; set; }
+        public int MachineTypeID { get; set; }
+        public Nullable<System.DateTime> ServiceTime { get; set; }
+        public Nullable<System.DateTime> SparePartTime { get; set; }
+        public string PurchaseOrderNumber { get; set; }
+        public System.DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> UpdatedAt { get; set; }
+        public string UpdatedBy { get; set; }
     
+        public virtual IssueHeader IssueHeader { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserVendor> UserVendors { get; set; }
+        public virtual ICollection<MachineBreakdownLog> MachineBreakdownLogs { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace PowerAppsCMS.CustomAuthentication
+namespace POTrackingV2.CustomAuthentication
 {
     /// <summary>
     /// Atribut otorisasi user untuk keamanan User yang diakses pada Controller

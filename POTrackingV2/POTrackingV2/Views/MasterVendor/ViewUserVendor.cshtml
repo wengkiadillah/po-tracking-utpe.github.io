@@ -1,0 +1,99 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<POTrackingV2.Models.UserVendor>
+
+@{
+    ViewBag.Title = "List User Vendor";
+}
+
+@section styles {
+    <link href="~/Content/um-style.css" rel="stylesheet" />
+}
+
+<div class="um">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Username)
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Role Type
+            </th>
+            <th>
+                Vendor
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().IsActive)
+            </th>
+
+            <th></th>
+        </tr>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="12">No rows match search criteria</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+            <tr style="background-color:white;">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VendorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    <span>
+                        <a class="col-xs-2" href='@Html.ActionLink("Edit", "EditUserVendor", new { id = item.ID })' alt="Details">
+                            <i class="fa fa-info-circle fa-lg"></i>
+                        </a>
+                    </span>
+                    <span>
+                        <a class="col-xs-2" href='@Html.ActionLink("Delete", "DeleteUserVendor", new { id = item.ID })' alt="Details">
+                            <i class="fa fa-edit fa-lg"></i>
+                        </a>
+                    </span>
+                    <span>
+                        <a class="col-xs-2" href='@Html.ActionLink("Reset Password", "ResetPasswordUserVendor", new { id = item.ID })' alt="Details">
+                            <i class="fa fa-edit fa-lg"></i>
+                        </a>
+                    </span>
+                </td>
+            </tr>
+            }
+        }
+
+    </table>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
+</div>

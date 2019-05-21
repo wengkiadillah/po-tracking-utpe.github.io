@@ -12,21 +12,28 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RolesType
+    public partial class MasterIssue
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RolesType()
+        public MasterIssue()
         {
-            this.Users = new HashSet<User>();
-            this.UserVendors = new HashSet<UserVendor>();
+            this.IssueHeaders = new HashSet<IssueHeader>();
+            this.UserGroups = new HashSet<UserGroup>();
         }
     
         public int ID { get; set; }
         public string Name { get; set; }
+        public bool IsEngine { get; set; }
+        public Nullable<int> IssueTypeID { get; set; }
+        public int ApplicationID { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime Created { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<System.DateTime> Modified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<IssueHeader> IssueHeaders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserVendor> UserVendors { get; set; }
+        public virtual ICollection<UserGroup> UserGroups { get; set; }
     }
 }

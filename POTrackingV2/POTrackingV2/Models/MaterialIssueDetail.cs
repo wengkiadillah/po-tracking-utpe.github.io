@@ -12,25 +12,30 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Role
+    public partial class MaterialIssueDetail
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Role()
+        public MaterialIssueDetail()
         {
-            this.Users = new HashSet<User>();
-            this.UserVendors = new HashSet<UserVendor>();
+            this.MaterialIssueLogs = new HashSet<MaterialIssueLog>();
         }
     
         public int ID { get; set; }
-        public string Name { get; set; }
+        public int IssueHeaderID { get; set; }
+        public string PartNumberComponent { get; set; }
+        public Nullable<System.DateTime> EndDateEstimation { get; set; }
+        public Nullable<System.DateTime> ArrivalDate { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime LastModified { get; set; }
         public string LastModifiedBy { get; set; }
+        public string PRONumber { get; set; }
+        public int Quantity { get; set; }
+        public string PRNumber { get; set; }
+        public string PONumber { get; set; }
     
+        public virtual IssueHeader IssueHeader { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserVendor> UserVendors { get; set; }
+        public virtual ICollection<MaterialIssueLog> MaterialIssueLogs { get; set; }
     }
 }

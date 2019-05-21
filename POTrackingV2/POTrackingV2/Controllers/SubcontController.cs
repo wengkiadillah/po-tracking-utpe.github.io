@@ -11,10 +11,11 @@ using System.Globalization;
 using System.IO;
 using POTrackingV2.CustomAuthentication;
 using System.Web.Security;
+using POTrackingV2.Constants;
 
 namespace POTrackingV2.Controllers
 {
-    [Authorize]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor)]
     public class SubcontController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();

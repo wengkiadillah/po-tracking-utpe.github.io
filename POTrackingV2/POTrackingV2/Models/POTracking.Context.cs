@@ -51,6 +51,7 @@ namespace POTrackingV2.Models
         public virtual DbSet<SubcontComponentCapability> SubcontComponentCapabilities { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserVendor> UserVendors { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
     }
 }
