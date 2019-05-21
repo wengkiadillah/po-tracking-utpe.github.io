@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "PO Import";
     var roleID = ViewBag.CurrentRoleID;
+    var poSignRow = 1;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -182,7 +183,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/12</span></div>
                                     </div>
                                 }
                                 else
@@ -233,7 +234,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -2752,6 +2753,7 @@
             </div>
         </li>
     </ul>
+    poSignRow++;
 }
 
 <div class="modal fade st6-modal" id="fillForm" tabindex="-1" role="dialog" aria-labelledby="fillFormModalLabel" aria-hidden="true">

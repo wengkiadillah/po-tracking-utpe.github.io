@@ -78,6 +78,7 @@ $(".st1-accept-item").on("click", function (obj) {
 
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
+    var donutProgressDoubled = 75.39822368615503 - 2 * donutProgressUnit;
 
     var checkboxItem = $(this).closest(".po-item-data-content__outer").find(".st1-checkbox-item");
     var inputConfirmedDate = $(this).closest(".po-item-data-content__outer").find(".st1-confirmed-date");
@@ -132,6 +133,13 @@ $(".st1-accept-item").on("click", function (obj) {
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+    //next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+    nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
     donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
@@ -170,11 +178,19 @@ $(".st1-accept-item").on("click", function (obj) {
                 date: partialDate
             });
 
+            //progress donutpie
             cssRow = $(this).closest(".po-item-data-content").prop("class");
             cssRow = cssRow.replace(" ", ".");
             cssRow = "." + cssRow;
             donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+            //next stage Controller
+            cssRow = $(this).closest(".po-item-data-content").prop("class");
+            cssRow = cssRow.replace(" ", ".");
+            cssRow = "." + cssRow;
+            nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+            nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
             donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
             donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
         });
@@ -218,10 +234,22 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut-text").text("1");
-                            $(".row-updated-donut").removeClass("row-updated-donut");
-                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            if (response.isSameAsProcs[0] === true) {
+                                $(".next-row-updated").removeAttr("disabled");
+                                $(".next-row-updated").removeClass("next-row-updated");
+
+                                $(".row-updated-donut").attr("stroke-dashoffset", donutProgressDoubled);
+                                $(".row-updated-donut-text").text("2");
+                                $(".row-updated-donut").removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            }
+                            else {
+                                $(".next-row-updated").removeClass("next-row-updated");
+                                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                                $(".row-updated-donut-text").text("1");
+                                $(".row-updated-donut").removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            }
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
@@ -257,10 +285,22 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut-text").text("1");
-                            $(".row-updated-donut").removeClass("row-updated-donut");
-                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            if (response.isSameAsProcs[0] === true) {
+                                $(".next-row-updated").removeAttr("disabled");
+                                $(".next-row-updated").removeClass("next-row-updated");
+
+                                $(".row-updated-donut").attr("stroke-dashoffset", donutProgressDoubled);
+                                $(".row-updated-donut-text").text("2");
+                                $(".row-updated-donut").removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            }
+                            else {
+                                $(".next-row-updated").removeClass("next-row-updated");
+                                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                                $(".row-updated-donut-text").text("1");
+                                $(".row-updated-donut").removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            }
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
@@ -288,6 +328,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
 
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
+    var donutProgressDouble = 75.39822368615503 - 2 * donutProgressUnit;
 
     $(this).closest(".po-item-section.stage-1").find(".po-form-item-st1").each(function (index) {
 
@@ -346,10 +387,16 @@ $(".st1-accept-all-po").on("click", function (obj) {
         });
 
         //progress donutpie
-        cssRow = $(this).find(".po-item-data-content").prop("class");
+        var cssRow = $(this).find(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+        //next stage Controller
+        cssRow = $(this).find(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
         if (deliveryMethod === "partial") {
             childRow.find(".po-item-data-content").each(function (index) {
@@ -413,6 +460,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         buttonAcceptItem.addClass("row-updated-button");
                         buttonCancelItem.addClass("row-updated");
                         editButton.addClass("row-updated-link");
+
+                        nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
                         donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
@@ -426,6 +475,12 @@ $(".st1-accept-all-po").on("click", function (obj) {
                                 cssRow = "." + cssRow;
                                 donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+                                cssRow = $(this).prop("class");
+                                cssRow = cssRow.replace(" ", ".");
+                                cssRow = "." + cssRow;
+                                nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+                                nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
                                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                             });
@@ -454,6 +509,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             dataType: "json",
             success: function (response) {
                 alert(response.responseText);
+                alert(response.isSameAsProc);
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
@@ -464,11 +520,24 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 $(".row-updated-button").removeClass("row-updated-button");
                 $(".row-updated-link").removeClass("row-updated-link");
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
-                
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("1");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+
+                if (response.isSameAsProc === true) {
+                    $(".next-row-updated").removeAttr("disabled");
+                    $(".next-row-updated").removeClass("next-row-updated");
+
+                    $(".row-updated-donut").attr("stroke-dashoffset", donutProgressDoubled);
+                    $(".row-updated-donut-text").text("2");
+                    $(".row-updated-donut").removeClass("row-updated-donut");
+                    $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                }
+                else {
+                    $(".next-row-updated").removeClass("next-row-updated");
+
+                    $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                    $(".row-updated-donut-text").text("1");
+                    $(".row-updated-donut").removeClass("row-updated-donut");
+                    $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                }
             }
         });
     }
