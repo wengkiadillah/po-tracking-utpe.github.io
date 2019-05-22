@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using POTrackingV2.Constants;
 using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using System;
@@ -27,16 +28,21 @@ namespace POTrackingV2
             if (authCookie != null)
             {
                 FormsAuthenticationTicket authTicket = FormsAuthentication.Decrypt(authCookie.Value);
+                CustomRole customRole = new CustomRole();
 
                 var serializeModel = JsonConvert.DeserializeObject<CustomSerializeModel>(authTicket.UserData);
 
-                CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
-                principal.Username = serializeModel.Username;
-                principal.Name = serializeModel.Name;
-                principal.Roles = serializeModel.Roles;
+                if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
+                {
+                    CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
-                HttpContext.Current.User = principal;
+                    principal.UserName = serializeModel.UserName;
+                    principal.Name = serializeModel.Name;
+                    principal.Roles = serializeModel.Roles;
+
+                    HttpContext.Current.User = principal;
+                }
             }
             else
             {

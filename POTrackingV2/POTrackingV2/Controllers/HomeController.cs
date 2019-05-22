@@ -9,14 +9,33 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
-    [Authorize]
+    [CustomAuthorize]
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
+        UserManagemetEntities DBUser = new UserManagemetEntities();
 
         public ActionResult Index()
         {
-            return View();
+            List<ViewModelUserManagement> userData = new List<ViewModelUserManagement>();
+
+
+            //UserRole userRole = DBUser.UserRoles.FirstOrDefault(x => x.ID == userSalesTools.UserRoleID);
+
+            //if (userRole != null)
+            //{
+            //    ViewModelUserManagement tmp = new ViewModelUserManagement
+            //    {
+            //        Name = userRole.User.Name,
+            //        UserName = userRole.Username,
+            //        RoleID = userRole.RoleID,
+            //        RoleName = userRole.Role.Name,
+            //    };
+
+            //    userData.Add(tmp);
+            //}
+
+            return View(userData);
         }
 
         public ActionResult About()
