@@ -16,7 +16,7 @@ using POTrackingV2.Constants;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
     public class SubcontController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
@@ -82,7 +82,7 @@ namespace POTrackingV2.Controllers
         public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string role = myUser.Roles;
 
             try
             {
@@ -91,7 +91,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                if (roleID == 2)
+                if (role.ToLower() == LoginConstants.RoleProcurement.ToLower())
                 {
                     //pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null)).OrderBy(x => x.Number);
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
@@ -102,7 +102,7 @@ namespace POTrackingV2.Controllers
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
 
-                ViewBag.CurrentRoleID = roleID;
+                ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.CurrentData = searchData;
                 ViewBag.CurrentFilter = filterBy;
                 ViewBag.CurrentStartPODate = searchStartPODate;
@@ -186,7 +186,7 @@ namespace POTrackingV2.Controllers
         public ActionResult SaveAllPOItem(List<PurchasingDocumentItem> purchasingDocumentItems, List<PurchasingDocumentItem> purchasingDocumentItemChilds)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string role = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -199,7 +199,7 @@ namespace POTrackingV2.Controllers
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = Existed_PDI.ID;
                         notification.StatusID = 3;
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -264,7 +264,7 @@ namespace POTrackingV2.Controllers
                         notification.Modified = now;
                         notification.ModifiedBy = User.Identity.Name;
 
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             // Child clean-up
                             List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
@@ -298,7 +298,7 @@ namespace POTrackingV2.Controllers
                         Notification notificationChild = new Notification();
                         notificationChild.StatusID = 3;
 
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
                             purchasingDocumentItem.POID = parent.POID;
@@ -401,7 +401,7 @@ namespace POTrackingV2.Controllers
         public ActionResult SavePartialPurchasingDocumentItems(List<PurchasingDocumentItem> purchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string role = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -415,7 +415,7 @@ namespace POTrackingV2.Controllers
 
                     if (purchasingDocumentItems.First() == item)
                     {
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
@@ -480,7 +480,7 @@ namespace POTrackingV2.Controllers
                         notification.Modified = now;
                         notification.ModifiedBy = User.Identity.Name;
 
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             // Child clean-up
                             List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
@@ -504,7 +504,7 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        if (roleID == 3)
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         {
                             Notification notificationChild = new Notification();
 
@@ -557,7 +557,7 @@ namespace POTrackingV2.Controllers
         public ActionResult SavePOItem(int pdItemID, int confirmedItemQty, DateTime confirmedDate, bool isCanceledPOItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string role = myUser.Roles;
             //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
             try
             {
@@ -579,12 +579,12 @@ namespace POTrackingV2.Controllers
                     Existed_PDI.ConfirmedItem = false;
                     notification.StatusID = 2;
                     notification.Stage = "1";
-                    notification.Role = roleID != 3 ? "vendor" : "procurement";
+                    notification.Role = role.ToLower();
                 }
                 else
                 {
                     notification.StatusID = 3;
-                    if (roleID == 3)
+                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                     {
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;

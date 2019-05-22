@@ -38,48 +38,46 @@ namespace POTrackingV2.Controllers
                 string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
-                int roleVendor = Convert.ToInt32(LoginConstants.RoleVendor);
-                bool isExternal = db.Users.Any(x => x.Username == loginView.UserName && x.RoleID == roleVendor && x.IsActive == true);
+                //bool isExternal = db.Users.Any(x => x.Username == loginView.UserName && x.Role.Name.ToLower() == LoginConstants.RoleVendor.ToLower() && x.IsActive == true);
 
-                if (isExternal)
-                {
-                    if (Membership.ValidateUser(loginView.UserName, loginView.Password))
-                    {
-                        var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
-                        if (user != null)
-                        {
-                            CustomSerializeModel userModel = new Models.CustomSerializeModel()
-                            {
-                                UserId = user.UserId,
-                                Name = user.Name,
-                                //Roles = user.Roles
-                                Roles = user.Roles,
-                                RolesType = user.RolesType,
-                                VendorCode = user.VendorCode
-                            };
+                //if (isExternal)
+                //{
+                //    if (Membership.ValidateUser(loginView.UserName, loginView.Password))
+                //    {
+                //        var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
+                //        if (user != null)
+                //        {
+                //            CustomSerializeModel userModel = new Models.CustomSerializeModel()
+                //            {
+                //                Username = user.UserName,
+                //                Name = user.Name,
+                //                Roles = user.Roles
+                //                //RolesType = user.RolesType,
+                //                //VendorCode = user.VendorCode
+                //            };
 
-                            string userData = JsonConvert.SerializeObject(userModel);
-                            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
-                                (
-                                1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
-                                );
+                //            string userData = JsonConvert.SerializeObject(userModel);
+                //            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
+                //                (
+                //                1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
+                //                );
 
-                            string enTicket = FormsAuthentication.Encrypt(authTicket);
+                //            string enTicket = FormsAuthentication.Encrypt(authTicket);
 
-                            DateTime now = DateTime.Now;
-                            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
-                            faCookie.Expires = now.AddMinutes(30);
-                            Response.Cookies.Add(faCookie);
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
-                        return View();
-                    }
-                }
-                else
-                {
+                //            DateTime now = DateTime.Now;
+                //            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                //            faCookie.Expires = now.AddMinutes(30);
+                //            Response.Cookies.Add(faCookie);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
+                //        return View();
+                //    }
+                //}
+                //else
+                //{
                     using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
                     {
                         try
@@ -98,12 +96,11 @@ namespace POTrackingV2.Controllers
                                     {
                                         CustomSerializeModel userModel = new Models.CustomSerializeModel()
                                         {
-                                            UserId = user.UserId,
+                                            Username = user.Username,
                                             Name = user.Name,
-                                            //Roles = user.Roles
-                                            Roles = user.Roles,
-                                            RolesType = user.RolesType,
-                                            VendorCode = user.VendorCode
+                                            Roles = user.Roles
+                                            //RolesType = user.RolesType,
+                                            //VendorCode = user.VendorCode
 
                                         };
 
@@ -141,7 +138,7 @@ namespace POTrackingV2.Controllers
                         }
                     }
 
-                }
+                //}
 
                 if (!string.IsNullOrEmpty(ReturnUrl))
                 {

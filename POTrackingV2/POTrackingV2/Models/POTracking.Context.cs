@@ -42,7 +42,6 @@ namespace POTrackingV2.Models
         public virtual DbSet<RawMaterialOrderPoFile> RawMaterialOrderPoFiles { get; set; }
         public virtual DbSet<RawMaterialOrderProgressFile> RawMaterialOrderProgressFiles { get; set; }
         public virtual DbSet<RawMaterialOrder> RawMaterialOrders { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<RolesType> RolesTypes { get; set; }
         public virtual DbSet<SequencesProgressReason> SequencesProgressReasons { get; set; }
         public virtual DbSet<Shipment> Shipments { get; set; }
@@ -50,7 +49,6 @@ namespace POTrackingV2.Models
         public virtual DbSet<SubcontCategory> SubcontCategories { get; set; }
         public virtual DbSet<SubcontComponentCapability> SubcontComponentCapabilities { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserVendor> UserVendors { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
     }

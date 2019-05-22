@@ -1,4 +1,5 @@
 ﻿using PagedList;
+using POTrackingV2.Constants;
 using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
@@ -14,9 +15,10 @@ using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
-    [Authorize]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
     public class ImportController : Controller
     {
+
         private POTrackingEntities db = new POTrackingEntities();
         public DateTime now = DateTime.Now;
 
@@ -24,7 +26,7 @@ namespace POTrackingV2.Controllers
         public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string role = myUser.Roles;
 
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                             .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
@@ -34,7 +36,7 @@ namespace POTrackingV2.Controllers
 
             //pOes = pOes.Except(pOes.Where(x => x.PurchasingDocumentItems.All(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx") == true));
 
-            if (roleID == 2)
+            if (role == "procurement")
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
@@ -45,7 +47,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchData = searchData;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
-            ViewBag.CurrentRoleID = roleID;
+            ViewBag.CurrentRoleID = role.ToLower();
 
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
 
@@ -93,7 +95,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -217,7 +219,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorEditItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -324,7 +326,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -460,7 +462,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -556,7 +558,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -626,7 +628,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -713,7 +715,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProformaInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileProformaInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -783,7 +785,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipProformaInvoice(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -843,7 +845,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementApprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -901,7 +903,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDisapprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -968,7 +970,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1033,7 +1035,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1096,7 +1098,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUpdateETA([Bind(Include = "PurchasingDocumentItemID,ETADate,DelayReasonID")]ETAHistory inputETAHistory)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1172,7 +1174,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProgressPhotoes(int inputPurchasingDocumentItemID, HttpPostedFileBase[] fileProgressPhotoes)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1254,7 +1256,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmShipmentBookingDate(List<Shipment> inputShipmentBookDates)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1324,7 +1326,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmATD(List<Shipment> inputShipmentATDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1400,7 +1402,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorFillInShipmentForm(int inputPurchasingDocumentItemID, DateTime inputCopyBLDate, HttpPostedFileBase fileCopyBL, HttpPostedFileBase filePackingList, HttpPostedFileBase fileInvoice, string inputAWB, string inputCourierName)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1531,7 +1533,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmOnAirport(List<Shipment> inputShipments)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1603,7 +1605,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1684,7 +1686,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorRemoveUploadInvoice(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }

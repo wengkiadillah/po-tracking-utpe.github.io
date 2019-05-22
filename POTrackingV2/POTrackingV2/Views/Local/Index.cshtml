@@ -60,7 +60,7 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-    if (roleID == 2)
+    if (roleID == "procurement")
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
@@ -255,7 +255,7 @@
                             var st1CheckboxAll = "st1-checkbox-all";
                             var st1AcceptAll = "st1-accept-all-po";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st1CheckboxAll = "st1-checkbox-all-proc";
                                 st1AcceptAll = "st1-accept-all-po-proc";
@@ -324,7 +324,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
                                 st1ItemIDInner = "st1-pd-item-id-inner-proc";
@@ -358,7 +358,7 @@
                             var isChecked = "";
                             var isPartial = "";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
@@ -495,7 +495,7 @@
                                                 isChecked = "";
                                                 isPartial = "";
 
-                                                if (roleID == 2)
+                                                if (roleID == "procurement")
                                                 {
                                                     if (childPurchasingDocumentItem.ConfirmedItem == true)
                                                     {
@@ -603,7 +603,7 @@
                         END STAGE 1
                 -->
                 <div class="po-item-section stage-2">
-                    @if (roleID == 2)
+                    @if (roleID == "procurement")
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -654,7 +654,7 @@
                             var st2ProcAcceptFirstEta = "";
                             var st2ProcDeclineFirstEta = "";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st2CheckboxItem = "st2-proc-checkbox-item";
                                 st2ItemId = "st2-proc-pd-item-id";
@@ -690,7 +690,7 @@
                                 valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hiddenButtonConfirmEtaDate = "hidden";
                                 hiddenButtonAcceptDecline = "";
@@ -797,7 +797,7 @@
                                                 valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
                                             }
 
-                                            if (roleID == 2)
+                                            if (roleID == "procurement")
                                             {
                                                 hiddenButtonConfirmEtaDate = "hidden";
                                                 hiddenButtonAcceptDecline = "";
@@ -922,7 +922,7 @@
                             {
                                 if (purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    if (roleID == 2)
+                                    if (roleID == "procurement")
                                     {
                                         disabledFileProformaInvoice = "disabled";
                                         disabledUploadProformaInvoice = "disabled";
@@ -969,7 +969,7 @@
 
                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
-                                if (roleID == 2)
+                                if (roleID == "procurement")
                                 {
                                     disabledApproveProforma = "";
                                     disabledDisApproveProforma = "";
@@ -1061,7 +1061,7 @@
                                             {
                                                 if (childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    if (roleID == 2)
+                                                    if (roleID == "procurement")
                                                     {
                                                         disabledFileProformaInvoice = "disabled";
                                                         disabledUploadProformaInvoice = "disabled";
@@ -1105,7 +1105,7 @@
 
                                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
-                                                if (roleID == 2)
+                                                if (roleID == "procurement")
                                                 {
                                                     disabledVendorSkipPI = "disabled";
                                                     disabledApproveProforma = "";
@@ -1181,7 +1181,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == 2)
+                    @if (roleID == "procurement")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1263,7 +1263,7 @@
                                 }
                             }
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1337,7 +1337,7 @@
                                                 }
                                             }
 
-                                            if (roleID == 2)
+                                            if (roleID == "procurement")
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -1427,7 +1427,7 @@
 
                             if (purchasingDocumentItem.ActiveStage == "4")
                             {
-                                if (roleID == 3)
+                                if (roleID == "role")
                                 {
                                     if (purchasingDocumentItem.ETAHistories.Count < 2)
                                     {
@@ -1530,7 +1530,7 @@
 
                                     valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                    if (roleID == 2)
+                                    if (roleID == "procurement")
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1546,7 +1546,7 @@
                                     disabledInputUploadProgressPhotoes = "disabled";
                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                    if (roleID == 3)
+                                    if (roleID == "vendor")
                                     {
                                         if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
                                         {
@@ -1668,7 +1668,7 @@
 
                                             if (childPurchasingDocumentItem.ActiveStage == "4")
                                             {
-                                                if (roleID == 3)
+                                                if (roleID == "vendor")
                                                 {
                                                     if (childPurchasingDocumentItem.ETAHistories.Count < 2)
                                                     {
@@ -1772,7 +1772,7 @@
 
                                                     valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                                    if (roleID == 2)
+                                                    if (roleID == "procurement")
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1788,7 +1788,7 @@
                                                     disabledInputUploadProgressPhotoes = "disabled";
                                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                                    if (roleID == 3)
+                                                    if (roleID == "vendor")
                                                     {
                                                         if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
                                                         {
@@ -2109,7 +2109,7 @@
                             }
                             else
                             {
-                                if (roleID == 3)
+                                if (roleID == "vendor")
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
@@ -2158,7 +2158,7 @@
                                             }
                                             else
                                             {
-                                                if (roleID == 3)
+                                                if (roleID == "vendor")
                                                 {
                                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                                     {

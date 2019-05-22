@@ -10,7 +10,6 @@ namespace POTrackingV2.CustomAuthentication
     public class CustomMembership : MembershipProvider
     {
 
-        private POTrackingEntities db = new POTrackingEntities();
 
         public override bool ValidateUser(string username, string password)
         {
@@ -19,8 +18,11 @@ namespace POTrackingV2.CustomAuthentication
                 return false;
             }
 
-            var user = db.Users.Where(a => a.Username.Equals(username)).SingleOrDefault();
-            return (user != null) ? true : false;
+            using (UserManagemetEntities db = new UserManagemetEntities())
+            {
+                var user = db.UserRoles.Where(a => a.Username.Equals(username) && a.Role.ApplicationID==3).SingleOrDefault();
+                return (user != null) ? true : false;
+            }
 
         }
 
@@ -31,9 +33,10 @@ namespace POTrackingV2.CustomAuthentication
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            
-                var user = (from us in db.Users
-                            where string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0
+            using (UserManagemetEntities db = new UserManagemetEntities())
+            {
+                var user = (from us in db.UserRoles
+                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.ApplicationID==3
                             select us).FirstOrDefault();
 
                 if (user == null)
@@ -43,17 +46,20 @@ namespace POTrackingV2.CustomAuthentication
                 var selectedUser = new CustomMembershipUser(user);
 
                 return selectedUser;
+            }
            
         }
 
         public override string GetUserNameByEmail(string email)
         {
-
-                string username = (from u in db.Users
-                                   where string.Compare(email, u.Email) == 0
+            using (UserManagemetEntities db = new UserManagemetEntities())
+            {
+                string username = (from u in db.UserRoles
+                                   where string.Compare(email, u.User.Email) == 0
                                    select u.Username).FirstOrDefault();
 
                 return !string.IsNullOrEmpty(username) ? username : string.Empty;
+            }
         }
 
         #region Overrides of Membership Provider

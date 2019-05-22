@@ -32,7 +32,7 @@ namespace POTrackingV2
 
                 CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
-                principal.UserId = serializeModel.UserId;
+                principal.Username = serializeModel.Username;
                 principal.Name = serializeModel.Name;
                 principal.Roles = serializeModel.Roles;
 
