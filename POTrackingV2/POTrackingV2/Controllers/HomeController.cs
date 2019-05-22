@@ -73,12 +73,12 @@ namespace POTrackingV2.Controllers
         {
             try
             {
-                int roleSearchDB = Convert.ToInt32(role);
+                //int roleSearchDB = Convert.ToInt32(role);
 
-                var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
+                //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
 
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                var notifications = db.Notifications.Where(x => x.Role == roleDB && x.isActive == true).Select(x =>
+                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true).Select(x =>
                   new
                   {
                       id = x.ID,

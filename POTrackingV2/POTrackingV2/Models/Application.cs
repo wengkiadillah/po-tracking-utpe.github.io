@@ -12,24 +12,22 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Role
+    public partial class Application
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Role()
+        public Application()
         {
-            this.UserRoles = new HashSet<UserRole>();
+            this.Roles = new HashSet<Role>();
         }
     
         public int ID { get; set; }
         public string Name { get; set; }
-        public int ApplicationID { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime Created { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> Modified { get; set; }
     
-        public virtual Application Application { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

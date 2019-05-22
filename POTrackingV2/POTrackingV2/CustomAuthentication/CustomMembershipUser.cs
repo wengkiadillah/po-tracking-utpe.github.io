@@ -14,13 +14,13 @@ namespace POTrackingV2.CustomAuthentication
         /// <summary>
         /// Propertis yang digunakan dalam identitas login User
         /// </summary>
-        public Guid UserId { get; set; }
+        public string Username { get; set; }
         public string Name { get; set; }
         //public string Roles { get; set; }
 
-        public int Roles { get; set; }
-        public int RolesType { get; set; }
-        public string VendorCode { get; set; }
+        public string Roles { get; set; }
+        //public int RolesType { get; set; }
+        //public string VendorCode { get; set; }
 
         #endregion
 
@@ -30,14 +30,14 @@ namespace POTrackingV2.CustomAuthentication
         /// 
         /// </summary>
         /// <param name="user"></param>
-        public CustomMembershipUser(User user) : base("CustomMembership", user.Username, user.ID, user.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
+        public CustomMembershipUser(UserRole user) : base("CustomMembership", user.Username, user.ID, user.User.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
         {
-            UserId = user.ID;
-            Name = user.Name;
-            //Roles = user.Role.Name;
-            Roles = user.RoleID;
-            RolesType = user.RolesTypeID != null ? (int)user.RolesTypeID : 0;
-            VendorCode = user.VendorCode;
+            Username = user.Username;
+            Name = user.User.Name;
+            Roles = user.Role.Name.ToLower();
+            //Roles = user.RoleID;
+            //RolesType = user.RolesTypeID != null ? (int)user.RolesTypeID : 0;
+            //VendorCode = user.VendorCode;
         }
 
         #endregion
