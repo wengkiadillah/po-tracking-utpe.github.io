@@ -159,8 +159,8 @@
                                 {
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut activeStagePo-@poSignRow" id="@purchasingDocumentItem.ActiveStage">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                             data-value="@purchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                                 else
@@ -188,8 +188,8 @@
                                             {
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut activeStagePo-@poSignRow" id="@childPurchasingDocumentItem.ActiveStage">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                                         data-value="@childPurchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -362,20 +362,26 @@
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
+                                disabledInputCheckbox = "disabled";
+
+                                if (purchasingDocumentItem.ConfirmedDate.HasValue || purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                {
+                                    disabledInputCheckbox = "";
+                                }
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:display";
+                                    hideButtonEdit = "style=visibility:hidden";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:display";
+                                    hideButtonEdit = "style=visibility:hidden";
 
                                     if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
                                     {
@@ -497,19 +503,26 @@
 
                                                 if (roleID == "procurement")
                                                 {
+                                                    disabledInputCheckbox = "disabled";
+
+                                                    if (purchasingDocumentItem.ConfirmedDate.HasValue || purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                    {
+                                                        disabledInputCheckbox = "";
+                                                    }
+
                                                     if (childPurchasingDocumentItem.ConfirmedItem == true)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:display";
+                                                        hideButtonEdit = "style=visibility:hidden";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:display";
+                                                        hideButtonEdit = "style=visibility:hidden";
 
                                                         if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
                                                         {
@@ -546,7 +559,7 @@
                                                                     <input class="checkbox-custom @st1CheckboxItem" @isChecked type="checkbox" @disabledInputCheckbox>
                                                                     <span class="checkmark"></span>
                                                                 </label>
-                                                                <div class="form-group tes" style="visibility:hidden">
+                                                                <div class="form-group" style="visibility:hidden">
                                                                     <input type="text" class="form-control form-date with-icon" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" disabled>
                                                                     <i class="fas fa-calendar-alt form-type-icon"></i>
                                                                 </div>
@@ -2099,6 +2112,7 @@
                             var disabledFileInvoiceUpload = "disabled";
                             var hiddenFormUploading = "";
                             var hiddenFormUploaded = "hidden";
+                            var hiddenst6FileInvoiceRemove = "";
                             var invoiceDownloadPath = "";
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
@@ -2106,6 +2120,12 @@
                                 invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
+
+                                if (roleID == "procurement")
+                                {
+                                    hiddenst6FileInvoiceRemove = "hidden";
+                                }
+                                
                             }
                             else
                             {
@@ -2135,7 +2155,7 @@
                                         </div>
                                         <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
                                             <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                            <a href="#" class="danger-link @st6FileInvoiceRemove" @hiddenst6FileInvoiceRemove>Remove?</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2148,6 +2168,7 @@
                                             disabledFileInvoiceUpload = "disabled";
                                             hiddenFormUploading = "";
                                             hiddenFormUploaded = "hidden";
+                                            hiddenst6FileInvoiceRemove = "";
                                             invoiceDownloadPath = "";
 
                                             if (childPurchasingDocumentItem.InvoiceDocument != null)
@@ -2155,6 +2176,11 @@
                                                 invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", childPurchasingDocumentItem.InvoiceDocument);
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
+
+                                                if (roleID == "procurement")
+                                                {
+                                                    hiddenst6FileInvoiceRemove = "hidden";
+                                                }
                                             }
                                             else
                                             {
@@ -2182,7 +2208,7 @@
                                                     </div>
                                                     <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
                                                         <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                        <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                                        <a href="#" class="danger-link @st6FileInvoiceRemove" @hiddenst6FileInvoiceRemove>Remove?</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2295,6 +2321,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             //$('#InputETAHistory_ETADate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date(Date.now()) >= date) ? false : true; } });
             //$('#InputPurchasingDocumentItem_ConfirmReceivedPaymentDate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
             $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+
+            $("#searchFilterBy option").each(function () {
+                if ($(this).attr("value") == $(this).parent().attr("value")) {
+                    $(this).attr("selected", "selected");
+                    $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
+                }
+            });
 
             //stage scrollbar fixed
             var chooseStagePosition = $('.filter-row').offset();
