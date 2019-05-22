@@ -88,7 +88,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
 
-    var donutProgressUnit = 75.39822368615503 / 7;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
 
     $(this).closest(".po-item-section.stage-1").find(".po-form-item-st1").each(function (index) {
