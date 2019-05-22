@@ -359,7 +359,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "1")
+                    if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
                         databasePurchasingDocumentItem.ConfirmedItem = true;
                         //databasePurchasingDocumentItem.OpenQuantity = inputPurchasingDocumentItem.OpenQuantity;
@@ -400,7 +400,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult ProcurementConfirmAllItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             if (inputPurchasingDocumentItems == null)
@@ -432,7 +432,7 @@ namespace POTrackingV2.Controllers
                 string errorMessage = (ex.Message + ex.StackTrace);
                 return View(errorMessage);
             }
-        }
+        }*/
 
         [HttpPost]
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
