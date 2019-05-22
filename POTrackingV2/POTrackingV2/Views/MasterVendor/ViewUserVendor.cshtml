@@ -68,23 +68,23 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
-                <td>
+                <td class="text-center">
                     @Html.DisplayFor(modelItem => item.IsActive)
                 </td>
                 <td>
                     <span>
                         <a class="col-xs-2" href='@Html.ActionLink("Edit", "EditUserVendor", new { id = item.ID })' alt="Details">
-                            <i class="fa fa-info-circle fa-lg"></i>
+                            <i class="fas fa-key"></i>
                         </a>
                     </span>
                     <span>
-                        <a class="col-xs-2" href='@Html.ActionLink("Delete", "DeleteUserVendor", new { id = item.ID })' alt="Details">
+                        <a class="col-xs-2" href='@Html.ActionLink("Delete", "DeleteUserVendor", new { id = item.ID })' alt="Details" style="color:green;">
                             <i class="fa fa-edit fa-lg"></i>
                         </a>
                     </span>
                     <span>
-                        <a class="col-xs-2" href='@Html.ActionLink("Reset Password", "ResetPasswordUserVendor", new { id = item.ID })' alt="Details">
-                            <i class="fa fa-edit fa-lg"></i>
+                        <a class="col-xs-2" href='@Html.ActionLink("Reset Password", "ResetPasswordUserVendor", new { id = item.ID })' alt="Details" style="color:red;">
+                            <i class="fa fa-trash fa-lg"></i>
                         </a>
                     </span>
                 </td>
