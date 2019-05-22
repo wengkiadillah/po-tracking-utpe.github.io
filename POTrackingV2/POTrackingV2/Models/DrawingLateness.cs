@@ -12,21 +12,25 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RolesType
+    public partial class DrawingLateness
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RolesType()
+        public DrawingLateness()
         {
-            this.Users = new HashSet<User>();
-            this.UserVendors = new HashSet<UserVendor>();
+            this.LateDrawingLogs = new HashSet<LateDrawingLog>();
         }
     
         public int ID { get; set; }
-        public string Name { get; set; }
+        public int IssueHeaderID { get; set; }
+        public System.DateTime EndDateEstimation { get; set; }
+        public string PartNumberProduct { get; set; }
+        public System.DateTime Created { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> LastModified { get; set; }
+        public string LastModifiedBy { get; set; }
     
+        public virtual IssueHeader IssueHeader { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserVendor> UserVendors { get; set; }
+        public virtual ICollection<LateDrawingLog> LateDrawingLogs { get; set; }
     }
 }

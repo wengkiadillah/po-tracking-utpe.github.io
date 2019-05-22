@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();

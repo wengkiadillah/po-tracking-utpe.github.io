@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Local PO tracking";
     var roleID = ViewBag.CurrentRoleID;
+    var poSignRow = 1;
 }
 
 @section styles {
@@ -212,7 +213,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -2293,6 +2294,7 @@
             </div>
         </li>
     </ul>
+    poSignRow++;
 }
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
@@ -2387,6 +2389,19 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             for (var i = 0; i < scrollLength.length; i++) {
                 scrollLength[i] += totalDistance;
                 totalDistance = scrollLength[i];
+            }
+
+            for (var i = 1; i < 11; i++) {
+                var lastStatus = 0;
+                $('.activeStagePo-' + i).each(function (index) {
+                    if (this.id > lastStatus) {
+                        lastStatus = this.id;
+                    }
+                });
+                console.log(lastStatus);
+                if (lastStatus > 0) {
+                    $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                }
             }
         });
 

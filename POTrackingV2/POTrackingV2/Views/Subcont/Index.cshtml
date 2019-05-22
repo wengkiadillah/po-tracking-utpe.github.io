@@ -20,9 +20,11 @@
     {
         @*<div class="filter-form-container form-inline">*@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
-        <div class="form-group mr-4">
-            <input id="searchData" name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.CurrentData" />
-            <i class="fas fa-search form-type-icon hint"></i>
+        <div class="form-group mr-4 frmSearch">
+            @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
+            <input  id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentData" />
+            <datalist id="data-list"></datalist>
+            @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
         <select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
             <option value="poNumber">PO Number</option>
@@ -1282,6 +1284,37 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
     <script type="text/javascript">
         var scrollLength = [];
         $(document).ready(function () {
+            $("#filterBy").on("change", function () {
+                $("#data-list").empty();
+            });
+            $("#searchData").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataFromValue", "Subcont")",
+                    data: { 'filterBy': $("#filterBy").val(), 'value': $("#searchData").val() },
+                    beforeSend: function () {
+                        $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            //console.log(response.data);
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                            }
+                            $("#data-list").html(element);
+                            $("#searchData").css("background", "");
+                        } else {
+                            alert(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            });
+
             $("#filterBy option").each(function () {
                 if ($(this).attr("value") == $(this).parent().attr("value")) {
                     $(this).attr("selected", "selected");
@@ -2488,7 +2521,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
-            
+
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                 $("#inputProgressModalLabel").attr("child", $(this).closest(".po-item-data-content").attr("child"));
             } else {
@@ -2535,7 +2568,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         $("#ATAPrimer").val(response.arrayDataTime['ATAPrimer']);
                         $("#ATAPrimerReasonID").val(response.arrayDataTime['ATAPrimerReasonID']);
-                        
+
                         //    var date = new Date(newDate);
                         //    date.setDate(date.getDate() - 10);
 
@@ -2583,7 +2616,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#fileSetting").empty();
                         $("#fileFullweld").empty();
                         $("#filePrimer").empty();
-                        
+
                         for (var k in jsonObjFilePB) {
                             filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
                         }
@@ -2611,7 +2644,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage4Outer = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage4Child = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__child");
-            
+
 
             var isValid = true;
             var errorMessage = "";
@@ -2847,7 +2880,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 formData.append("inputPurchasingDocumentItemID", pdItemID);
             }
             if (fileInvoiceDOM.files.length > 0) {
-                
+
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("VendorUploadInvoice", "Subcont")",
@@ -3076,7 +3109,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 dvPreview.innerHTML = "";
                 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                 var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
-                   
+
                 if (regexOffice.test(fileName.toLowerCase())) {
                     var img = document.createElement("IMG");
                     img.height = "100";
@@ -3112,11 +3145,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
     <!-- Live PReview PIc-->
     <script language="javascript" type="text/javascript">
-            window.onload = function () {
-                uploadFilePreview("inputFilePB", "filePB");
-                uploadFilePreview("inputFileSetting", "fileSetting");
-                uploadFilePreview("inputFileFullweld", "fileFullweld");
-                uploadFilePreview("inputFilePrimer", "filePrimer");
-            };
-        </script>
+        window.onload = function () {
+            uploadFilePreview("inputFilePB", "filePB");
+            uploadFilePreview("inputFileSetting", "fileSetting");
+            uploadFilePreview("inputFileFullweld", "fileFullweld");
+            uploadFilePreview("inputFilePrimer", "filePrimer");
+        };
+    </script>
 }

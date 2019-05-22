@@ -54,13 +54,13 @@ namespace POTrackingV2.CustomAuthentication
             {
                 foreach (var item in roles)
                 {
-                    if (item.Trim().Equals(Roles) && !val)
+                    if (item.Trim().Equals(Roles.ToString()) && !val)
                         val = true;
                 }
             }
             else
             {
-                if (Roles.Equals(role))
+                if (Roles.ToString().Equals(role))
                     val = true;
             }
 

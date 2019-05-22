@@ -173,32 +173,94 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AlertNotification.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AlertTools.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AlertTools.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AlertTools.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AlertTools.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AlertTools.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Capability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\CapabilityCategory.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CustomerComponentsDetail.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DelayReason.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DeliveryLateness.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DrawingLateness.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ETAHistory.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\HistoryIssue.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HistoryIssueUser.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IssueHeader.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\KompoCategory.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\LateDrawingLog.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\LoginView.cs" />
+    <Compile Include="Models\MachineBreakdownDetail.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MachineBreakdownLog.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MasterIssue.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MaterialIssueDetail.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MaterialIssueLog.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MaterialProcurementPOTracking.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Notification.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\NotificationStatu.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OrganizationGroup.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Partial\ETAHistory.cs" />
+    <Compile Include="Models\PasswordView.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItem.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItemHistory.cs" />
     <Compile Include="Models\Partial\Shipment.cs" />
+    <Compile Include="Models\Partial\UserVendor.cs" />
     <Compile Include="Models\PO.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
@@ -229,8 +291,14 @@
     <Compile Include="Models\PurchasingDocumentItemHistory.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\QualityControlPOTracking.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\QualityControlProgress.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\QualityReceivePOTracking.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\RawMaterialOrder.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
@@ -271,6 +339,12 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserGroup.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserVendor.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Vendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
@@ -285,6 +359,8 @@
     <Content Include="Content\all.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\chosen.css" />
+    <Content Include="Content\chosen.min.css" />
     <Content Include="Content\datepicker.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\styles.css" />
@@ -310,6 +386,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\close.png" />
     <Content Include="Images\excel.png" />
+    <Content Include="Images\LoaderIcon.gif" />
     <Content Include="Images\login-background.jpg" />
     <Content Include="Images\logo-patria.png" />
     <Content Include="Images\logout.png" />
@@ -317,6 +394,16 @@
     <Content Include="Images\pdf.png" />
     <Content Include="Images\powerpoint.png" />
     <Content Include="Images\word.png" />
+    <Content Include="Models\AlertTools.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>AlertTools.edmx</DependentUpon>
+      <LastGenOutput>AlertTools.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\AlertTools.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>AlertTools.edmx</DependentUpon>
+      <LastGenOutput>AlertTools.cs</LastGenOutput>
+    </Content>
     <Content Include="Models\POTracking.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>POTracking.edmx</DependentUpon>
@@ -368,7 +455,16 @@
     <Content Include="fonts\fa-solid-900.ttf" />
     <Content Include="fonts\fa-solid-900.woff" />
     <Content Include="fonts\fa-solid-900.woff2" />
+    <Content Include="Scripts\chosen.jquery.js" />
+    <Content Include="Scripts\chosen.jquery.min.js" />
     <Content Include="Scripts\data.json" />
+    <EntityDeploy Include="Models\AlertTools.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\AlertTools.edmx.diagram">
+      <DependentUpon>AlertTools.edmx</DependentUpon>
+    </Content>
     <EntityDeploy Include="Models\POTracking.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
@@ -398,7 +494,6 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -458,6 +553,8 @@
     <Content Include="Views\ReasonSubCont\Index.cshtml" />
     <Content Include="Views\DelayReason\IndexDelay.cshtml" />
     <Content Include="Views\Local\Index.cshtml" />
+    <Content Include="Views\MasterVendor\CreateUserVendor.cshtml" />
+    <Content Include="Views\MasterVendor\ViewUserVendor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
