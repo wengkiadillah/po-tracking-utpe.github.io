@@ -96,7 +96,7 @@ namespace POTrackingV2.Controllers
                                     {
                                         CustomSerializeModel userModel = new Models.CustomSerializeModel()
                                         {
-                                            Username = user.Username,
+                                            UserName = user.UserName,
                                             Name = user.Name,
                                             Roles = user.Roles
                                             //RolesType = user.RolesType,
@@ -152,6 +152,13 @@ namespace POTrackingV2.Controllers
             return View(loginView);
         }
 
+
+        public ActionResult LoginExternal()
+        {
+            string loginURL = WebConfigurationManager.AppSettings["LoginURL"];
+            return Redirect(loginURL);
+        }
+
         public ActionResult LogOut()
         {
             HttpCookie cookie = new HttpCookie("Cookie1", "");
@@ -159,7 +166,18 @@ namespace POTrackingV2.Controllers
             Response.Cookies.Add(cookie);
 
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login", "Account", null);
+
+            var myrole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+
+            if (myrole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+            {
+                return RedirectToAction("Login", "Account", null);
+            }
+            else
+            {
+                string loginURL = WebConfigurationManager.AppSettings["LoginURL"];
+                return Redirect(loginURL);
+            }
         }
     }
 }

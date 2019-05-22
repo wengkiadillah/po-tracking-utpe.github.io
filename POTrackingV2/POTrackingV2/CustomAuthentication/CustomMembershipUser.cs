@@ -14,7 +14,7 @@ namespace POTrackingV2.CustomAuthentication
         /// <summary>
         /// Propertis yang digunakan dalam identitas login User
         /// </summary>
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Name { get; set; }
         //public string Roles { get; set; }
 
@@ -32,7 +32,7 @@ namespace POTrackingV2.CustomAuthentication
         /// <param name="user"></param>
         public CustomMembershipUser(UserRole user) : base("CustomMembership", user.Username, user.ID, user.User.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
         {
-            Username = user.Username;
+            UserName = user.Username;
             Name = user.User.Name;
             Roles = user.Role.Name.ToLower();
             //Roles = user.RoleID;
