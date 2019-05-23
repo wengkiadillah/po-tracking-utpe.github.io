@@ -160,7 +160,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@purchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                                 else
@@ -189,7 +189,7 @@
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                          data-value="@childPurchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
+                                                    <div><span class="mark-donut" id="activeStagePo-@poSignRow">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -2459,6 +2459,36 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
                 }
             }
+
+            var count = 1;
+            // Every PO to Active Stage
+            $(".po-item-container").each(function (index) {
+                var activeStages = [];
+                $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
+                    var findID = "#activeStagePo-" + count;
+                    var textStage = $(this).find(findID).first().text();
+                    if (textStage != "") {
+                        if (textStage === "2a") {
+                            textStage = 3;
+                        }
+                        else if (textStage >= 3) {
+                            textStage = parseInt(textStage) + 1;
+                        }
+                        else {
+                            textStage = parseInt(textStage);
+                        }
+
+                            activeStages.push(textStage);
+                    }
+                });
+
+                activeStages.sort();
+                findID = ".po-sign-row-" + count;
+                var biggestActiveStages = activeStages[activeStages.length - 1];
+                console.log("ini" +biggestActiveStages);
+                $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
+                count++;
+            });
         });
 
 

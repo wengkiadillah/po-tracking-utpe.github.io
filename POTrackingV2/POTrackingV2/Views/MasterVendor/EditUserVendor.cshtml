@@ -1,0 +1,117 @@
+﻿@model POTrackingV2.Models.UserVendor
+
+@{
+    ViewBag.Title = "EditUserVendor";
+}
+
+@using (Html.BeginForm("EditUserVendor", "MasterVendor", FormMethod.Post))
+{
+    @*@Html.AntiForgeryToken()*@
+
+<div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
+    <h2 class="form-sub-header">
+        Edit User Vendor
+    </h2>
+    <hr class="mb-4">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.ID)
+    <div class="row">
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Username, "", new { @class = "field-validation-valid text-danger" })
+            <span class="text-danger">@ViewBag.ErrorMessage</span>
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.RoleID, "Role", htmlAttributes: new { @class = "form-custom-label" })
+            <input type="text" value="Vendor" class="form-control full-width text-box single-line" disabled />
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.RolesTypeID, "Roles Type", htmlAttributes: new { @class = "form-custom-label" })
+            @Html.DropDownList("RolesTypeID", null, "Select Role", htmlAttributes: new { @class = "form-control full-width" })
+            @Html.ValidationMessageFor(model => model.RolesTypeID, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.VendorCode, "Roles Type", htmlAttributes: new { @class = "form-custom-label" })
+            @Html.DropDownList("VendorCode", null, "Select Vendor", htmlAttributes: new { @class = "form-control full-width chosen" })
+            @Html.ValidationMessageFor(model => model.VendorCode, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-6">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+
+        <div class="col-lg-6 col-12 custom-form-field mb-3">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "form-custom-label" })
+            @Html.EditorFor(model => model.IsActive)
+            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "field-validation-valid text-danger" })
+        </div>
+    </div>
+    <div class="row justify-content-between mt-5">
+        <div class="col-auto">
+            <a href="@Url.Action("ViewUserVendor", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+        </div>
+        <div class="col-auto">
+            <button type="submit" value="Submit" class="btn btn-success create-ad-user mr-0 mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> &nbsp; Submit</button>
+        </div>
+    </div>
+</div>
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+
+        $(function () {
+
+            $('.create-ad-user').click(function (e) {
+                var roleType = $('#RolesTypeID').val();
+                if (!$('form').valid() && (roleType == null || roleType == '')) {
+                    $("[data-valmsg-for='RolesTypeID']").text("Role Type must be selected");
+                    e.preventDefault();
+                }
+                else if (!$('form').valid()) {
+                    e.preventDefault();
+                }
+                else if (roleType == null || roleType == '') {
+                    $("[data-valmsg-for='RolesTypeID']").text("Role Type must be selected");
+                    e.preventDefault();
+                }
+                else {
+                    $('form').submit();
+                }
+            });
+
+            $("#RolesTypeID").change(function () {
+                var roleType = $('#RolesTypeID').val();
+
+                if (roleType == null || roleType == '') {
+                    $("[data-valmsg-for='RolesTypeID']").text("Role Type must be selected");
+                }
+                else {
+                    $("[data-valmsg-for='RolesTypeID']").text("");
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('.chosen').chosen({
+                search_contains: true
+            });
+        });
+    </script>
+}

@@ -3018,32 +3018,33 @@
 
         var count = 1;
         // Every PO to Active Stage
-    $(".po-item-container").each(function (index) {
-        var activeStages = [];
-        $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
-            var findID = "#activeStagePo-" + count;
-            var textStage = $(this).find(findID).first().text();
+        $(".po-item-container").each(function (index) {
+            var activeStages = [];
+            $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
+                var findID = "#activeStagePo-" + count;
+                var textStage = $(this).find(findID).first().text();
+                if (textStage != "") {
+                    if (textStage === "2a") {
+                        textStage = 3;
+                    }
+                    else if (textStage >= 3) {
+                        textStage = parseInt(textStage) + 1;
+                    }
+                    else {
+                        textStage = parseInt(textStage);
+                    }
 
-            if (textStage === "2a") {
-                textStage = 3;
-            }
-            else if (textStage >= 3) {
-                textStage = parseInt(textStage) + 1;
-            }
-            else {
-                textStage = parseInt(textStage);
-            }
-
-            activeStages.push(textStage);
-        });
-
-        activeStages.sort();
-        findID = ".po-sign-row-" + count;
-        var biggestActiveStages = activeStages[activeStages.length - 1];
-        $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
-        count++;
-    });
+                    activeStages.push(textStage);
+                }
             });
+
+                    activeStages.sort();
+                    findID = ".po-sign-row-" + count;
+                    var biggestActiveStages = activeStages[activeStages.length - 1];
+                    $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
+                    count++;
+                });
+         });
 
 
             function paginationShow(destination) {

@@ -12,6 +12,22 @@
 }
 
 <div class="um">
+    <div class="filter-row">
+        @using (Html.BeginForm("ViewUserVendor", "MasterVendor", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+        {
+            <div class="form-group mr-4">
+                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchString" />
+                <i class="fas fa-search form-type-icon hint"></i>
+            </div>
+
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "ViewUserVendor", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+        }
+        <div class="form-group mt-4">
+            @Html.ActionLink("Create New", "CreateUserVendor", null, new { @class = "btn btn-info" })
+
+        </div>
+    </div>
     <table class="table table-striped table-bordered">
         <tr>
             <th>
@@ -48,52 +64,81 @@
         {
             foreach (var item in Model)
             {
-            <tr style="background-color:white;">
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Username)
-                </td>
+                <tr style="background-color:white;">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoleName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoleTypeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VendorName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td class="text-center">
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td>
-                    <span>
-                        <a class="col-xs-2" href='@Html.ActionLink("Edit", "EditUserVendor", new { id = item.ID })' alt="Details">
-                            <i class="fas fa-key"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a class="col-xs-2" href='@Html.ActionLink("Delete", "DeleteUserVendor", new { id = item.ID })' alt="Details" style="color:green;">
-                            <i class="fa fa-edit fa-lg"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a class="col-xs-2" href='@Html.ActionLink("Reset Password", "ResetPasswordUserVendor", new { id = item.ID })' alt="Details" style="color:red;">
-                            <i class="fa fa-trash fa-lg"></i>
-                        </a>
-                    </span>
-                </td>
-            </tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoleName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoleTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VendorName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td>
+                        <input type="text" value="@item.ID" class="hide" name="userVendorID" />
+
+                        <span>
+                            <input type="text" value="@item.Username" class="hide" name="userVendorName" />
+                            <a class="col-xs-2 resetUserVendor" href='@Url.Action("ResetPasswordUserVendor", "MasterVendor", new { ID = item.ID })' alt="Details">
+                                <i class="fas fa-key"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a class="col-xs-2" href='@Url.Action("EditUserVendor", "MasterVendor", new { ID = item.ID })' alt="Details" style="color:green;">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a class="col-xs-2 deleteUserVendor" alt="Details" style="color:red;">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </a>
+                        </span>
+                    </td>
+                </tr>
             }
         }
 
     </table>
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+    @Html.PagedListPager(Model, page => Url.Action("ViewUserVendor", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
     new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
 </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            var userVendorID = 0;
+
+            $(".deleteUserVendor").click(function () {
+                userVendorID = $(this).parent().prev().prev().prev().val();
+                if (confirm("Are you sure want to delete this user vendor?")) {
+                    window.location.href = "@Url.Action("DeleteUserVendor", "MasterVendor")?id=" + userVendorID;
+                };
+                return false;
+            });
+
+            $(".resetUserVendor").click(function () {
+                 userVendorID = $(this).parent().prev().val();
+                if (confirm("Are you sure want to reset password this user vendor?")) {
+                    window.location.href = "@Url.Action("ResetPasswordUserVendor", "MasterVendor")?id=" + userVendorID;
+                };
+                return false;
+            });
+        });
+    </script>
+}
