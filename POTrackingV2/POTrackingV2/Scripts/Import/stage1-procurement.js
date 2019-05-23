@@ -31,6 +31,8 @@ $(".st1-checkbox-item-proc").on("change", function (obj) {
 $(".st1-accept-item-proc").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage1ProcurementConfirmItem = $("#stage1ProcurementConfirmItem").val();
+
     var itemID;
     var inputPurchasingDocumentItems = [];
 
@@ -64,7 +66,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "ProcurementConfirmItem",
+        url: stage1ProcurementConfirmItem,
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -88,8 +90,10 @@ $(".st1-accept-item-proc").on("click", function (obj) {
 //PROCUREMENT Confirm All PO -- Save All buat item yang aktif (gak disabled) - PROCUREMENT
 $(".st1-accept-all-po-proc").on("click", function (obj) {
     obj.preventDefault();
-    var inputPurchasingDocumentItems = [];
 
+    var stage1ProcurementConfirmItem = $("#stage1ProcurementConfirmItem").val();
+
+    var inputPurchasingDocumentItems = [];
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 2 * donutProgressUnit;
 
@@ -159,7 +163,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "ProcurementConfirmItem",
+        url: stage1ProcurementConfirmItem,
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -190,6 +194,8 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 //PROCUREMENT Click cancel item - PROCUREMENT
 $(".st1-cancel-item-proc").on("click", function (obj) {
 
+    var stage1CancelItem = $("#stage1CancelItem").val();
+
     obj.preventDefault();
 
     var itemID;
@@ -212,7 +218,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "CancelItem",
+        url: stage1CancelItem,
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {

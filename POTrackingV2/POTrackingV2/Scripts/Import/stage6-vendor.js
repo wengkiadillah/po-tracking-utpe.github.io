@@ -16,13 +16,15 @@ $(".st6-docs-acceptance-lc-date").datepicker({
 
 // Open Modal
 $(document).on("click", ".st6-fill-in-the-form", function () {
+
+    var stage6GetShippingInformation = $("#stage6GetShippingInformation").val();
     var myPurchasingDocumentItemId = $(this).data('id');
     $("#fillForm .modal-content #modalPurchasingDocumentItemId").val(myPurchasingDocumentItemId);
     var modalContent = $("#fillForm .modal-content");
 
     $.ajax({
         type: "POST",
-        url: "GetShippingInformation",
+        url: stage6GetShippingInformation,
         data: JSON.stringify({ 'myPurchasingDocumentItemId': myPurchasingDocumentItemId }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {
@@ -105,6 +107,8 @@ $(".st6-courier-name").on('input focus', function (e) {
 //Vendor click Shipment Book Date
 $(".st6-fill-the-form").on("click", function (obj) {
 
+    var stage6VendorFillInShipmentForm = $("#stage6VendorFillInShipmentForm").val();
+
     var buttonFillTheForm = $(this);
     var rowModal = $(this).closest(".modal.fade");
     var inputCopyBLDate = rowModal.find(".st6-copy-bl-date");
@@ -179,7 +183,7 @@ $(".st6-fill-the-form").on("click", function (obj) {
                         if (courierName !== '' && inputCourierName.val() !== '') {
                             $.ajax({
                                 type: "POST",
-                                url: "VendorFillInShipmentForm",
+                                url: stage6VendorFillInShipmentForm,
                                 data: formData,
                                 cache: false,
                                 contentType: false,

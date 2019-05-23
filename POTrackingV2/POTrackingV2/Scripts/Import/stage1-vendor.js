@@ -67,6 +67,9 @@ $(".st1-checkbox-item").on("change", function (obj) {
 
 //Vendor click Confirm button Item Quantity
 $(".st1-accept-item").on("click", function (obj) {
+    var stage1VendorConfirmItem = $("#stage1VendorConfirmItem").val();
+    var stage1VendorEditItem = $("#stage1VendorEditItem").val();
+
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
     var dateValidationArray = [];
@@ -211,7 +214,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 if (isEdit === "false") {
                     $.ajax({
                         type: "POST",
-                        url: "VendorConfirmItem",
+                        url: stage1VendorConfirmItem,
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -268,7 +271,7 @@ $(".st1-accept-item").on("click", function (obj) {
                 else {
                     $.ajax({
                         type: "POST",
-                        url: "VendorEditItem",
+                        url: stage1VendorEditItem,
                         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -339,6 +342,8 @@ $(".st1-accept-item").on("click", function (obj) {
 
 //Vendor Confirm All PO -- Save All buat item yang aktif (gak disabled)
 $(".st1-accept-all-po").on("click", function (obj) {
+    var stage1VendorConfirmItem = $("#stage1VendorConfirmItem").val();
+
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
     var inputConfirmedDateForNextStage = [];
@@ -527,7 +532,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
     if (inputPurchasingDocumentItems.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmItem",
+            url: stage1VendorConfirmItem,
             data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -580,6 +585,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
 
 //Vendor Click cancel item
 $(".st1-cancel-item").on("click", function (obj) {
+    var stage1CancelItem = $("#stage1CancelItem").val();
 
     var checkboxItem = $(this).closest(".po-item-data-content__outer").find(".st1-checkbox-item");
     var inputConfirmedDate = $(this).closest(".po-item-data-content__outer").find(".st1-confirmed-date");
@@ -599,7 +605,7 @@ $(".st1-cancel-item").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "CancelItem",
+        url: stage1CancelItem,
         data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
         contentType: "application/json; charset=utf-8",
         success: function (response) {
