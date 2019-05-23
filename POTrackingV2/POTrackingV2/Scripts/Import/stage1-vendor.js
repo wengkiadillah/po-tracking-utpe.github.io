@@ -227,7 +227,6 @@ $(".st1-accept-item").on("click", function (obj) {
                             buttonDelRow.attr("style", "visibility:hidden");
                             buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
                             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
-                            editButton.attr("style", "visibility:display");
 
                             if (deliveryMethod === "partial") {
                                 childRow.find(".po-item-data-content").each(function (index) {
@@ -256,6 +255,8 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".row-updated-donut-text").first().text("1");
                                     $(".row-updated-donut").first().removeClass("row-updated-donut");
                                     $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                    editButton.attr("style", "visibility:display");
                                 }
                             }
                         },
@@ -284,7 +285,6 @@ $(".st1-accept-item").on("click", function (obj) {
                             buttonDelRow.attr("style", "visibility:hidden");
                             buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
                             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
-                            editButton.attr("style", "visibility:display");
 
                             if (deliveryMethod === "partial") {
                                 childRow.find(".po-item-data-content").each(function (index) {
@@ -313,6 +313,8 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".row-updated-donut-text").first().text("1");
                                     $(".row-updated-donut").first().removeClass("row-updated-donut");
                                     $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                    editButton.attr("style", "visibility:display");
                                 }
                             }
                         },
@@ -531,16 +533,13 @@ $(".st1-accept-all-po").on("click", function (obj) {
             dataType: "json",
             success: function (response) {
                 alert(response.responseText);
-                alert(response.isSameAsProcs);
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                $(".row-updated-link").attr("style", "visibility:display");
                 $(".row-updated-link-negative").attr("style", "visibility:hidden");
 
                 $(".row-updated").removeClass("selected-negative").removeClass("row-updated");
                 $(".row-updated-button").removeClass("row-updated-button");
-                $(".row-updated-link").removeClass("row-updated-link");
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
 
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
@@ -555,6 +554,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut-text").first().text("2");
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                        $(".row-updated-link").removeClass("row-updated-link");
                     }
                     else {
                         $(".next-row-updated").first().removeClass("next-row-updated");
@@ -564,6 +565,9 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut-text").first().text("1");
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                        $(".row-updated-link").attr("style", "visibility:display");
+                        $(".row-updated-link").removeClass("row-updated-link");
                     }
                 }
             }
