@@ -1116,14 +1116,14 @@ a[data-toggle="collapse"] {
         -moz-transition: all .2s ease-out;
         -o-transition: all .2s ease-out;
         transition: all .2s ease-out;
+        border: 1px solid #567FEF;
     }
 
-    .info-stage .po-item-section-header__icon:hover + .pop-up-notification,
-    .pop-up-notification:hover {
-        z-index: 2;
-        top: 30%;
-        border: 4px solid #567FEF;
-    }
+        .info-stage .po-item-section-header__icon:hover + .pop-up-notification,
+        .info-stage .pop-up-notification:hover {
+            z-index: 2;
+            top: 30%;
+        }
 
 
 .chosen-container {
