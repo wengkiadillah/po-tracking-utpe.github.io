@@ -17,13 +17,13 @@ namespace POTrackingV2.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public RolesType()
         {
-            this.UserVendors = new HashSet<UserVendor>();
+            this.UserRoleTypes = new HashSet<UserRoleType>();
         }
     
         public int ID { get; set; }
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserVendor> UserVendors { get; set; }
+        public virtual ICollection<UserRoleType> UserRoleTypes { get; set; }
     }
 }

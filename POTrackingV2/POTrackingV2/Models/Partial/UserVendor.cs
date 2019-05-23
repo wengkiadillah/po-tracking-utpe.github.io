@@ -10,6 +10,7 @@ namespace POTrackingV2.Models
     [MetadataType(typeof(UserVendorAnnotaiton))]
     public partial class UserVendor
     {
+        public Nullable<int> RolesTypeID { get; set; }
 
         public string RoleName
         {
@@ -28,7 +29,8 @@ namespace POTrackingV2.Models
             {
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    return db.RolesTypes.SingleOrDefault(x => x.ID == this.RolesTypeID).Name;
+                    var selectedUserRole= db.UserRoleTypes.FirstOrDefault(x => x.Username == this.Username);
+                    return db.RolesTypes.SingleOrDefault(x => x.ID == selectedUserRole.RolesTypeID).Name;
                 }
             }
         }
@@ -59,7 +61,7 @@ namespace POTrackingV2.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "Username is required")]
         public string Username { get; set; }
-        public Nullable<int> RolesTypeID { get; set; }
+        
         [Required(ErrorMessage = "Vendor is required")]
         public string VendorCode { get; set; }
         [EmailAddress(ErrorMessage = "Invalid Email Address.")]

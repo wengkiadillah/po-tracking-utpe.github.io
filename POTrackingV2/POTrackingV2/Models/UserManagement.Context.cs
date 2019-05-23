@@ -13,10 +13,10 @@ namespace POTrackingV2.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class UserManagemetEntities : DbContext
+    public partial class UserManagementEntities : DbContext
     {
-        public UserManagemetEntities()
-            : base("name=UserManagemetEntities")
+        public UserManagementEntities()
+            : base("name=UserManagementEntities")
         {
         }
     

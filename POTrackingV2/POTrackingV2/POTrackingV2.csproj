@@ -261,6 +261,7 @@
       <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Partial\ETAHistory.cs" />
+    <Compile Include="Models\Partial\UserRoleType.cs" />
     <Compile Include="Models\PasswordView.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItem.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItemHistory.cs" />
@@ -339,7 +340,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>UserManagement.tt</DependentUpon>
+      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -365,6 +366,9 @@
     <Compile Include="Models\UserRole.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserRoleType.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\UserVendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
@@ -378,6 +382,7 @@
     <Compile Include="ViewModels\MasterVendorViewModel.cs" />
     <Compile Include="ViewModels\POPurchasingDocumentItemViewModel.cs" />
     <Compile Include="ViewModels\PurchasingDocumentItemPurchasingDocumentItemHistoryViewModel.cs" />
+    <Compile Include="Controllers\RoleTypeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\all.min.css" />
@@ -502,13 +507,6 @@
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\POTracking.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\POTracking.edmx.diagram">
-      <DependentUpon>POTracking.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\UserManagement.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
@@ -516,6 +514,14 @@
     <Content Include="Models\UserManagement.edmx.diagram">
       <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
+    <EntityDeploy Include="Models\POTracking.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\POTracking.edmx.diagram">
+      <DependentUpon>POTracking.edmx</DependentUpon>
+    </Content>
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\datepicker.min.js" />
@@ -599,6 +605,9 @@
     <Content Include="Views\MasterVendor\CreateUserVendor.cshtml" />
     <Content Include="Views\MasterVendor\ViewUserVendor.cshtml" />
     <Content Include="Views\MasterVendor\EditUserVendor.cshtml" />
+    <Content Include="Views\RoleType\Create.cshtml" />
+    <Content Include="Views\RoleType\Index.cshtml" />
+    <Content Include="Views\RoleType\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
