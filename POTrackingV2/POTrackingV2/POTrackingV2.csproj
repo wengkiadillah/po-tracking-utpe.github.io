@@ -401,6 +401,9 @@
     <Content Include="Files\Import\Shipping\CopyBL\donotdelete.txt" />
     <Content Include="Files\Import\Shipping\Invoice\donotdelete.txt" />
     <Content Include="Files\Import\Shipping\PackingList\donotdelete.txt" />
+    <Content Include="Files\Local\Invoice\donotdelete.txt" />
+    <Content Include="Files\Local\ProformaInvoice\donotdelete.txt" />
+    <Content Include="Files\Local\ProgressProforma\donotdelete.txt" />
     <Content Include="fonts\AvenirLTStd-Black.svg" />
     <Content Include="fonts\AvenirLTStd-Book.svg" />
     <Content Include="fonts\AvenirLTStd-Heavy.svg" />
@@ -608,9 +611,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Files\Local\Invoice\" />
-    <Folder Include="Files\Local\ProformaInvoice\" />
-    <Folder Include="Files\Local\ProgressProforma\" />
     <Folder Include="Files\Subcont\Invoice\" />
     <Folder Include="Files\Subcont\SequencesProgress\" />
   </ItemGroup>

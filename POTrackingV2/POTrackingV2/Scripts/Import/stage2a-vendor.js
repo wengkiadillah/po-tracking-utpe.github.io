@@ -1,5 +1,7 @@
 ﻿//Vendor upload one Proforma Invoice
 $(".st2a-upload-proforma-invoice").on("click", function (obj) {
+
+    var stage2aVendorUploadProformaInvoice = $("#stage2aVendorUploadProformaInvoice").val();
     obj.preventDefault();
 
     var buttonUploadProformaInvoice = $(this);
@@ -36,7 +38,7 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
     if (inputFileProformaInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadProformaInvoice",
+            url: stage2aVendorUploadProformaInvoice,
             data: formData,
             processData: false,
             contentType: false,
@@ -70,6 +72,8 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
 
 // Vendor Skip Proforma
 $(".st2a-skip-proforma").on("click", function (obj) {
+
+    var stage2aVendorSkipProformaInvoice = $("#stage2aVendorSkipProformaInvoice").val();
     obj.preventDefault();
 
     var buttonSkipProforma = $(this);
@@ -95,7 +99,7 @@ $(".st2a-skip-proforma").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: "VendorSkipProformaInvoice",
+            url: stage2aVendorSkipProformaInvoice,
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
