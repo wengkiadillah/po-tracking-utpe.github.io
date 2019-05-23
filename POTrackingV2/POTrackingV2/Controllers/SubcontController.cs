@@ -820,7 +820,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var fileSetting = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Setting").Select(x =>
@@ -828,7 +828,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                     //@Path.Combine("..\\Files\\Subcont\\SequencesProgress", x.FileName)
                 });
 
@@ -837,7 +837,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var filePrimer = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Primer").Select(x =>
@@ -845,7 +845,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
 
@@ -872,7 +872,7 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, string PBActualReason, string settingActualReason, string fullweldActualReason, string primerActualReason, HttpPostedFileBase[] invoices)
+        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices)
         {
             //HttpPostedFileBase file = Request.Files["FileUpload"];
             try
@@ -933,10 +933,10 @@ namespace POTrackingV2.Controllers
                 Existed_PDI.SettingActualDate = settingActualDate;
                 Existed_PDI.FullweldActualDate = fullweldActualDate;
                 Existed_PDI.PrimerActualDate = primerActualDate;
-                //Existed_PDI.PBALateReason = PBActualReason == "null"? null: PBActualReason;
-                //Existed_PDI.SettingLateReason = settingActualReason == "null" ? null : settingActualReason;
-                //Existed_PDI.FullweldLateReason = fullweldActualReason == "null" ? null : fullweldActualReason;
-                //Existed_PDI.PremierLateReason = primerActualReason == "null" ? null : primerActualReason;
+                Existed_PDI.PBLateReasonID = PBActualReason;
+                Existed_PDI.SettingLateReasonID = settingActualReason;
+                Existed_PDI.FullweldLateReasonID = fullweldActualReason;
+                Existed_PDI.PremierLateReasonID = primerActualReason;
                 Existed_PDI.LastModified = now;
                 Existed_PDI.LastModifiedBy = User.Identity.Name;
 
