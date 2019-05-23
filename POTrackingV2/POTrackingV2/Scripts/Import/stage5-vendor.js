@@ -65,6 +65,8 @@ $(".st5-checkbox-item").on("change", function (obj) {
 $(".st5-ship-booking-date-confirm").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage5VendorConfirmShipmentBookingDate = $("#stage5VendorConfirmShipmentBookingDate").val();
+
     var buttonShipBookingDateConfirm = $(this);
     var inputShipBookingDate = $(this).closest(".po-item-data-header__column").find(".st5-ship-booking-date");
     var buttonATDConfirm = $(this).closest(".po-item-data-header__column").next().find(".st5-ATD-confirm");
@@ -86,7 +88,7 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
         if (shipBookingDate <= maxDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmShipmentBookingDate",
+                url: stage5VendorConfirmShipmentBookingDate,
                 data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -120,6 +122,8 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
 $(".st5-ATD-confirm").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage5VendorConfirmATD = $("#stage5VendorConfirmATD").val();
+
     var inputShipmentATDs = [];
     var buttonATDConfirm = $(this);
     var inputATD = $(this).closest(".po-item-data-header__column").find(".st5-ATD");
@@ -151,7 +155,7 @@ $(".st5-ATD-confirm").on("click", function (obj) {
 
         $.ajax({
             type: "POST",
-            url: "VendorConfirmATD",
+            url: stage5VendorConfirmATD,
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -180,6 +184,9 @@ $(".st5-ATD-confirm").on("click", function (obj) {
 //Vendor Confirm All 
 $(".st5-confirm-all").on("click", function (obj) {
     obj.preventDefault();
+
+    var stage5VendorConfirmShipmentBookingDate = $("#stage5VendorConfirmShipmentBookingDate").val();
+    var stage5VendorConfirmATD = $("#stage5VendorConfirmATD").val();
 
     var inputShipmentBookDates = [];
     var inputShipmentATDs = [];
@@ -263,7 +270,7 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentBookDates.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmShipmentBookingDate",
+            url: stage5VendorConfirmShipmentBookingDate,
             data: JSON.stringify({ 'inputShipmentBookDates': inputShipmentBookDates }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -290,7 +297,7 @@ $(".st5-confirm-all").on("click", function (obj) {
     if (inputShipmentATDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmATD",
+            url: stage5VendorConfirmATD,
             data: JSON.stringify({ 'inputShipmentATDs': inputShipmentATDs }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",

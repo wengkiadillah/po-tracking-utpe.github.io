@@ -39,6 +39,8 @@ $(".st2-checkbox-item").on("change", function (obj) {
 // Vendor one input ETA DATE
 $(".st2-confirm-first-eta").on("click", function (obj) {
 
+    var stage2VendorConfirmFirstETA = $("#stage2VendorConfirmFirstETA").val();
+
     obj.preventDefault();
 
     var inputETAHistories = [];
@@ -76,7 +78,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmFirstETA",
+                url: stage2VendorConfirmFirstETA,
                 data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -112,6 +114,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
 
 //Vendor input All ETA DATE
 $(".st2-confirm-first-eta-all").on("click", function (obj) {
+    var stage2VendorConfirmFirstETA = $("#stage2VendorConfirmFirstETA").val();
 
     obj.preventDefault();
 
@@ -178,7 +181,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
     if (inputETAHistories.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorConfirmFirstETA",
+            url: stage2VendorConfirmFirstETA,
             data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

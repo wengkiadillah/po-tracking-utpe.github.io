@@ -2872,6 +2872,28 @@
         </div>
     </div>
 </div>
+
+<input type="text" id="stage1VendorConfirmItem" hidden value="@Url.Action("VendorConfirmItem", "Import")"/>
+<input type="text" id="stage1VendorEditItem" hidden value="@Url.Action("VendorEditItem", "Import")"/>
+<input type="text" id="stage1ProcurementConfirmItem" hidden value="@Url.Action("ProcurementConfirmItem", "Import")"/>
+<input type="text" id="stage1CancelItem" hidden value="@Url.Action("CancelItem", "Import")"/>
+<input type="text" id="stage2VendorConfirmFirstETA" hidden value="@Url.Action("VendorConfirmFirstETA", "Import")"/>
+<input type="text" id="stage2ProcurementAcceptFirstEta" hidden value="@Url.Action("ProcurementAcceptFirstEta", "Import")"/>
+<input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Import")"/>
+<input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadProformaInvoice", "Import")"/>
+<input type="text" id="stage2aVendorSkipProformaInvoice" hidden value="@Url.Action("VendorSkipProformaInvoice", "Import")"/>
+<input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Import")"/>
+<input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Import")"/>
+<input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Import")"/>
+<input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Import")"/>
+<input type="text" id="stage5VendorConfirmShipmentBookingDate" hidden value="@Url.Action("VendorConfirmShipmentBookingDate", "Import")"/>
+<input type="text" id="stage5VendorConfirmATD" hidden value="@Url.Action("VendorConfirmATD", "Import")"/>
+<input type="text" id="stage6VendorFillInShipmentForm" hidden value="@Url.Action("VendorFillInShipmentForm", "Import")"/>
+<input type="text" id="stage6GetShippingInformation" hidden value="@Url.Action("GetShippingInformation", "Import")"/>
+<input type="text" id="stage7ProcurementConfirmOnAirport" hidden value="@Url.Action("ProcurementConfirmOnAirport", "Import")"/>
+<input type="text" id="stage10VendorUploadInvoice" hidden value="@Url.Action("VendorUploadInvoice", "Import")"/>
+<input type="text" id="stage10VendorRemoveUploadInvoice" hidden value="@Url.Action("VendorRemoveUploadInvoice", "Import")"/>
+
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
@@ -2998,29 +3020,29 @@
                         totalDistance = scrollLength[i];
                     }
 
-                var count = 1;
                 // Every PO to Active Stage
-            $(".po-item-container").each(function (index) {
-                var activeStages = [];
-                $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
-                    var findID = "#activeStagePo-" + count;
-                    var textStage = $(this).find(findID).first().text();
+                var count = 1;
+                $(".po-item-container").each(function (index) {
+                    var activeStages = [];
+                    $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
+                        var findID = "#activeStagePo-" + count;
+                        var textStage = $(this).find(findID).first().text();
 
-                    if (textStage === "cancel") {
-                        textStage = 0;
-                    }
-                    else if (textStage === "2a") {
-                        textStage = 3;
-                    }
-                    else if (textStage >= 3) {
-                        textStage = parseInt(textStage) + 1;
-                    }
-                    else{
-                        textStage = parseInt(textStage);
-                    }
+                        if (textStage === "cancel") {
+                            textStage = 0;
+                        }
+                        else if (textStage === "2a") {
+                            textStage = 3;
+                        }
+                        else if (textStage >= 3) {
+                            textStage = parseInt(textStage) + 1;
+                        }
+                        else{
+                            textStage = parseInt(textStage);
+                        }
 
-                    activeStages.push(textStage);
-                });
+                        activeStages.push(textStage);
+                    });
 
                 activeStages.sort();
                 findID = ".po-sign-row-" + count;

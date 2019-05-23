@@ -2,6 +2,8 @@
 $(".st10-file-invoice-upload").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage10VendorUploadInvoice = $("#stage10VendorUploadInvoice").val();
+
     var buttonUploadInvoice = $(this);
     var inputFileInvoice = $(this).closest(".form-inline").find(".st10-file-invoice");
     var inputFileInvoiceDOM = inputFileInvoice.get(0);
@@ -23,7 +25,7 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
     if (inputFileInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadInvoice",
+            url: stage10VendorUploadInvoice,
             data: formData,
             processData: false,
             contentType: false,
@@ -52,6 +54,8 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
 $(".st10-file-invoice-remove").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage10VendorRemoveUploadInvoice = $("#stage10VendorRemoveUploadInvoice").val();
+
     var buttonUploadInvoice = $(this).closest(".po-item-data-header__column").find(".st10-file-invoice-upload");
     var inputFileInvoice = $(this).closest(".po-item-data-header__column").find(".st10-file-invoice");
     var formUploaded = $(this).closest(".st10-form-uploaded");
@@ -65,7 +69,7 @@ $(".st10-file-invoice-remove").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "VendorRemoveUploadInvoice",
+        url: stage10VendorRemoveUploadInvoice,
         data: formData,
         processData: false,
         contentType: false,
