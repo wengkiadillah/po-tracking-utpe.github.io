@@ -339,7 +339,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -499,13 +499,6 @@
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\UserManagement.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\UserManagement.edmx.diagram">
-      <DependentUpon>UserManagement.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\POTracking.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
@@ -513,7 +506,13 @@
     <Content Include="Models\POTracking.edmx.diagram">
       <DependentUpon>POTracking.edmx</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <EntityDeploy Include="Models\UserManagement.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\UserManagement.edmx.diagram">
+      <DependentUpon>UserManagement.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\datepicker.min.js" />
