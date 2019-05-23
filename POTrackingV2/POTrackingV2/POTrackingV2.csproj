@@ -596,6 +596,7 @@
     <Content Include="Views\Local\Index.cshtml" />
     <Content Include="Views\MasterVendor\CreateUserVendor.cshtml" />
     <Content Include="Views\MasterVendor\ViewUserVendor.cshtml" />
+    <Content Include="Views\MasterVendor\EditUserVendor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

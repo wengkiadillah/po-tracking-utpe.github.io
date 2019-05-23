@@ -223,7 +223,7 @@ namespace POTracking.Controllers
             }
         }
 
-        // GET: MasterVendor/CreateUserVendor
+        [HttpGet]
         public ActionResult CreateUserVendor()
         {
 
@@ -231,12 +231,11 @@ namespace POTracking.Controllers
             {
                 listRoleType = db.RolesTypes.ToList();
                 listVendor = db.Vendors.ToList();
-            }
-            ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
-            ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
+                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
 
-            return View();
-
+                return View();
+            }      
         }
 
         [HttpPost]
@@ -259,6 +258,7 @@ namespace POTracking.Controllers
                     objNewUser.Email = objNewUser.Email;
                     objNewUser.RoleID = 3;
                     objNewUser.RolesTypeID = objNewUser.RolesTypeID;
+                    objNewUser.VendorCode = objNewUser.VendorCode;
                     objNewUser.IsActive = objNewUser.IsActive;
                     objNewUser.Salt = keyNew;
                     objNewUser.Hash = password;
@@ -269,7 +269,7 @@ namespace POTracking.Controllers
                     db.UserVendors.Add(objNewUser);
                     db.SaveChanges();
                     ModelState.Clear();
-                    return RedirectToAction("Home", "Index");
+                    return RedirectToAction("ViewUserVendor", "MasterVendor");
                 }
                 ViewBag.ErrorMessage = "User Already Exist!";
                 return View();
@@ -277,49 +277,102 @@ namespace POTracking.Controllers
 
         }
 
-        public ActionResult ViewUserVendor(int? page)
+        public ActionResult ViewUserVendor(string search, int? page)
         {
-
+            ViewBag.CurrentSearchString = search;
             using (POTrackingEntities db = new POTrackingEntities())
             {
 
-                return View(db.UserVendors.ToList().ToPagedList(page ?? 1, 10));
+                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
 
             }
 
         }
 
-        public ActionResult EditUserVendor(int ID)
+        [HttpGet]
+
+        public ActionResult EditUserVendor(Guid ID)
         {
-
-            return View();
-
-        }
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                listRoleType = db.RolesTypes.ToList();
+                listVendor = db.Vendors.ToList();
+                var selectedUserVendor = db.UserVendors.Find(ID);
+                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserVendor.RolesTypeID);
+                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
+                return View(selectedUserVendor);
+            }
+        }       
 
         [HttpPost]
-        public ActionResult EditUserVendor(UserVendor objEditUser)
+        public ActionResult EditUserVendor(Guid ID, UserVendor objEditUser)
         {
 
 
-            return View();
+            try
+            {
+                using (POTrackingEntities db = new POTrackingEntities())
+                {
+                    listRoleType = db.RolesTypes.ToList();
+                    listVendor = db.Vendors.ToList();
+                    var selectedUserVendor = db.UserVendors.Find(ID);
+                    ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserVendor.RolesTypeID);
+                    ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
+
+                    var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objEditUser.Username && x.ID != ID));
+                    if (chkUser == null)
+                    {
+
+                        selectedUserVendor.Name = objEditUser.Name;
+                        selectedUserVendor.Username = objEditUser.Username;
+                        selectedUserVendor.Email = objEditUser.Email;
+                        selectedUserVendor.RolesTypeID = objEditUser.RolesTypeID;
+                        selectedUserVendor.VendorCode = objEditUser.VendorCode;
+                        selectedUserVendor.IsActive = objEditUser.IsActive;
+                        selectedUserVendor.LastModified = DateTime.Now;
+                        selectedUserVendor.LastModifiedBy = User.Identity.Name;
+                        db.SaveChanges();
+                        ModelState.Clear();
+                        return RedirectToAction("ViewUserVendor","MasterVendor");
+                    }
+                    ViewBag.ErrorMessage = "User Already Exist!";
+                    return View();
+                }
+            }
+            catch(Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+        }
+
+
+        public ActionResult DeleteUserVendor(Guid ID)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                var userVendor = db.UserVendors.Find(ID);
+                db.UserVendors.Remove(userVendor);
+                db.SaveChanges();
+
+                return RedirectToAction("ViewUserVendor");
+            }
 
         }
 
-        public ActionResult DeleteUserVendor(int ID)
+        public ActionResult ResetPasswordUserVendor(Guid ID)
         {
-
-
-
-            return View();
-
-        }
-
-        public ActionResult ResetPasswordUserVendor()
-        {
-
-
-
-            return View();
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                var selectedUserVendor = db.UserVendors.Find(ID);
+                var keyNew = Helper.GeneratePassword(10);
+                var password = Helper.EncodePassword(LoginConstants.defaultPassword, keyNew);
+                selectedUserVendor.Salt = keyNew;
+                selectedUserVendor.Hash = password;
+                db.SaveChanges();
+                ModelState.Clear();
+                return RedirectToAction("ViewUserVendor");
+            }
 
         }
 
