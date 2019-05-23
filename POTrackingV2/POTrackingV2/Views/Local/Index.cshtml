@@ -60,7 +60,7 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-    if (roleID == 2)
+    if (roleID == "procurement")
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
@@ -159,8 +159,8 @@
                                 {
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@purchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut activeStagePo-@poSignRow" id="@purchasingDocumentItem.ActiveStage">@purchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                             data-value="@purchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                                 else
@@ -180,7 +180,7 @@
                                 {
                                     foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                     {
-                                        <div class="po-item-data-content row-@row-@childRow mt-customize" row="@row" child="@childRow">
+                                        <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
                                             <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
                                             <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
                                             <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
@@ -188,8 +188,8 @@
                                             {
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@childPurchasingDocumentItem.DonutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut activeStagePo-@poSignRow" id="@childPurchasingDocumentItem.ActiveStage">@childPurchasingDocumentItem.ActiveStage</span><span class="secondary-text">/7</span></div>
+                                                         data-value="@childPurchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                    <div><span class="mark-donut">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                                 </div>
                                             }
                                             else
@@ -255,7 +255,7 @@
                             var st1CheckboxAll = "st1-checkbox-all";
                             var st1AcceptAll = "st1-accept-all-po";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st1CheckboxAll = "st1-checkbox-all-proc";
                                 st1AcceptAll = "st1-accept-all-po-proc";
@@ -324,7 +324,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
                                 st1ItemIDInner = "st1-pd-item-id-inner-proc";
@@ -358,24 +358,30 @@
                             var isChecked = "";
                             var isPartial = "";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
+                                disabledInputCheckbox = "disabled";
+
+                                if (purchasingDocumentItem.ConfirmedDate.HasValue || purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                {
+                                    disabledInputCheckbox = "";
+                                }
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:display";
+                                    hideButtonEdit = "style=visibility:hidden";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:display";
+                                    hideButtonEdit = "style=visibility:hidden";
 
                                     if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
                                     {
@@ -495,21 +501,28 @@
                                                 isChecked = "";
                                                 isPartial = "";
 
-                                                if (roleID == 2)
+                                                if (roleID == "procurement")
                                                 {
+                                                    disabledInputCheckbox = "disabled";
+
+                                                    if (purchasingDocumentItem.ConfirmedDate.HasValue || purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                    {
+                                                        disabledInputCheckbox = "";
+                                                    }
+
                                                     if (childPurchasingDocumentItem.ConfirmedItem == true)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:display";
+                                                        hideButtonEdit = "style=visibility:hidden";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:display";
+                                                        hideButtonEdit = "style=visibility:hidden";
 
                                                         if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
                                                         {
@@ -546,7 +559,7 @@
                                                                     <input class="checkbox-custom @st1CheckboxItem" @isChecked type="checkbox" @disabledInputCheckbox>
                                                                     <span class="checkmark"></span>
                                                                 </label>
-                                                                <div class="form-group tes" style="visibility:hidden">
+                                                                <div class="form-group" style="visibility:hidden">
                                                                     <input type="text" class="form-control form-date with-icon" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" disabled>
                                                                     <i class="fas fa-calendar-alt form-type-icon"></i>
                                                                 </div>
@@ -603,7 +616,7 @@
                         END STAGE 1
                 -->
                 <div class="po-item-section stage-2">
-                    @if (roleID == 2)
+                    @if (roleID == "procurement")
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -654,7 +667,7 @@
                             var st2ProcAcceptFirstEta = "";
                             var st2ProcDeclineFirstEta = "";
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 st2CheckboxItem = "st2-proc-checkbox-item";
                                 st2ItemId = "st2-proc-pd-item-id";
@@ -690,7 +703,7 @@
                                 valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hiddenButtonConfirmEtaDate = "hidden";
                                 hiddenButtonAcceptDecline = "";
@@ -797,7 +810,7 @@
                                                 valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
                                             }
 
-                                            if (roleID == 2)
+                                            if (roleID == "procurement")
                                             {
                                                 hiddenButtonConfirmEtaDate = "hidden";
                                                 hiddenButtonAcceptDecline = "";
@@ -922,7 +935,7 @@
                             {
                                 if (purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    if (roleID == 2)
+                                    if (roleID == "procurement")
                                     {
                                         disabledFileProformaInvoice = "disabled";
                                         disabledUploadProformaInvoice = "disabled";
@@ -969,7 +982,7 @@
 
                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
-                                if (roleID == 2)
+                                if (roleID == "procurement")
                                 {
                                     disabledApproveProforma = "";
                                     disabledDisApproveProforma = "";
@@ -1061,7 +1074,7 @@
                                             {
                                                 if (childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    if (roleID == 2)
+                                                    if (roleID == "procurement")
                                                     {
                                                         disabledFileProformaInvoice = "disabled";
                                                         disabledUploadProformaInvoice = "disabled";
@@ -1105,7 +1118,7 @@
 
                                                 downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
-                                                if (roleID == 2)
+                                                if (roleID == "procurement")
                                                 {
                                                     disabledVendorSkipPI = "disabled";
                                                     disabledApproveProforma = "";
@@ -1181,7 +1194,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == 2)
+                    @if (roleID == "procurement")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1263,7 +1276,7 @@
                                 }
                             }
 
-                            if (roleID == 2)
+                            if (roleID == "procurement")
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1337,7 +1350,7 @@
                                                 }
                                             }
 
-                                            if (roleID == 2)
+                                            if (roleID == "procurement")
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -1427,7 +1440,7 @@
 
                             if (purchasingDocumentItem.ActiveStage == "4")
                             {
-                                if (roleID == 3)
+                                if (roleID == "role")
                                 {
                                     if (purchasingDocumentItem.ETAHistories.Count < 2)
                                     {
@@ -1530,7 +1543,7 @@
 
                                     valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                    if (roleID == 2)
+                                    if (roleID == "procurement")
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1546,7 +1559,7 @@
                                     disabledInputUploadProgressPhotoes = "disabled";
                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                    if (roleID == 3)
+                                    if (roleID == "vendor")
                                     {
                                         if (purchasingDocumentItem.ProgressPhotoes.Count < 1)
                                         {
@@ -1668,7 +1681,7 @@
 
                                             if (childPurchasingDocumentItem.ActiveStage == "4")
                                             {
-                                                if (roleID == 3)
+                                                if (roleID == "vendor")
                                                 {
                                                     if (childPurchasingDocumentItem.ETAHistories.Count < 2)
                                                     {
@@ -1772,7 +1785,7 @@
 
                                                     valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                                    if (roleID == 2)
+                                                    if (roleID == "procurement")
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1788,7 +1801,7 @@
                                                     disabledInputUploadProgressPhotoes = "disabled";
                                                     disabledInputUploadProgressPhotoesConfirm = "disabled";
 
-                                                    if (roleID == 3)
+                                                    if (roleID == "vendor")
                                                     {
                                                         if (childPurchasingDocumentItem.ProgressPhotoes.Count < 1)
                                                         {
@@ -2099,6 +2112,7 @@
                             var disabledFileInvoiceUpload = "disabled";
                             var hiddenFormUploading = "";
                             var hiddenFormUploaded = "hidden";
+                            var hiddenst6FileInvoiceRemove = "";
                             var invoiceDownloadPath = "";
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
@@ -2106,10 +2120,16 @@
                                 invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
+
+                                if (roleID == "procurement")
+                                {
+                                    hiddenst6FileInvoiceRemove = "hidden";
+                                }
+                                
                             }
                             else
                             {
-                                if (roleID == 3)
+                                if (roleID == "vendor")
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
@@ -2135,7 +2155,7 @@
                                         </div>
                                         <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
                                             <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                            <a href="#" class="danger-link @st6FileInvoiceRemove" @hiddenst6FileInvoiceRemove>Remove?</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2148,6 +2168,7 @@
                                             disabledFileInvoiceUpload = "disabled";
                                             hiddenFormUploading = "";
                                             hiddenFormUploaded = "hidden";
+                                            hiddenst6FileInvoiceRemove = "";
                                             invoiceDownloadPath = "";
 
                                             if (childPurchasingDocumentItem.InvoiceDocument != null)
@@ -2155,10 +2176,15 @@
                                                 invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", childPurchasingDocumentItem.InvoiceDocument);
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
+
+                                                if (roleID == "procurement")
+                                                {
+                                                    hiddenst6FileInvoiceRemove = "hidden";
+                                                }
                                             }
                                             else
                                             {
-                                                if (roleID == 3)
+                                                if (roleID == "vendor")
                                                 {
                                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                                     {
@@ -2182,7 +2208,7 @@
                                                     </div>
                                                     <div class="file-uploaded @st6FormUploaded" @hiddenFormUploaded>
                                                         <p class="mb-0"> <a class="@st6FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                        <a href="#" class="danger-link @st6FileInvoiceRemove">Remove?</a>
+                                                        <a href="#" class="danger-link @st6FileInvoiceRemove" @hiddenst6FileInvoiceRemove>Remove?</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2295,6 +2321,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             //$('#InputETAHistory_ETADate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date(Date.now()) >= date) ? false : true; } });
             //$('#InputPurchasingDocumentItem_ConfirmReceivedPaymentDate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
             $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+
+            $("#searchFilterBy option").each(function () {
+                if ($(this).attr("value") == $(this).parent().attr("value")) {
+                    $(this).attr("selected", "selected");
+                    $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
+                }
+            });
 
             //stage scrollbar fixed
             var chooseStagePosition = $('.filter-row').offset();

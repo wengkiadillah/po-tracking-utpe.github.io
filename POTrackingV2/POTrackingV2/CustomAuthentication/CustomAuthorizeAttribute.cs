@@ -56,7 +56,7 @@ namespace POTrackingV2.CustomAuthentication
 
             //return val;
 
-            return ((CurrentUser != null && !CurrentUser.IsInRole(Roles)) || CurrentUser == null) ? false : true;
+            return (CurrentUser == null) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace POTrackingV2.CustomAuthentication
                         //controller = "Error",
                         //action = "Unauthorized",
                         controller = "Account",
-                        action = "Login",
-                        errorMessage = "Error"
+                        action = "LoginExternal",
+                        ReturnUrl = filterContext.HttpContext.Request.Url
                     }
                     ));
             }

@@ -15,10 +15,11 @@ namespace POTrackingV2.Models
         {
             get
             {
-                using (POTrackingEntities db = new POTrackingEntities())
-                {
-                    return db.Roles.SingleOrDefault(x => x.ID == this.RoleID).Name;
-                }
+                //using (R db = new POTrackingEntities())
+                //{
+                //    return db.Roles.SingleOrDefault(x => x.ID == this.RoleID).Name;
+                //}
+                return "role name";
             }
         }
         public string RoleTypeName

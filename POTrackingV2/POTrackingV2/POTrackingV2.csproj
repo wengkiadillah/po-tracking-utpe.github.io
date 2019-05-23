@@ -157,6 +157,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Constants\LoginConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DelayReasonController.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="CustomAuthentication\CustomMembership.cs" />
     <Compile Include="CustomAuthentication\CustomMembershipUser.cs" />
     <Compile Include="CustomAuthentication\CustomPrincipal.cs" />
+    <Compile Include="CustomAuthentication\CustomRole.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -190,6 +192,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AlertTools.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Application.cs">
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Capability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
@@ -313,7 +318,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Role.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\RolesType.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
@@ -337,10 +342,28 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserGroup.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserManagement.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserManagement.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserManagement.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserManagement.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserManagement.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserManagement.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserRole.cs">
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserVendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
@@ -348,6 +371,7 @@
     <Compile Include="Models\Vendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewModelUserManagement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\IndexLocalViewModel.cs" />
     <Compile Include="ViewModels\IndexSubcontViewModel.cs" />
@@ -414,6 +438,16 @@
       <DependentUpon>POTracking.edmx</DependentUpon>
       <LastGenOutput>POTracking.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\UserManagement.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>UserManagement.edmx</DependentUpon>
+      <LastGenOutput>UserManagement.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\UserManagement.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>UserManagement.edmx</DependentUpon>
+      <LastGenOutput>UserManagement.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -464,6 +498,13 @@
     </EntityDeploy>
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\UserManagement.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\UserManagement.edmx.diagram">
+      <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
     <EntityDeploy Include="Models\POTracking.edmx">
       <Generator>EntityModelCodeGenerator</Generator>

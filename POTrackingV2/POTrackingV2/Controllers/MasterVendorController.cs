@@ -257,7 +257,7 @@ namespace POTracking.Controllers
                     objNewUser.Name = objNewUser.Name;
                     objNewUser.Username = objNewUser.Username;
                     objNewUser.Email = objNewUser.Email;
-                    objNewUser.RoleID = Convert.ToInt32(LoginConstants.RoleVendor);
+                    objNewUser.RoleID = 3;
                     objNewUser.RolesTypeID = objNewUser.RolesTypeID;
                     objNewUser.IsActive = objNewUser.IsActive;
                     objNewUser.Salt = keyNew;

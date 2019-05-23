@@ -22,12 +22,12 @@ namespace POTrackingV2.CustomAuthentication
         //public string Email { get; set; }
         //public string[] Roles { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserName { get; set; }
         public string Name { get; set; }
         //public string Roles { get; set; }
-        public int Roles { get; set; }
-        public int RolesType { get; set; }
-        public string VendorCode { get; set; }
+        public string Roles { get; set; }
+        //public int RolesType { get; set; }
+        //public string VendorCode { get; set; }
 
 
         #endregion
@@ -54,13 +54,13 @@ namespace POTrackingV2.CustomAuthentication
             {
                 foreach (var item in roles)
                 {
-                    if (item.Trim().Equals(Roles.ToString()) && !val)
+                    if (item.ToLower().Trim().Equals(Roles.ToLower()) && !val)
                         val = true;
                 }
             }
             else
             {
-                if (Roles.ToString().Equals(role))
+                if (Roles.ToLower().Equals(role.ToLower()))
                     val = true;
             }
 

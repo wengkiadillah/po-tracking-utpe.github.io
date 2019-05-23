@@ -11,10 +11,11 @@ using POTrackingV2.ViewModels;
 using System.IO;
 using POTrackingV2.CustomAuthentication;
 using System.Web.Security;
+using POTrackingV2.Constants;
 
 namespace POTrackingV2.Controllers
 {
-    [Authorize]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
     public class LocalController : Controller
     {
         public DateTime now = DateTime.Now;
@@ -25,7 +26,7 @@ namespace POTrackingV2.Controllers
         public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page, string role)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            int roleID = myUser.Roles;
+            string roleID = myUser.Roles;
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
@@ -35,7 +36,7 @@ namespace POTrackingV2.Controllers
                                 .OrderBy(x => x.Number)
                                 .AsQueryable();
 
-            if (roleID == 2)
+            if (roleID == "procurement")
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
@@ -106,7 +107,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmQuantity(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -118,6 +119,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
+            List<bool> isSameAsProcs = new List<bool>();
 
             try
             {
@@ -129,17 +131,47 @@ namespace POTrackingV2.Controllers
                     {
                         databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
 
+                        List<PurchasingDocumentItem> childPurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == inputPurchasingDocumentItem.ID && x.ID != inputPurchasingDocumentItem.ID).ToList();
+                        if (childPurchasingDocumentItems.Count > 0)
+                        {
+                            //Child Clean Up
+                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                            {
+                                if (childPurchasingDocumentItem.ID != inputPurchasingDocumentItem.ID)
+                                {
+                                    db.PurchasingDocumentItems.Remove(childPurchasingDocumentItem);
+                                }
+                            }
+                        }
+
                         if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                         {
 
                             //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                            databasePurchasingDocumentItem.ConfirmedItem = null;
                             databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                             databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                            databasePurchasingDocumentItem.ActiveStage = "1";
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             counter++;
+
+                            if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = true;
+                                databasePurchasingDocumentItem.ActiveStage = "2";
+                                isSameAsProcs.Add(true);
+                            }
+                            else
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                databasePurchasingDocumentItem.ActiveStage = "1";
+                                isSameAsProcs.Add(false);
+                            }
+
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            foreach (var previousNotification in previousNotifications)
+                            {
+                                previousNotification.isActive = false;
+                            }
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -169,6 +201,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
@@ -184,7 +219,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected",isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -197,7 +232,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorEditItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -209,6 +244,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
+            List<bool> isSameAsProcs = new List<bool>();
 
             try
             {
@@ -235,14 +271,27 @@ namespace POTrackingV2.Controllers
 
                             if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                             {
-                                databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
+                                //databasePurchasingDocumentItem.ConfirmedItem = null;
                                 databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                                 databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                                databasePurchasingDocumentItem.ActiveStage = "1";
+                                //databasePurchasingDocumentItem.ActiveStage = "1";
                                 databasePurchasingDocumentItem.LastModified = now;
                                 databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                                 counter++;
+
+                                if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
+                                {
+                                    databasePurchasingDocumentItem.ConfirmedItem = true;
+                                    databasePurchasingDocumentItem.ActiveStage = "2";
+                                    isSameAsProcs.Add(true);
+                                }
+                                else
+                                {
+                                    databasePurchasingDocumentItem.ConfirmedItem = null;
+                                    databasePurchasingDocumentItem.ActiveStage = "1";
+                                    isSameAsProcs.Add(false);
+                                }
                             }
                         }
                         else
@@ -276,7 +325,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected",isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -291,7 +340,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -310,7 +359,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "1")
+                    if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
                         databasePurchasingDocumentItem.ConfirmedItem = true;
                         //databasePurchasingDocumentItem.OpenQuantity = inputPurchasingDocumentItem.OpenQuantity;
@@ -351,7 +400,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult ProcurementConfirmAllItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             if (inputPurchasingDocumentItems == null)
@@ -383,7 +432,7 @@ namespace POTrackingV2.Controllers
                 string errorMessage = (ex.Message + ex.StackTrace);
                 return View(errorMessage);
             }
-        }
+        }*/
 
         [HttpPost]
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
@@ -461,7 +510,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -559,7 +608,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -629,7 +678,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -713,7 +762,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadInvoice (int inputPurchasingDocumentItemID,HttpPostedFileBase fileProformaInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -790,7 +839,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementApprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -848,7 +897,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDisapprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 2)
+            if (myUser.Roles != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -912,7 +961,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipPI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -971,7 +1020,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1034,7 +1083,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1093,7 +1142,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUpdateETA([Bind(Include = "PurchasingDocumentItemID,ETADate,DelayReasonID")]ETAHistory inputETAHistory)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1169,7 +1218,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProgressPhotoes(int inputPurchasingDocumentItemID, HttpPostedFileBase[] fileProgressPhotoes)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != 3)
+            if (myUser.Roles != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }

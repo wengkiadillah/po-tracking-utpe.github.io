@@ -595,6 +595,33 @@ namespace POTrackingV2.Models
             }
         }
 
+        public double DonutProgressLocal
+        {
+            get
+            {
+                double donutProgress;
+
+                if (String.IsNullOrEmpty(this.ActiveStage) || this.ActiveStage == "0")
+                {
+                    donutProgress = 0;
+                }
+                else if (this.ActiveStage == "2a")
+                {
+                    donutProgress = Convert.ToDouble(3) * 9.42;
+                }
+                else if (this.ActiveStage == "1" || this.ActiveStage == "2")
+                {
+                    donutProgress = Convert.ToDouble(this.ActiveStage) * 9.42;
+                }
+                else
+                {
+                    donutProgress = (Convert.ToDouble(this.ActiveStage) + 1) * 9.42;
+                }
+
+                return donutProgress;
+            }
+        }
+
         public string ConfirmReceivedPaymentDateView
         {
             get
