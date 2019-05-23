@@ -18,7 +18,7 @@ namespace POTrackingV2.CustomAuthentication
                 return false;
             }
 
-            using (UserManagemetEntities db = new UserManagemetEntities())
+            using (UserManagementEntities db = new UserManagementEntities())
             {
                 var user = db.UserRoles.Where(a => a.Username.Equals(username) && a.Role.ApplicationID==3).SingleOrDefault();
                 return (user != null) ? true : false;
@@ -33,7 +33,7 @@ namespace POTrackingV2.CustomAuthentication
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            using (UserManagemetEntities db = new UserManagemetEntities())
+            using (UserManagementEntities db = new UserManagementEntities())
             {
                 var user = (from us in db.UserRoles
                             where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.ApplicationID==3
@@ -52,7 +52,7 @@ namespace POTrackingV2.CustomAuthentication
 
         public override string GetUserNameByEmail(string email)
         {
-            using (UserManagemetEntities db = new UserManagemetEntities())
+            using (UserManagementEntities db = new UserManagementEntities())
             {
                 string username = (from u in db.UserRoles
                                    where string.Compare(email, u.User.Email) == 0

@@ -27,7 +27,7 @@ namespace POTrackingV2.CustomAuthentication
 
         public bool IsUserInApplicaiton(string username, string applicationName)
         {
-            using (UserManagemetEntities dbUser = new UserManagemetEntities())
+            using (UserManagementEntities dbUser = new UserManagementEntities())
             {
                 var applictionList = from user in dbUser.Users
                                      join UR in dbUser.UserRoles on user.Username equals UR.Username
@@ -57,7 +57,7 @@ namespace POTrackingV2.CustomAuthentication
 
             var userRoles = new string[] { };
 
-            using (UserManagemetEntities dbContext = new UserManagemetEntities())
+            using (UserManagementEntities dbContext = new UserManagementEntities())
             {
                 var selectedUser = (from us in dbContext.Users.Include("Role")
                                     where string.Compare(us.Username, username, StringComparison.OrdinalIgnoreCase) == 0
