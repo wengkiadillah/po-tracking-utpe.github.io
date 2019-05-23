@@ -1412,6 +1412,8 @@
                             var st4UploadProgressPhotoes = "st4-upload-progress-photoes";
                             var st4UploadProgressPhotoesConfirm = "st4-upload-progress-photoes-confirm";
                             var st4DelayReason = "st4-delay-reason";
+                            var st4UploadingForm = "st4-uploading-form";
+                            var st4UploadedForm = "st4-uploaded-form";
 
                             var disabledInputUpdateEtaDateOnTime = "disabled";
                             var disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
@@ -1423,6 +1425,7 @@
 
                             var selectedInputUpdateEtaDateOnTime = "";
                             var selectedInputUpdateEtaDateDelay = "";
+                            var hiddenUploadingForm = "";
 
                             var valueInputUpdateEtaDateOnTime = "";
                             var valueInputUpdateEtaDateDelay = "";
@@ -1440,7 +1443,7 @@
 
                             if (purchasingDocumentItem.ActiveStage == "4")
                             {
-                                if (roleID == "role")
+                                if (roleID == "vendor")
                                 {
                                     if (purchasingDocumentItem.ETAHistories.Count < 2)
                                     {
@@ -1503,6 +1506,8 @@
                                 }
                                 else
                                 {
+                                    hiddenUploadingForm = "hidden";
+
                                     disabledInputUpdateEtaDateOnTime = "disabled";
                                     disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
                                     disabledInputUpdateEtaDateDelay = "disabled";
@@ -1547,6 +1552,7 @@
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                        hiddenUploadingForm = "hidden";
 
                                     }
                                 }
@@ -1576,7 +1582,8 @@
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
-                                       
+                                        hiddenUploadingForm = "hidden";
+
                                     }
 
                                     if (purchasingDocumentItem.IsDelayed)
@@ -1623,7 +1630,7 @@
                                         </div>
                                     </div>
                                     <div class="po-item-data-header__column">
-                                        <div class="form-inline">
+                                        <div class="form-inline @st4UploadingForm" @hiddenUploadingForm>
                                             <div class="form-group mr-2">
                                                 <input type="hidden" class="@st4ItemIdInner" value="@purchasingDocumentItem.ID" />
                                                 <input type="file" class="form-control with-icon @st4UploadProgressPhotoes" @disabledInputUploadProgressPhotoes multiple>
@@ -1633,7 +1640,7 @@
                                         </div>
                                     </div>
                                     <div class="po-item-data-header__column info">
-                                        <div class="form-inline">
+                                        <div class="form-inline @st4UploadedForm">
                                             <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
                                             <div class="pop-up-notification">
                                                 @if (purchasingDocumentItem.ProgressPhotoes.Count > 0)
@@ -1664,6 +1671,7 @@
 
                                             selectedInputUpdateEtaDateOnTime = "";
                                             selectedInputUpdateEtaDateDelay = "";
+                                            hiddenUploadingForm = "";
 
                                             valueInputUpdateEtaDateOnTime = "";
                                             valueInputUpdateEtaDateDelay = "";
@@ -1745,6 +1753,8 @@
                                                 }
                                                 else
                                                 {
+                                                    hiddenUploadingForm = "hidden";
+
                                                     disabledInputUpdateEtaDateOnTime = "disabled";
                                                     disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
                                                     disabledInputUpdateEtaDateDelay = "disabled";
@@ -1789,6 +1799,7 @@
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        hiddenUploadingForm = "hidden";
 
                                                     }
                                                 }
@@ -1818,7 +1829,8 @@
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
-                                                        
+                                                        hiddenUploadingForm = "hidden";
+
                                                     }
 
                                                     if (childPurchasingDocumentItem.IsDelayed)
@@ -1864,7 +1876,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="po-item-data-header__column">
-                                                    <div class="form-inline">
+                                                    <div class="form-inline @st4UploadingForm" @hiddenUploadingForm>
                                                         <div class="form-group mr-2">
                                                             <input type="hidden" class="@st4ItemIdInner" value="@childPurchasingDocumentItem.ID" />
                                                             <input type="file" class="form-control with-icon @st4UploadProgressPhotoes" @disabledInputUploadProgressPhotoes multiple>
@@ -1874,7 +1886,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="po-item-data-header__column info">
-                                                    <div class="form-inline">
+                                                    <div class="form-inline @st4UploadedForm">
                                                         <i class="fas fa-info-circle po-item-section-header__icon info mt-2"></i>
                                                         <div class="pop-up-notification">
                                                             @if (childPurchasingDocumentItem.ProgressPhotoes.Count > 0)

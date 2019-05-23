@@ -192,21 +192,9 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
 
     var itemID = $(this).closest(".form-inline").find(".st4-item-id-inner").val();
 
-    // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 13;
-    var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
-    var cssRow = $(this).closest(".po-item-data-content").prop("class");
-    cssRow = cssRow.replace(" ", ".");
-    cssRow = "." + cssRow;
-    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
-
-    // Next stage Controller
-    cssRow = $(this).closest(".po-item-data-content").prop("class");
-    cssRow = cssRow.replace(" ", ".");
-    cssRow = "." + cssRow;
-    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
-
     var formData = new FormData();
+
+    var imagesContainer = $(this).closest(".po-item-data-header__column").next().find(".st4-uploaded-form").find(".pop-up-notification");
 
     for (var i = 0; i < inputUploadProgressPhotoesDOM.files.length; i++) {
         var file = inputUploadProgressPhotoesDOM.files[i];
@@ -224,6 +212,15 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
             contentType: false,
             success: function (response) {
                 alert(response.responseText);
+
+                console.log(response.imageSources);
+                var imageSources = response.imageSources;
+
+                imageSources.forEach(function (item, index) {
+                    imagesContainer.append('<span class="mr-2">' +
+                        '<img src="' + item + '" width="50px" height="50px">' +
+                        '</span>');
+                });
 
                 buttonUploadProgressPhotoesConfirm.attr("disabled", "disabled");
                 inputUploadProgressPhotoes.attr("disabled", "disabled");
