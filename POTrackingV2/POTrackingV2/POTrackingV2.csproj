@@ -513,7 +513,6 @@
     <Content Include="Models\UserManagement.edmx.diagram">
       <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\datepicker.min.js" />
