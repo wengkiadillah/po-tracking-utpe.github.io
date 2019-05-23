@@ -3006,7 +3006,10 @@
                     var findID = "#activeStagePo-" + count;
                     var textStage = $(this).find(findID).first().text();
 
-                    if (textStage === "2a") {
+                    if (textStage === "cancel") {
+                        textStage = 0;
+                    }
+                    else if (textStage === "2a") {
                         textStage = 3;
                     }
                     else if (textStage >= 3) {
