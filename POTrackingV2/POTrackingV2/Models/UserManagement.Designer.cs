@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\Git\PO Tracking V2\POTrackingV2\POTrackingV2\Models\UserManagement.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Git\utpe-patria.visualstudio.com\POTrackingV2\POTrackingV2\POTrackingV2\Models\UserManagement.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

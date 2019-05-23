@@ -221,7 +221,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="UserManagemetEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Applications" EntityType="Self.Application" />
           <EntitySet Name="Roles" EntityType="Self.Role" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
@@ -245,7 +245,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="UserManagementStoreContainer" CdmEntityContainer="UserManagemetEntities">
+        <EntityContainerMapping StorageEntityContainer="UserManagementStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="Applications">
             <EntityTypeMapping TypeName="UserManagement.Application">
               <MappingFragment StoreEntitySet="Application">

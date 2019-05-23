@@ -57,7 +57,7 @@ namespace POTrackingV2.Models
         public Nullable<int> Fullweld { get; set; }
         public Nullable<int> Primer { get; set; }
         public Nullable<System.DateTime> PBActualDate { get; set; }
-        public Nullable<int> PBALateReasonID { get; set; }
+        public Nullable<int> PBLateReasonID { get; set; }
         public Nullable<System.DateTime> SettingActualDate { get; set; }
         public Nullable<int> SettingLateReasonID { get; set; }
         public Nullable<System.DateTime> FullweldActualDate { get; set; }

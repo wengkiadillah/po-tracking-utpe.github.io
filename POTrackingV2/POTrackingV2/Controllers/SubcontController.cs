@@ -810,7 +810,7 @@ namespace POTrackingV2.Controllers
                 string ATAFullweld = purchasingDocumentItem.FullweldActualDate.HasValue ? purchasingDocumentItem.FullweldActualDate.Value.ToString("dd/MM/yyyy") : "";
                 string ATAPrimer = purchasingDocumentItem.PrimerActualDate.HasValue ? purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy") : "";
 
-                int ATAPBReasonID = purchasingDocumentItem.PBALateReasonID.HasValue ? purchasingDocumentItem.PBALateReasonID.Value : 0;
+                int ATAPBReasonID = purchasingDocumentItem.PBLateReasonID.HasValue ? purchasingDocumentItem.PBLateReasonID.Value : 0;
                 int ATASettingReasonID = purchasingDocumentItem.SettingLateReasonID.HasValue ? purchasingDocumentItem.SettingLateReasonID.Value : 0;
                 int ATAFullweldReasonID = purchasingDocumentItem.FullweldLateReasonID.HasValue ? purchasingDocumentItem.FullweldLateReasonID.Value : 0;
                 int ATAPrimerReasonID = purchasingDocumentItem.PremierLateReasonID.HasValue ? purchasingDocumentItem.PremierLateReasonID.Value : 0;
@@ -856,7 +856,8 @@ namespace POTrackingV2.Controllers
                         arrayDataFileSetting = JsonConvert.SerializeObject(fileSetting),
                         arrayDataFileFullweld = JsonConvert.SerializeObject(fileFullweld),
                         arrayDataFilePrimer = JsonConvert.SerializeObject(filePrimer),
-                        arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID } }, JsonRequestBehavior.AllowGet);
+                        arrayDataTime = new { LeadTime = leadTime, PBDays = pb, SettingDays = setting, FullweldDays = fullweld, PrimerDays = primer, PB = pbDate, Setting = settingDate, Fullweld = fullweldDate, Primer = primerDate, ATAPB = ATAPB, ATASetting = ATASetting, ATAFullweld = ATAFullweld, ATAPrimer = ATAPrimer, ATAPBReasonID = ATAPBReasonID, ATASettingReasonID = ATASettingReasonID, ATAFullweldReasonID = ATAFullweldReasonID, ATAPrimerReasonID = ATAPrimerReasonID }
+                    }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
