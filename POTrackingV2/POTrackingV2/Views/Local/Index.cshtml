@@ -1925,11 +1925,22 @@
                                 isComplete = "Yes";
                             }
 
+                            var goodsReceiptQuantity = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                            var confirmedQuantity = purchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                            if (purchasingDocumentItem.ActiveStageToNumber < 5)
+                            {
+                                grDateNewDateFormat = "-";
+                                goodsReceiptQuantity = "-";
+                                confirmedQuantity = "-";
+                                isComplete = "-";
+                            }
+
                             <div class="po-item-data-content row-@rowstage5">
                                 <div class="po-item-data-content__outer">
                                     <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                     <div class="po-item-data-header__column gr-qty">
-                                        <div>@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                        <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                     </div>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     <span class="po-item-data-header__text info">
@@ -1945,11 +1956,18 @@
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
                                                     {
                                                         grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                                        var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                        if (purchasingDocumentItem.ActiveStageToNumber < 5)
+                                                        {
+                                                            pdihGoodsReceiptQuantity = "-";
+                                                            grDateNewDateFormat = "-";
+                                                        }
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
                                                             <td>&nbsp;</td>
-                                                            <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                            <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -1969,10 +1987,21 @@
                                                 isComplete = "Yes";
                                             }
 
+                                            goodsReceiptQuantity = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
+                                            confirmedQuantity = childPurchasingDocumentItem.ConfirmedQuantity.ToString();
+
+                                            if (childPurchasingDocumentItem.ActiveStageToNumber < 5)
+                                            {
+                                                grDateNewDateFormat = "-";
+                                                goodsReceiptQuantity = "-";
+                                                confirmedQuantity = "-";
+                                                isComplete = "-";
+                                            }
+
                                             <div class="po-item-data-content row-@rowstage5-@childrowstage5 mt-customize" row="@rowstage5" child="@childrowstage5">
                                                 <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
                                                 <div class="po-item-data-header__column gr-qty">
-                                                    <div>@childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity<span class="secondary-text">/@purchasingDocumentItem.ConfirmedQuantity</span></div>
+                                                    <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
                                                 </div>
                                                 <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                                 <span class="po-item-data-header__text info">
@@ -1989,10 +2018,18 @@
                                                                 {
                                                                     grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
+                                                                    var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
+
+                                                                    if (childPurchasingDocumentItem.ActiveStageToNumber < 5)
+                                                                    {
+                                                                        pdihGoodsReceiptQuantity = "-";
+                                                                        grDateNewDateFormat = "-";
+                                                                    }
+
                                                                     <tr>
                                                                         <td class="secondary-text">@grDateNewDateFormat</td>
                                                                         <td>&nbsp;</td>
-                                                                        <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                        <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
                                                                     </tr>
                                                                 }
                                                             </tbody>
@@ -2133,7 +2170,7 @@
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
-                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3)
+                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
                                         {
                                             disabledFileInvoice = "";
                                             disabledFileInvoiceUpload = "";
@@ -2188,7 +2225,7 @@
                                                 {
                                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                                     {
-                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3)
+                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
                                                         {
                                                             disabledFileInvoice = "";
                                                             disabledFileInvoiceUpload = "";

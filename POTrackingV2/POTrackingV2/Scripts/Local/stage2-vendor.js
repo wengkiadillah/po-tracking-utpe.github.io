@@ -60,7 +60,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     });
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -117,7 +117,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
 
     obj.preventDefault();
 
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
 
     var inputETAHistories = [];

@@ -43,7 +43,7 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
     inputPurchasingDocumentItemIDs.push(itemID);
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -85,7 +85,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
 
     obj.preventDefault();
 
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
 
     var inputPurchasingDocumentItemIDs = [];

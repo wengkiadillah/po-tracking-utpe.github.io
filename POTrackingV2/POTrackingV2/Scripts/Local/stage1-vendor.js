@@ -87,9 +87,11 @@ $(".st1-checkbox-item").on("change", function (obj) {
 $(".st1-accept-all-po").on("click", function (obj) {
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
+    var inputConfirmedDateForNextStage = [];
 
     var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
+    var donutProgressDoubled = 75.39822368615503 - 2 * donutProgressUnit;
 
     $(this).closest(".po-item-section.stage-1").find(".po-form-item-st1").each(function (index) {
 
@@ -104,6 +106,9 @@ $(".st1-accept-all-po").on("click", function (obj) {
 
         var checkboxItem = $(this).find(".po-item-data-content__outer").find(".st1-checkbox-item");
         var inputConfirmedDate = $(this).find(".po-item-data-content__outer").find(".st1-confirmed-date");
+
+        inputConfirmedDateForNextStage.push(inputConfirmedDate.val());
+
         var inputDeliveryMethod = $(this).find(".po-item-data-content__outer").find(".st1-delivery-method");
         var inputPartialQuantity = $(this).find(".po-item-data-content__outer").find(".st1-partial-confirm-qty");
         var inputPartialDate = $(this).find(".po-item-data-content__outer").find(".st1-partial-date");
@@ -148,10 +153,16 @@ $(".st1-accept-all-po").on("click", function (obj) {
         });
 
         //progress donutpie
-        cssRow = $(this).find(".po-item-data-content").prop("class");
+        var cssRow = $(this).find(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+        //next stage Controller
+        cssRow = $(this).find(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
         if (deliveryMethod === "partial") {
             childRow.find(".po-item-data-content").each(function (index) {
@@ -215,6 +226,10 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         buttonAcceptItem.addClass("row-updated-button");
                         buttonCancelItem.addClass("row-updated");
                         editButton.addClass("row-updated-link");
+
+                        nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
+                        nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
+
                         donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
@@ -227,6 +242,14 @@ $(".st1-accept-all-po").on("click", function (obj) {
                                 cssRow = cssRow.replace(" ", ".");
                                 cssRow = "." + cssRow;
                                 donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+                                cssRow = $(this).prop("class");
+                                cssRow = cssRow.replace(" ", ".");
+                                cssRow = "." + cssRow;
+                                nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+                                nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
+                                nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
 
                                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
@@ -256,6 +279,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             dataType: "json",
             success: function (response) {
                 alert(response.responseText);
+                alert(response.isSameAsProcs);
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
@@ -267,10 +291,29 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 $(".row-updated-link").removeClass("row-updated-link");
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
 
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("1");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                    console.log(response.isSameAsProcs[i]);
+                    if (response.isSameAsProcs[i] === true) {
+                        $(".next-row-updated").first().removeAttr("disabled");
+                        $(".next-row-updated").first().removeClass("next-row-updated");
+                        $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
+                        $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                        $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
+                        $(".row-updated-donut-text").first().text("2");
+                        $(".row-updated-donut").first().removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                    }
+                    else {
+                        $(".next-row-updated").first().removeClass("next-row-updated");
+                        $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                        $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
+                        $(".row-updated-donut-text").first().text("1");
+                        $(".row-updated-donut").first().removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                    }
+                }
             }
         });
     }
@@ -291,8 +334,9 @@ $(".st1-accept-item").on("click", function (obj) {
     var cssRow;
     var partialDateObject;
 
-    var donutProgressUnit = 75.39822368615503 / 7;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
+    var donutProgressDoubled = 75.39822368615503 - 2 * donutProgressUnit;
 
     var checkboxItem = $(this).closest(".po-item-data-content__outer").find(".st1-checkbox-item");
     var inputConfirmedDate = $(this).closest(".po-item-data-content__outer").find(".st1-confirmed-date");
@@ -347,6 +391,14 @@ $(".st1-accept-item").on("click", function (obj) {
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+    //next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+    nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
+    nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
     donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
@@ -385,11 +437,20 @@ $(".st1-accept-item").on("click", function (obj) {
                 date: partialDate
             });
 
+            //progress donutpie
             cssRow = $(this).closest(".po-item-data-content").prop("class");
             cssRow = cssRow.replace(" ", ".");
             cssRow = "." + cssRow;
             donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+            //next stage Controller 
+            cssRow = $(this).closest(".po-item-data-content").prop("class");
+            cssRow = cssRow.replace(" ", ".");
+            cssRow = "." + cssRow;
+            nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+            nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
+            nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
             donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
             donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
         });
@@ -443,10 +504,28 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut-text").text("1");
-                            $(".row-updated-donut").removeClass("row-updated-donut");
-                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                                if (response.isSameAsProcs[i] === true) {
+                                    $(".next-row-updated").first().removeAttr("disabled");
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
+                                    $(".row-updated-donut-text").first().text("2");
+                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                                }
+                                else {
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
+                                    $(".row-updated-donut-text").first().text("1");
+                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                                }
+                            }
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
@@ -482,10 +561,28 @@ $(".st1-accept-item").on("click", function (obj) {
                                 });
                             }
 
-                            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                            $(".row-updated-donut-text").text("1");
-                            $(".row-updated-donut").removeClass("row-updated-donut");
-                            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                            for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                                if (response.isSameAsProcs[i] === true) {
+                                    $(".next-row-updated").first().removeAttr("disabled");
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
+                                    $(".row-updated-donut-text").first().text("2");
+                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                                }
+                                else {
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
+                                    $(".row-updated-donut-text").first().text("1");
+                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+                                }
+                            }
                         },
                         error: function (xhr, status, error) {
                             alert(xhr.status + " : " + error);
