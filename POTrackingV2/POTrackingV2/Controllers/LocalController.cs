@@ -36,6 +36,8 @@ namespace POTrackingV2.Controllers
                                 .OrderBy(x => x.Number)
                                 .AsQueryable();
 
+    
+
             if (roleID == "procurement")
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
@@ -107,7 +109,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmQuantity(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -232,7 +234,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorEditItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -340,7 +342,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "procurement")
+            if (myUser.Roles.ToLower() != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -510,7 +512,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -608,7 +610,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "procurement")
+            if (myUser.Roles.ToLower() != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -678,7 +680,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "procurement")
+            if (myUser.Roles.ToLower() != "procurement")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -762,7 +764,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadInvoice (int inputPurchasingDocumentItemID,HttpPostedFileBase fileProformaInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -787,6 +789,7 @@ namespace POTrackingV2.Controllers
 
                     purchasingDocumentItem.ProformaInvoiceDocument = fileName;
                     purchasingDocumentItem.LastModified = now;
+                    purchasingDocumentItem.ActiveStage = "3";
                     purchasingDocumentItem.LastModifiedBy = user;
                     purchasingDocumentItem.ApproveProformaInvoiceDocument = null;
                     //purchasingDocumentItem.ActiveStage = "4";
@@ -799,7 +802,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                    notification.StatusID = 3;
+                    notification.StatusID = 1;
                     notification.Stage = "2a";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -819,7 +822,7 @@ namespace POTrackingV2.Controllers
                 }
                 else
                 {
-                    return Json(new { responseText = $"There is no File" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
                     //return Json 
                 }
 
@@ -835,133 +838,133 @@ namespace POTrackingV2.Controllers
             //return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public ActionResult ProcurementApprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
-        {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "procurement")
-            {
-                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-            }
+        //[HttpPost]
+        //public ActionResult ProcurementApprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
+        //{
+        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+        //    if (myUser.Roles != "procurement")
+        //    {
+        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+        //    }
 
-            try
-            {
-                PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
+        //    try
+        //    {
+        //        PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                if (databasePurchasingDocumentItem.ActiveStage == "2a")
-                {
-                    string user = User.Identity.Name;
+        //        if (databasePurchasingDocumentItem.ActiveStage == "2a")
+        //        {
+        //            string user = User.Identity.Name;
 
-                    databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = true;
-                    databasePurchasingDocumentItem.ActiveStage = "3";
-                    databasePurchasingDocumentItem.LastModified = now;
-                    databasePurchasingDocumentItem.LastModifiedBy = user;
+        //            databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = true;
+        //            databasePurchasingDocumentItem.ActiveStage = "3";
+        //            databasePurchasingDocumentItem.LastModified = now;
+        //            databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-                    foreach (var previousNotification in previousNotifications)
-                    {
-                        previousNotification.isActive = false;
-                    }
+        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+        //            foreach (var previousNotification in previousNotifications)
+        //            {
+        //                previousNotification.isActive = false;
+        //            }
 
-                    Notification notification = new Notification();
-                    notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 3;
-                    notification.Stage = "2a";
-                    notification.Role = "vendor";
-                    notification.isActive = true;
-                    notification.Created = now;
-                    notification.CreatedBy = User.Identity.Name;
-                    notification.Modified = now;
-                    notification.ModifiedBy = User.Identity.Name;
+        //            Notification notification = new Notification();
+        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+        //            notification.StatusID = 3;
+        //            notification.Stage = "2a";
+        //            notification.Role = "vendor";
+        //            notification.isActive = true;
+        //            notification.Created = now;
+        //            notification.CreatedBy = User.Identity.Name;
+        //            notification.Modified = now;
+        //            notification.ModifiedBy = User.Identity.Name;
 
-                    db.Notifications.Add(notification);
+        //            db.Notifications.Add(notification);
 
-                    db.SaveChanges();
+        //            db.SaveChanges();
 
-                    return Json(new { responseText = $"Proforma Invoice successfully accepted" }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = (ex.Message + ex.StackTrace);
-                return View(errorMessage);
-            }
-        }
+        //            return Json(new { responseText = $"Proforma Invoice successfully accepted" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = (ex.Message + ex.StackTrace);
+        //        return View(errorMessage);
+        //    }
+        //}
 
-        // POST: Import/ProcurementDisapprovePI
-        [HttpPost]
-        public ActionResult ProcurementDisapprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
-        {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "procurement")
-            {
-                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-            }
+        //// POST: Import/ProcurementDisapprovePI
+        //[HttpPost]
+        //public ActionResult ProcurementDisapprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
+        //{
+        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+        //    if (myUser.Roles != "procurement")
+        //    {
+        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+        //    }
 
-            try
-            {
-                PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
+        //    try
+        //    {
+        //        PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                if (databasePurchasingDocumentItem.ActiveStage == "2a")
-                {
-                    string user = User.Identity.Name;
+        //        if (databasePurchasingDocumentItem.ActiveStage == "2a")
+        //        {
+        //            string user = User.Identity.Name;
 
-                    string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), databasePurchasingDocumentItem.ProformaInvoiceDocument);
+        //            string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), databasePurchasingDocumentItem.ProformaInvoiceDocument);
 
-                    System.IO.File.Delete(pathWithfileName);
+        //            System.IO.File.Delete(pathWithfileName);
 
-                    databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
-                    databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
-                    databasePurchasingDocumentItem.ActiveStage = "2a";
-                    databasePurchasingDocumentItem.LastModified = now;
-                    databasePurchasingDocumentItem.LastModifiedBy = user;
+        //            databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
+        //            databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+        //            databasePurchasingDocumentItem.ActiveStage = "2a";
+        //            databasePurchasingDocumentItem.LastModified = now;
+        //            databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-                    foreach (var previousNotification in previousNotifications)
-                    {
-                        previousNotification.isActive = false;
-                    }
+        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+        //            foreach (var previousNotification in previousNotifications)
+        //            {
+        //                previousNotification.isActive = false;
+        //            }
 
-                    Notification notification = new Notification();
-                    notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 2;
-                    notification.Stage = "2a";
-                    notification.Role = "vendor";
-                    notification.isActive = true;
-                    notification.Created = now;
-                    notification.CreatedBy = User.Identity.Name;
-                    notification.Modified = now;
-                    notification.ModifiedBy = User.Identity.Name;
+        //            Notification notification = new Notification();
+        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+        //            notification.StatusID = 2;
+        //            notification.Stage = "2a";
+        //            notification.Role = "vendor";
+        //            notification.isActive = true;
+        //            notification.Created = now;
+        //            notification.CreatedBy = User.Identity.Name;
+        //            notification.Modified = now;
+        //            notification.ModifiedBy = User.Identity.Name;
 
-                    db.Notifications.Add(notification);
+        //            db.Notifications.Add(notification);
 
-                    db.SaveChanges();
+        //            db.SaveChanges();
 
-                    return Json(new { responseText = $"Proforma Invoice successfully declined" }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
-                }
+        //            return Json(new { responseText = $"Proforma Invoice successfully declined" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
+        //        }
 
 
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = (ex.Message + ex.StackTrace);
-                return View(errorMessage);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = (ex.Message + ex.StackTrace);
+        //        return View(errorMessage);
+        //    }
+        //}
 
         [HttpPost]
         public ActionResult VendorSkipPI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -976,6 +979,8 @@ namespace POTrackingV2.Controllers
 
                     //databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
                     databasePurchasingDocumentItem.ActiveStage = "3";
+                    databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+                    databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = null;
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
 
@@ -987,7 +992,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 2;
+                    notification.StatusID = 1;
                     notification.Stage = "2a";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -1020,7 +1025,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1054,7 +1059,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 1;
                         notification.Stage = "3";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1070,6 +1075,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
+   
                 return Json(new { responseText = $"{count} data affected" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -1083,7 +1089,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1092,10 +1098,11 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (databasePurchasingDocumentItem.ActiveStage == "3")
+                if (databasePurchasingDocumentItem.ActiveStage == "3" || databasePurchasingDocumentItem.ActiveStage == "4")
                 {
                     string user = User.Identity.Name;
 
+                    databasePurchasingDocumentItem.ConfirmReceivedPaymentDate = null;
                     databasePurchasingDocumentItem.ActiveStage = "4";
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -1108,7 +1115,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 2;
+                    notification.StatusID = 1;
                     notification.Stage = "3";
                     notification.Role = "procurement";
                     notification.isActive = true;
@@ -1142,7 +1149,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUpdateETA([Bind(Include = "PurchasingDocumentItemID,ETADate,DelayReasonID")]ETAHistory inputETAHistory)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1186,7 +1193,7 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                        notification.StatusID = 2;
+                        notification.StatusID = 1;
                         notification.Stage = "4";
                         notification.Role = "procurement";
                         notification.isActive = true;
@@ -1318,7 +1325,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadInvoice_2(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1399,7 +1406,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorRemoveUploadInvoice(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }

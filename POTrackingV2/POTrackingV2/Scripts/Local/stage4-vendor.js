@@ -25,6 +25,8 @@ $(".st4-update-eta-date-delay").on('input focus', function (e) {
 
 //Vendor click one Update Eta on time
 $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
+    var stage4VendorUpdateETA = $("#stage4VendorUpdateETA").val();
+
     var buttonEtaDateOnTimeConfirm = $(this);
     var inputUpdateEtaDateOntime = $(this).closest(".form-inline").find(".st4-update-eta-date-on-time");
     var inputUpdateEtaDateDelay = $(this).closest(".form-inline").find(".st4-update-eta-date-delay");
@@ -64,7 +66,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
         if (etaOnTime >= minDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorUpdateETA",
+                url: stage4VendorUpdateETA,
                 data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -101,6 +103,8 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
 
 //Vendor click one Update Eta Delay
 $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
+    var stage4VendorUpdateETA = $("#stage4VendorUpdateETA").val();
+
     var buttonEtaDateDelayConfirm = $(this);
     var inputUpdateEtaDateDelay = $(this).closest(".form-inline").find(".st4-update-eta-date-delay");
     var inputDelayReason = $(this).closest(".form-inline").find(".st4-delay-reason");
@@ -143,7 +147,7 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
             if (delayReasonID !== '' && delayReasonID !== '0') {
                 $.ajax({
                     type: "POST",
-                    url: "VendorUpdateETA",
+                    url: stage4VendorUpdateETA,
                     data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
                     contentType: "application/json; charset=utf-8",
                     success: function (response) {
@@ -186,6 +190,8 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
 
 //Vendor Upload Progress Photoes
 $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
+    var stage4VendorUploadProgressPhotoes = $("#stage4VendorUploadProgressPhotoes").val();
+
     var buttonUploadProgressPhotoesConfirm = $(this);
     var inputUploadProgressPhotoes = $(this).closest(".form-inline").find(".st4-upload-progress-photoes");
     var inputUploadProgressPhotoesDOM = inputUploadProgressPhotoes.get(0);
@@ -206,7 +212,7 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
     if (inputUploadProgressPhotoesDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadProgressPhotoes",
+            url: stage4VendorUploadProgressPhotoes,
             data: formData,
             processData: false,
             contentType: false,
