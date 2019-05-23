@@ -1218,7 +1218,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProgressPhotoes(int inputPurchasingDocumentItemID, HttpPostedFileBase[] fileProgressPhotoes)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles != "vendor")
+            if (myUser.Roles.ToLower() != "vendor")
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1261,7 +1261,7 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 3;
+                    notification.StatusID = 1;
                     notification.Stage = "4";
                     notification.Role = "procurement";
                     notification.isActive = true;

@@ -1392,7 +1392,14 @@
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text col-md-8 mr-5 pl-0">ETA Confirmation</span>
-                            <span class="po-item-data-header__text col-md-3 pl-0 mr-0">Upload Photo</span>
+                            @if (roleID == "vendor")
+                            {
+                                <span class="po-item-data-header__text col-md-3 pl-0 mr-0">Upload Photo</span>
+                            }
+                            else
+                            {
+                                <span class="po-item-data-header__text col-md-2 pl-0 mr-10"></span>
+                            }
                             <span class="po-item-data-header__text">info</span>
                         </div>
                         @{
