@@ -25,6 +25,7 @@ $(".st2-proc-checkbox-item").on("change", function (obj) {
 
 // Procurement one Accept
 $(".st2-proc-accept-first-eta").on("click", function (obj) {
+    var stage2ProcurementAcceptFirstEta = $("#stage2ProcurementAcceptFirstEta").val();
 
     obj.preventDefault();
 
@@ -53,7 +54,7 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         $.ajax({
             type: "POST",
-            url: "ProcurementAcceptFirstEta",
+            url: stage2ProcurementAcceptFirstEta,
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -82,6 +83,8 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
 
 //Procurement accept All ETA DATE
 $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
+
+    var stage2ProcurementAcceptFirstEta = $("#stage2ProcurementAcceptFirstEta").val();
 
     obj.preventDefault();
 
@@ -130,7 +133,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
     if (inputPurchasingDocumentItemIDs.length > 0) {
         $.ajax({
             type: "POST",
-            url: "ProcurementAcceptFirstEta",
+            url: stage2ProcurementAcceptFirstEta,
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -160,6 +163,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
 // Procurement one Decline
 $(".st2-proc-decline-first-eta").on("click", function (obj) {
 
+    var stage2ProcurementDeclineFirstEta = $("#stage2ProcurementDeclineFirstEta").val();
     obj.preventDefault();
 
     var inputPurchasingDocumentItemIDs = [];
@@ -177,7 +181,7 @@ $(".st2-proc-decline-first-eta").on("click", function (obj) {
     if (etaDate !== '') {
         $.ajax({
             type: "POST",
-            url: "ProcurementDeclineFirstEta",
+            url: stage2ProcurementDeclineFirstEta,
             data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
