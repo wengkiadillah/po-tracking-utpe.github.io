@@ -2892,163 +2892,145 @@
         <script src="~/Scripts/Import/stage7-procurement.js"></script>
         <script src="~/Scripts/Import/stage10-vendor.js"></script>
         <script type="text/javascript">
-    var scrollLength = [];
+            var scrollLength = [];
 
-    $(document).ready(function () {
+            $(document).ready(function () {
+                    $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+                    $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+                    $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
+                    $("#searchFilterBy").on("change", function () {
+                            $("#data-list").empty();
+                    });
 
-                $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-                $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
-                $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-
-                $("#searchFilterBy").on("change", function () {
-                        $("#data-list").empty();
-                });
-
-                $("#searchData").on("keyup focus", function () {
-                    $.ajax({
-                        type: "GET",
-                        url: "@Url.Action("GetDataForSearch", "Import")",
-                        data: { 'searchFilterBy': $("#searchFilterBy").val(), 'value': $("#searchData").val() },
-                        beforeSend: function () {
-                            $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                        },
-                        success: function (response) {
-                            if (response.responseCode == "200") {
-                                var jsonObjSuggestion = $.parseJSON(response.data);
-                                var element = "";
-                                //console.log(response.data);
-                                for (var k in jsonObjSuggestion) {
-                                    element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                    $("#searchData").on("keyup focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': $("#searchFilterBy").val(), 'value': $("#searchData").val() },
+                            beforeSend: function () {
+                                $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    //console.log(response.data);
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list").html(element);
+                                    $("#searchData").css("background", "");
+                                } else {
+                                    alert(response.responseCode + response.responseText);
                                 }
-                                $("#data-list").html(element);
-                                $("#searchData").css("background", "");
-                            } else {
-                                alert(response.responseCode + response.responseText);
+                            },
+                            error: function (xhr, status, error) {
+                                alert(xhr.status + " : " + error);
                             }
-                        },
-                        error: function (xhr, status, error) {
-                            alert(xhr.status + " : " + error);
+                        });
+                    });
+
+                    $("#searchFilterBy option").each(function () {
+                        if ($(this).attr("value") == $(this).parent().attr("value")) {
+                            $(this).attr("selected", "selected");
+                            $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
                         }
                     });
-                });
 
-                $("#searchFilterBy option").each(function () {
-                    if ($(this).attr("value") == $(this).parent().attr("value")) {
-                        $(this).attr("selected", "selected");
-                        $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
-                    }
-                });
+                    //stage scrollbar fixed
+                    var chooseStagePosition = $('.filter-row').offset();
 
-                //stage scrollbar fixed
-                var chooseStagePosition = $('.filter-row').offset();
-
-                $(".main-container").scroll(function () {
-                    if ($(".main-container").scrollTop() > chooseStagePosition.top) {
-                        //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
-                        $('.filter-row').addClass("freeze");
-                    } else {
-                        //$('.stage-pagination-container').css('position', 'static');
-                        $('.filter-row').removeClass("freeze");
-                    }
-                });
-
-                var tempArray = [];
-                var tempMaxHeight = 0;
-                var tempMaxWidth = 0;
-
-                $(".po-item-container").each(function (index) {
-                    var rowExist = 1;
-
-                    while (rowExist > 0) {
-                        if ($(this).find(".row-" + rowExist).length > 0) {
-                            tempArray = [];
-                            tempMaxHeight = 0;
-                            $(this).find(".row-" + rowExist).each(function () {
-                                tempArray.push($(this).height());
-                            });
-                            tempMaxHeight = Math.max(...tempArray);
-                            $(this).find(".row-" + rowExist).height(tempMaxHeight);
-                            rowExist++;
+                    $(".main-container").scroll(function () {
+                        if ($(".main-container").scrollTop() > chooseStagePosition.top) {
+                            //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
+                            $('.filter-row').addClass("freeze");
                         } else {
-                            rowExist = -1;
+                            //$('.stage-pagination-container').css('position', 'static');
+                            $('.filter-row').removeClass("freeze");
                         }
-                    }
-                });
+                    });
 
-                tempArray = [];
-                $(".po-item-section.information").each(function () {
-                    tempArray.push($(this).outerWidth(true));
-                });
-                tempMaxWidth = Math.max(...tempArray);
-                $(".po-item-section.information").width(tempMaxWidth);
-                scrollLength.push(tempMaxWidth + 1.5);
+                    var tempArray = [];
+                    var tempMaxHeight = 0;
+                    var tempMaxWidth = 0;
 
-                for (var i = 1; i <= 13; i++) {
+                    $(".po-item-container").each(function (index) {
+                        var rowExist = 1;
+
+                        while (rowExist > 0) {
+                            if ($(this).find(".row-" + rowExist).length > 0) {
+                                tempArray = [];
+                                tempMaxHeight = 0;
+                                $(this).find(".row-" + rowExist).each(function () {
+                                    tempArray.push($(this).height());
+                                });
+                                tempMaxHeight = Math.max(...tempArray);
+                                $(this).find(".row-" + rowExist).height(tempMaxHeight);
+                                rowExist++;
+                            } else {
+                                rowExist = -1;
+                            }
+                        }
+                    });
+
                     tempArray = [];
-                    $(".po-item-section.stage-" + i).each(function () {
+                    $(".po-item-section.information").each(function () {
                         tempArray.push($(this).outerWidth(true));
                     });
                     tempMaxWidth = Math.max(...tempArray);
-                    $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                    $(".po-item-section.information").width(tempMaxWidth);
                     scrollLength.push(tempMaxWidth + 1.5);
-                }
 
-                var totalDistance = 0;
-                for (var i = 0; i < scrollLength.length; i++) {
-                    scrollLength[i] += totalDistance;
-                    totalDistance = scrollLength[i];
-                }
-
-                for (var i = 1; i < 11; i++) {
-                    var lastStatus = 0;
-                    $('.activeStagePo-' + i).each(function (index) {
-                        if (this.id > lastStatus) {
-                            lastStatus = this.id;
-                        }
-                    });
-                    //console.log(lastStatus);
-                    if (lastStatus > 0) {
-                        $(".po-sign-row-" + i).animate({ scrollLeft: scrollLength[lastStatus - 1] }, 500);
+                    for (var i = 1; i <= 13; i++) {
+                        tempArray = [];
+                        $(".po-item-section.stage-" + i).each(function () {
+                            tempArray.push($(this).outerWidth(true));
+                        });
+                        tempMaxWidth = Math.max(...tempArray);
+                        $(".po-item-section.stage-" + i).width(tempMaxWidth);
+                        scrollLength.push(tempMaxWidth + 1.5);
                     }
-                }
-        //console.log($('#activeStagePo-1'));
 
+                    var totalDistance = 0;
+                    for (var i = 0; i < scrollLength.length; i++) {
+                        scrollLength[i] += totalDistance;
+                        totalDistance = scrollLength[i];
+                    }
 
+                var count = 1;
+                // Every PO to Active Stage
+            $(".po-item-container").each(function (index) {
+                var activeStages = [];
+                $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
+                    var findID = "#activeStagePo-" + count;
+                    var textStage = $(this).find(findID).first().text();
 
-        var count = 1;
-        // Every PO to Active Stage
-    $(".po-item-container").each(function (index) {
-        var activeStages = [];
-        $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
-            var findID = "#activeStagePo-" + count;
-            var textStage = $(this).find(findID).first().text();
+                    if (textStage === "2a") {
+                        textStage = 3;
+                    }
+                    else if (textStage >= 3) {
+                        textStage = parseInt(textStage) + 1;
+                    }
+                    else{
+                        textStage = parseInt(textStage);
+                    }
 
-            if (textStage === "2a") {
-                textStage = 3;
-            }
-            else if (textStage >= 3) {
-                textStage = parseInt(textStage) + 1;
-            }
-            else {
-                textStage = parseInt(textStage);
-            }
+                    activeStages.push(textStage);
+                });
 
-            activeStages.push(textStage);
-        });
-
-        activeStages.sort();
-        findID = ".po-sign-row-" + count;
-        var biggestActiveStages = activeStages[activeStages.length - 1];
-        $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
-        count++;
-    });
+                activeStages.sort();
+                findID = ".po-sign-row-" + count;
+                var biggestActiveStages = activeStages[activeStages.length - 1];
+                $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
+                count++;
+                });
             });
 
 
             function paginationShow(destination) {
                 $(".po-item-scrollable").animate({ scrollLeft: scrollLength[destination - 1] }, 500);
-    }
+            }
 
             function poItemCollapse(row) {
                 row.closest("li").toggleClass("collapse-row");
