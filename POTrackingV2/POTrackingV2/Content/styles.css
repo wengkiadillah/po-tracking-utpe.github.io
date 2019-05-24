@@ -1153,3 +1153,17 @@ a[data-toggle="collapse"] {
     overflow: auto !important;
     border: 0 !important;
 }
+
+.filter-row.tier-2.mt-0.freeze {
+    top: 70px;
+    z-index: 999;
+    background-color: #fafafa;
+    position: fixed;
+    margin: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #fafafa;
+    width: 82%;
+    left: 335px;
+    /* justify-content: flex-end; */
+}

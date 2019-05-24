@@ -16,7 +16,7 @@
 }
 @*<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>*@
 <h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
-<div class="filter-row">
+<div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         @*<div class="filter-form-container form-inline">*@
@@ -62,6 +62,23 @@
             @*<li class="pagination-list__item" onclick="paginationShow(8)">8</li>*@
         </ul>
     </div>
+</div>
+<div class="filter-row tier-2 mt-0">
+    <form action="/potracking/Local" class="filter-form-container form-inline" method="get">
+        <div class="form-group mr-4">
+            <input name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search">
+            <i class="fas fa-search form-type-icon hint"></i>
+        </div>
+        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+
+
+        <input name="roleID" type="hidden" value="vendor">
+
+    </form>
 </div>
 @foreach (var pO in Model)
 {
