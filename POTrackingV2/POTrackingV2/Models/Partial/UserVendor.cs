@@ -12,21 +12,21 @@ namespace POTrackingV2.Models
     public partial class UserVendor
     {
         public Nullable<int> RolesTypeID { get; set; }
-
-        public string RoleName
-        {
-            get
-            {
-                return LoginConstants.RoleVendor.ToLower();
-            }
-        }
+        public string RoleName { get; set; }
+        //public string RoleName
+        //{
+        //    get
+        //    {
+        //        return LoginConstants.RoleVendor.ToLower();
+        //    }
+        //}
         public string RoleTypeName
         {
             get
             {
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    var selectedUserRole= db.UserRoleTypes.FirstOrDefault(x => x.Username == this.Username);
+                    var selectedUserRole = db.UserRoleTypes.FirstOrDefault(x => x.Username == this.Username);
                     return db.RolesTypes.SingleOrDefault(x => x.ID == selectedUserRole.RolesTypeID).Name;
                 }
             }
@@ -52,13 +52,23 @@ namespace POTrackingV2.Models
         }
     }
 
+    public partial class UserVendorProxy
+    {
+        public Guid ID { get; set; }
+        public string Username { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string RoleName { get; set; }
+    }
+
+
     public class UserVendorAnnotaiton
     {
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Username is required")]
         public string Username { get; set; }
-        
+
         [Required(ErrorMessage = "Vendor is required")]
         public string VendorCode { get; set; }
         [EmailAddress(ErrorMessage = "Invalid Email Address.")]

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Security;
 using POTrackingV2.Models;
 using POTrackingV2.Controllers;
+using POTrackingV2.Constants;
 
 namespace POTrackingV2.CustomAuthentication
 {
@@ -52,22 +53,43 @@ namespace POTrackingV2.CustomAuthentication
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            //using (UserManagementEntities db = new UserManagementEntities())
-            using (POTrackingEntities db = new POTrackingEntities())
+            using (UserManagementEntities dbMaster = new UserManagementEntities())
             {
-                var user = (from us in db.UserVendors//db.UserRoles
-                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) //&& us.Role.ApplicationID==3
-                            select us).FirstOrDefault();
-
-                if (user == null)
+                using (POTrackingEntities db = new POTrackingEntities())
                 {
-                    return null;
-                }
-                var selectedUser = new CustomMembershipUser(user);
+                    var user = (from us in db.UserVendors//db.UserRoles
+                                where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) //&& us.Role.ApplicationID==3
+                                select us).FirstOrDefault();
 
-                return selectedUser;
+                    if (user == null)
+                    {
+
+                        var userInternal = (from us in dbMaster.UserRoles
+                                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.ApplicationID == 3
+                                            select us).FirstOrDefault();
+                        if (userInternal == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            var userInternalCustom = new UserVendorProxy() {ID= new Guid(), Email = userInternal.User.Email, Username= userInternal.Username, Name= userInternal.User.Name, RoleName= userInternal.Role.Name};
+                            var selectedUser = new CustomMembershipUser(userInternalCustom);
+
+                            return selectedUser;
+                        }
+                    }
+                    else
+                    {
+                        var userVendorCustom = new UserVendorProxy() { ID = user.ID, Email = user.Email, Username = user.Username, Name = user.Name, RoleName = LoginConstants.RoleVendor };
+                        var selectedUser = new CustomMembershipUser(userVendorCustom);
+
+                        return selectedUser;
+                    }
+                   
+                }
             }
-           
+
         }
 
         public override string GetUserNameByEmail(string email)
