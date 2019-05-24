@@ -12,7 +12,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Collections;
 
-namespace POTracking.Controllers
+namespace POTrackingV2.Controllers
 {
     public class MasterVendorController : Controller
     {

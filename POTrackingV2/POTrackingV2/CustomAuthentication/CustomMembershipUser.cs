@@ -30,14 +30,15 @@ namespace POTrackingV2.CustomAuthentication
         /// 
         /// </summary>
         /// <param name="user"></param>
-        public CustomMembershipUser(UserRole user) : base("CustomMembership", user.Username, user.ID, user.User.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
+        public CustomMembershipUser(UserVendor user) : base("CustomMembership", user.Username, user.ID, user.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
         {
+            //UserName = user.Username;
+            //Name = user.User.Name;
+            //Roles = user.Role.Name.ToLower();
             UserName = user.Username;
-            Name = user.User.Name;
-            Roles = user.Role.Name.ToLower();
-            //Roles = user.RoleID;
-            //RolesType = user.RolesTypeID != null ? (int)user.RolesTypeID : 0;
-            //VendorCode = user.VendorCode;
+            Name = user.Name;
+            Roles = user.RoleName.ToLower();
+
         }
 
         #endregion

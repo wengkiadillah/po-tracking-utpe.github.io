@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using POTrackingV2.Constants;
 using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
@@ -35,7 +37,31 @@ namespace POTrackingV2.Controllers
             //    userData.Add(tmp);
             //}
 
-            return View(userData);
+            var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
+            if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+            {
+                if (roleType.RolesType.Name.ToLower() == "import")
+                {
+                    return RedirectToAction("Index", "Import");
+                }
+                else if (roleType.RolesType.Name.ToLower() == "local")
+                {
+                    return RedirectToAction("Index", "Local");
+                }
+                else if (roleType.RolesType.Name.ToLower() == "subcont")
+                {
+                    return RedirectToAction("Index", "Subcont");
+                }
+                else
+                {
+                    return View(userData);
+                }
+            }
+            else
+            {
+                return View(userData);
+            }
         }
 
         public ActionResult About()

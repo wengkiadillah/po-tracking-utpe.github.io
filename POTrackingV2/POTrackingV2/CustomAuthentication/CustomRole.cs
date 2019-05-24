@@ -29,13 +29,14 @@ namespace POTrackingV2.CustomAuthentication
         {
             using (UserManagementEntities dbUser = new UserManagementEntities())
             {
-                var applictionList = from user in dbUser.Users
-                                     join UR in dbUser.UserRoles on user.Username equals UR.Username
-                                     join role in dbUser.Roles on UR.RoleID equals role.ID
-                                     join app in dbUser.Applications on role.ApplicationID equals app.ID
-                                     where user.Username.Equals(username) && app.Name.Equals(applicationName)
-                                     select app.Name;
-                if (applictionList != null && applictionList.Count() > 0)
+                var applicationList = from user in dbUser.Users
+                                      join UR in dbUser.UserRoles on user.Username equals UR.Username
+                                      join role in dbUser.Roles on UR.RoleID equals role.ID
+                                      join app in dbUser.Applications on role.ApplicationID equals app.ID
+                                      where user.Username.Equals(username) && app.Name.Equals(applicationName)
+                                      select app.Name;
+
+                if (applicationList != null && applicationList.Count() > 0)
                 {
                     return true;
                 }

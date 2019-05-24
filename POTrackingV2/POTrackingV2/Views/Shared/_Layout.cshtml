@@ -79,10 +79,8 @@
                         <i class="fas fa-cogs"></i> <span>Subcontract</span>
                     </a>
                 </li>
-                @{
-                    var userData = ((CustomPrincipal)HttpContext.Current.User);
-                }
-                @if (userData.IsInRole(LoginConstants.RoleAdministrator))
+               
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     <li class="main-menu-item">
                         <a href="#" class="main-menu__link">

@@ -51,7 +51,8 @@ namespace POTrackingV2.CustomAuthentication
                         //controller = "Error",
                         //action = "Unauthorized",
                         controller = "Account",
-                        action = "LoginExternal",
+                        //action = "LoginExternal",
+                        action = "Login",
                         ReturnUrl = filterContext.HttpContext.Request.Url
                     }
                     ));

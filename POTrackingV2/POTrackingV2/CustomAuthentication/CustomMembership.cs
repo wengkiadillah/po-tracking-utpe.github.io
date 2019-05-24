@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using POTrackingV2.Models;
+using POTrackingV2.Controllers;
 
 namespace POTrackingV2.CustomAuthentication
 {
@@ -18,10 +19,28 @@ namespace POTrackingV2.CustomAuthentication
                 return false;
             }
 
-            using (UserManagementEntities db = new UserManagementEntities())
+            //using (UserManagementEntities db = new UserManagementEntities())
+            //{
+            //    var user = db.UserRoles.Where(a => a.Username.Equals(username) && a.Role.ApplicationID==3).SingleOrDefault();
+            //    return (user != null) ? true : false;
+            //}
+
+            using (POTrackingEntities db = new POTrackingEntities())
             {
-                var user = db.UserRoles.Where(a => a.Username.Equals(username) && a.Role.ApplicationID==3).SingleOrDefault();
-                return (user != null) ? true : false;
+                var getUser = db.UserVendors.Where(x => x.Username == username).FirstOrDefault();
+                if (getUser != null)
+                {
+                    var salt = getUser.Salt;
+                    //Password Hasing Process Call Helper Class Method    
+                    var encodingPasswordString = Helper.EncodePassword(password, salt);
+
+                    var user = db.UserVendors.Where(a => a.Username.Equals(username) && a.Hash.Equals(encodingPasswordString)).SingleOrDefault();
+                    return (user != null) ? true : false;
+                }
+                else
+                {
+                    return false;
+                }
             }
 
         }
@@ -33,10 +52,11 @@ namespace POTrackingV2.CustomAuthentication
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            using (UserManagementEntities db = new UserManagementEntities())
+            //using (UserManagementEntities db = new UserManagementEntities())
+            using (POTrackingEntities db = new POTrackingEntities())
             {
-                var user = (from us in db.UserRoles
-                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.ApplicationID==3
+                var user = (from us in db.UserVendors//db.UserRoles
+                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) //&& us.Role.ApplicationID==3
                             select us).FirstOrDefault();
 
                 if (user == null)

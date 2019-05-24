@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using POTrackingV2.Constants;
 using POTrackingV2.Models;
 
 namespace POTrackingV2.Models
@@ -16,11 +17,7 @@ namespace POTrackingV2.Models
         {
             get
             {
-                //using (R db = new POTrackingEntities())
-                //{
-                //    return db.Roles.SingleOrDefault(x => x.ID == this.RoleID).Name;
-                //}
-                return "role name";
+                return LoginConstants.RoleVendor.ToLower();
             }
         }
         public string RoleTypeName

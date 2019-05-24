@@ -32,8 +32,7 @@ namespace POTrackingV2
 
                 var serializeModel = JsonConvert.DeserializeObject<CustomSerializeModel>(authTicket.UserData);
 
-
-                if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
+                if (serializeModel.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
                     CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
@@ -43,6 +42,19 @@ namespace POTrackingV2
 
                     HttpContext.Current.User = principal;
                 }
+                else
+                {
+                    if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
+                    {
+                        CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
+
+                        principal.UserName = serializeModel.UserName;
+                        principal.Name = serializeModel.Name;
+                        principal.Roles = serializeModel.Roles;
+
+                        HttpContext.Current.User = principal;
+                    }
+                }              
             }
             else
             {

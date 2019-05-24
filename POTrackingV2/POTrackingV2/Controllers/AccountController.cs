@@ -39,17 +39,17 @@ namespace POTrackingV2.Controllers
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
 
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
-                {
+                //using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                //{
                     try
                     {
-                        if (entry.Guid == null)
-                        {
-                            ModelState.AddModelError("", "Username or Password invalid");
-                            return View();
-                        }
-                        else
-                        {
+                        //if (entry.Guid == null)
+                        //{
+                        //    ModelState.AddModelError("", "Username or Password invalid");
+                        //    return View();
+                        //}
+                        //else
+                        //{
                             if (Membership.ValidateUser(loginView.UserName, loginView.Password))
                             {
                                 var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
@@ -78,10 +78,10 @@ namespace POTrackingV2.Controllers
                             }
                             else
                             {
-                                ModelState.AddModelError("", "Sorry your account not register yet in our system, please contact the administrator to register your account.");
+                                ModelState.AddModelError("", "Username or Password invalid.");
                                 return View();
                             }
-                        }
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -97,22 +97,13 @@ namespace POTrackingV2.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
-                }
-
-                if(!string.IsNullOrEmpty(ReturnUrl))
-                {
-                    return Redirect(ReturnUrl);
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                //}
             }
             return View(loginView);
         }
 
 
-        public ActionResult LoginExternal()
+        public ActionResult LoginInternal()
         {
             string loginURL = WebConfigurationManager.AppSettings["LoginURL"];
             return Redirect(loginURL);
