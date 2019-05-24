@@ -31,6 +31,7 @@ $(".st3-checkbox-item").on("change", function (obj) {
 
 //Vendor click Confirm button Item Quantity
 $(".st3-confirm-payment-submit").on("click", function (obj) {
+    var stage3VendorConfirmPaymentReceived = $("#stage3VendorConfirmPaymentReceived").val();
     obj.preventDefault();
 
     var inputPurchasingDocumentItems = [];
@@ -50,18 +51,24 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
     });
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
     if (confirmedReceivedPaymentDate !== '' && !isNaN(confirmedReceivedPaymentDate.getTime())) {
         //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
             $.ajax({
                 type: "POST",
-                url: "VendorConfirmPaymentReceived",
+                url: stage3VendorConfirmPaymentReceived,
                 data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -92,13 +99,15 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
             //}
     }
     else {
-        alert("Tanggal tidak boleh kosong");
+        alert("Date can not be empty");
         inputConfirmReceivedPaymentDate.focus();
     }
 });
 
 //Vendor Confirm All PO -- Save All buat item yang aktif (gak disabled)
 $(".st3-confirm-payment-all").on("click", function (obj) {
+    var stage3VendorConfirmPaymentReceived = $("#stage3VendorConfirmPaymentReceived").val();
+
     var inputPurchasingDocumentItems = [];
     var donutProgress;
 
@@ -115,7 +124,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
         var confirmedReceivedPaymentDate = reverseDayMonth(inputConfirmReceivedPaymentDate.val());
 
         // Donut Progress
-        var donutProgressUnit = 75.39822368615503 / 12;
+        var donutProgressUnit = 75.39822368615503 / 8;
         donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
         var cssRow = $(this).closest(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");
@@ -161,7 +170,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "VendorConfirmPaymentReceived",
+        url: stage3VendorConfirmPaymentReceived,
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -189,6 +198,8 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
 // Vendor skip Stage 3
 $(".st3-confirm-payment-skip").on("click", function (obj) {
+    var stage3VendorSkipConfirmPayment = $("#stage3VendorSkipConfirmPayment").val();
+
     obj.preventDefault();
 
     var buttonConfirmPaymentSkip = $(this);
@@ -200,7 +211,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     var inputPurchasingDocumentItemID = $(this).closest(".form-inline").find("input.st3-item-id").val();
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -216,7 +227,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: "VendorSkipConfirmPayment",
+            url: stage3VendorSkipConfirmPayment,
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

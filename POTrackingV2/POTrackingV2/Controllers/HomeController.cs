@@ -13,7 +13,7 @@ namespace POTrackingV2.Controllers
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
-        UserManagemetEntities DBUser = new UserManagemetEntities();
+        UserManagementEntities DBUser = new UserManagementEntities();
 
         public ActionResult Index()
         {

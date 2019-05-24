@@ -27,6 +27,8 @@ $(".st7-checkbox-item").on("change", function (obj) {
 $(".st7-on-airport-confirm").on("click", function (obj) {
     obj.preventDefault();
 
+    var stage7ProcurementConfirmOnAirport = $("#stage7ProcurementConfirmOnAirport").val();
+
     var inputShipments = [];
 
     var checkboxItem = $(this).closest(".po-form-item-st7").find(".st7-checkbox-item");
@@ -56,7 +58,7 @@ $(".st7-on-airport-confirm").on("click", function (obj) {
         if (inputATAOnAirport.val() !== '' && !isNaN(ataOnAirport.getTime())) {
             $.ajax({
                 type: "POST",
-                url: "ProcurementConfirmOnAirport",
+                url: stage7ProcurementConfirmOnAirport,
                 data: JSON.stringify({ 'inputShipments': inputShipments }),
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -90,6 +92,8 @@ $(".st7-on-airport-confirm").on("click", function (obj) {
 // Procurement Confirm All on Airport
 $(".st7-confirm-all-on-airport").on("click", function (obj) {
     obj.preventDefault();
+
+    var stage7ProcurementConfirmOnAirport = $("#stage7ProcurementConfirmOnAirport").val();
 
     var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 9 * donutProgressUnit;
@@ -145,7 +149,7 @@ $(".st7-confirm-all-on-airport").on("click", function (obj) {
     if (inputShipments.length > 0) {
         $.ajax({
             type: "POST",
-            url: "ProcurementConfirmOnAirport",
+            url: stage7ProcurementConfirmOnAirport,
             data: JSON.stringify({ 'inputShipments': inputShipments }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {

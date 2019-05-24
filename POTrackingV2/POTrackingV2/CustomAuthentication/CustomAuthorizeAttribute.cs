@@ -29,32 +29,6 @@ namespace POTrackingV2.CustomAuthentication
         /// <returns>Return 'True' jika sebuah Username termasuk ke dalam sebuah Role, 'False' jika tidak</returns>
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            //bool val = false;
-
-            //if (HttpContext.Current.User.Identity.Name != null)
-            //{
-            //    using (PowerAppsCMSEntities dbContext = new PowerAppsCMSEntities())
-            //    {
-            //        string userNoDomain = HttpContext.Current.User.Identity.Name.Split('\\')[1];
-            //        var user = dbContext.Users.Where(a => a.Username.Equals(userNoDomain)).FirstOrDefault();//.Role.Name;
-
-            //        string[] roles = Roles.Split(',');
-
-            //        if(roles.Count() > 1)
-            //        {
-            //            foreach(var item in roles)
-            //            {
-            //                if (user != null && item.Trim().Equals(user.Role.Name) && !val)
-            //                    val = true;
-            //            }
-            //        }
-
-            //        //if (user != null && Roles.Contains(user.Role.Name))
-            //        //    val = true;
-            //    }
-            //}
-
-            //return val;
 
             return (CurrentUser == null) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
         }

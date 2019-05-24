@@ -1,0 +1,111 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<POTrackingV2.Models.UserRoleTypeProxy>
+
+@{
+    ViewBag.Title = "List User Role Type";
+}
+
+@section styles {
+    <link href="~/Content/um-style.css" rel="stylesheet" />
+}
+
+<div class="um">
+    <div class="filter-row">
+        @using (Html.BeginForm("Index", "RoleType", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+        {
+            <div class="form-group mr-4">
+                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchString" />
+                <i class="fas fa-search form-type-icon hint"></i>
+            </div>
+
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "Index", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+        }
+        <div class="form-group mt-4">
+            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-info" })
+
+        </div>
+    </div>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>
+               Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Username)
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Role Type
+            </th>
+
+            <th></th>
+        </tr>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="12">No rows match search criteria</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr style="background-color:white;">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoleName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RoleTypeName)
+                    </td>                  
+                    <td>
+                        <input type="text" value="@item.RoleTypeID" class="hide" name="roleTypeID" />
+                        <span>
+                            <a class="col-xs-2" href='@Url.Action("Edit", "RoleType", new { ID = item.RoleTypeID })' alt="Details" style="color:green;">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a class="col-xs-2 deleteUserRoleType" alt="Details" style="color:red;">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </a>
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+    $(document).ready(function () {
+        var roleTypeID = 0;
+
+        $(".deleteUserRoleType").click(function () {
+            roleTypeID = $(this).parent().prev().prev().val();
+            if (confirm("Are you sure want to delete this user role type?")) {
+                window.location.href = "@Url.Action("Delete", "RoleType")?id=" + roleTypeID;
+            };
+            return false;
+        });
+    })
+    </script>
+}   

@@ -1118,18 +1118,18 @@
                             </div>*@
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label>Estimasi Tanggal Selesai</label>
+                                <label>ETC</label>
                                 <input type="text" id="ETAPB" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
                                 <input type="hidden" id="PBDays">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Aktual Tanggal Selesai</label>
+                                <label>Finish Date</label>
                                 <input type="text" id="ATAPB" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Alasan</label>
+                                <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
                                 <select class="form-control" id="ATAPBReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
@@ -1156,18 +1156,18 @@
                     <div class="tab-pane fade" id="setting" role="tabpanel" aria-labelledby="setting-tab">
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label>Estimasi Tanggal Selesai</label>
+                                <label>ETC</label>
                                 <input type="text" id="ETASetting" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
                                 <input type="hidden" id="SettingDays">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Aktual Tanggal Selesai</label>
+                                <label>Finish Date</label>
                                 <input type="text" id="ATASetting" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Alasan</label>
+                                <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
                                 <select class="form-control" id="ATASettingReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
@@ -1194,18 +1194,18 @@
                     <div class="tab-pane fade" id="fullweld" role="tabpanel" aria-labelledby="fullweld-tab">
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label>Estimasi Tanggal Selesai</label>
+                                <label>ETC</label>
                                 <input type="text" id="ETAFullweld" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
                                 <input type="hidden" id="FullweldDays">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Aktual Tanggal Selesai</label>
+                                <label>Finish Date</label>
                                 <input type="text" id="ATAFullweld" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Alasan</label>
+                                <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
                                 <select class="form-control" id="ATAFullweldReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
@@ -1232,18 +1232,18 @@
                     <div class="tab-pane fade" id="primer" role="tabpanel" aria-labelledby="primer-tab">
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label>Estimasi Tanggal Selesai</label>
+                                <label>ETC</label>
                                 <input type="text" id="ETAPrimer" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy" disabled>
                                 <input type="hidden" id="PrimerDays">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Aktual Tanggal Selesai</label>
+                                <label>Finish Date</label>
                                 <input type="text" id="ATAPrimer" class="form-control form-date with-icon" autocomplete="off" placeholder="dd/mm/yyyy">
                                 <i class="fas fa-calendar-alt form-type-icon"></i>
                             </div>
                             <div class="form-group col-md-3">
-                                <label>Alasan</label>
+                                <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
                                 <select class="form-control" id="ATAPrimerReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
@@ -2453,6 +2453,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#Setting").attr("disabled", "disabled");
                         $("#Fullweld").attr("disabled", "disabled");
                         $("#Primer").attr("disabled", "disabled");
+
+
                     } else {
                         $("#PB").removeAttr("disabled");
                         $("#Setting").removeAttr("disabled");
@@ -2591,7 +2593,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#ETAPrimer").val(response.arrayDataTime['Primer']);
                         $("#ATAPB").val(response.arrayDataTime['ATAPB']);
                         $("#ATAPBReasonID").val(response.arrayDataTime['ATAPBReasonID']);
-
                         $("#ATASetting").val(response.arrayDataTime['ATASetting']);
                         $("#ATASettingReasonID").val(response.arrayDataTime['ATASettingReasonID']);
 
@@ -2607,7 +2608,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         if ($("#ATAPB").val()) {
                             var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                             ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
-                            $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
+                            $("#ATAPB").attr("disabled", "disabled");
+                            $("#inputFilePB").attr("disabled", "disabled");
+                            $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                         } else {
                             $("#ATAPB").removeAttr("disabled");
                         }
@@ -2615,7 +2618,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         if ($("#ATASetting").val()) {
                             var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
                             ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
-                            $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
+                            $("#ATASetting").attr("disabled", "disabled");
+                            $("#inputFileSetting").attr("disabled", "disabled");
+                            $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                         } else {
                             $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
                         }
@@ -2623,13 +2628,16 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         if ($("#ATAFullweld").val()) {
                             var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
                             ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
-                            $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
+                            $("#ATAFullweld").attr("disabled", "disabled");
+                            $("#inputFileFullweld").attr("disabled", "disabled");
+                            $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
                         } else {
                             $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
                         }
 
                         if ($("#ATAPrimer").val()){
                             $("#ATAPrimer").attr("disabled", "disabled");
+                            $("#inputFilePrimer").attr("disabled", "disabled");
                         } else {
                             $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
                         }
@@ -2653,12 +2661,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
                         }
                         for (var k in jsonObjFileSetting) {
-                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileSetting");
+                            filePreview(jsonObjFileSetting[k]['fileName'], jsonObjFileSetting[k]['url'], "fileSetting");
                         }
                         for (var k in jsonObjFileFullweld) {
-                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "fileFullweld");
+                            filePreview(jsonObjFileFullweld[k]['fileName'], jsonObjFileFullweld[k]['url'], "fileFullweld");
                         } for (var k in jsonObjFilePrimer) {
-                            filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePrimer");
+                            filePreview(jsonObjFilePrimer[k]['fileName'], jsonObjFilePrimer[k]['url'], "filePrimer");
                         }
                     }
                     //alert(response.responseCode);
@@ -2818,6 +2826,17 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#ATASetting").attr("min", $("#ETASetting").val());
                                 $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
                                 $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
+                                
+                                $("#ATAPBReasonID").attr("disabled", "disabled");
+                                $("#ATASettingReasonID").attr("disabled", "disabled");
+                                $("#ATAFullweldReasonID").attr("disabled", "disabled");
+                                $("#ATAPrimerReasonID").attr("disabled", "disabled");
+
+                                $("#inputFilePB").attr("disabled", "disabled");
+                                $("#inputFileSetting").attr("disabled", "disabled");
+                                $("#inputFileFullweld").attr("disabled", "disabled");
+                                $("#inputFilePrimer").attr("disabled", "disabled");
+                                
                                 //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ATAPBReason").attr("disabled", "disabled"), $("#ETASetting").val($("#ATAPB").val()), $("#ATASetting").attr("min", $("#ATAPB").val())) : $("#ATAPB").removeAttr("disabled");
                                 //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ATASettingReason").attr("disabled", "disabled"), $("#ETAFullweld").val($("#ATASetting").val()), $("#ATAFullweld").attr("min", $("#ATASetting").val())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
                                 //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ATAFullweldReason").attr("disabled", "disabled"), $("#ETAPrimer").val($("#ATAFullweld").val()), $("#ATAPrimer").attr("min", $("#ATAFullweld").val())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
@@ -3160,7 +3179,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     if (fileName.includes(".pdf")) {
                         img.src = siteUrl + "/Images/pdf.png";
                     }
-                    dvPreview.appendChild(img);
                 } else {
                     var img = document.createElement("IMG");
                     img.height = "100";
@@ -3168,6 +3186,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     img.title = fileName.toLowerCase();
                     img.src = url;
                 }
+                dvPreview.appendChild(img);
             } else {
                 alert("This browser does not support HTML5 FileReader.");
             }

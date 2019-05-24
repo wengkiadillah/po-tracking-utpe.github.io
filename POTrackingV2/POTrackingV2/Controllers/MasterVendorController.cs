@@ -226,7 +226,6 @@ namespace POTracking.Controllers
         [HttpGet]
         public ActionResult CreateUserVendor()
         {
-
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listRoleType = db.RolesTypes.ToList();
@@ -250,26 +249,41 @@ namespace POTracking.Controllers
                 var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewUser.Username));
                 if (chkUser == null)
                 {
-                    var keyNew = Helper.GeneratePassword(10);
-                    var password = Helper.EncodePassword(LoginConstants.defaultPassword, keyNew);
-                    objNewUser.ID = Guid.NewGuid();
-                    objNewUser.Name = objNewUser.Name;
-                    objNewUser.Username = objNewUser.Username;
-                    objNewUser.Email = objNewUser.Email;
-                    objNewUser.RoleID = 3;
-                    objNewUser.RolesTypeID = objNewUser.RolesTypeID;
-                    objNewUser.VendorCode = objNewUser.VendorCode;
-                    objNewUser.IsActive = objNewUser.IsActive;
-                    objNewUser.Salt = keyNew;
-                    objNewUser.Hash = password;
-                    objNewUser.Created = DateTime.Now;
-                    objNewUser.CreatedBy = User.Identity.Name;
-                    objNewUser.LastModified = DateTime.Now;
-                    objNewUser.LastModifiedBy = User.Identity.Name;
-                    db.UserVendors.Add(objNewUser);
-                    db.SaveChanges();
-                    ModelState.Clear();
-                    return RedirectToAction("ViewUserVendor", "MasterVendor");
+                    var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewUser.Username));
+                    if (chkUserRole == null)
+                    {
+                        var keyNew = Helper.GeneratePassword(10);
+                        var password = Helper.EncodePassword(LoginConstants.defaultPassword, keyNew);
+                        objNewUser.ID = Guid.NewGuid();
+                        objNewUser.Name = objNewUser.Name;
+                        objNewUser.Username = objNewUser.Username;
+                        objNewUser.Email = objNewUser.Email;
+                        objNewUser.RoleID = 3;
+                        objNewUser.VendorCode = objNewUser.VendorCode;
+                        objNewUser.IsActive = objNewUser.IsActive;
+                        objNewUser.Salt = keyNew;
+                        objNewUser.Hash = password;
+                        objNewUser.Created = DateTime.Now;
+                        objNewUser.CreatedBy = User.Identity.Name;
+                        objNewUser.LastModified = DateTime.Now;
+                        objNewUser.LastModifiedBy = User.Identity.Name;
+                        db.UserVendors.Add(objNewUser);
+
+                        UserRoleType objNewUserRole = new UserRoleType();
+                        objNewUserRole.Username = objNewUser.Username;
+                        objNewUserRole.RolesTypeID = objNewUser.RolesTypeID;
+                        objNewUserRole.Created = DateTime.Now;
+                        objNewUserRole.CreatedBy = User.Identity.Name;
+                        objNewUserRole.LastModified = DateTime.Now;
+                        objNewUserRole.LastModifiedBy = User.Identity.Name;
+                        db.UserRoleTypes.Add(objNewUserRole);
+
+                        db.SaveChanges();
+                        ModelState.Clear();
+                        return RedirectToAction("ViewUserVendor", "MasterVendor");
+                    }
+                    ViewBag.ErrorMessage = "User Already Exist!";
+                    return View();
                 }
                 ViewBag.ErrorMessage = "User Already Exist!";
                 return View();
@@ -298,7 +312,9 @@ namespace POTracking.Controllers
                 listRoleType = db.RolesTypes.ToList();
                 listVendor = db.Vendors.ToList();
                 var selectedUserVendor = db.UserVendors.Find(ID);
-                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserVendor.RolesTypeID);
+                var selectedUserRole = db.UserRoleTypes.Where(x => x.Username == selectedUserVendor.Username).FirstOrDefault();
+
+                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserRole.RolesTypeID);
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
                 return View(selectedUserVendor);
             }
@@ -308,7 +324,6 @@ namespace POTracking.Controllers
         public ActionResult EditUserVendor(Guid ID, UserVendor objEditUser)
         {
 
-
             try
             {
                 using (POTrackingEntities db = new POTrackingEntities())
@@ -316,12 +331,19 @@ namespace POTracking.Controllers
                     listRoleType = db.RolesTypes.ToList();
                     listVendor = db.Vendors.ToList();
                     var selectedUserVendor = db.UserVendors.Find(ID);
-                    ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserVendor.RolesTypeID);
+                    var selectedUserRole = db.UserRoleTypes.Where(x=>x.Username== selectedUserVendor.Username).FirstOrDefault();
+
+                    ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserRole.RolesTypeID);
                     ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
 
                     var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objEditUser.Username && x.ID != ID));
                     if (chkUser == null)
                     {
+                        var userRole = db.UserRoleTypes.FirstOrDefault(x => x.Username == selectedUserVendor.Username);
+                        userRole.Username = objEditUser.Username;
+                        userRole.RolesTypeID = objEditUser.RolesTypeID;
+                        userRole.LastModified = DateTime.Now;
+                        userRole.LastModifiedBy = User.Identity.Name;
 
                         selectedUserVendor.Name = objEditUser.Name;
                         selectedUserVendor.Username = objEditUser.Username;
@@ -331,6 +353,7 @@ namespace POTracking.Controllers
                         selectedUserVendor.IsActive = objEditUser.IsActive;
                         selectedUserVendor.LastModified = DateTime.Now;
                         selectedUserVendor.LastModifiedBy = User.Identity.Name;
+
                         db.SaveChanges();
                         ModelState.Clear();
                         return RedirectToAction("ViewUserVendor","MasterVendor");
@@ -352,6 +375,8 @@ namespace POTracking.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 var userVendor = db.UserVendors.Find(ID);
+                var userRole = db.UserRoleTypes.Where(x => x.Username == userVendor.Username).FirstOrDefault();
+                db.UserRoleTypes.Remove(userRole);
                 db.UserVendors.Remove(userVendor);
                 db.SaveChanges();
 

@@ -1,5 +1,7 @@
 ﻿//Vendor upload one Proforma Invoice
 $(".st6-file-invoice-upload").on("click", function (obj) {
+    var stage6VendorUploadInvoice_2 = $("#stage6VendorUploadInvoice_2").val();
+
     obj.preventDefault();
 
     var buttonUploadInvoice = $(this);
@@ -23,7 +25,7 @@ $(".st6-file-invoice-upload").on("click", function (obj) {
     if (inputFileInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: "VendorUploadInvoice_2",
+            url: stage6VendorUploadInvoice_2,
             data: formData,
             processData: false,
             contentType: false,
@@ -50,6 +52,8 @@ $(".st6-file-invoice-upload").on("click", function (obj) {
 
 //Vendor upload one Proforma Invoice
 $(".st6-file-invoice-remove").on("click", function (obj) {
+    var stage6VendorRemoveUploadInvoice = $("#stage6VendorRemoveUploadInvoice").val();
+
     obj.preventDefault();
 
     var buttonUploadInvoice = $(this).closest(".po-item-data-header__column").find(".st6-file-invoice-upload");
@@ -65,7 +69,7 @@ $(".st6-file-invoice-remove").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: "VendorRemoveUploadInvoice",
+        url: stage6VendorRemoveUploadInvoice,
         data: formData,
         processData: false,
         contentType: false,
