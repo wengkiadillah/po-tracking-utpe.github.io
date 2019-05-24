@@ -71,35 +71,6 @@
 
     </form>
 </div>
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get">
-        <div class="form-group mr-4">
-            <input name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search">
-            <i class="fas fa-search form-type-icon hint"></i>
-        </div>
-        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>
-
-
-        <input name="roleID" type="hidden" value="vendor">
-
-    </form>    <div class="stage-pagination-container">
-        <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
-        <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
-            <li class="pagination-list__item" onclick="paginationShow(1)">1</li>
-            <li class="pagination-list__item" onclick="paginationShow(2)">2</li>
-            <li class="pagination-list__item" onclick="paginationShow(3)">2a</li>
-            <li class="pagination-list__item" onclick="paginationShow(4)">3</li>
-            <li class="pagination-list__item" onclick="paginationShow(5)">4</li>
-            <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
-            <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
-            <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
-
-        </ul>
-    </div>
-</div>
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
