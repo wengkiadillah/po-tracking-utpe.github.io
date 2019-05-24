@@ -44,7 +44,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-on-time").attr("mindate"));
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -123,7 +123,7 @@ $(".st4-update-eta-date-delay-confirm").on("click", function (obj) {
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-delay").attr("mindate"));
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 12;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 6 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");

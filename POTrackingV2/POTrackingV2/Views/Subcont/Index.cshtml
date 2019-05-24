@@ -9,13 +9,14 @@
 @{
     ViewBag.Title = "PO Subcont";
     var roleID = ViewBag.CurrentRoleID;
+    var poSignRow = 1;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 @*<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>*@
 <h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
-<div class="filter-row">
+<div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         @*<div class="filter-form-container form-inline">*@
@@ -61,6 +62,23 @@
             @*<li class="pagination-list__item" onclick="paginationShow(8)">8</li>*@
         </ul>
     </div>
+</div>
+<div class="filter-row tier-2 mt-0">
+    <form action="/potracking/Local" class="filter-form-container form-inline" method="get">
+        <div class="form-group mr-4">
+            <input name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search">
+            <i class="fas fa-search form-type-icon hint"></i>
+        </div>
+        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+
+
+        <input name="roleID" type="hidden" value="vendor">
+
+    </form>
 </div>
 @foreach (var pO in Model)
 {
@@ -178,7 +196,7 @@
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut">@purchasingDocumentItem.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                                 else
@@ -208,7 +226,7 @@
                                             <div class="po-item-data-header__column po-progress">
                                                 <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                      data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                <div><span class="mark-donut">@purchasingDocumentItemChild.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
+                                                <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItemChild.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
                                             </div>
                                         }
                                         else
@@ -228,7 +246,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -1001,6 +1019,7 @@
             </div>
         </li>
     </ul>
+                                poSignRow++;
                             }
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1416,6 +1435,36 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 totalDistance = scrollLength[i];
             }
             setCustomValidation();
+
+            var count = 1;
+            // Every PO to Active Stage
+            $(".po-item-container").each(function (index) {
+                var activeStages = [];
+                $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
+                    var findID = "#activeStagePo-" + count;
+                    var textStage = $(this).find(findID).first().text();
+                    if (textStage != "") {
+                        if (textStage === "2a") {
+                            textStage = 3;
+                        }
+                        else if (textStage >= 3) {
+                            textStage = parseInt(textStage) + 1;
+                        }
+                        else {
+                            textStage = parseInt(textStage);
+                        }
+
+                        activeStages.push(textStage);
+                    }
+                });
+
+                activeStages.sort();
+                findID = ".po-sign-row-" + count;
+                var biggestActiveStages = activeStages[activeStages.length - 1];
+                console.log("ini" + biggestActiveStages);
+                $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
+                count++;
+            });
         });
 
         var rowHeights = [];
