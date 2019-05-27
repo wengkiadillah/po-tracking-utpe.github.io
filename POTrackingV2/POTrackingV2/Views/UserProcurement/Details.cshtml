@@ -1,0 +1,169 @@
+﻿@model POTrackingV2.ViewModels.UserProcurementViewModelDetails
+
+@{
+    ViewBag.Title = "Details";
+    int number = 1;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Superior Procurement User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Username
+        </dt>
+        <dd id="superiorUsername" value="@Model.UserProcurementSuperior.Username">
+            @Html.DisplayFor(model => model.UserProcurementSuperior.Username)
+        </dd>
+    </dl>
+
+    <div class="form-group">
+        <p class="form-custom-label">Select Inferior User</p>
+        <select name="InferiorUser_Username" id="InferiorUser_Username" class="form-control" multiple></select>
+        <p class="material-preparation-process-validation text-danger"></p>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="text" value="@Model.UserProcurementSuperior.ID" id="userProcurementSuperiorID" name="userProcurementSuperiorID" hidden />
+            <input type="submit" id="buttonAdd" name="buttonAdd" value="Add" class="btn btn-default" />
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table card-table bordered">
+            <thead>
+                <tr>
+                    <th>
+                        No
+                    </th>
+                    <th>
+                        inferior Username
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.UserProcurementInferiors)
+                {
+                    <tr>
+                        <td>
+                            @number
+                        </td>
+                        <td class="value-label">
+                            <label for="valueLabel">@Html.DisplayFor(modelItem => item.Username)</label>
+                        </td>
+                        <td class="edit-action">
+                            <input type="text" value="@item.ID" class="userProcurementInferiorID" name="userProcurementInferiorID" hidden />
+                            <button class="btn btn-danger btn-sm delete-inferiorUser" role="button" data-toggle="tooltip" data-placement="top" title="Delete"><i data-feather="trash-2"></i></button>
+                        </td>
+                    </tr>
+                    number++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#InferiorUser_Username").find('option').remove().end();
+
+            var username = $("#superiorUsername").attr("value");
+            var data = {
+                username: username
+            };
+
+            if (username != null && username != '') {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PopulateUser", "UserProcurement")",
+                    context: this,
+                    data: data,
+                    success: function (response) {
+                        if (response.selectListusers != null && !jQuery.isEmptyObject(response.selectListusers)) {
+                            $.each(response.selectListusers, function (i, item) {
+                                $("#InferiorUser_Username").append($("<option />").val(this.Value).text(this.Text));
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#buttonAdd').click(function () {
+            var userSuperiorID = $('#userProcurementSuperiorID').val();
+
+            var inferiorUsernames = [];
+            $("#InferiorUser_Username :selected").each(function (i, selected) {
+                inferiorUsernames[i] = $(selected).val();
+            });
+
+            var data = {
+                userSuperiorID: userSuperiorID,
+                inferiorUsernames: inferiorUsernames
+            };
+
+            if (data.userSuperiorID !== "" || data.userSuperiorID !== null) {
+                if (data.inferiorUsernames.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("AddInferiorUser", "UserProcurement")",
+                        context: this,
+                        data: data,
+                        success: function (response) {
+                            location.reload(true);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                }
+                else {
+                alert("Please Choose Inferior User");
+                }
+            }
+            else {
+                alert("Please Choose Superior User");
+            }
+        });
+
+
+        $(".delete-inferiorUser").click(function () {
+            var userInferiorID = $(this).closest("td.edit-action").find("input.userProcurementInferiorID").val();
+
+            var data = {
+                userInferiorID: userInferiorID
+            };
+
+            if (data.userInferiorID !== "" || data.userInferiorID !== null) {
+                if (confirm("Are you sure want to delete this user?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DeleteInferiorUser", "UserProcurement")",
+                        context: this,
+                        data: data,
+                        success: function (response) {
+                            location.reload(true);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                };
+            }
+            else {
+                alert("Something went wrong !");
+            }
+        });
+    </script>
+}
