@@ -14,15 +14,18 @@
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" autocomplete="off" value="@ViewBag.CurrentSearchData" />
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchData" />
             <datalist id="data-list"></datalist>
         </div>
-        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentSearchFilterBy">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>
-        <div class="form-group mr-0">
+        <div class="form-group mr-4 ml-0">
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchData" />
+            <datalist id="data-list"></datalist>
+        </div>
+        <div class="form-group mr-4 ml-0">
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchData" />
+            <datalist id="data-list"></datalist>
+        </div>
+        <div class="form-group mr-0 ml-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
                    placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
@@ -38,6 +41,33 @@
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
     }
+</div>
+<div class="filter-row tier-2 mt-0">
+    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+        <div class="form-group mr-4 frmSearch">
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
+            <datalist id="data-list"></datalist>
+        </div>
+        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+        <div class="form-group mr-0">
+            <label for="startPODate">PO Date</label>
+            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <div class="form-group">
+            <label for="endPODate">to</label>
+            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        <a class="btn btn-info mr-3" href="/Import">Clear</a>
+        <input name="roleID" type="hidden" value="vendor">
+
+    </form>
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
@@ -2874,26 +2904,26 @@
     </div>
 </div>
 
-<input type="text" id="stage1VendorConfirmItem" hidden value="@Url.Action("VendorConfirmItem", "Import")"/>
-<input type="text" id="stage1VendorEditItem" hidden value="@Url.Action("VendorEditItem", "Import")"/>
-<input type="text" id="stage1ProcurementConfirmItem" hidden value="@Url.Action("ProcurementConfirmItem", "Import")"/>
-<input type="text" id="stage1CancelItem" hidden value="@Url.Action("CancelItem", "Import")"/>
-<input type="text" id="stage2VendorConfirmFirstETA" hidden value="@Url.Action("VendorConfirmFirstETA", "Import")"/>
-<input type="text" id="stage2ProcurementAcceptFirstEta" hidden value="@Url.Action("ProcurementAcceptFirstEta", "Import")"/>
-<input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Import")"/>
-<input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadProformaInvoice", "Import")"/>
-<input type="text" id="stage2aVendorSkipProformaInvoice" hidden value="@Url.Action("VendorSkipProformaInvoice", "Import")"/>
-<input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Import")"/>
-<input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Import")"/>
-<input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Import")"/>
-<input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Import")"/>
-<input type="text" id="stage5VendorConfirmShipmentBookingDate" hidden value="@Url.Action("VendorConfirmShipmentBookingDate", "Import")"/>
-<input type="text" id="stage5VendorConfirmATD" hidden value="@Url.Action("VendorConfirmATD", "Import")"/>
-<input type="text" id="stage6VendorFillInShipmentForm" hidden value="@Url.Action("VendorFillInShipmentForm", "Import")"/>
-<input type="text" id="stage6GetShippingInformation" hidden value="@Url.Action("GetShippingInformation", "Import")"/>
-<input type="text" id="stage7ProcurementConfirmOnAirport" hidden value="@Url.Action("ProcurementConfirmOnAirport", "Import")"/>
-<input type="text" id="stage10VendorUploadInvoice" hidden value="@Url.Action("VendorUploadInvoice", "Import")"/>
-<input type="text" id="stage10VendorRemoveUploadInvoice" hidden value="@Url.Action("VendorRemoveUploadInvoice", "Import")"/>
+<input type="text" id="stage1VendorConfirmItem" hidden value="@Url.Action("VendorConfirmItem", "Import")" />
+<input type="text" id="stage1VendorEditItem" hidden value="@Url.Action("VendorEditItem", "Import")" />
+<input type="text" id="stage1ProcurementConfirmItem" hidden value="@Url.Action("ProcurementConfirmItem", "Import")" />
+<input type="text" id="stage1CancelItem" hidden value="@Url.Action("CancelItem", "Import")" />
+<input type="text" id="stage2VendorConfirmFirstETA" hidden value="@Url.Action("VendorConfirmFirstETA", "Import")" />
+<input type="text" id="stage2ProcurementAcceptFirstEta" hidden value="@Url.Action("ProcurementAcceptFirstEta", "Import")" />
+<input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Import")" />
+<input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadProformaInvoice", "Import")" />
+<input type="text" id="stage2aVendorSkipProformaInvoice" hidden value="@Url.Action("VendorSkipProformaInvoice", "Import")" />
+<input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Import")" />
+<input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Import")" />
+<input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Import")" />
+<input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Import")" />
+<input type="text" id="stage5VendorConfirmShipmentBookingDate" hidden value="@Url.Action("VendorConfirmShipmentBookingDate", "Import")" />
+<input type="text" id="stage5VendorConfirmATD" hidden value="@Url.Action("VendorConfirmATD", "Import")" />
+<input type="text" id="stage6VendorFillInShipmentForm" hidden value="@Url.Action("VendorFillInShipmentForm", "Import")" />
+<input type="text" id="stage6GetShippingInformation" hidden value="@Url.Action("GetShippingInformation", "Import")" />
+<input type="text" id="stage7ProcurementConfirmOnAirport" hidden value="@Url.Action("ProcurementConfirmOnAirport", "Import")" />
+<input type="text" id="stage10VendorUploadInvoice" hidden value="@Url.Action("VendorUploadInvoice", "Import")" />
+<input type="text" id="stage10VendorRemoveUploadInvoice" hidden value="@Url.Action("VendorRemoveUploadInvoice", "Import")" />
 
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
