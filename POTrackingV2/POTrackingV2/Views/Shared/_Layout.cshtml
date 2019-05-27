@@ -1,9 +1,13 @@
 ﻿
 @using POTrackingV2.CustomAuthentication
 @using POTrackingV2.Constants
+@using POTrackingV2.Models
 
 @{
+    POTrackingEntities db = new POTrackingEntities();
     var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+    var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
+
 }
 
 <!DOCTYPE html>
@@ -64,22 +68,30 @@
                         </li>
                     </ul>
                 </li>
-                <li class="main-menu-item">
-                    <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
-                        <i class="fas fa-plane"></i> <span>PO Import</span>
-                    </a>
-                </li>
-                <li class="main-menu-item">
-                    <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
-                        <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
-                    </a>
-                </li>
-                <li class="main-menu-item">
-                    <a href="~/SubCont/index" class="main-menu__link" data-menu="Subcontract">
-                        <i class="fas fa-cogs"></i> <span>Subcontract</span>
-                    </a>
-                </li>
-               
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import"))
+                {
+                    <li class="main-menu-item">
+                        <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
+                            <i class="fas fa-plane"></i> <span>PO Import</span>
+                        </a>
+                    </li>
+                }
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local"))
+                {
+                    <li class="main-menu-item">
+                        <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
+                            <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
+                        </a>
+                    </li>
+                }
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont"))
+                {
+                    <li class="main-menu-item">
+                        <a href="~/SubCont/index" class="main-menu__link" data-menu="Subcontract">
+                            <i class="fas fa-cogs"></i> <span>Subcontract</span>
+                        </a>
+                    </li>
+                }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     <li class="main-menu-item">
@@ -95,6 +107,9 @@
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/DelayReason/Index" class="main-menu-submenu__link" data-menu="Mastervendor">Delay Reason</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="~/MasterVendor/ViewUserVendor" class="main-menu-submenu__link" data-menu="Mastervendor">User Vendor</a>
                             </li>
                         </ul>
                     </li>

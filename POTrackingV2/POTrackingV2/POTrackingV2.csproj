@@ -615,6 +615,7 @@
     <Content Include="Views\UserProcurement\Index.cshtml" />
     <Content Include="Views\UserProcurement\Create.cshtml" />
     <Content Include="Views\UserProcurement\Details.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

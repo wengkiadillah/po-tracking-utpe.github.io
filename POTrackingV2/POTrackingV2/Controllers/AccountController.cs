@@ -41,66 +41,101 @@ namespace POTrackingV2.Controllers
 
                 //using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
                 //{
-                    try
+                try
+                {
+                    //if (entry.Guid == null)
+                    //{
+                    //    ModelState.AddModelError("", "Username or Password invalid");
+                    //    return View();
+                    //}
+                    //else
+                    //{
+                    if (Membership.ValidateUser(ldapUser, ldapPassword))
                     {
-                        //if (entry.Guid == null)
-                        //{
-                        //    ModelState.AddModelError("", "Username or Password invalid");
-                        //    return View();
-                        //}
-                        //else
-                        //{
-                            if (Membership.ValidateUser(ldapUser, ldapPassword))
+                        var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
+                        if (user != null)
+                        {
+                            CustomSerializeModel userModel = new Models.CustomSerializeModel()
                             {
-                                var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
-                                if (user != null)
-                                {
-                                    CustomSerializeModel userModel = new Models.CustomSerializeModel()
-                                    {
-                                        UserName = user.UserName,
-                                        Name = user.Name,
-                                        Roles = user.Roles
-                                        //RolesType = user.RolesType,
-                                        //VendorCode = user.VendorCode
+                                UserName = user.UserName,
+                                Name = user.Name,
+                                Roles = user.Roles
+                                //RolesType = user.RolesType,
+                                //VendorCode = user.VendorCode
 
-                                    };
+                            };
 
-                                    string userData = JsonConvert.SerializeObject(userModel);
-                                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
-                                        (
-                                        1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
-                                        );
+                            string userData = JsonConvert.SerializeObject(userModel);
+                            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
+                                (
+                                1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
+                                );
 
-                                    string enTicket = FormsAuthentication.Encrypt(authTicket);
-                                    HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
-                                    Response.Cookies.Add(faCookie);
-                                }
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("", "Username or Password invalid.");
-                                return View();
-                            }
-                        //}
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError("", "Username or Password invalid " + ex.Message);
-                        return View();
-                    }
-
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        return Redirect(ReturnUrl);
+                            string enTicket = FormsAuthentication.Encrypt(authTicket);
+                            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                            Response.Cookies.Add(faCookie);
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        ModelState.AddModelError("", "Username or Password invalid.");
+                        return View();
                     }
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Username or Password invalid " + ex.Message);
+                    return View();
+                }
+
+                if (!string.IsNullOrEmpty(ReturnUrl))
+                {
+                    return Redirect(ReturnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
                 //}
             }
             return View(loginView);
         }
+
+        public ActionResult ChangePassword()
+        {
+            ChangePassword changePassword = new ChangePassword();
+            changePassword.Username = User.Identity.Name;
+            return View(changePassword);
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePassword changePassword)
+        {
+            try
+            {
+                // TODO: Add update logic here
+                using (POTrackingEntities db = new POTrackingEntities())
+                {
+                    UserVendor selectedUserVendor = db.UserVendors.SingleOrDefault(x => x.Username == changePassword.Username);
+                    var keyNew = Helper.GeneratePassword(10);
+                    var password = Helper.EncodePassword(changePassword.NewPassword, keyNew);
+                    selectedUserVendor.Salt = keyNew;
+                    selectedUserVendor.Hash = password;
+                    selectedUserVendor.LastModified = DateTime.Now.Date;
+                    selectedUserVendor.LastModifiedBy = changePassword.Username;
+
+                    db.SaveChanges();
+                    db.SaveChanges();
+                }
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
 
 
         public ActionResult LoginInternal()
