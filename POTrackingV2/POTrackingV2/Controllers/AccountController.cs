@@ -50,9 +50,9 @@ namespace POTrackingV2.Controllers
                         //}
                         //else
                         //{
-                            if (Membership.ValidateUser(loginView.UserName, loginView.Password))
+                            if (Membership.ValidateUser(ldapUser, ldapPassword))
                             {
-                                var user = (CustomMembershipUser)Membership.GetUser(loginView.UserName, false);
+                                var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
                                 if (user != null)
                                 {
                                     CustomSerializeModel userModel = new Models.CustomSerializeModel()

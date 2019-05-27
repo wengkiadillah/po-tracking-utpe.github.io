@@ -12,6 +12,9 @@
 }
 
 <div class="um">
+    <h2 class="form-sub-header">
+        List User Vendor
+    </h2>
     <div class="filter-row">
         @using (Html.BeginForm("ViewUserVendor", "MasterVendor", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
         {
@@ -35,9 +38,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.First().Username)
-            </th>
-            <th>
-                Role
             </th>
             <th>
                 Role Type
@@ -70,10 +70,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Username)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RoleName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.RoleTypeName)

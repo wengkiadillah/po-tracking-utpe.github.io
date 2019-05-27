@@ -30,7 +30,7 @@ namespace POTrackingV2.CustomAuthentication
         /// 
         /// </summary>
         /// <param name="user"></param>
-        public CustomMembershipUser(UserVendor user) : base("CustomMembership", user.Username, user.ID, user.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
+        public CustomMembershipUser(UserVendorProxy user) : base("CustomMembership", user.Username, user.ID, user.Email, string.Empty, string.Empty, true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now)
         {
             //UserName = user.Username;
             //Name = user.User.Name;
