@@ -1,0 +1,98 @@
+﻿@model POTrackingV2.ViewModels.UserProcurementViewModelCreate
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<div class="form-horizontal">
+    <h4>UserProcurementSuperior</h4>
+    <hr />
+    <div class="form-group">
+        <p class="form-custom-label">Procurement Superior User</p>
+        @Html.DropDownList("SuperiorUser_Username", Model.SuperiorUsernames, "Select", htmlAttributes: new { @class = "form-control full-width" })
+    </div>
+    <div class="form-group">
+        <p class="form-custom-label">Select Inferior User</p>
+        <select name="InferiorUser_Username" id="InferiorUser_Username" class="form-control" multiple></select>
+        <p class="material-preparation-process-validation text-danger"></p>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" id="buttonCreate" name="buttonCreate" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $('#SuperiorUser_Username').change(function () {
+            $("#InferiorUser_Username").find('option').remove().end();
+
+            var username = $('#SuperiorUser_Username :selected').val();
+            var data = {
+                username: username
+            };
+
+            if (username != null && username != '') {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PopulateUser", "UserProcurement")",
+                    context: this,
+                    data: data,
+                    success: function (response) {
+                        if (response.selectListusers != null && !jQuery.isEmptyObject(response.selectListusers)) {
+                            $.each(response.selectListusers, function (i, item) {
+                                $("#InferiorUser_Username").append($("<option />").val(this.Value).text(this.Text));
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#buttonCreate').click(function () {
+            var username = $('#SuperiorUser_Username :selected').val();
+
+            var inferiorUsernames = [];
+            $("#InferiorUser_Username :selected").each(function (i, selected) {
+                inferiorUsernames[i] = $(selected).val();
+            });
+
+            var data = {
+                username: username,
+                inferiorUsernames: inferiorUsernames
+            };
+
+            if (data.username !== "" || data.username !== null) {
+                if (data.inferiorUsernames.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("CreateSuperiorUser", "UserProcurement")",
+                        context: this,
+                        data: data,
+                        success: function (response) {
+                            window.location.href = "@Url.Action("Index", "UserProcurement")";
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                }
+                else {
+                alert("Please Choose Inferior User");
+                }
+            }
+            else {
+                alert("Please Choose Superior User");
+            }
+        });
+    </script>
+}
