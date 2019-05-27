@@ -340,9 +340,6 @@
     <Compile Include="Models\SubcontComponentCapability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\SubcontDevVendor.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
