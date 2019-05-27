@@ -93,12 +93,18 @@ namespace POTrackingV2.Controllers
 
                 if (role.ToLower() == LoginConstants.RoleProcurement.ToLower())
                 {
+                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.UserName == userName).Select(x => x.VendorCode).Distinct();
+                    if (listVendorSubconDev != null)
+                    {
+                        pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
+                    }
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
                 else if(role.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
+                    string vendorCode = db.UserVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).FirstOrDefault();
                     //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
 
                 ViewBag.CurrentRoleID = role.ToLower();
