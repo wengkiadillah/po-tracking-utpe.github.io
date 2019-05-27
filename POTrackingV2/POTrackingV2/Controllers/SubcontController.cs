@@ -93,7 +93,7 @@ namespace POTrackingV2.Controllers
 
                 if (role.ToLower() == LoginConstants.RoleProcurement.ToLower())
                 {
-                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.UserName == userName).Select(x => x.VendorCode).Distinct();
+                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
                     if (listVendorSubconDev != null)
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));

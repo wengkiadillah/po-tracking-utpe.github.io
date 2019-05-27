@@ -15,7 +15,7 @@ namespace POTrackingV2.Models
     public partial class SubcontDevVendor
     {
         public int ID { get; set; }
-        public string UserName { get; set; }
+        public string Username { get; set; }
         public string VendorCode { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }
