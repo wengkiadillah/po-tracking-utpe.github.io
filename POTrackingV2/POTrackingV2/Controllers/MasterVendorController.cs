@@ -11,9 +11,11 @@ using POTrackingV2.Constants;
 using System.Text;
 using System.Security.Cryptography;
 using System.Collections;
+using POTrackingV2.CustomAuthentication;
 
 namespace POTrackingV2.Controllers
 {
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();

@@ -16,7 +16,7 @@ using POTrackingV2.Constants;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleSubcontDev)]
     public class SubcontController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();

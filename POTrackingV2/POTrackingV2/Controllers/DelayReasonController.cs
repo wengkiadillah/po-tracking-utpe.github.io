@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using POTrackingV2.Constants;
+using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 
 namespace POTracking.Controllers
 {
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class DelayReasonController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();

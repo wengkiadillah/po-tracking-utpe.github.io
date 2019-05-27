@@ -102,6 +102,7 @@ namespace POTrackingV2.Controllers
             return View(loginView);
         }
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         public ActionResult ChangePassword()
         {
             ChangePassword changePassword = new ChangePassword();
