@@ -95,6 +95,8 @@
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
 
+    purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
+
     <ul class="list-unstyled po-list">
         <li class="po-item-container">
             <div class="po-item-section po-item-sticky">
@@ -2432,7 +2434,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $("#searchData").on("keyup focus", function () {
                 $.ajax({
                     type: "GET",
-                    url: "@Url.Action("GetDataForSearch", "Import")",
+                    url: "@Url.Action("GetDataForSearch", "Local")",
                     data: { 'searchFilterBy': $("#searchFilterBy").val(), 'value': $("#searchData").val() },
                     beforeSend: function () {
                         $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");

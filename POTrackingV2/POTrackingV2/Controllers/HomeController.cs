@@ -39,7 +39,7 @@ namespace POTrackingV2.Controllers
 
             var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
-            if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+            if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {
                 if (roleType.RolesType.Name.ToLower() == "import")
                 {
@@ -57,6 +57,14 @@ namespace POTrackingV2.Controllers
                 {
                     return View(userData);
                 }
+            }
+            else if (myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+            {
+                return RedirectToAction("Index", "Import");
+            }
+            else if (myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            {
+                return RedirectToAction("Index", "Subcont");
             }
             else
             {

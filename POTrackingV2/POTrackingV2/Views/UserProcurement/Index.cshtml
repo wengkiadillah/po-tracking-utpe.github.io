@@ -1,0 +1,97 @@
+﻿@model IEnumerable<POTrackingV2.Models.UserProcurementSuperior>
+
+@{
+    ViewBag.Title = "Index";
+    int number = 1;
+}
+
+<h2>User Procurement Superior</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Number
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Username)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NRP)
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @number
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NRP)
+                </td>
+                <td class="edit-action">
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    <input type="text" value="@item.ID" class="userProcurementSuperiorID" name="userProcurementSuperiorID" hidden />
+                    <button class="btn btn-danger btn-sm delete-superiorUser" role="button" data-toggle="tooltip" data-placement="top" title="Delete"><i data-feather="trash-2"></i></button>
+                </td>
+            </tr>
+
+            number++;
+        }
+    }
+    else
+    {
+        <tr>
+            <td>
+                No Data
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+
+</table>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(".delete-superiorUser").click(function () {
+            var userSuperiorID = $(this).closest("td.edit-action").find("input.userProcurementSuperiorID").val();
+
+            var data = {
+                userSuperiorID: userSuperiorID
+            };
+
+            if (data.userSuperiorID !== "" || data.userSuperiorID !== null) {
+                if (confirm("Are you sure want to delete this user?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DeleteSuperiorUser", "UserProcurement")",
+                        context: this,
+                        data: data,
+                        success: function (response) {
+                            location.reload(true);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
+                };
+            }
+            else {
+                alert("Something went wrong !");
+            }
+        });
+    </script>
+}

@@ -92,8 +92,6 @@ namespace POTrackingV2.Controllers
                             .OrderBy(x => x.Number)
                             .AsQueryable();
 
-            //pOes = pOes.Except(pOes.Where(x => x.PurchasingDocumentItems.All(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx") == true));
-
             if (role == "procurement")
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
@@ -112,7 +110,6 @@ namespace POTrackingV2.Controllers
             ViewBag.DelayReasons = delayReasons;
 
             #region Filter
-
             if (!String.IsNullOrEmpty(searchData))
             {
                 if (filterBy == "poNumber")
@@ -1829,52 +1826,6 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        #endregion
-
-        #region WHITEBOARD
-        // GET: Import/ReturnBharasTestPO (116-131)
-        public ActionResult ReturnBharasTestPO()
-        {
-            List<PurchasingDocumentItem> purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID >= 116 && x.ID <= 131).ToList();
-
-            foreach (var purchasingDocumentItem in purchasingDocumentItems)
-            {
-                purchasingDocumentItem.ActiveStage = null;
-                purchasingDocumentItem.ParentID = null;
-                purchasingDocumentItem.ConfirmedItem = null;
-                purchasingDocumentItem.ConfirmedQuantity = null;
-                purchasingDocumentItem.ConfirmedDate = null;
-                purchasingDocumentItem.OpenQuantity = null;
-                purchasingDocumentItem.ProformaInvoiceDocument = null;
-                purchasingDocumentItem.ApproveProformaInvoiceDocument = null;
-
-                List<PurchasingDocumentItem> childPurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID != purchasingDocumentItem.ID && x.ParentID == purchasingDocumentItem.ID).ToList();
-
-                foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                {
-                    List<ETAHistory> childETAHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == childPurchasingDocumentItem.ID).ToList();
-
-                    foreach (var childETAHistory in childETAHistories)
-                    {
-                        db.ETAHistories.Remove(childETAHistory);
-                    }
-
-                    db.PurchasingDocumentItems.Remove(childPurchasingDocumentItem);
-                }
-
-                List<ETAHistory> eTAHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
-
-                foreach (var eTAHistory in eTAHistories)
-                {
-                    db.ETAHistories.Remove(eTAHistory);
-                }
-
-            }
-
-            db.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
         #endregion
     }
 }

@@ -20,6 +20,8 @@ namespace POTrackingV2.Models
             this.POes = new HashSet<PO>();
             this.SubcontCapabilities = new HashSet<SubcontCapability>();
             this.SubcontComponentCapabilities = new HashSet<SubcontComponentCapability>();
+            this.SubcontDevVendors = new HashSet<SubcontDevVendor>();
+            this.UserVendors = new HashSet<UserVendor>();
         }
     
         public string Code { get; set; }
@@ -48,5 +50,9 @@ namespace POTrackingV2.Models
         public virtual SubcontCategory SubcontCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubcontComponentCapability> SubcontComponentCapabilities { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SubcontDevVendor> SubcontDevVendors { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserVendor> UserVendors { get; set; }
     }
 }

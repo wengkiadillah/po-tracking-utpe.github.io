@@ -14,18 +14,15 @@
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchData" />
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" autocomplete="off" value="@ViewBag.CurrentSearchData" />
             <datalist id="data-list"></datalist>
         </div>
-        <div class="form-group mr-4 ml-0">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchData" />
-            <datalist id="data-list"></datalist>
-        </div>
-        <div class="form-group mr-4 ml-0">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchData" />
-            <datalist id="data-list"></datalist>
-        </div>
-        <div class="form-group mr-0 ml-0">
+        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentSearchFilterBy">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+        <div class="form-group mr-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
                    placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
@@ -41,33 +38,6 @@
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
     }
-</div>
-<div class="filter-row tier-2 mt-0">
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
-        <div class="form-group mr-4 frmSearch">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
-            <datalist id="data-list"></datalist>
-        </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>
-        <div class="form-group mr-0">
-            <label for="startPODate">PO Date</label>
-            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-        <div class="form-group">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        <a class="btn btn-info mr-3" href="/Import">Clear</a>
-        <input name="roleID" type="hidden" value="vendor">
-
-    </form>
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
@@ -79,13 +49,17 @@
             <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
             <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
             <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
-
+            @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
             <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
+            @if (roleID == "procurement")
+            {
+                <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
+            }
         </ul>
     </div>
-
 </div>
+
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));

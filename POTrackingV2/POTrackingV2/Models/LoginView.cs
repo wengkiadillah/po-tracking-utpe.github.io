@@ -19,6 +19,21 @@ namespace POTrackingV2.Models
         public bool RememberMe { get; set; }
     }
 
+    public class ChangePassword
+    {
+        public string Username { get; set; }
+
+        [Required]
+        [Display(Name = "Old Password")]
+        public string OldPassword { get; set; }
+        [Required]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+        [Required]
+        [Display(Name = "Re-Enter New Password")]
+        public string ReNewPassword { get; set; }
+    }
+
     public class CustomSerializeModel
     {
         public string UserName { get; set; }

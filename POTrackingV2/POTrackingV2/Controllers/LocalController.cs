@@ -12,6 +12,7 @@ using System.IO;
 using POTrackingV2.CustomAuthentication;
 using System.Web.Security;
 using POTrackingV2.Constants;
+using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
@@ -22,11 +23,67 @@ namespace POTrackingV2.Controllers
         private POTrackingEntities db = new POTrackingEntities();
 
         #region PAGELIST
+        [HttpGet]
+        public JsonResult GetDataForSearch(string searchFilterBy, string value)
+        {
+            try
+            {
+                object data = null;
+                value = value.ToLower();
+                //var data = db.POes.Distinct().Select(x =>
+                //    new
+                //    {
+                //        Data = x.Number
+                //    }).OrderByDescending(x => x.Data);
+
+                if (searchFilterBy == "poNumber")
+                {
+                    data = db.POes.Where(x => x.Number.Contains(value)).Select(x =>
+                     new
+                     {
+                         Data = x.Number,
+                         MatchEvaluation = x.Number.ToLower().IndexOf(value)
+                     }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
+                }
+                else if (searchFilterBy == "vendor")
+                {
+                    data = db.Vendors.Where(x => x.Name.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.Name,
+                        MatchEvaluation = x.Name.ToLower().IndexOf(value)
+                    }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
+                }
+                else if (searchFilterBy == "material")
+                {
+                    data = db.PurchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
+                        MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
+                    }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+                }
+
+                if (data != null)
+                {
+                    return Json(new { success = true, responseCode = "200", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         // GET: Local
-        public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page, string role)
+        public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            string roleID = myUser.Roles;
+            string roleID = myUser.Roles.ToLower();
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
@@ -78,9 +135,7 @@ namespace POTrackingV2.Controllers
             {
                 DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
-                pOes = pOes.Where(x => x.Date >= startDate)
-                                .Include(x => x.PurchasingDocumentItems)
-                                .Include(x => x.Vendor);
+                pOes = pOes.Where(x => x.Date >= startDate);
             }
 
             if (!String.IsNullOrEmpty(searchEndPODate))
@@ -88,9 +143,7 @@ namespace POTrackingV2.Controllers
 
                 DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
-                pOes = pOes.Where(x => x.Date <= endDate)
-                                .Include(x => x.PurchasingDocumentItems)
-                                .Include(x => x.Vendor);
+                pOes = pOes.Where(x => x.Date <= endDate);
             }
 
             //IndexLocalViewModel indexLocalViewModel = new IndexLocalViewModel();
