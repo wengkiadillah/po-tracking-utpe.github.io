@@ -27,5 +27,7 @@ namespace POTrackingV2.Models
         public string CreatedBy { get; set; }
         public System.DateTime LastModified { get; set; }
         public string LastModifiedBy { get; set; }
+    
+        public virtual Vendor Vendor { get; set; }
     }
 }

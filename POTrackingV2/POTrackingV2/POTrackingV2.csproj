@@ -340,6 +340,9 @@
     <Compile Include="Models\SubcontComponentCapability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubcontDevVendor.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
@@ -363,9 +366,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UserManagement.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\UserProcurementInferior.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserProcurementSuperior.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
