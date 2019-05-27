@@ -224,7 +224,7 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
 
                 imageSources.forEach(function (item, index) {
                     imagesContainer.append('<span class="mr-2">' +
-                        '<img src="' + item + '" width="50px" height="50px">' +
+                        '<img src="' + item + '" width="125px" height="125px">' +
                         '</span>');
                 });
 
