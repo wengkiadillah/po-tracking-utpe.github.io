@@ -28,7 +28,7 @@ namespace POTrackingV2.CustomAuthentication
 
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                var getUser = db.UserVendors.Where(x => x.Username == username).FirstOrDefault();
+                var getUser = db.UserVendors.Where(x => x.Username == username && x.IsActive == true).FirstOrDefault();
                 if (getUser != null)
                 {
                     var salt = getUser.Salt;

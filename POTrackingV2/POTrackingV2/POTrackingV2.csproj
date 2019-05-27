@@ -608,6 +608,7 @@
     <Content Include="Views\RoleType\Create.cshtml" />
     <Content Include="Views\RoleType\Index.cshtml" />
     <Content Include="Views\RoleType\Edit.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,6 @@
 ﻿@using POTrackingV2.CustomAuthentication
+@using POTrackingV2.Constants
+
 
 @{
     var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
@@ -17,7 +19,13 @@
             </a>
 
         </div>
-        <p class="user-info__name" id="userName">@User.Identity.Name (@myRole.Roles) @*, role : @myRole.Roles, role type : @myRole.RolesType, vendor code : @myRole.VendorCode*@! &nbsp; <a href='#'><i class="fas fa-key"></i></a></p>
+        <p class="user-info__name" id="userName">
+            @myRole.Name (@myRole.Roles) ! &nbsp;
+            @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+            {
+                <a href="@Url.Action("ChangePassword", "Account",User.Identity.Name)"><i class="fas fa-key"></i></a>
+            }
+        </p>
     </text>
 }
 else
