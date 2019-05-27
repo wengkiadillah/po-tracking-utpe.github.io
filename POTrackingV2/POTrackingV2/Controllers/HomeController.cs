@@ -11,7 +11,7 @@ using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement + "," + LoginConstants.RoleSubcontDev)]
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();

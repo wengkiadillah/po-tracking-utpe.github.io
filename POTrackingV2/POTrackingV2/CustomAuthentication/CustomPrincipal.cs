@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Security;
 
 namespace POTrackingV2.CustomAuthentication
 {
@@ -50,6 +51,7 @@ namespace POTrackingV2.CustomAuthentication
             bool val = false;
             string[] roles = role.Split(',');
 
+
             if (roles.Count() > 1)
             {
                 foreach (var item in roles)
@@ -63,6 +65,8 @@ namespace POTrackingV2.CustomAuthentication
                 if (Roles.ToLower().Equals(role.ToLower()))
                     val = true;
             }
+
+
 
             //if (Roles.Any(r => role.Contains(r)))
             //{
