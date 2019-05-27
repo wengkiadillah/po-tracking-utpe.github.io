@@ -16,6 +16,6 @@ namespace POTrackingV2.ViewModels
     public class UserProcurementViewModelDetails
     {
         public UserProcurementSuperior UserProcurementSuperior { get; set; }
-        public List<UserProcurementInferior> UserProcurementInferiors { get; set; }
+        public List<UserProcurementSuperior> UserProcurementInferiors { get; set; }
     }
 }

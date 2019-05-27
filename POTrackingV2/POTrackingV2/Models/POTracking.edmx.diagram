@@ -4,9 +4,9 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="4de0e7bb343b4cebaee564ca51b81c57" Name="Diagram1">
+      <Diagram DiagramId="e602a0d057a84bfdbe4263a3c42befe1" Name="Diagram1">
         <EntityTypeShape EntityType="POTrackingModel.Capability" Width="1.5" PointX="1.5" PointY="33.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.CapabilityCategory" Width="1.5" PointX="8.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.CapabilityCategory" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.DelayReason" Width="1.5" PointX="6" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ETAHistory" Width="1.5" PointX="8.25" PointY="20.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.KompoCategory" Width="1.5" PointX="1.5" PointY="7.75" IsExpanded="true" />
@@ -28,11 +28,10 @@
         <EntityTypeShape EntityType="POTrackingModel.SubcontCapability" Width="1.5" PointX="3.75" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontCategory" Width="1.5" PointX="1.5" PointY="29.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontComponentCapability" Width="1.5" PointX="3.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.sysdiagram" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.UserProcurementInferior" Width="2.5" PointX="8" PointY="4" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.UserProcurementSuperior" Width="1.875" PointX="5.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.sysdiagram" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.UserProcurementSuperior" Width="1.5" PointX="8.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.UserRoleType" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.UserVendor" Width="1.5" PointX="10.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.UserVendor" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.Vendor" Width="1.5" PointX="1.5" PointY="0.875" IsExpanded="true" />
         <AssociationConnector Association="POTrackingModel.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_ETAHistory_DelayReason_DelayReasonID" ManuallyRouted="false" />
@@ -59,7 +58,6 @@
         <AssociationConnector Association="POTrackingModel.FK_SubcontCapabilities_Vendors_VendorCode" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_Vendors_SubcontCategories_SubcontCategoryID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_SubcontComponentCapabilities_Vendors_VendorCode" ManuallyRouted="false" />
-        <AssociationConnector Association="POTrackingModel.FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

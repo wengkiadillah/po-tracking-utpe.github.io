@@ -17,6 +17,12 @@
         <dd id="superiorUsername" value="@Model.UserProcurementSuperior.Username">
             @Html.DisplayFor(model => model.UserProcurementSuperior.Username)
         </dd>
+        <dt>
+            NRP
+        </dt>
+        <dd id="superiorUsername" value="@Model.UserProcurementSuperior.NRP">
+            @Html.DisplayFor(model => model.UserProcurementSuperior.NRP)
+        </dd>
     </dl>
 
     <div class="form-group">
@@ -42,6 +48,9 @@
                         inferior Username
                     </th>
                     <th>
+                        NRP
+                    </th>
+                    <th>
                         Action
                     </th>
                 </tr>
@@ -55,6 +64,9 @@
                         </td>
                         <td class="value-label">
                             <label for="valueLabel">@Html.DisplayFor(modelItem => item.Username)</label>
+                        </td>
+                        <td class="value-label">
+                            <label for="valueLabel">@Html.DisplayFor(modelItem => item.NRP)</label>
                         </td>
                         <td class="edit-action">
                             <input type="text" value="@item.ID" class="userProcurementInferiorID" name="userProcurementInferiorID" hidden />

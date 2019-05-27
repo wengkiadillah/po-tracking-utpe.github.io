@@ -49,7 +49,6 @@ namespace POTrackingV2.Models
         public virtual DbSet<SubcontCategory> SubcontCategories { get; set; }
         public virtual DbSet<SubcontComponentCapability> SubcontComponentCapabilities { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
-        public virtual DbSet<UserProcurementInferior> UserProcurementInferiors { get; set; }
         public virtual DbSet<UserProcurementSuperior> UserProcurementSuperiors { get; set; }
         public virtual DbSet<UserRoleType> UserRoleTypes { get; set; }
         public virtual DbSet<UserVendor> UserVendors { get; set; }

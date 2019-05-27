@@ -381,20 +381,14 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <EntityType Name="UserProcurementInferior">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserProcurementSuperiorID" Type="int" Nullable="false" />
-          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
-        </EntityType>
         <EntityType Name="UserProcurementSuperior">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParentID" Type="int" />
           <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NRP" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserRoleType">
           <Key>
@@ -725,18 +719,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID">
-          <End Role="UserProcurementSuperior" Type="Self.UserProcurementSuperior" Multiplicity="1" />
-          <End Role="UserProcurementInferior" Type="Self.UserProcurementInferior" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProcurementSuperior">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserProcurementInferior">
-              <PropertyRef Name="UserProcurementSuperiorID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UserRoleType_RolesType_RolesTypeID">
           <End Role="RolesType" Type="Self.RolesType" Multiplicity="0..1" />
           <End Role="UserRoleType" Type="Self.UserRoleType" Multiplicity="*" />
@@ -786,7 +768,6 @@
           <EntitySet Name="SubcontCategories" EntityType="Self.SubcontCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubcontComponentCapabilities" EntityType="Self.SubcontComponentCapabilities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserProcurementInferior" EntityType="Self.UserProcurementInferior" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProcurementSuperior" EntityType="Self.UserProcurementSuperior" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoleType" EntityType="Self.UserRoleType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendors" Schema="dbo" store:Type="Tables" />
@@ -882,10 +863,6 @@
           <AssociationSet Name="FK_SubcontComponentCapabilities_Vendors_VendorCode" Association="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
             <End Role="SubcontComponentCapabilities" EntitySet="SubcontComponentCapabilities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID" Association="Self.FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID">
-            <End Role="UserProcurementSuperior" EntitySet="UserProcurementSuperior" />
-            <End Role="UserProcurementInferior" EntitySet="UserProcurementInferior" />
           </AssociationSet>
           <AssociationSet Name="FK_UserRoleType_RolesType_RolesTypeID" Association="Self.FK_UserRoleType_RolesType_RolesTypeID">
             <End Role="RolesType" EntitySet="RolesType" />
@@ -1322,22 +1299,14 @@
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
-        <EntityType Name="UserProcurementInferior">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserProcurementSuperiorID" Type="Int32" Nullable="false" />
-          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="UserProcurementSuperior" Relationship="Self.FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID" FromRole="UserProcurementInferior" ToRole="UserProcurementSuperior" />
-        </EntityType>
         <EntityType Name="UserProcurementSuperior">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParentID" Type="Int32" />
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="UserProcurementInferiors" Relationship="Self.FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID" FromRole="UserProcurementSuperior" ToRole="UserProcurementInferior" />
+          <Property Name="NRP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="UserRoleType">
           <Key>
@@ -1697,18 +1666,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID">
-          <End Role="UserProcurementSuperior" Type="Self.UserProcurementSuperior" Multiplicity="1" />
-          <End Role="UserProcurementInferior" Type="Self.UserProcurementInferior" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserProcurementSuperior">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="UserProcurementInferior">
-              <PropertyRef Name="UserProcurementSuperiorID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Capabilities" EntityType="Self.Capability" />
           <EntitySet Name="CapabilityCategories" EntityType="Self.CapabilityCategory" />
@@ -1734,7 +1691,6 @@
           <EntitySet Name="SubcontCategories" EntityType="Self.SubcontCategory" />
           <EntitySet Name="SubcontComponentCapabilities" EntityType="Self.SubcontComponentCapability" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
-          <EntitySet Name="UserProcurementInferiors" EntityType="Self.UserProcurementInferior" />
           <EntitySet Name="UserProcurementSuperiors" EntityType="Self.UserProcurementSuperior" />
           <EntitySet Name="UserRoleTypes" EntityType="Self.UserRoleType" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendor" />
@@ -1838,10 +1794,6 @@
           <AssociationSet Name="FK_SubcontComponentCapabilities_Vendors_VendorCode" Association="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
             <End Role="SubcontComponentCapabilities" EntitySet="SubcontComponentCapabilities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID" Association="Self.FK_UserProcurementInferior_UserProcurementSuperior_UserProcurementSuperiorID">
-            <End Role="UserProcurementSuperior" EntitySet="UserProcurementSuperiors" />
-            <End Role="UserProcurementInferior" EntitySet="UserProcurementInferiors" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -2250,20 +2202,13 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserProcurementInferiors">
-            <EntityTypeMapping TypeName="POTrackingModel.UserProcurementInferior">
-              <MappingFragment StoreEntitySet="UserProcurementInferior">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserProcurementSuperiorID" ColumnName="UserProcurementSuperiorID" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserProcurementSuperiors">
             <EntityTypeMapping TypeName="POTrackingModel.UserProcurementSuperior">
               <MappingFragment StoreEntitySet="UserProcurementSuperior">
                 <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="NRP" ColumnName="NRP" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
