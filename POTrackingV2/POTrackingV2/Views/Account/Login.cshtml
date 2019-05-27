@@ -51,8 +51,8 @@
                     </div>
                     <br>
                     <button class="login-button btn" type="submit">Login</button>
-                    <br />
-                    <button class="login-button btn" type="button" onclick="location.href='@Url.Action("LoginInternal", "Account")'">Internal Login</button>
+                    <hr style="border-color:white;">
+                    <button class="login-button btn" style="width:30%;" type="button" onclick="location.href='@Url.Action("LoginInternal", "Account")'">Internal Login</button>
                 </div>
             </form>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -103,7 +103,7 @@
         z-index: 2;
         width: 28%;
         padding: 20px;
-        text-align: center;
+        text-align: right;
     }
 
         .login-conatainer > form {
