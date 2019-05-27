@@ -1,9 +1,11 @@
 ﻿@using POTrackingV2.CustomAuthentication
 @using POTrackingV2.Constants
-
+@using POTrackingV2.Models
 
 @{
+    //POTrackingEntities db = new POTrackingEntities();
     var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+    //var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
 }
 @if (Request.IsAuthenticated)
 {
@@ -20,7 +22,7 @@
 
         </div>
         <p class="user-info__name" id="userName">
-            @myRole.Name (@myRole.Roles) ! &nbsp;
+            @myRole.Name ! &nbsp; @*(@myRole.Roles, @roleType.RolesType.Name.ToLower())*@
             @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {
                 <a href="@Url.Action("ChangePassword", "Account")"><i class="fas fa-key"></i></a>

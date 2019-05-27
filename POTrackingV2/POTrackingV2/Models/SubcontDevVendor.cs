@@ -12,12 +12,16 @@ namespace POTrackingV2.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class UserProcurementInferior
+    public partial class SubcontDevVendor
     {
         public int ID { get; set; }
-        public int UserProcurementSuperiorID { get; set; }
-        public string Username { get; set; }
+        public string UserName { get; set; }
+        public string VendorCode { get; set; }
+        public System.DateTime Created { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime LastModified { get; set; }
+        public string LastModifiedBy { get; set; }
     
-        public virtual UserProcurementSuperior UserProcurementSuperior { get; set; }
+        public virtual Vendor Vendor { get; set; }
     }
 }

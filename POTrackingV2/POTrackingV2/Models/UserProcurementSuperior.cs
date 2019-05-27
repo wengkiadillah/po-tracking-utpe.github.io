@@ -14,16 +14,13 @@ namespace POTrackingV2.Models
     
     public partial class UserProcurementSuperior
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public UserProcurementSuperior()
-        {
-            this.UserProcurementInferiors = new HashSet<UserProcurementInferior>();
-        }
-    
         public int ID { get; set; }
+        public Nullable<int> ParentID { get; set; }
         public string Username { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserProcurementInferior> UserProcurementInferiors { get; set; }
+        public string NRP { get; set; }
+        public Nullable<System.DateTime> Created { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> LastModified { get; set; }
+        public string LastModifiedBy { get; set; }
     }
 }

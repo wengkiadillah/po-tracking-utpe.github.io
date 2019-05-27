@@ -64,7 +64,8 @@ namespace POTrackingV2.Controllers
             {
                 var ViewModel = new MasterVendorViewModel
                 {
-                    ListName = new SelectList(db.Vendors.OrderBy(x => x.Code), "Code", "Name")
+
+                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
                 };
                 return View(ViewModel);
             }
@@ -231,7 +232,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listRoleType = db.RolesTypes.ToList();
-                listVendor = db.Vendors.ToList();
+                listVendor = db.Vendors.Where(x =>x.Code.Length == 5).ToList();
                 ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
 
@@ -245,7 +246,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listRoleType = db.RolesTypes.ToList();
-                listVendor = db.Vendors.ToList();
+                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                 ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
                 var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewUser.Username));
@@ -312,7 +313,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listRoleType = db.RolesTypes.ToList();
-                listVendor = db.Vendors.ToList();
+                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                 var selectedUserVendor = db.UserVendors.Find(ID);
                 var selectedUserRole = db.UserRoleTypes.Where(x => x.Username == selectedUserVendor.Username).FirstOrDefault();
 
@@ -331,7 +332,7 @@ namespace POTrackingV2.Controllers
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
                     listRoleType = db.RolesTypes.ToList();
-                    listVendor = db.Vendors.ToList();
+                    listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                     var selectedUserVendor = db.UserVendors.Find(ID);
                     var selectedUserRole = db.UserRoleTypes.Where(x=>x.Username== selectedUserVendor.Username).FirstOrDefault();
 

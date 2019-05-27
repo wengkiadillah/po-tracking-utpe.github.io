@@ -4,8 +4,10 @@ using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
@@ -27,7 +29,7 @@ namespace POTrackingV2.Controllers
         public ActionResult Details(int id)
         {
             UserProcurementSuperior superiorUser = dbPOTracking.UserProcurementSuperiors.Find(id);
-            List<UserProcurementInferior> inferiorUsers = dbPOTracking.UserProcurementInferiors.Where(x => x.UserProcurementSuperiorID == id).ToList();
+            List<UserProcurementSuperior> inferiorUsers = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == id).ToList();
 
             var ViewModel = new UserProcurementViewModelDetails
             {
@@ -62,18 +64,40 @@ namespace POTrackingV2.Controllers
         {
             try
             {
+                List<UserProcurementSuperior> databaseUserProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
+
+                string description = GetNPRByUsername(username);
+
                 UserProcurementSuperior userProcurementSuperior = new UserProcurementSuperior();
                 userProcurementSuperior.Username = username;
+                userProcurementSuperior.NRP = description;
 
-                int id = dbPOTracking.UserProcurementSuperiors.Add(userProcurementSuperior).ID;
+                dbPOTracking.UserProcurementSuperiors.Add(userProcurementSuperior);
+
+                dbPOTracking.SaveChanges();
+
+                int id = userProcurementSuperior.ID;
 
                 foreach (var item in inferiorUsernames)
                 {
-                    UserProcurementInferior userProcurementInferior = new UserProcurementInferior();
-                    userProcurementInferior.UserProcurementSuperiorID = id;
-                    userProcurementInferior.Username = item;
+                    UserProcurementSuperior userProcurementInferior = new UserProcurementSuperior();
 
-                    dbPOTracking.UserProcurementInferiors.Add(userProcurementInferior);
+                    if (databaseUserProcurementSuperiors.Any(x => x.Username == item))
+                    {
+                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
+
+                        userProcurementInferior.ParentID = id;
+                    }
+                    else
+                    {
+                        description = GetNPRByUsername(item);
+
+                        userProcurementInferior.ParentID = id;
+                        userProcurementInferior.Username = item;
+                        userProcurementInferior.NRP = description;
+
+                        dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
+                    }
                 }
 
                 dbPOTracking.SaveChanges();
@@ -90,13 +114,30 @@ namespace POTrackingV2.Controllers
         {
             try
             {
+                List<UserProcurementSuperior> databaseUserProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
+
                 foreach (var item in inferiorUsernames)
                 {
-                    UserProcurementInferior userProcurementInferior = new UserProcurementInferior();
-                    userProcurementInferior.UserProcurementSuperiorID = userSuperiorID;
-                    userProcurementInferior.Username = item;
+                    UserProcurementSuperior userProcurementInferior = new UserProcurementSuperior();
 
-                    dbPOTracking.UserProcurementInferiors.Add(userProcurementInferior);
+                    if (databaseUserProcurementSuperiors.Any(x => x.Username == item))
+                    {
+                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
+
+                        userProcurementInferior.ParentID = userSuperiorID;
+                    }
+                    else
+                    {
+                        string description = GetNPRByUsername(item);
+
+                        userProcurementInferior.ParentID = userSuperiorID;
+                        userProcurementInferior.Username = item;
+                        userProcurementInferior.NRP = description;
+
+                        dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
+                    }
+
+                    dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
                 }
 
                 dbPOTracking.SaveChanges();
@@ -112,16 +153,11 @@ namespace POTrackingV2.Controllers
         {
             List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.ApplicationID == 3) && x.Username != username).ToList();
 
-            UserProcurementSuperior userProcurementSuperior = dbPOTracking.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+            List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 
-            if (userProcurementSuperior != null)
+            foreach (var item in userProcurementInferiors)
             {
-                List<UserProcurementInferior> userProcurementInferiors = dbPOTracking.UserProcurementInferiors.Where(x => x.UserProcurementSuperiorID == userProcurementSuperior.ID).ToList();
-
-                foreach (var item in userProcurementInferiors)
-                {
-                    users = users.Where(x => x.Username != item.Username).ToList();
-                }
+                users = users.Where(x => x.Username != item.Username).ToList();
             }
 
             SelectList selectListusers = new SelectList(users, "Username", "Name");
@@ -135,13 +171,13 @@ namespace POTrackingV2.Controllers
             try
             {
                 UserProcurementSuperior userProcurementSuperior = dbPOTracking.UserProcurementSuperiors.Find(userSuperiorID);
-                List<UserProcurementInferior> userProcurementInferiors = userProcurementSuperior.UserProcurementInferiors.ToList();
+                List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == userSuperiorID).ToList();
 
                 if (userProcurementInferiors.Count > 0)
                 {
                     foreach (var item in userProcurementInferiors)
                     {
-                        dbPOTracking.UserProcurementInferiors.Remove(item);
+                        dbPOTracking.UserProcurementSuperiors.Remove(item);
                     }
                 }
 
@@ -162,11 +198,11 @@ namespace POTrackingV2.Controllers
         {
             try
             {
-                UserProcurementInferior userProcurementInferior = dbPOTracking.UserProcurementInferiors.Find(userInferiorID);
+                UserProcurementSuperior userProcurementInferior = dbPOTracking.UserProcurementSuperiors.Find(userInferiorID);
 
                 if (userProcurementInferior != null)
                 {
-                    dbPOTracking.UserProcurementInferiors.Remove(userProcurementInferior);
+                    dbPOTracking.UserProcurementSuperiors.Remove(userProcurementInferior);
 
                     dbPOTracking.SaveChanges();
 
@@ -179,6 +215,28 @@ namespace POTrackingV2.Controllers
             {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public string GetNPRByUsername(string username)
+        {
+            if (!string.IsNullOrEmpty(username))
+            {
+                SearchResult sResultSet;
+
+                string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
+                string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
+                string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
+                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                {
+                    DirectorySearcher dSearch = new DirectorySearcher(entry);
+                    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
+                    sResultSet = dSearch.FindOne();
+                }
+
+                string description = sResultSet.Properties["sn"][0].ToString();
+                return description;
+            }
+            return null;
         }
     }
 }

@@ -341,8 +341,11 @@
     <Compile Include="Models\SubcontComponentCapability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\sysdiagram.cs">
+    <Compile Include="Models\SubcontDevVendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -364,9 +367,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UserManagement.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\UserProcurementInferior.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UserProcurementSuperior.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
@@ -516,19 +516,19 @@
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\UserManagement.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\UserManagement.edmx.diagram">
-      <DependentUpon>UserManagement.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\POTracking.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\POTracking.edmx.diagram">
       <DependentUpon>POTracking.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\UserManagement.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\UserManagement.edmx.diagram">
+      <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -591,7 +591,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_NotificationList.cshtml" />
     <Content Include="Views\Import\Index.cshtml" />
-    <Content Include="Views\Import\WhiteBoard.cshtml" />
     <Content Include="Views\Subcont\Index.cshtml" />
     <Content Include="Views\Subcont\Template.cshtml" />
     <Content Include="Views\DelayReason\Create.cshtml" />
