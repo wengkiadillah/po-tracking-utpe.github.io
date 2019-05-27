@@ -587,7 +587,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_NotificationList.cshtml" />
     <Content Include="Views\Import\Index.cshtml" />
-    <Content Include="Views\Import\WhiteBoard.cshtml" />
     <Content Include="Views\Subcont\Index.cshtml" />
     <Content Include="Views\Subcont\Template.cshtml" />
     <Content Include="Views\DelayReason\Create.cshtml" />
