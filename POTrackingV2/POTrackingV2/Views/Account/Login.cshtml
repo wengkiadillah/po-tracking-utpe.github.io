@@ -45,7 +45,6 @@
                             @Html.LabelFor(model => model.Password)
                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
                             <i class="show-hide-password" data-feather="eye" onclick="showHidePassword()"></i>
-
                         </div>
                         @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                     </div>
@@ -74,6 +73,12 @@
 
     * {
         box-sizing: border-box;
+    }
+
+    .login-conatainer ul {
+      list-style-type: none;
+      padding-left: 0!important;
+      text-align :center;
     }
 
     .bg-image {
