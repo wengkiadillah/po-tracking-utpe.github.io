@@ -49,7 +49,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult Create()
         {
-            IQueryable<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.ApplicationID == 3));
+            IQueryable<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()));
             IQueryable<User> inferiorUsers = users;
 
             foreach (var item in dbPOTracking.UserProcurementSuperiors)
@@ -158,7 +158,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult PopulateUser(string username)
         {
-            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.ApplicationID == 3) && x.Username != username).ToList();
+            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).ToList();
 
             List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 

@@ -38,6 +38,7 @@ namespace POTrackingV2.Controllers
             //}
 
             var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            
             var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
             if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {

@@ -31,7 +31,7 @@ namespace POTrackingV2.Controllers
                     var userList = (from ur in dbUser.UserRoles
                                     join us in dbUser.Users on ur.Username equals us.Username
                                     join role in dbUser.Roles on ur.RoleID equals role.ID
-                                    where role.ApplicationID == 3
+                                    where role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
                                     select new { Username = us.Username, Name = us.Name, RoleName = role.Name }).ToList();
 
                     foreach (var item in userList)
@@ -69,7 +69,7 @@ namespace POTrackingV2.Controllers
                     var userList = (from ur in dbUser.UserRoles
                                     join us in dbUser.Users on ur.Username equals us.Username
                                     join role in dbUser.Roles on ur.RoleID equals role.ID
-                                    where role.ApplicationID == 3
+                                    where role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
                                     select new { Username = us.Username, Name = us.Name, RoleName = role.Name }).ToList();
 
                     foreach (var item in userList)
@@ -102,7 +102,7 @@ namespace POTrackingV2.Controllers
                         var userList = (from ur in dbUser.UserRoles
                                         join us in dbUser.Users on ur.Username equals us.Username
                                         join role in dbUser.Roles on ur.RoleID equals role.ID
-                                        where role.ApplicationID == 3
+                                        where role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
                                         select new { Username = us.Username, Name = us.Name, RoleName = role.Name }).ToList();
 
                         foreach (var item in userList)
@@ -154,7 +154,7 @@ namespace POTrackingV2.Controllers
                     var userList = (from ur in dbUser.UserRoles
                                     join us in dbUser.Users on ur.Username equals us.Username
                                     join role in dbUser.Roles on ur.RoleID equals role.ID
-                                    where role.ApplicationID == 3
+                                    where role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
                                     select new { Username = us.Username, Name = us.Name, RoleName = role.Name }).ToList();
 
                     foreach (var item in userList)
