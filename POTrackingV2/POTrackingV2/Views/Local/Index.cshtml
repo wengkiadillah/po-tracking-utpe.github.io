@@ -96,6 +96,11 @@
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
 
+    if (purchasingDocumentItems.Count() < 1)
+    {
+        continue;
+    }
+
     purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
     <ul class="list-unstyled po-list">
