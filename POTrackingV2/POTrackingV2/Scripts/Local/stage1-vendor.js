@@ -282,7 +282,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             dataType: "json",
             success: function (response) {
                 alert(response.responseText);
-                alert(response.isSameAsProcs);
+                //alert(response.isSameAsProcs);
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
