@@ -294,6 +294,60 @@ namespace POTrackingV2.Controllers
 
         }
 
+        [HttpGet]
+        public ActionResult CreateVendorSubcontDev()
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CreateVendorSubcontDev(SubcontDevVendor objNewVendor)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                listRoleType = db.RolesTypes.ToList();
+                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
+                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewVendor.Username && x.VendorCode == objNewVendor.VendorCode));
+                if (chkUser == null)
+                {
+                    var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewVendor.Username));
+                    if (chkUserRole == null)
+                    {
+                        objNewVendor.Username = objNewVendor.Username;
+                        if (objNewVendor.VendorCode == null)
+                        {
+                            objNewVendor.VendorCode = "50000";
+                        }
+                        else
+                        {
+                            objNewVendor.VendorCode = objNewVendor.VendorCode;
+                        }
+                        
+                        objNewVendor.Created = DateTime.Now;
+                        objNewVendor.CreatedBy = User.Identity.Name;
+                        objNewVendor.LastModified = DateTime.Now;
+                        objNewVendor.LastModifiedBy = User.Identity.Name;
+                        db.SubcontDevVendors.Add(objNewVendor);
+                        db.SaveChanges();
+                        ModelState.Clear();
+                        return RedirectToAction("ViewVendorSubcontDev", "MasterVendor");
+                    }
+                    ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
+                    return View();
+                }
+                ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
+                return View();
+            }
+
+        }
+
         public ActionResult ViewUserVendor(string search, int? page)
         {
             ViewBag.CurrentSearchString = search;
@@ -301,6 +355,16 @@ namespace POTrackingV2.Controllers
             {
 
                 return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
+
+            }
+        }
+        public ActionResult ViewVendorSubcontDev(string search, int? page)
+        {
+            ViewBag.CurrentSearchString = search;
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+
+                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
 
             }
 
@@ -385,7 +449,17 @@ namespace POTrackingV2.Controllers
 
                 return RedirectToAction("ViewUserVendor");
             }
+        }
+        public ActionResult DeleteVendorSubcontDev(int ID)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                var subcontDev = db.SubcontDevVendors.Find(ID);
+                db.SubcontDevVendors.Remove(subcontDev);
+                db.SaveChanges();
 
+                return RedirectToAction("ViewVendorSubcontDev");
+            }
         }
 
         public ActionResult ResetPasswordUserVendor(Guid ID)
