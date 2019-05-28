@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class UserProcurementController : Controller
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();
@@ -78,6 +78,10 @@ namespace POTrackingV2.Controllers
                 UserProcurementSuperior userProcurementSuperior = new UserProcurementSuperior();
                 userProcurementSuperior.Username = username;
                 userProcurementSuperior.NRP = description;
+                userProcurementSuperior.Created = now;
+                userProcurementSuperior.CreatedBy = User.Identity.Name;
+                userProcurementSuperior.LastModified = now;
+                userProcurementSuperior.LastModifiedBy = User.Identity.Name;
 
                 dbPOTracking.UserProcurementSuperiors.Add(userProcurementSuperior);
 
@@ -94,6 +98,8 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
 
                         userProcurementInferior.ParentID = id;
+                        userProcurementInferior.LastModified = now;
+                        userProcurementInferior.LastModifiedBy = User.Identity.Name;
                     }
                     else
                     {
@@ -102,6 +108,10 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior.ParentID = id;
                         userProcurementInferior.Username = item;
                         userProcurementInferior.NRP = description;
+                        userProcurementInferior.Created = now;
+                        userProcurementInferior.CreatedBy = User.Identity.Name;
+                        userProcurementInferior.LastModified = now;
+                        userProcurementInferior.LastModifiedBy = User.Identity.Name;
 
                         dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
                     }
@@ -132,6 +142,8 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
 
                         userProcurementInferior.ParentID = userSuperiorID;
+                        userProcurementInferior.LastModified = now;
+                        userProcurementInferior.LastModifiedBy = User.Identity.Name;
                     }
                     else
                     {
@@ -140,11 +152,13 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior.ParentID = userSuperiorID;
                         userProcurementInferior.Username = item;
                         userProcurementInferior.NRP = description;
+                        userProcurementInferior.Created = now;
+                        userProcurementInferior.CreatedBy = User.Identity.Name;
+                        userProcurementInferior.LastModified = now;
+                        userProcurementInferior.LastModifiedBy = User.Identity.Name;
 
                         dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
                     }
-
-                    dbPOTracking.UserProcurementSuperiors.Add(userProcurementInferior);
                 }
 
                 dbPOTracking.SaveChanges();
@@ -241,6 +255,7 @@ namespace POTrackingV2.Controllers
                 }
 
                 string description = sResultSet.Properties["givenname"][0].ToString();
+                //string description = sResultSet.Properties["description"][0].ToString();
                 return description;
                 //return Json(new { success = true, sResultSet }, JsonRequestBehavior.AllowGet);
             }
