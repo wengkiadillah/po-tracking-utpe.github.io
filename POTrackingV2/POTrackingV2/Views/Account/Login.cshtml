@@ -34,7 +34,7 @@
             <form action="/utpe-patria/" method="post">
                 <input name="__RequestVerificationToken" type="hidden" value="1F_VZ9gQnAVhieDi9pRV76_uVf3XE5VhXpXcY18B9YQD0ohm7yhjZ_wMnMxrMp-Lqc0UuuFoAEo4Q-nNHg7H3UY-U18IC5JPi13BwDBtUrY1">
                 <div class="form-container">
-                    <img src="~/Images/patria-logo-login.png" class="login-logo">
+                    <img src="~/Images/patria-logo-login.png" class="login-logo mb-3">
                     <div class="form-group">
                         @Html.LabelFor(model => model.UserName)
                         @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
@@ -52,7 +52,7 @@
                     <br>
                     <button class="login-button btn" type="submit">Login</button>
                     <hr style="border-color:white;">
-                    <button class="login-button btn" style="width:30%;" type="button" onclick="location.href='@Url.Action("LoginInternal", "Account")'">Internal Login</button>
+                    <button class="login-button btn" type="button" onclick="location.href='@Url.Action("LoginInternal", "Account")'">Internal Login</button>
                 </div>
             </form>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -104,6 +104,7 @@
         width: 28%;
         padding: 20px;
         text-align: right;
+        border-radius: 3%;
     }
 
         .login-conatainer > form {
@@ -157,6 +158,7 @@
     .form-container {
         padding: 2em;
         position: relative;
+        padding-top : 0;
     }
 
         .form-container img {
