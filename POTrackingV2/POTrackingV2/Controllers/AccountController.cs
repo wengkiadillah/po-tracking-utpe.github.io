@@ -39,18 +39,18 @@ namespace POTrackingV2.Controllers
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
 
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                //using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                //{
+                try
                 {
-                    try
-                    {
-                        if (entry.Guid == null)
-                        {
-                            ModelState.AddModelError("", "Username or Password invalid");
-                            return View();
-                        }
-                        else
-                        {
-                            if (Membership.ValidateUser(ldapUser, ldapPassword))
+                    //        if (entry.Guid == null)
+                    //        {
+                    //            ModelState.AddModelError("", "Username or Password invalid");
+                    //            return View();
+                    //        }
+                    //        else
+                    //        {
+                    if (Membership.ValidateUser(ldapUser, ldapPassword))
                             {
                                 var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
                                 if (user != null)
@@ -81,7 +81,7 @@ namespace POTrackingV2.Controllers
                                 ModelState.AddModelError("", "Username or Password invalid.");
                                 return View();
                             }
-                        }
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -95,9 +95,9 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "LandingPage");
+                        return RedirectToAction("Index", "Home");
                     }
-                }
+                //}
             }
             return View(loginView);
         }

@@ -44,8 +44,8 @@ namespace POTrackingV2
                 }
                 else
                 {
-                    if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
-                    {
+                    //if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
+                    //{
                         CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
                         principal.UserName = serializeModel.UserName;
@@ -53,7 +53,7 @@ namespace POTrackingV2
                         principal.Roles = serializeModel.Roles;
 
                         HttpContext.Current.User = principal;
-                    }
+                    //}
                 }              
             }
             else

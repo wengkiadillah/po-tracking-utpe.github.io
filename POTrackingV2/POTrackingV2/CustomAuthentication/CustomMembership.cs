@@ -65,7 +65,7 @@ namespace POTrackingV2.CustomAuthentication
                     {
 
                         var userInternal = (from us in dbMaster.UserRoles
-                                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.ApplicationID == 3
+                                            where (string.Compare(username, us.Username, StringComparison.OrdinalIgnoreCase) == 0) && us.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
                                             select us).FirstOrDefault();
                         if (userInternal == null)
                         {
