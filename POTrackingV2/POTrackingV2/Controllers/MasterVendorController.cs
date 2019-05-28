@@ -60,15 +60,16 @@ namespace POTrackingV2.Controllers
         // GET: MasterVendor/Create
         public ActionResult Create()
         {
-            using (POTrackingEntities db = new POTrackingEntities())
-            {
-                var ViewModel = new MasterVendorViewModel
-                {
+            //using (POTrackingEntities db = new POTrackingEntities())
+            //{
+            //    var ViewModel = new MasterVendorViewModel
+            //    {
 
-                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
-                };
-                return View(ViewModel);
-            }
+            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "ame")
+            //    };
+            //    return View(ViewModel);
+            //}
+            return View();
         }
 
         //public ActionResult CreateDropdown()
