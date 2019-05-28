@@ -36,18 +36,18 @@ namespace POTrackingV2.Controllers
             //ViewBag.Role = role;
             //ViewBag.RoleType = roleType.RolesType.Name.ToLower();
 
-            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
-            {
-                return RedirectToAction("Index", "Local");
-            }
-            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
-            {
-                return RedirectToAction("Index", "SubCont");
-            }
-            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
-            {
-                return RedirectToAction("Index", "SubCont");
-            }
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            //{
+            //    return RedirectToAction("Index", "Local");
+            //}
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            //{
+            //    return RedirectToAction("Index", "SubCont");
+            //}
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            //{
+            //    return RedirectToAction("Index", "SubCont");
+            //}
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
