@@ -25,7 +25,7 @@
             @myRole.Name ! &nbsp; @*(@myRole.Roles, @roleType.RolesType.Name.ToLower())*@
             @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {
-                <a href="@Url.Action("ChangePassword", "Account",User.Identity.Name)"><i class="fas fa-key"></i></a>
+                <a href="@Url.Action("ChangePassword", "Account")"><i class="fas fa-key"></i></a>
             }
         </p>
     </text>

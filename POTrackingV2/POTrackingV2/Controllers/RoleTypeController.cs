@@ -1,4 +1,6 @@
 ﻿using PagedList;
+using POTrackingV2.Constants;
+using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using System;
 using System.Collections.Generic;
@@ -9,14 +11,12 @@ using System.Web.Mvc;
 namespace POTrackingV2.Controllers
 {
 
-
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class RoleTypeController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
         List<UserRoleTypeProxy> listUserRoleType = new List<UserRoleTypeProxy>();
         List<UserProxy> listUser = new List<UserProxy>();
-
-
 
         // GET: RoleType
         public ActionResult Index(string search, int? page)

@@ -102,6 +102,7 @@ namespace POTrackingV2.Controllers
             return View(loginView);
         }
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         public ActionResult ChangePassword()
         {
             ChangePassword changePassword = new ChangePassword();
@@ -118,17 +119,24 @@ namespace POTrackingV2.Controllers
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
                     UserVendor selectedUserVendor = db.UserVendors.SingleOrDefault(x => x.Username == changePassword.Username);
-                    var keyNew = Helper.GeneratePassword(10);
-                    var password = Helper.EncodePassword(changePassword.NewPassword, keyNew);
-                    selectedUserVendor.Salt = keyNew;
-                    selectedUserVendor.Hash = password;
-                    selectedUserVendor.LastModified = DateTime.Now.Date;
-                    selectedUserVendor.LastModifiedBy = changePassword.Username;
+                    var newPassword = Helper.EncodePassword(changePassword.OldPassword, selectedUserVendor.Salt);
 
-                    db.SaveChanges();
-                    db.SaveChanges();
-                }
-                return RedirectToAction("Index", "Home");
+                    if (selectedUserVendor.Hash == newPassword)
+                    {
+                        var keyNew = Helper.GeneratePassword(10);
+                        var password = Helper.EncodePassword(changePassword.NewPassword, keyNew);
+                        selectedUserVendor.Salt = keyNew;
+                        selectedUserVendor.Hash = password;
+                        selectedUserVendor.LastModified = DateTime.Now.Date;
+                        selectedUserVendor.LastModifiedBy = changePassword.Username;
+
+                        db.SaveChanges();
+                        db.SaveChanges();
+                        return RedirectToAction("Index", "Home");
+                    }
+                    ViewBag.ErrorMessage = "Old Password is wrong";
+                    return View();
+                }              
             }
             catch
             {

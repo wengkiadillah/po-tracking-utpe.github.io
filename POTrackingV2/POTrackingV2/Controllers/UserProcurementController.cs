@@ -1,4 +1,6 @@
-﻿using POTrackingV2.Models;
+﻿using POTrackingV2.Constants;
+using POTrackingV2.CustomAuthentication;
+using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class UserProcurementController : Controller
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();

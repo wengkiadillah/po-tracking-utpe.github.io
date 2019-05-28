@@ -16,7 +16,7 @@ using POTrackingV2.Constants;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleSubcontDev)]
     public class SubcontController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
@@ -93,7 +93,7 @@ namespace POTrackingV2.Controllers
 
                 if (role.ToLower() == LoginConstants.RoleProcurement.ToLower())
                 {
-                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.UserName == userName).Select(x => x.VendorCode).Distinct();
+                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
                     if (listVendorSubconDev != null)
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));

@@ -161,6 +161,7 @@
     <Compile Include="Constants\LoginConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DelayReasonController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
@@ -344,7 +345,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>UserManagement.tt</DependentUpon>
+      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -515,19 +516,19 @@
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\POTracking.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\POTracking.edmx.diagram">
-      <DependentUpon>POTracking.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\UserManagement.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\UserManagement.edmx.diagram">
       <DependentUpon>UserManagement.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\POTracking.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\POTracking.edmx.diagram">
+      <DependentUpon>POTracking.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -619,6 +620,8 @@
     <Content Include="Views\UserProcurement\Create.cshtml" />
     <Content Include="Views\UserProcurement\Details.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Error\Unauthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

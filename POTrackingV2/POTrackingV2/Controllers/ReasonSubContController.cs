@@ -4,10 +4,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using POTrackingV2.Constants;
+using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 
 namespace POTracking.Controllers
 {
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class ReasonSubContController : Controller
     {
         // GET: ReasonSubCont

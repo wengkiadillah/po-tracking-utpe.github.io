@@ -23,7 +23,7 @@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
         <div class="form-group mr-4 frmSearch">
             @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
-            <input  id="searchDataPONumber" name="searchDataPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
+            <input id="searchDataPONumber" name="searchDataPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
@@ -36,10 +36,10 @@
             <datalist id="data-list-material"></datalist>
         </div>
         @*<select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>*@
+                <option value="poNumber">PO Number</option>
+                <option value="vendor">Vendor Name</option>
+                <option value="material">Material</option>
+            </select>*@
         <div class="form-group mr-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
@@ -57,6 +57,33 @@
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
         @*</div>*@
     }
+</div>
+<div class="filter-row tier-2 mt-0">
+    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+        <div class="form-group mr-4 frmSearch">
+            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
+            <datalist id="data-list"></datalist>
+        </div>
+        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
+            <option value="poNumber">PO Number</option>
+            <option value="vendor">Vendor Name</option>
+            <option value="material">Material</option>
+        </select>
+        <div class="form-group mr-0">
+            <label for="startPODate">PO Date</label>
+            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <div class="form-group">
+            <label for="endPODate">to</label>
+            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <i class="far fa-calendar-alt form-type-icon"></i>
+        </div>
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        <a class="btn btn-info mr-3" href="/Import">Clear</a>
+        <input name="roleID" type="hidden" value="vendor">
+
+    </form>
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0">
@@ -71,23 +98,6 @@
         </ul>
     </div>
 </div>
-@*<div class="filter-row tier-2 mt-0">
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get">
-        <div class="form-group mr-4">
-            <input name="searchData" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search">
-            <i class="fas fa-search form-type-icon hint"></i>
-        </div>
-        <select id="searchFilterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>
-
-
-        <input name="roleID" type="hidden" value="vendor">
-
-    </form>
-</div>*@
 @foreach (var pO in Model)
 {
     <ul class="list-unstyled po-list">
@@ -398,7 +408,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem !=null)))
+                            if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)))
                             //if (ViewBag.CurrentRoleID == 3 && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
@@ -672,7 +682,7 @@
                             <span class="po-item-data-header__text gr-qty">Qty</span>
                             <span class="po-item-data-header__text gr-complete">GR Completed</span>
                             @*<span class="po-item-data-header__text">Inspection Date</span>
-                            <span class="po-item-data-header__text">Qty</span>*@
+                                <span class="po-item-data-header__text">Qty</span>*@
                             <span class="po-item-data-header__text">info</span>
 
                         </div>
@@ -701,7 +711,7 @@
                                     <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     @*<span class="po-item-data-header__column inspection-date"></span>
-                                    <span class="po-item-data-header__column inspecton-qty"></span>*@
+                                        <span class="po-item-data-header__column inspecton-qty"></span>*@
                                     <span class="po-item-data-header__text info">
                                         <i class="fas fa-info-circle po-item-section-header__icon info"></i>
                                         <div class="pop-up-notification">
@@ -748,7 +758,7 @@
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
-                                            <span class="po-item-data-header__column qty"></span>*@
+                                                <span class="po-item-data-header__column qty"></span>*@
                                             <span class="po-item-data-header__text info">
                                                 <i class="fas fa-info-circle po-item-section-header__icon info"></i>
                                                 <div class="pop-up-notification">
@@ -805,7 +815,7 @@
                                 checkStageProgressItem = true;
                             }
 
-                            if (checkStageProgressItem==false || ViewBag.CurrentRoleID == "procurement")
+                            if (checkStageProgressItem == false || ViewBag.CurrentRoleID == "procurement")
                             {
                                 isDisabled = "disabled";
                             }
@@ -888,7 +898,7 @@
                             var invoiceDownloadPath = "";
                             var grFullFill = "";
 
-                            if(purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            if (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             {
                                 grFullFill = "gr-full-fill";
                             }
@@ -955,14 +965,14 @@
                                             }
                                         }
 
-                                        if(purchasingDocumentItemChild.InvoiceMethod == "full" || purchasingDocumentItemChild.InvoiceMethod==null)
+                                        if (purchasingDocumentItemChild.InvoiceMethod == "full" || purchasingDocumentItemChild.InvoiceMethod == null)
                                         {
                                             hiddenFormUploading = "hidden";
                                             hiddenFormUploaded = "hidden";
                                         }
 
                                         @*<div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" >*@
-                                        <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild" >
+                                        <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild">
                                             <div class="po-item-data-header__column">
                                                 <input type="hidden" class="pd-item-id" value="@purchasingDocumentItemChild.ID">
                                                 <div class="form-inline form-upload" @hiddenFormUploading>
@@ -1028,8 +1038,8 @@
             </div>
         </li>
     </ul>
-                                poSignRow++;
-                            }
+    poSignRow++;
+}
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -2869,7 +2879,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#ATASetting").attr("min", $("#ETASetting").val());
                                 $("#ATAFullweld").attr("min", $("#ETAFullweld").val());
                                 $("#ATAPrimer").attr("min", $("#ETAPrimer").val());
-                                
+
                                 $("#ATAPBReasonID").attr("disabled", "disabled");
                                 $("#ATASettingReasonID").attr("disabled", "disabled");
                                 $("#ATAFullweldReasonID").attr("disabled", "disabled");
@@ -2879,7 +2889,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#inputFileSetting").attr("disabled", "disabled");
                                 $("#inputFileFullweld").attr("disabled", "disabled");
                                 $("#inputFilePrimer").attr("disabled", "disabled");
-                                
+
                                 //$("#ATAPB").val() ? ($("#ATAPB").attr("disabled", "disabled"), $("#ATAPBReason").attr("disabled", "disabled"), $("#ETASetting").val($("#ATAPB").val()), $("#ATASetting").attr("min", $("#ATAPB").val())) : $("#ATAPB").removeAttr("disabled");
                                 //$("#ATASetting").val() ? ($("#ATASetting").attr("disabled", "disabled"), $("#ATASettingReason").attr("disabled", "disabled"), $("#ETAFullweld").val($("#ATASetting").val()), $("#ATAFullweld").attr("min", $("#ATASetting").val())) : $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
                                 //$("#ATAFullweld").val() ? ($("#ATAFullweld").attr("disabled", "disabled"), $("#ATAFullweldReason").attr("disabled", "disabled"), $("#ETAPrimer").val($("#ATAFullweld").val()), $("#ATAPrimer").attr("min", $("#ATAFullweld").val())) : $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");

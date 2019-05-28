@@ -1,0 +1,8 @@
+﻿
+@{
+    ViewBag.Title = "Unauthorized";
+}
+
+<h1 class="text-danger">Un Authorized</h1>
+<h2 class="text-danger">You don't have authorize to access this application.</h2>
+@Html.ActionLink("Sign in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })

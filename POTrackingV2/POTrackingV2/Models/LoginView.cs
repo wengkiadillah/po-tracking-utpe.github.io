@@ -25,12 +25,15 @@ namespace POTrackingV2.Models
 
         [Required]
         [Display(Name = "Old Password")]
+        [DataType(DataType.Password)]
         public string OldPassword { get; set; }
         [Required]
         [Display(Name = "New Password")]
+        [DataType(DataType.Password)]
         public string NewPassword { get; set; }
         [Required]
         [Display(Name = "Re-Enter New Password")]
+        [DataType(DataType.Password)]
         public string ReNewPassword { get; set; }
     }
 
