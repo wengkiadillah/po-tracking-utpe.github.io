@@ -31,15 +31,14 @@ namespace POTrackingV2.Controllers
             {
                 object data = null;
                 value = value.ToLower();
-                //var data = db.POes.Distinct().Select(x =>
-                //    new
-                //    {
-                //        Data = x.Number
-                //    }).OrderByDescending(x => x.Data);
+
+                IEnumerable<Vendor> vendors = db.Vendors.Where(x => x.POes.Any(y => y.Type.ToLower() == "zo04" || y.Type.ToLower() == "zo07" || y.Type.ToLower() == "zo08"));
+                IEnumerable<PurchasingDocumentItem> purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.PO.Type.ToLower() == "zo04" || x.PO.Type.ToLower() == "zo07" || x.PO.Type.ToLower() == "zo08");
+
 
                 if (searchFilterBy == "poNumber")
                 {
-                    data = db.POes.Where(x => x.Number.Contains(value)).Select(x =>
+                    data = db.POes.Where(x => x.Number.Contains(value) && (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")).Select(x =>
                      new
                      {
                          Data = x.Number,
@@ -48,7 +47,7 @@ namespace POTrackingV2.Controllers
                 }
                 else if (searchFilterBy == "vendor")
                 {
-                    data = db.Vendors.Where(x => x.Name.Contains(value)).Select(x =>
+                    data = vendors.Where(x => x.Name.Contains(value)).Select(x =>
                     new
                     {
                         Data = x.Name,
@@ -57,7 +56,7 @@ namespace POTrackingV2.Controllers
                 }
                 else if (searchFilterBy == "material")
                 {
-                    data = db.PurchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
+                    data = purchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
                     new
                     {
                         Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
@@ -81,11 +80,11 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: Import
-        public ActionResult Index(string searchData, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
-            
+
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                             .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
@@ -99,7 +98,9 @@ namespace POTrackingV2.Controllers
                                 .AsQueryable();
             }
 
-            ViewBag.CurrentSearchData = searchData;
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = role.ToLower();
@@ -109,20 +110,19 @@ namespace POTrackingV2.Controllers
             ViewBag.DelayReasons = delayReasons;
 
             #region Filter
-            if (!String.IsNullOrEmpty(searchData))
+            if (!String.IsNullOrEmpty(searchPONumber))
             {
-                //if (filterBy == "poNumber")
-                //{
-                //    pOes = pOes.Where(x => x.Number.Contains(searchData));
-                //}
-                //else if (filterBy == "vendor")
-                //{
-                //    pOes = pOes.Where(x => x.Vendor.Name.Contains(searchData));
-                //}
-                //else if (filterBy == "material")
-                //{
-                //    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchData) || y.Description.Contains(searchData)));
-                //}
+                pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.Contains(searchVendorName));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial)));
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))
