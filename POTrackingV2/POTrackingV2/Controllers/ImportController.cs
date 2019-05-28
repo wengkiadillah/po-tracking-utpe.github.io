@@ -55,28 +55,36 @@ namespace POTrackingV2.Controllers
                             .OrderBy(x => x.Number)
                             .AsQueryable();
 
-            ////  GetUserNRPs
-            //List<string> myUserNRPs = new List<string>();
-            //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-            //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
-
-            //if (myUserNRPs.Count > 0)
-            //{
-            //    var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
-
-            //    foreach (var myUserNRP in myUserNRPs)
-            //    {
-            //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
-            //    }
-
-            //    pOes = pOes.Except(noShowPOes);
-            //}
-
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                                 .AsQueryable();
+
+                //  Filter Procurement cuman bisa liat PO yang dia bikin
+
+                ////  GetUserNRPs
+                //List<string> myUserNRPs = new List<string>();
+                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
+
+                //if (myUserNRPs.Count > 0)
+                //{
+                //    var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
+
+                //    foreach (var myUserNRP in myUserNRPs)
+                //    {
+                //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
+                //    }
+
+                //    pOes = pOes.Except(noShowPOes);
+                //}
+            }
+            else
+            {
+                //  Filter Vendor cuman bisa liat PO yang punya dia
+
+                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).SingleOrDefault().VendorCode);
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
