@@ -43,31 +43,27 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+    <form class="filter-form-container form-inline" style="visibility:hidden;">
         <div class="form-group mr-4 frmSearch">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
-            <datalist id="data-list"></datalist>
+            <input class="form-control form-control-lg filter-search with-icon">
+            <datalist></datalist>
         </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
+        <select class="form-control form-control-lg">
         </select>
         <div class="form-group mr-0">
-            <label for="startPODate">PO Date</label>
-            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <label >PO Date</label>
+            <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
         <div class="form-group">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <label>to</label>
+            <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        <a class="btn btn-info mr-3" href="/Import">Clear</a>
-        <input name="roleID" type="hidden" value="vendor">
-
+        <button class="btn btn-info mr-3">Find</button>
+        <a class="btn btn-info mr-3">Clear</a>
     </form>
+
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
@@ -2952,7 +2948,7 @@
                     $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
                     $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
-                    $("#searchFilterBy").on("change", function () {
+                    @*$("#searchFilterBy").on("change", function () {
                             $("#data-list").empty();
                     });
 
@@ -2982,14 +2978,14 @@
                                 alert(xhr.status + " : " + error);
                             }
                         });
-                    });
+                    });*@
 
-                    $("#searchFilterBy option").each(function () {
-                        if ($(this).attr("value") == $(this).parent().attr("value")) {
-                            $(this).attr("selected", "selected");
-                            $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
-                        }
-                    });
+                    //$("#searchFilterBy option").each(function () {
+                    //    if ($(this).attr("value") == $(this).parent().attr("value")) {
+                    //        $(this).attr("selected", "selected");
+                    //        $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
+                    //    }
+                    //});
 
                     //stage scrollbar fixed
                     var chooseStagePosition = $('.filter-row').offset();

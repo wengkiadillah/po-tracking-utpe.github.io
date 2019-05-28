@@ -81,7 +81,7 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: Import
-        public ActionResult Index(string searchData, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchData, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -99,7 +99,6 @@ namespace POTrackingV2.Controllers
                                 .AsQueryable();
             }
 
-            ViewBag.CurrentSearchFilterBy = filterBy;
             ViewBag.CurrentSearchData = searchData;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
@@ -112,18 +111,18 @@ namespace POTrackingV2.Controllers
             #region Filter
             if (!String.IsNullOrEmpty(searchData))
             {
-                if (filterBy == "poNumber")
-                {
-                    pOes = pOes.Where(x => x.Number.Contains(searchData));
-                }
-                else if (filterBy == "vendor")
-                {
-                    pOes = pOes.Where(x => x.Vendor.Name.Contains(searchData));
-                }
-                else if (filterBy == "material")
-                {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchData) || y.Description.Contains(searchData)));
-                }
+                //if (filterBy == "poNumber")
+                //{
+                //    pOes = pOes.Where(x => x.Number.Contains(searchData));
+                //}
+                //else if (filterBy == "vendor")
+                //{
+                //    pOes = pOes.Where(x => x.Vendor.Name.Contains(searchData));
+                //}
+                //else if (filterBy == "material")
+                //{
+                //    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchData) || y.Description.Contains(searchData)));
+                //}
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))
