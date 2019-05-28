@@ -23,6 +23,87 @@ namespace POTrackingV2.Controllers
         private POTrackingEntities db = new POTrackingEntities();
         public DateTime now = DateTime.Now;
 
+        // GET: Import
+        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            //ViewBag.MyUser = myUser;
+            //ViewBag.Role = role;
+            //ViewBag.RoleType = roleType.RolesType.Name.ToLower();
+
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            {
+                return RedirectToAction("Index", "Local");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+
+            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
+                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                            .OrderBy(x => x.Number)
+                            .AsQueryable();
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+                pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                                .AsQueryable();
+            }
+
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+            ViewBag.CurrentStartPODate = searchStartPODate;
+            ViewBag.CurrentEndPODate = searchEndPODate;
+            ViewBag.CurrentRoleID = role.ToLower();
+
+            List<DelayReason> delayReasons = db.DelayReasons.ToList();
+
+            ViewBag.DelayReasons = delayReasons;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.Contains(searchVendorName));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial)));
+            }
+
+            if (!String.IsNullOrEmpty(searchStartPODate))
+            {
+                DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date >= startDate);
+            }
+
+            if (!String.IsNullOrEmpty(searchEndPODate))
+            {
+                DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date <= endDate);
+            }
+            #endregion
+
+            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+        }
 
         [HttpGet]
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
@@ -79,77 +160,13 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // GET: Import
-        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
-        {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            string role = myUser.Roles.ToLower();
-
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                            .OrderBy(x => x.Number)
-                            .AsQueryable();
-
-            if (role == "procurement")
-            {
-                pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                                .AsQueryable();
-            }
-
-            ViewBag.CurrentSearchPONumber = searchPONumber;
-            ViewBag.CurrentSearchVendorName = searchVendorName;
-            ViewBag.CurrentSearchMaterial = searchMaterial;
-            ViewBag.CurrentStartPODate = searchStartPODate;
-            ViewBag.CurrentEndPODate = searchEndPODate;
-            ViewBag.CurrentRoleID = role.ToLower();
-
-            List<DelayReason> delayReasons = db.DelayReasons.ToList();
-
-            ViewBag.DelayReasons = delayReasons;
-
-            #region Filter
-            if (!String.IsNullOrEmpty(searchPONumber))
-            {
-                pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
-            }
-
-            if (!String.IsNullOrEmpty(searchVendorName))
-            {
-                pOes = pOes.Where(x => x.Vendor.Name.Contains(searchVendorName));
-            }
-
-            if (!String.IsNullOrEmpty(searchMaterial))
-            {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial)));
-            }
-
-            if (!String.IsNullOrEmpty(searchStartPODate))
-            {
-                DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                pOes = pOes.Where(x => x.Date >= startDate);
-            }
-
-            if (!String.IsNullOrEmpty(searchEndPODate))
-            {
-                DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                pOes = pOes.Where(x => x.Date <= endDate);
-            }
-            #endregion
-
-            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
-        }
-
         #region STAGE 1
 
         [HttpPost]
         public ActionResult VendorConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -287,7 +304,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorEditItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -394,7 +411,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "procurement")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -530,7 +547,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -626,7 +643,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "procurement")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -696,7 +713,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "procurement")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -783,7 +800,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProformaInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileProformaInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -853,7 +870,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipProformaInvoice(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1038,7 +1055,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1103,7 +1120,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1166,7 +1183,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUpdateETA([Bind(Include = "PurchasingDocumentItemID,ETADate,DelayReasonID")]ETAHistory inputETAHistory)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1242,7 +1259,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadProgressPhotoes(int inputPurchasingDocumentItemID, HttpPostedFileBase[] fileProgressPhotoes)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1324,7 +1341,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmShipmentBookingDate(List<Shipment> inputShipmentBookDates)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1394,7 +1411,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorConfirmATD(List<Shipment> inputShipmentATDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1470,7 +1487,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorFillInShipmentForm(int inputPurchasingDocumentItemID, DateTime inputCopyBLDate, HttpPostedFileBase fileCopyBL, HttpPostedFileBase filePackingList, HttpPostedFileBase fileInvoice, string inputAWB, string inputCourierName)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1601,7 +1618,7 @@ namespace POTrackingV2.Controllers
         public ActionResult ProcurementConfirmOnAirport(List<Shipment> inputShipments)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "procurement")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1673,7 +1690,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1754,7 +1771,7 @@ namespace POTrackingV2.Controllers
         public ActionResult VendorRemoveUploadInvoice(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != "vendor")
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
