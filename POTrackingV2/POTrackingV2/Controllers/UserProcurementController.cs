@@ -19,9 +19,16 @@ namespace POTrackingV2.Controllers
         private UserManagementEntities dbUserManagement = new UserManagementEntities();
         public DateTime now = DateTime.Now;
 
-        public ActionResult Index()
+        public ActionResult Index(string searchUser)
         {
             List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
+
+            if (!string.IsNullOrEmpty(searchUser))
+            {
+                userProcurementSuperiors = userProcurementSuperiors.Where(x => x.Username.ToLower().Contains(searchUser)).ToList();
+            }
+
+            ViewBag.CurrentSearchUser = searchUser;
 
             return View(userProcurementSuperiors);
         }
