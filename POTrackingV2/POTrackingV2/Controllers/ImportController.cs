@@ -928,7 +928,7 @@ namespace POTrackingV2.Controllers
 
                     db.SaveChanges();
 
-                    string downloadUrl = Path.Combine("..\\Files\\Import\\ProformaInvoice", fileName);
+                    string downloadUrl = Path.Combine("Files\\Import\\ProformaInvoice", fileName);
 
                     return Json(new { responseText = $"File successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                 }
@@ -1678,9 +1678,9 @@ namespace POTrackingV2.Controllers
             {
                 if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 6)
                 {
-                    string dokumenCopyBL = Path.Combine("../Files/Import/Shipping/CopyBL", shipment.CopyBLDocument);
-                    string dokumenPackingList = Path.Combine("../Files/Import/Shipping/PackingList", shipment.PackingListDocument);
-                    string dokumenInvoice = Path.Combine("../Files/Import/Shipping/Invoice", shipment.InvoiceDocument);
+                    string dokumenCopyBL = Path.Combine("Files/Import/Shipping/CopyBL", shipment.CopyBLDocument);
+                    string dokumenPackingList = Path.Combine("Files/Import/Shipping/PackingList", shipment.PackingListDocument);
+                    string dokumenInvoice = Path.Combine("Files/Import/Shipping/Invoice", shipment.InvoiceDocument);
 
                     return Json(new { isCompleted = true, activeStage = purchasingDocumentItem.ActiveStageView, copyBLDate = shipment.CopyBLDateView, dokumenCopyBL, dokumenPackingList, dokumenInvoice, awb = shipment.AWB, courierName = shipment.CourierName }, JsonRequestBehavior.AllowGet);
                 }
@@ -1821,7 +1821,7 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            string downloadUrl = Path.Combine("..\\Files\\Import\\Invoice", fileName);
+                            string downloadUrl = Path.Combine("Files\\Import\\Invoice", fileName);
 
                             return Json(new { responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                         }
