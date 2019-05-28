@@ -39,65 +39,65 @@ namespace POTrackingV2.Controllers
                 string ldapUser = loginView.UserName;// WebConfigurationManager.AppSettings["ADUsername"];
                 string ldapPassword = loginView.Password;// WebConfigurationManager.AppSettings["ADPassword"];
 
-                //using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
-                //{
-                try
+                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
                 {
-                    //if (entry.Guid == null)
-                    //{
-                    //    ModelState.AddModelError("", "Username or Password invalid");
-                    //    return View();
-                    //}
-                    //else
-                    //{
-                    if (Membership.ValidateUser(ldapUser, ldapPassword))
+                    try
                     {
-                        var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
-                        if (user != null)
+                        if (entry.Guid == null)
                         {
-                            CustomSerializeModel userModel = new Models.CustomSerializeModel()
-                            {
-                                UserName = user.UserName,
-                                Name = user.Name,
-                                Roles = user.Roles
-                                //RolesType = user.RolesType,
-                                //VendorCode = user.VendorCode
-
-                            };
-
-                            string userData = JsonConvert.SerializeObject(userModel);
-                            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
-                                (
-                                1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
-                                );
-
-                            string enTicket = FormsAuthentication.Encrypt(authTicket);
-                            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
-                            Response.Cookies.Add(faCookie);
+                            ModelState.AddModelError("", "Username or Password invalid");
+                            return View();
                         }
+                        else
+                        {
+                            if (Membership.ValidateUser(ldapUser, ldapPassword))
+                            {
+                                var user = (CustomMembershipUser)Membership.GetUser(ldapUser, false);
+                                if (user != null)
+                                {
+                                    CustomSerializeModel userModel = new Models.CustomSerializeModel()
+                                    {
+                                        UserName = user.UserName,
+                                        Name = user.Name,
+                                        Roles = user.Roles
+                                        //RolesType = user.RolesType,
+                                        //VendorCode = user.VendorCode
+
+                                    };
+
+                                    string userData = JsonConvert.SerializeObject(userModel);
+                                    FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket
+                                        (
+                                        1, loginView.UserName, DateTime.Now, DateTime.Now.AddMinutes(15), false, userData
+                                        );
+
+                                    string enTicket = FormsAuthentication.Encrypt(authTicket);
+                                    HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                                    Response.Cookies.Add(faCookie);
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Username or Password invalid.");
+                                return View();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", "Username or Password invalid " + ex.Message);
+                        return View();
+                    }
+
+                    if (!string.IsNullOrEmpty(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Username or Password invalid.");
-                        return View();
+                        return RedirectToAction("Index", "LandingPage");
                     }
-                    //}
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Username or Password invalid " + ex.Message);
-                    return View();
-                }
-
-                if (!string.IsNullOrEmpty(ReturnUrl))
-                {
-                    return Redirect(ReturnUrl);
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                //}
             }
             return View(loginView);
         }
@@ -136,7 +136,7 @@ namespace POTrackingV2.Controllers
                     }
                     ViewBag.ErrorMessage = "Old Password is wrong";
                     return View();
-                }              
+                }
             }
             catch
             {
