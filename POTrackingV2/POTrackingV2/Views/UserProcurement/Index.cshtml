@@ -7,6 +7,17 @@
 
 <h2>User Procurement Superior</h2>
 
+<div class="filter-row mb-2">
+    @using (Html.BeginForm("Index", "UserProcurement", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    {
+        <div class="form-group mr-4">
+            <input id="searchUser" name="searchUser" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search User" autocomplete="off" value="@ViewBag.CurrentSearchUser" />
+        </div>
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
+    }
+</div>
+
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>

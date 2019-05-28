@@ -14,16 +14,16 @@
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchData" />
-            <datalist id="data-list"></datalist>
+            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <datalist id="data-list-ponumber"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchData" />
-            <datalist id="data-list"></datalist>
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <datalist id="data-list-vendorname"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchData" />
-            <datalist id="data-list"></datalist>
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <datalist id="data-list-material"></datalist>
         </div>
         <div class="form-group mr-0 ml-0">
             <label for="startPODate">PO Date</label>
@@ -43,31 +43,27 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+    <form class="filter-form-container form-inline" style="visibility:hidden;">
         <div class="form-group mr-4 frmSearch">
-            <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
-            <datalist id="data-list"></datalist>
+            <input class="form-control form-control-lg filter-search with-icon">
+            <datalist></datalist>
         </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
+        <select class="form-control form-control-lg">
         </select>
         <div class="form-group mr-0">
-            <label for="startPODate">PO Date</label>
-            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <label >PO Date</label>
+            <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
         <div class="form-group">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
+            <label>to</label>
+            <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        <a class="btn btn-info mr-3" href="/Import">Clear</a>
-        <input name="roleID" type="hidden" value="vendor">
-
+        <button class="btn btn-info mr-3">Find</button>
+        <a class="btn btn-info mr-3">Clear</a>
     </form>
+
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0 custom-scrollbar">
@@ -97,9 +93,9 @@
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
 
-    if (ViewBag.CurrentSearchFilterBy == "material" && !string.IsNullOrEmpty(ViewBag.CurrentSearchData))
+    if (!string.IsNullOrEmpty(ViewBag.CurrentSearchMaterial))
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.Contains(ViewBag.CurrentSearchData) || x.Description.Contains(ViewBag.CurrentSearchData));
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.Contains(ViewBag.CurrentSearchMaterial) || x.Description.Contains(ViewBag.CurrentSearchMaterial));
     }
 
     if (roleID == "procurement")
@@ -2928,7 +2924,7 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, searchData = ViewBag.CurrentSearchData, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+        new { page, searchPONumber = ViewBag.CurrentSearchPONumber,searchVendorName = ViewBag.CurrentSearchVendorName,searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
     @section scripts {
         <script src="~/Scripts/datepicker.min.js"></script>
         <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -2952,43 +2948,85 @@
                     $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
                     $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
-                    $("#searchFilterBy").on("change", function () {
-                            $("#data-list").empty();
-                    });
-
-                    $("#searchData").on("keyup focus", function () {
+                    $("#searchPONumber").on("keyup focus", function () {
                         $.ajax({
                             type: "GET",
                             url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': $("#searchFilterBy").val(), 'value': $("#searchData").val() },
+                            data: { 'searchFilterBy': 'poNumber', 'value': $("#searchPONumber").val() },
                             beforeSend: function () {
-                                $("#searchData").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                                $("#searchPONumber").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
                             },
                             success: function (response) {
                                 if (response.responseCode == "200") {
                                     var jsonObjSuggestion = $.parseJSON(response.data);
                                     var element = "";
-                                    //console.log(response.data);
                                     for (var k in jsonObjSuggestion) {
                                         element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
                                     }
-                                    $("#data-list").html(element);
-                                    $("#searchData").css("background", "");
+                                    $("#data-list-ponumber").html(element);
+                                    $("#searchPONumber").css("background", "");
                                 } else {
-                                    alert(response.responseCode + response.responseText);
+                                    console.log(response.responseCode + response.responseText);
                                 }
                             },
                             error: function (xhr, status, error) {
-                                alert(xhr.status + " : " + error);
+                                console.log(xhr.status + " : " + error);
                             }
                         });
                     });
 
-                    $("#searchFilterBy option").each(function () {
-                        if ($(this).attr("value") == $(this).parent().attr("value")) {
-                            $(this).attr("selected", "selected");
-                            $("#searchFilterBy").attr("placeholder", "Search " + $(this).text())
-                        }
+                    $("#searchVendorName").on("keyup focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': 'vendor', 'value': $("#searchVendorName").val() },
+                            beforeSend: function () {
+                                $("#searchVendorName").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list-vendorname").html(element);
+                                    $("#searchVendorName").css("background", "");
+                                } else {
+                                    console.log(response.responseCode + response.responseText);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.status + " : " + error);
+                            }
+                        });
+                    });
+
+                    $("#searchMaterial").on("focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
+                            beforeSend: function () {
+                                $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list-material").html(element);
+                                    $("#searchMaterial").css("background", "");
+                                } else {
+                                    console.log(response.responseCode + response.responseText);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.status + " : " + error);
+                            }
+                        });
                     });
 
                     //stage scrollbar fixed
