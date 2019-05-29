@@ -28,7 +28,7 @@
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
         <div class="form-group mr-4 frmSearch">
-            <input id="searchDataVendorName" name="searchDataVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
+            <input id="searchDataVendorName" name="searchDataVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
             <datalist id="data-list-vendor"></datalist>
         </div>
         <div class="form-group mr-4 frmSearch">
@@ -1038,8 +1038,8 @@
             </div>
         </li>
     </ul>
-    poSignRow++;
-}
+                                poSignRow++;
+                            }
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1984,7 +1984,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
                             btnEditItem.addClass("editable");
-                            if (role == "vendor") {
+                            if (role == "subcontdev") {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -2007,13 +2007,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 }
 
                 //if ((confirmedQtyParent.attr("disabled") !== typeof undefined && confirmedQtyParent.attr("disabled") !== false && role == "vendor") || (role == "procurement")){
-                if ((role == "subcontdev" && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == "vendor"))) {
+                if ((role == "vendor" && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == "subcontdev"))) {
                     //if ((role == "vendor")){
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").each(function (index) {
                         var checkedItemChild = $(this).find(".checkbox-item");
                         //console.log(checkedItemChild.attr("disabled"));
                         //alert(checkedItem.prop("checked"));
-                        if (role == "subcontdev" || (role == "vendor" && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
+                        if (role == "vendor" || (role == "subcontdev" && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
                             var pDItemID = $(this).find(".pd-item-id").val();
                             var pDItemParentID = $(this).find(".pd-item-parent-id").val();
                             var confirmedQtyChild = $(this).find(".pd-item-confirm-qty");
@@ -2050,7 +2050,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         //Description:
                                     });
 
-                                    if (role == "vendor") {
+                                    if (role == "subcontdev") {
                                         $(this).find(".checkbox-item").addClass("isUpdated");
                                         $(this).find(".btn-positive").addClass("buttonClicked");
                                         $(this).find(".btn").addClass("isUpdated");
@@ -2140,7 +2140,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             if ($(this).prop("checked") == true) {
                 var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var newDate = deliveryDate.replaceDayMonth();
-                if (role == "subcontdev") {
+                if (role == "vendor") {
                     if (!isNaN(Date.parse(newDate))) {
                         var date = new Date(newDate);
                         row.find(".confirmed-date").datepicker('setDate', date.newDateFormat());
@@ -2159,7 +2159,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 row.find(".btn.btn-positive").removeAttr("disabled");
                 row.find(".btn.btn-negative").removeAttr("disabled");
             } else {
-                if (role == "subcontdev") {
+                if (role == "vendor") {
                     row.find(".pd-item-confirm-qty").attr("disabled", "disabled");
                     row.find(".partial-date").attr("disabled", "disabled");
                     row.find(".confirmed-date").attr("disabled", "disabled");
@@ -2235,7 +2235,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
-                                    if (role == "vendor") {
+                                    if (role == "subcontdev") {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                     }
                                     btnConfirmPO.addClass("selected");
@@ -2261,7 +2261,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     }
                 }
             } else if (deliveryMethod.val() == "partial") {
-                if (role == "subcontdev") {
+                if (role == "vendor") {
                     var dataPurchasingDocumentItems = [];
                     var total = 0;
                     var isNullChecked = false;
@@ -2270,11 +2270,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var confirmedQtyParent = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .pd-item-confirm-qty");
                     var confirmedDate = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .confirmed-date");
                     var partialDateOuter = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .partial-date");
-
-                    if ($(this).closest(".po-item-data-content").attr("child") > 0) {
-                        confirmedDate = $(this).closest(".po-item-data-content__child").parent().find(".po-item-data-content__outer .confirmed-date");
-                        partialDateOuter = $(this).closest(".po-item-data-content__child").parent().find(".po-item-data-content__outer .partial-date");
-                    }
 
                     if (confirmedDate.val().length == 10 && partialDateOuter.val().length == 10) {
                         var newConfirmedDate = confirmedDate.val().replaceDayMonth();
@@ -2384,7 +2379,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                         });
                     }
-                } else if (role == "vendor") {
+                } else if (role == "subcontdev") {
                     obj.preventDefault();
                     var pdItemID = $(this).closest(".po-item-data-content").find("input.pd-item-id").val();
                     var confirmedItemQty = $(this).closest(".po-item-data-content").find(".pd-item-confirm-qty");
@@ -2407,7 +2402,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (isCanceledPOItem == true) {
                                 btnCancelPO.addClass("selected-negative");
                             } else {
-                                if (role == "vendor") {
+                                if (role == "subcontdev") {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
                                 }
                                 btnConfirmPO.addClass("selected");
@@ -2438,7 +2433,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".edit-row").on("click", function (obj) {
             var role = $("#role").val();
             var lastRowChild = $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").last();
-            if (role == "subcontdev") {
+            if (role == "vendor") {
                 $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
@@ -2452,7 +2447,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .pd-item-confirm-qty").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .partial-date").removeAttr("disabled");
                 }
-            } else if (role == "vendor") {
+            } else if (role == "subcontdev") {
                 if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                     $(this).closest(".po-item-data-content").find(".checkbox-item").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".btn").removeAttr("disabled");
@@ -2623,7 +2618,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
-            if (role == "vendor") {
+            if (role == "subcontdev") {
                 $("#SaveSequencesProgress").hide();
             }
 
