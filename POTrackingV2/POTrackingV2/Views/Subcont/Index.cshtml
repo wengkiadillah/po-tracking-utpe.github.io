@@ -2271,6 +2271,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var confirmedDate = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .confirmed-date");
                     var partialDateOuter = $(this).closest(".po-item-data-content").find(".po-item-data-content__outer .partial-date");
 
+                    if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+                        confirmedDate = $(this).closest(".po-item-data-content__child").parent().find(".po-item-data-content__outer .confirmed-date");
+                        partialDateOuter = $(this).closest(".po-item-data-content__child").parent().find(".po-item-data-content__outer .partial-date");
+                    }
+
                     if (confirmedDate.val().length == 10 && partialDateOuter.val().length == 10) {
                         var newConfirmedDate = confirmedDate.val().replaceDayMonth();
                         var newPartialDate = partialDateOuter.val().replaceDayMonth();
