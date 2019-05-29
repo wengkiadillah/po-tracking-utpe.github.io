@@ -183,7 +183,7 @@
                         var purchasingDocumentItems = pO.PurchasingDocumentItems;
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
 
-                        if (ViewBag.CurrentRoleID == "procurement")
+                        if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
                         {
                             purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                         }
@@ -381,7 +381,7 @@
                                     checkItem = "checked";
                                 }
                             }
-                            else if (ViewBag.CurrentRoleID == "procurement")
+                            else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
                             {
                                 disabledInputQty = "disabled";
                                 if (purchasingDocumentItem.ConfirmedItem == true)
@@ -413,7 +413,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            else if (ViewBag.CurrentRoleID == "procurement" && purchasingDocumentItem.ActiveStageToNumber != 2)
+                            else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber != 2)
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -695,7 +695,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
-                            if (ViewBag.CurrentRoleID != "procurement" && purchasingDocumentItem.ActiveStageToNumber < 4)
+                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 4)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
@@ -748,7 +748,7 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != "procurement" && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 4)
                                         {
                                             hideGR = "style=visibility:hidden";
                                         }
@@ -815,7 +815,7 @@
                                 checkStageProgressItem = true;
                             }
 
-                            if (checkStageProgressItem == false || ViewBag.CurrentRoleID == "procurement")
+                            if (checkStageProgressItem == false || ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
                             {
                                 isDisabled = "disabled";
                             }
@@ -911,7 +911,7 @@
                             }
                             else
                             {
-                                if (ViewBag.CurrentRoleID == "procurement" || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
+                                if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
                                 {
                                     disabledFileInvoice = "disabled";
                                     disabledFileInvoiceUpload = "disabled";
@@ -958,7 +958,7 @@
                                         }
                                         else
                                         {
-                                            if (ViewBag.CurrentRoleID == "procurement" || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
                                             {
                                                 disabledFileInvoice = "disabled";
                                                 disabledFileInvoiceUpload = "disabled";
@@ -1984,7 +1984,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
                             btnEditItem.addClass("editable");
-                            if (role == 2) {
+                            if (role == "vendor") {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -2007,13 +2007,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 }
 
                 //if ((confirmedQtyParent.attr("disabled") !== typeof undefined && confirmedQtyParent.attr("disabled") !== false && role == "vendor") || (role == "procurement")){
-                if ((role == 3 && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == 2))) {
+                if ((role == "subcontdev" && checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true || (role == "vendor"))) {
                     //if ((role == "vendor")){
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").each(function (index) {
                         var checkedItemChild = $(this).find(".checkbox-item");
                         //console.log(checkedItemChild.attr("disabled"));
                         //alert(checkedItem.prop("checked"));
-                        if (role == 3 || (role == 2 && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
+                        if (role == "subcontdev" || (role == "vendor" && checkedItemChild.attr("disabled") != "disabled" && checkedItemChild.prop("checked") == true)) {
                             var pDItemID = $(this).find(".pd-item-id").val();
                             var pDItemParentID = $(this).find(".pd-item-parent-id").val();
                             var confirmedQtyChild = $(this).find(".pd-item-confirm-qty");
@@ -2050,7 +2050,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         //Description:
                                     });
 
-                                    if (role == 2) {
+                                    if (role == "vendor") {
                                         $(this).find(".checkbox-item").addClass("isUpdated");
                                         $(this).find(".btn-positive").addClass("buttonClicked");
                                         $(this).find(".btn").addClass("isUpdated");
@@ -2140,7 +2140,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             if ($(this).prop("checked") == true) {
                 var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var newDate = deliveryDate.replaceDayMonth();
-                if (role == 3) {
+                if (role == "subcontdev") {
                     if (!isNaN(Date.parse(newDate))) {
                         var date = new Date(newDate);
                         row.find(".confirmed-date").datepicker('setDate', date.newDateFormat());
@@ -2159,7 +2159,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 row.find(".btn.btn-positive").removeAttr("disabled");
                 row.find(".btn.btn-negative").removeAttr("disabled");
             } else {
-                if (role == 3) {
+                if (role == "subcontdev") {
                     row.find(".pd-item-confirm-qty").attr("disabled", "disabled");
                     row.find(".partial-date").attr("disabled", "disabled");
                     row.find(".confirmed-date").attr("disabled", "disabled");
@@ -2235,7 +2235,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
-                                    if (role == 2) {
+                                    if (role == "vendor") {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                     }
                                     btnConfirmPO.addClass("selected");
@@ -2261,7 +2261,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     }
                 }
             } else if (deliveryMethod.val() == "partial") {
-                if (role == 3) {
+                if (role == "subcontdev") {
                     var dataPurchasingDocumentItems = [];
                     var total = 0;
                     var isNullChecked = false;
@@ -2379,7 +2379,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                         });
                     }
-                } else if (role == 2) {
+                } else if (role == "vendor") {
                     obj.preventDefault();
                     var pdItemID = $(this).closest(".po-item-data-content").find("input.pd-item-id").val();
                     var confirmedItemQty = $(this).closest(".po-item-data-content").find(".pd-item-confirm-qty");
@@ -2402,7 +2402,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (isCanceledPOItem == true) {
                                 btnCancelPO.addClass("selected-negative");
                             } else {
-                                if (role == 2) {
+                                if (role == "vendor") {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
                                 }
                                 btnConfirmPO.addClass("selected");
@@ -2433,7 +2433,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".edit-row").on("click", function (obj) {
             var role = $("#role").val();
             var lastRowChild = $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").last();
-            if (role == 3) {
+            if (role == "subcontdev") {
                 $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
@@ -2447,7 +2447,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .pd-item-confirm-qty").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .partial-date").removeAttr("disabled");
                 }
-            } else if (role == 2) {
+            } else if (role == "vendor") {
                 if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                     $(this).closest(".po-item-data-content").find(".checkbox-item").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".btn").removeAttr("disabled");
@@ -2618,7 +2618,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
-            if (role == 2) {
+            if (role == "vendor") {
                 $("#SaveSequencesProgress").hide();
             }
 

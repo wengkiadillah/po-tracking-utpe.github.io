@@ -108,6 +108,7 @@ namespace POTrackingV2.Controllers
                 }
 
                 ViewBag.CurrentRoleID = role.ToLower();
+                ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
                 ViewBag.CurrentDataPONumber = searchDataPONumber;
                 ViewBag.CurrentDataVendorName = searchDataVendorName;
                 ViewBag.CurrentDataMaterial = searchDataMaterial;
