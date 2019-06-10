@@ -264,6 +264,7 @@
     </Compile>
     <Compile Include="Models\Partial\ETAHistory.cs" />
     <Compile Include="Models\Partial\UserRoleType.cs" />
+    <Compile Include="Models\Partial\SubcontDevVendor.cs" />
     <Compile Include="Models\PasswordView.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItem.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItemHistory.cs" />
@@ -623,6 +624,8 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Error\Unauthorized.cshtml" />
+    <Content Include="Views\MasterVendor\ViewVendorSubcontDev.cshtml" />
+    <Content Include="Views\MasterVendor\CreateVendorSubcontDev.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
