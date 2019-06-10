@@ -154,14 +154,14 @@ namespace POTrackingV2.Controllers
                       CountEtaHistory = x.PurchasingDocumentItem.ETAHistories.Count,
                       ConfirmFirstETA = x.PurchasingDocumentItem.ETAHistories.OrderBy(y => y.Created).FirstOrDefault().AcceptedByProcurement,
                       ProformaInvoice = x.PurchasingDocumentItem.ProformaInvoiceDocument,
-                      ApproveProformaInvoice = x.PurchasingDocumentItem.ApproveProformaInvoiceDocument,
                       ConfirmedPaymentReceive = x.PurchasingDocumentItem.ConfirmReceivedPaymentDate,
                       SecondETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderByDescending(y => y.Created).FirstOrDefault().ETADate,
                       CountProgressPhotos = x.PurchasingDocumentItem.ProgressPhotoes.Count(),
                       ShipmentBookingDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().BookingDate,
                       ShipmentATD = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATDDate,
                       ShipmentCopyBLDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().CopyBLDate,
-                      ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate
+                      ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
+                      InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
                   }).OrderByDescending(x => x.created);
 
                 if (notifications != null)

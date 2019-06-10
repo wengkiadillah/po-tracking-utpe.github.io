@@ -216,4 +216,5 @@ $(".edit-row-st2").on("click", function (obj) {
 
     formRow.find(".st2-first-eta-date").removeAttr("disabled");
     formRow.find(".st2-confirm-first-eta").removeAttr("disabled").removeClass("selected");
+    formRow.find(".st2-checkbox-item").removeAttr("disabled");
 });

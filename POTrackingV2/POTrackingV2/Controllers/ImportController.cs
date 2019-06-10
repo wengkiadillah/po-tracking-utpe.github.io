@@ -23,7 +23,8 @@ namespace POTrackingV2.Controllers
     {
 
         private POTrackingEntities db = new POTrackingEntities();
-        public DateTime now = DateTime.Now;
+        private DateTime now = DateTime.Now;
+        private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
         public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
@@ -55,28 +56,36 @@ namespace POTrackingV2.Controllers
                             .OrderBy(x => x.Number)
                             .AsQueryable();
 
-            ////  GetUserNRPs
-            //List<string> myUserNRPs = new List<string>();
-            //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-            //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
-
-            //if (myUserNRPs.Count > 0)
-            //{
-            //    var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
-
-            //    foreach (var myUserNRP in myUserNRPs)
-            //    {
-            //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
-            //    }
-
-            //    pOes = pOes.Except(noShowPOes);
-            //}
-
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                                 .AsQueryable();
+
+                //  Filter Procurement cuman bisa liat PO yang dia bikin
+
+                ////  GetUserNRPs
+                //List<string> myUserNRPs = new List<string>();
+                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
+
+                //if (myUserNRPs.Count > 0)
+                //{
+                //    var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
+
+                //    foreach (var myUserNRP in myUserNRPs)
+                //    {
+                //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
+                //    }
+
+                //    pOes = pOes.Except(noShowPOes);
+                //}
+            }
+            else
+            {
+                //  Filter Vendor cuman bisa liat PO yang punya dia
+
+                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).SingleOrDefault().VendorCode);
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -85,6 +94,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.IISAppName = iisAppName;
 
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
 
@@ -920,7 +930,7 @@ namespace POTrackingV2.Controllers
 
                     db.SaveChanges();
 
-                    string downloadUrl = Path.Combine("..\\Files\\Import\\ProformaInvoice", fileName);
+                    string downloadUrl = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", fileName);
 
                     return Json(new { responseText = $"File successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                 }
@@ -1670,9 +1680,9 @@ namespace POTrackingV2.Controllers
             {
                 if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 6)
                 {
-                    string dokumenCopyBL = Path.Combine("../Files/Import/Shipping/CopyBL", shipment.CopyBLDocument);
-                    string dokumenPackingList = Path.Combine("../Files/Import/Shipping/PackingList", shipment.PackingListDocument);
-                    string dokumenInvoice = Path.Combine("../Files/Import/Shipping/Invoice", shipment.InvoiceDocument);
+                    string dokumenCopyBL = Path.Combine("/", iisAppName, "Files/Import/Shipping/CopyBL", shipment.CopyBLDocument);
+                    string dokumenPackingList = Path.Combine("/", iisAppName, "Files/Import/Shipping/PackingList", shipment.PackingListDocument);
+                    string dokumenInvoice = Path.Combine("/", iisAppName, "Files/Import/Shipping/Invoice", shipment.InvoiceDocument);
 
                     return Json(new { isCompleted = true, activeStage = purchasingDocumentItem.ActiveStageView, copyBLDate = shipment.CopyBLDateView, dokumenCopyBL, dokumenPackingList, dokumenInvoice, awb = shipment.AWB, courierName = shipment.CourierName }, JsonRequestBehavior.AllowGet);
                 }
@@ -1756,7 +1766,7 @@ namespace POTrackingV2.Controllers
 
         #endregion
 
-        #region STAGE 10
+        #region STAGE 9
 
         [HttpPost]
         public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
@@ -1801,7 +1811,7 @@ namespace POTrackingV2.Controllers
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                             notification.StatusID = 1;
-                            notification.Stage = "10";
+                            notification.Stage = "9";
                             notification.Role = "procurement";
                             notification.isActive = true;
                             notification.Created = now;
@@ -1813,7 +1823,7 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            string downloadUrl = Path.Combine("..\\Files\\Import\\Invoice", fileName);
+                            string downloadUrl = Path.Combine("/", iisAppName, "Files/Import/Invoice", fileName);
 
                             return Json(new { responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                         }
@@ -1877,7 +1887,7 @@ namespace POTrackingV2.Controllers
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                             notification.StatusID = 3;
-                            notification.Stage = "10";
+                            notification.Stage = "9";
                             notification.Role = "procurement";
                             notification.isActive = true;
                             notification.Created = now;
@@ -1893,17 +1903,17 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                            return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
                     }
                 }
                 else
                 {
-                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)

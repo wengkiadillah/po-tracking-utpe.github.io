@@ -125,10 +125,19 @@
                             var shipmentBookingDate = jsonObj[k]['ShipmentBookingDate'];
                             var shipmentCopyBLDate = jsonObj[k]['ShipmentCopyBLDate'];
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
+                            var invoiceDocument = jsonObj[k]['InvoiceDocument'];
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                            var url = siteUrl + "/"+POTypeCategory + "/Index" + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                            message = "";
+
+                            if (POTypeCategory == "Import") {
+                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&activeStage=" + stage;
+                                message = "";
+                            }
+                            else {
+                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                                message = "";
+                            }
+
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
                             if (POTypeCategory == "Import") {
@@ -182,9 +191,12 @@
                                     if (shipmentATA != null) {
                                         message += " has updated shipment ATA at " + shipmentATA + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "10") {
-                                    if (shipmentATA != null) {
-                                        message += " has updated shipment ATA at " + shipmentATA + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                }else if (stage == "9") {
+                                    if (invoiceDocument != null) {
+                                        message += " has uploaded Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
+                                    }
+                                    else {
+                                        message += " has removed Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
                                 }else {
                                     message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
