@@ -426,16 +426,16 @@
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
 
-                                    if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
@@ -568,16 +568,16 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
 
-                                                        if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
                                                         }
