@@ -60,10 +60,9 @@ namespace POTrackingV2.Controllers
 
                 //  Filter Procurement cuman bisa liat PO yang dia bikin
 
-                ////  GetUserNRPs
                 //List<string> myUserNRPs = new List<string>();
                 //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
+                //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 //if (myUserNRPs.Count > 0)
                 //{
@@ -71,7 +70,7 @@ namespace POTrackingV2.Controllers
 
                 //    foreach (var myUserNRP in myUserNRPs)
                 //    {
-                //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
+                //        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
                 //    }
 
                 //    pOes = pOes.Except(noShowPOes);
@@ -81,7 +80,7 @@ namespace POTrackingV2.Controllers
             {
                 //  Filter Vendor cuman bisa liat PO yang punya dia
 
-                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).SingleOrDefault().VendorCode);
+                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -185,7 +184,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public string GetNPRByUsername(string username)
+        public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
