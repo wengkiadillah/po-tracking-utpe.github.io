@@ -33,10 +33,6 @@ namespace POTrackingV2.Controllers
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
-            //ViewBag.MyUser = myUser;
-            //ViewBag.Role = role;
-            //ViewBag.RoleType = roleType.RolesType.Name.ToLower();
-
             if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
             {
                 return RedirectToAction("Index", "Local");

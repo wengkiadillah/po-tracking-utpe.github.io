@@ -38,7 +38,7 @@ namespace POTrackingV2.Controllers
             //}
 
             var myRole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            
+
             var roleType = db.UserRoleTypes.Where(x => x.Username == myRole.UserName).FirstOrDefault();
             if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {
@@ -128,11 +128,27 @@ namespace POTrackingV2.Controllers
             try
             {
                 //int roleSearchDB = Convert.ToInt32(role);
-
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
 
+                CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+                var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true).Select(x =>
+                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
+
+                if (roleType.RolesTypeID == 1)
+                {
+                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                }
+                else if (roleType.RolesTypeID == 2)
+                {
+                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                }
+                else if (roleType.RolesTypeID == 3)
+                {
+                    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+                }
+
+                var notificationsDTO = notifications.Select(x =>
                   new
                   {
                       id = x.ID,
@@ -161,12 +177,12 @@ namespace POTrackingV2.Controllers
                       ShipmentATD = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATDDate,
                       ShipmentCopyBLDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().CopyBLDate,
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
-                      InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
+                      InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument
                   }).OrderByDescending(x => x.created);
 
-                if (notifications != null)
+                if (notificationsDTO != null)
                 {
-                    return Json(new { success = true, responseCode = "200", notifications = JsonConvert.SerializeObject(notifications) }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, responseCode = "200", notifications = JsonConvert.SerializeObject(notificationsDTO) }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
