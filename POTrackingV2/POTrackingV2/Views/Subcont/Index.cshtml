@@ -23,16 +23,16 @@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
         <div class="form-group mr-4 frmSearch">
             @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
-            <input id="searchDataPONumber" name="searchDataPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
+            <input id="searchDataPONumber" name="searchDataPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
         <div class="form-group mr-4 frmSearch">
-            <input id="searchDataVendorName" name="searchDataVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
+            <input id="searchDataVendorName" name="searchDataVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
             <datalist id="data-list-vendor"></datalist>
         </div>
         <div class="form-group mr-4 frmSearch">
-            <input id="searchDataMaterial" name="searchDataMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
+            <input id="searchDataMaterial" name="searchDataMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
         @*<select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
