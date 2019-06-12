@@ -10,6 +10,7 @@
     ViewBag.Title = "PO Subcont";
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
+    var iisAppName = ViewBag.IISAppName;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -911,7 +912,8 @@
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
-                                invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                //invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Subcont/Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
                             }
@@ -964,7 +966,8 @@
 
                                         if (purchasingDocumentItemChild.InvoiceDocument != null)
                                         {
-                                            invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItemChild.InvoiceDocument);
+                                            //invoiceDownloadPath = Path.Combine("..\\Files\\Subcont\\Invoice", purchasingDocumentItemChild.InvoiceDocument);
+                                            invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Subcont/Invoice", purchasingDocumentItemChild.InvoiceDocument);
                                             hiddenFormUploading = "hidden";
                                             hiddenFormUploaded = "";
                                         }
@@ -2722,7 +2725,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#fileSetting").empty();
                         $("#fileFullweld").empty();
                         $("#filePrimer").empty();
-
+                        
                         for (var k in jsonObjFilePB) {
                             filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
                         }
