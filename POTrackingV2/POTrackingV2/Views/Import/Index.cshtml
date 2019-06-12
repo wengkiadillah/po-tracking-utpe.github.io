@@ -3129,21 +3129,28 @@
                 });
 
                 $(".info-stage .pop-up-notification img").hover(function () {
-                    console.log($(this));
                     var height = $(this).prop('naturalHeight');
-                    console.log(height);
                     var width = $(this).prop('naturalWidth');
-                    console.log(width);
                     var heightScale = height / 150.0;
+                    if (heightScale < 1) {
+                        heightScale = 1;
+                    }
                     var widthScale = width / 150.0;
+                    if (widthScale < 1) {
+                        widthScale = 1;
+                    }
                     var scale = "scale(" + widthScale + "," + heightScale + ")";
-                    $(this).css("-ms-transform:", "scale(2)");
-                    $(this).css(" -webkit-transform:", "scale(2)");
-                    $(this).css("transform:", "scale(2)");
+                    $(this).css({
+                        "-ms-transform": scale,
+                        "-webkit-transform": scale,
+                        "transform": scale
+                    });
                 }, function () {
-                    $(this).css("-ms-transform:", "scale(1)");
-                    $(this).css(" -webkit-transform:", "scale(1)");
-                    $(this).css("transform:", "scale(1)");
+                    $(this).css({
+                        "-ms-transform": "scale(1)",
+                        "-webkit-transform": "scale(1)",
+                        "transform": "scale(1)"
+                    });
                 });
             });
 
