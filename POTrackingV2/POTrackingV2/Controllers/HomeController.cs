@@ -69,6 +69,10 @@ namespace POTrackingV2.Controllers
             {
                 return RedirectToAction("Index", "Subcont");
             }
+            else if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
+            {
+                return RedirectToAction("Index", "MasterVendor");
+            }
             else
             {
                 return View(userData);
