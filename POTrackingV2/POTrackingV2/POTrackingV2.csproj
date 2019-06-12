@@ -626,6 +626,7 @@
     <Content Include="Views\Error\Unauthorized.cshtml" />
     <Content Include="Views\MasterVendor\ViewVendorSubcontDev.cshtml" />
     <Content Include="Views\MasterVendor\CreateVendorSubcontDev.cshtml" />
+    <Content Include="Views\MasterVendor\EditVendorSubcontDev.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
