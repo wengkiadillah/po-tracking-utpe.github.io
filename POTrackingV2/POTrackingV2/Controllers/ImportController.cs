@@ -346,12 +346,12 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
                             inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
                             inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
-                            //inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
-                            //inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
-                            //inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
+                            inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
+                            inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
+                            inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -461,12 +461,12 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
                             inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
                             inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
-                            //inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
-                            //inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
-                            //inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
+                            inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
+                            inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
+                            inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
