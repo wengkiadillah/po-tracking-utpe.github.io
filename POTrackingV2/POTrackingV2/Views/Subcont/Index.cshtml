@@ -2847,47 +2847,47 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (response.responseCode == "200") {
                                 alert(response.responseText);
 
-                                //if ($("#ATAPB").val()) {
-                                //    var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
-                                //    ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
-                                //    $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
-                                //} else {
-                                //    $("#ATAPB").removeAttr("disabled");
-                                //    $("#inputFilePB").removeAttr("disabled");
-                                //}
+                                if ($("#ATAPB").val()) {
+                                    var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
+                                    ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
+                                    $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
+                                } else {
+                                    $("#ATAPB").removeAttr("disabled");
+                                    $("#inputFilePB").removeAttr("disabled");
+                                }
 
-                                //if ($("#ATASetting").val()) {
-                                //    var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
-                                //    ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
-                                //    $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
-                                //} else {
-                                //    $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
-                                //}
+                                if ($("#ATASetting").val()) {
+                                    var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
+                                    ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
+                                    $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
+                                } else {
+                                    $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
+                                }
 
-                                //if ($("#ATAFullweld").val()) {
-                                //    var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
-                                //    ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
-                                //    $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
-                                //} else {
-                                //    $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
-                                //}
+                                if ($("#ATAFullweld").val()) {
+                                    var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
+                                    ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
+                                    $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
+                                } else {
+                                    $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
+                                }
 
-                                //if ($("#ATAPrimer").val()) {
-                                //    $("#ATAPrimer").attr("disabled", "disabled");
-                                //    $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                //    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
-                                //        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
-                                //        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
-                                //    }
-                                //    if ($("#inputProgressModalLabel").attr("child") > 0) {
-                                //        stage4Child.find(".po-item-data-content").attr("style", "visibility:display");
-                                //    } else {
-                                //        stage4Outer.attr("style", "visibility:display");
-                                //    }
-                                //    $("#close-input-progress").click();
-                                //} else {
-                                //    $("#ATAFullweld").val() ? ($("#ATAPrimer").removeAttr("disabled"), $("#inputFilePrimer").removeAttr("disabled")) : ($("#ATAPrimer").attr("disabled", "disabled"), $("#inputFilePrimer").attr("disabled", "disabled"));
-                                //}
+                                if ($("#ATAPrimer").val()) {
+                                    $("#ATAPrimer").attr("disabled", "disabled");
+                                    $("#ATAPrimerReasonID").attr("disabled", "disabled");
+                                    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
+                                        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
+                                        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                    }
+                                    if ($("#inputProgressModalLabel").attr("child") > 0) {
+                                        stage4Child.find(".po-item-data-content").attr("style", "visibility:display");
+                                    } else {
+                                        stage4Outer.attr("style", "visibility:display");
+                                    }
+                                    $("#close-input-progress").click();
+                                } else {
+                                    $("#ATAFullweld").val() ? ($("#ATAPrimer").removeAttr("disabled"), $("#inputFilePrimer").removeAttr("disabled")) : ($("#ATAPrimer").attr("disabled", "disabled"), $("#inputFilePrimer").attr("disabled", "disabled"));
+                                }
 
                                 $("#ATAPB").attr("min", $("#ETAPB").val());
                                 $("#ATASetting").attr("min", $("#ETASetting").val());
