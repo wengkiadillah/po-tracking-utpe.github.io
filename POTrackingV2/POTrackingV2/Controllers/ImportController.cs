@@ -33,10 +33,6 @@ namespace POTrackingV2.Controllers
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
-            //ViewBag.MyUser = myUser;
-            //ViewBag.Role = role;
-            //ViewBag.RoleType = roleType.RolesType.Name.ToLower();
-
             if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
             {
                 return RedirectToAction("Index", "Local");
@@ -64,10 +60,9 @@ namespace POTrackingV2.Controllers
 
                 //  Filter Procurement cuman bisa liat PO yang dia bikin
 
-                ////  GetUserNRPs
                 //List<string> myUserNRPs = new List<string>();
-                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                //myUserNRPs.Add(GetNPRByUsername(myUser.UserName));
+                ViewBag.myUserNRPs = GetChildNRPsByUsername(myUser.UserName).FirstOrDefault();
+                //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 //if (myUserNRPs.Count > 0)
                 //{
@@ -75,7 +70,7 @@ namespace POTrackingV2.Controllers
 
                 //    foreach (var myUserNRP in myUserNRPs)
                 //    {
-                //        noShowPOes = noShowPOes.Where(x => x.PurchaseOrderCreator != myUserNRP);
+                //        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
                 //    }
 
                 //    pOes = pOes.Except(noShowPOes);
@@ -85,7 +80,7 @@ namespace POTrackingV2.Controllers
             {
                 //  Filter Vendor cuman bisa liat PO yang punya dia
 
-                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).SingleOrDefault().VendorCode);
+                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -189,7 +184,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public string GetNPRByUsername(string username)
+        public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
@@ -354,9 +349,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -407,11 +402,20 @@ namespace POTrackingV2.Controllers
                     PurchasingDocumentItem databasePurchasingDocumentItem = new PurchasingDocumentItem();
                     List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == inputPurchasingDocumentItem.ID && x.ID != inputPurchasingDocumentItem.ID).ToList();
 
-                    if (!childDatabasePurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
+                    if (childDatabasePurchasingDocumentItems.Count > 0)
                     {
-                        if (!inputPurchasingDocumentItem.ParentID.HasValue)
+                        if (childDatabasePurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
                         {
-                            // Child clean-up
+                            return Json(new { responseText = $"{counter} Item succesfully affected"}, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+
+                    if (!inputPurchasingDocumentItem.ParentID.HasValue)
+                    {
+                        // Child clean-up
+
+                        if (childDatabasePurchasingDocumentItems.Count > 0)
+                        {
                             foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
                             {
                                 if (childDatabasePurchasingDocumentItem.ID != inputPurchasingDocumentItem.ID)
@@ -419,62 +423,61 @@ namespace POTrackingV2.Controllers
                                     db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
                                 }
                             }
-                            // finish
-
-                            databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
-
-                            if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
-                            {
-                                //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                                databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
-                                databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                                databasePurchasingDocumentItem.LastModified = now;
-                                databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-                                counter++;
-
-                                if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
-                                {
-                                    databasePurchasingDocumentItem.ConfirmedItem = true;
-                                    databasePurchasingDocumentItem.ActiveStage = "2";
-                                    isSameAsProcs.Add(true);
-                                }
-                                else
-                                {
-                                    databasePurchasingDocumentItem.ConfirmedItem = null;
-                                    databasePurchasingDocumentItem.ActiveStage = "1";
-                                    isSameAsProcs.Add(false);
-                                }
-                            }
                         }
-                        else
+                        // finish
+
+                        databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
+
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                         {
-                            databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID).FirstOrDefault();
+                            //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
+                            databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
+                            databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
+                            databasePurchasingDocumentItem.LastModified = now;
+                            databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+                            counter++;
 
-                            if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                            if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
                             {
-                                inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
-                                inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
-                                inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
-                                inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
-                                inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
-                                inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
-                                inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                                inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                                inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                                inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
-                                inputPurchasingDocumentItem.IsClosed = "";
-
-                                inputPurchasingDocumentItem.ActiveStage = "1";
-                                inputPurchasingDocumentItem.Created = now;
-                                inputPurchasingDocumentItem.CreatedBy = User.Identity.Name;
-                                inputPurchasingDocumentItem.LastModified = now;
-                                inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-
-                                db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
-                                counter++;
+                                databasePurchasingDocumentItem.ConfirmedItem = true;
+                                databasePurchasingDocumentItem.ActiveStage = "2";
+                                isSameAsProcs.Add(true);
+                            }
+                            else
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                databasePurchasingDocumentItem.ActiveStage = "1";
+                                isSameAsProcs.Add(false);
                             }
                         }
+                    }
+                    else
+                    {
+                        databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID).FirstOrDefault();
 
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                        {
+                            inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
+                            inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
+                            inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
+                            inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
+                            inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
+                            inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
+                            inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.IsClosed = "";
+
+                            inputPurchasingDocumentItem.ActiveStage = "1";
+                            inputPurchasingDocumentItem.Created = now;
+                            inputPurchasingDocumentItem.CreatedBy = User.Identity.Name;
+                            inputPurchasingDocumentItem.LastModified = now;
+                            inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+
+                            db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
+                            counter++;
+                        }
                     }
                 }
 

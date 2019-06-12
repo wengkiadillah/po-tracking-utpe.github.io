@@ -10,20 +10,21 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
+<input hidden value="@ViewBag.myUserNRPs" />
 <h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
-            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-ponumber"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
             <datalist id="data-list-vendorname"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
         <div class="form-group mr-0 ml-0">
@@ -426,16 +427,16 @@
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
 
-                                    if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
@@ -568,16 +569,16 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
 
-                                                        if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
                                                         }
@@ -1683,9 +1684,9 @@
                                                 {
                                                     foreach (var progressPhoto in purchasingDocumentItem.ProgressPhotoes)
                                                     {
-                                                        <span class="mr-2">
-                                                            <img src="@Path.Combine("/", iisAppName, "Files/Import/ProgressPhotos", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
-                                                        </span>
+                                                <span class="mr-2">
+                                                    <img src="@Path.Combine("/", iisAppName, "Files/Import/ProgressPhotos", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                </span>
                                                     }
                                                 }
                                             </div>
@@ -3125,6 +3126,31 @@
                 var biggestActiveStages = activeStages[activeStages.length - 1];
                 $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
                 count++;
+                });
+
+                $(".info-stage .pop-up-notification img").hover(function () {
+                    var height = $(this).prop('naturalHeight');
+                    var width = $(this).prop('naturalWidth');
+                    var heightScale = height / 150.0;
+                    if (heightScale < 1) {
+                        heightScale = 1;
+                    }
+                    var widthScale = width / 150.0;
+                    if (widthScale < 1) {
+                        widthScale = 1;
+                    }
+                    var scale = "scale(" + widthScale + "," + heightScale + ")";
+                    $(this).css({
+                        "-ms-transform": scale,
+                        "-webkit-transform": scale,
+                        "transform": scale
+                    });
+                }, function () {
+                    $(this).css({
+                        "-ms-transform": "scale(1)",
+                        "-webkit-transform": "scale(1)",
+                        "transform": "scale(1)"
+                    });
                 });
             });
 

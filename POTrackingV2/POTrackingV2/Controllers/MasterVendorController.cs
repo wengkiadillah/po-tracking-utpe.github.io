@@ -15,12 +15,12 @@ using POTrackingV2.CustomAuthentication;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
         List<Vendor> listVendor = new List<Vendor>();
-
+        //SubcontDevVendorViewModelEdit subcontDevVendorViewModelEdit = new SubcontDevVendorViewModelEdit();
 
         // GET: MasterVendor
         public ActionResult Index(string searchBy, string search, int? page)
@@ -60,16 +60,31 @@ namespace POTrackingV2.Controllers
         // GET: MasterVendor/Create
         public ActionResult Create()
         {
+            //POTrackingEntities db = new POTrackingEntities();
+            //ViewBag.Vendors = new SelectList(db.Vendors, "Code", "Name");
+            //return View();
+
             //using (POTrackingEntities db = new POTrackingEntities())
             //{
             //    var ViewModel = new MasterVendorViewModel
             //    {
 
-            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "ame")
+            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
             //    };
+
             //    return View(ViewModel);
             //}
-            return View();
+
+            POTrackingEntities db = new POTrackingEntities();
+            
+            var ViewModel = new MasterVendorViewModel
+            {
+
+                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
+            };
+            return View(ViewModel);
+            
+            //return View();
         }
 
         //public ActionResult CreateDropdown()
@@ -307,46 +322,175 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateVendorSubcontDev(SubcontDevVendor objNewVendor)
+        public ActionResult CreateVendorSubcontDev(string username, List<string> vendorList)
+        {
+            try
+            {
+                using (POTrackingEntities db = new POTrackingEntities())
+                {
+                    listRoleType = db.RolesTypes.ToList();
+                    listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                    ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
+                    ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                    List<SubcontDevVendor> subcontDevExist = db.SubcontDevVendors.Where(x => x.Username.ToLower() == username.ToLower()).ToList();
+
+                    if (subcontDevExist.Count == 0)
+                    {
+                        foreach (var vendorCode in vendorList)
+                        {
+                            SubcontDevVendor subcontDev = new SubcontDevVendor();
+                            subcontDev.Username = username;
+                            subcontDev.VendorCode = vendorCode;
+                            subcontDev.Created = DateTime.Now;
+                            subcontDev.CreatedBy = User.Identity.Name;
+                            subcontDev.LastModified = DateTime.Now;
+                            subcontDev.LastModifiedBy = User.Identity.Name;
+                            db.SubcontDevVendors.Add(subcontDev);
+                            //ModelState.Clear();
+                        }
+                        db.SaveChanges();
+                        return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json(new { success = false, responseText = "Username Already Exist!" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //public ActionResult CreateVendorSubcontDev(SubcontDevVendor objNewVendor)
+        //{
+        //    using (POTrackingEntities db = new POTrackingEntities())
+        //    {
+        //        listRoleType = db.RolesTypes.ToList();
+        //        listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+        //        ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
+        //        ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+        //        var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewVendor.Username && x.VendorCode == objNewVendor.VendorCode));
+        //        if (chkUser == null)
+        //        {
+        //            var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewVendor.Username));
+        //            if (chkUserRole == null)
+        //            {
+        //                objNewVendor.Username = objNewVendor.Username;
+        //                if (objNewVendor.VendorCode == null)
+        //                {
+        //                    objNewVendor.VendorCode = "50000";
+        //                }
+        //                else
+        //                {
+        //                    objNewVendor.VendorCode = objNewVendor.VendorCode;
+        //                }
+
+        //                objNewVendor.Created = DateTime.Now;
+        //                objNewVendor.CreatedBy = User.Identity.Name;
+        //                objNewVendor.LastModified = DateTime.Now;
+        //                objNewVendor.LastModifiedBy = User.Identity.Name;
+        //                db.SubcontDevVendors.Add(objNewVendor);
+        //                db.SaveChanges();
+        //                ModelState.Clear();
+        //                return RedirectToAction("ViewVendorSubcontDev", "MasterVendor");
+        //            }
+        //            ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
+        //            return View();
+        //        }
+        //        ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
+        //        return View();
+        //    }
+        //}
+
+        [HttpGet]
+        public ActionResult EditVendorSubcontDev(int ID)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                listRoleType = db.RolesTypes.ToList();
-                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
-                ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
-                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
-                var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewVendor.Username && x.VendorCode == objNewVendor.VendorCode));
-                if (chkUser == null)
-                {
-                    var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewVendor.Username));
-                    if (chkUserRole == null)
-                    {
-                        objNewVendor.Username = objNewVendor.Username;
-                        if (objNewVendor.VendorCode == null)
-                        {
-                            objNewVendor.VendorCode = "50000";
-                        }
-                        else
-                        {
-                            objNewVendor.VendorCode = objNewVendor.VendorCode;
-                        }
-                        
-                        objNewVendor.Created = DateTime.Now;
-                        objNewVendor.CreatedBy = User.Identity.Name;
-                        objNewVendor.LastModified = DateTime.Now;
-                        objNewVendor.LastModifiedBy = User.Identity.Name;
-                        db.SubcontDevVendors.Add(objNewVendor);
-                        db.SaveChanges();
-                        ModelState.Clear();
-                        return RedirectToAction("ViewVendorSubcontDev", "MasterVendor");
-                    }
-                    ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
-                    return View();
-                }
-                ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
-                return View();
-            }
+                //subcontDevVendorViewModelEdit.SubcontDevVendor = db.SubcontDevVendors.Find(ID);
 
+                //listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                //subcontDevVendorViewModelEdit.VendorCode = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x=>x.VendorCode).ToList();
+                ////ViewBag.SelectedVendorCode = new SelectList(listRoleType, "ID", "Name", selectedVendorCode.RolesTypeID);
+                //ViewBag.SelectedVendorCode = subcontDevVendorViewModelEdit.VendorCode;
+                ////product.Categories = new MultiSelectList(list, "ID", "Name", cat.CategorySelected.Select(c => c.ID).ToArray());
+                ////List<SelectListItem> VendorSelected = new List<SelectListItem>();
+                ////MultiSelectList vendorSelectList = new MultiSelectList(listVendor, "Code", "CodeName", subcontDevVendorViewModelEdit.VendorCode.ToList());
+
+                //var subcontDevVendor = db.SubcontDevVendors.Find(ID);
+                //var vendorCodeList = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToList();
+                //ViewBag.SelectedVendorCode = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToArray();
+                //ViewBag.VendorCode = new MultiSelectList(listVendor, "Code", "CodeName", db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToArray());
+                //var ViewModel = new SubcontDevVendorViewModelEdit
+                //{
+                //    SubcontDevVendor = subcontDevVendor,
+                //    VendorCode = vendorCodeList
+                //};
+                var subcontDevVendor = db.SubcontDevVendors.Where(x => x.ID == ID).FirstOrDefault();
+                var listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                return View(subcontDevVendor);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult getSelectedVendorList(string username)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                try
+                {
+                    var subcontDevVendor = db.SubcontDevVendors.Where(x => x.Username == username).Select(x=>x.VendorCode).ToList();
+
+                    return Json(new { success = true, responseText = "OK", arrayDataVendors = subcontDevVendor }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditVendorSubcontDev(string username, List<string> vendorList)
+        {
+            try
+            {
+                using (POTrackingEntities db = new POTrackingEntities())
+                {
+                    listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
+                    ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
+                    List<SubcontDevVendor> subcontDevExist = db.SubcontDevVendors.Where(x => x.Username == username).ToList();
+
+                    if (subcontDevExist != null)
+                    {
+                        foreach (var subcontDev in subcontDevExist)
+                        {
+                            db.SubcontDevVendors.Remove(subcontDev);
+                        }
+                    }
+
+                    foreach (var vendorCode in vendorList)
+                    {
+                        SubcontDevVendor subcontDev = new SubcontDevVendor();
+                        subcontDev.Username = username;
+                        subcontDev.VendorCode = vendorCode;
+                        subcontDev.Created = DateTime.Now;
+                        subcontDev.CreatedBy = User.Identity.Name;
+                        subcontDev.LastModified = DateTime.Now;
+                        subcontDev.LastModifiedBy = User.Identity.Name;
+                        db.SubcontDevVendors.Add(subcontDev);
+                        //ModelState.Clear();
+                    }
+                    db.SaveChanges();
+                    return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult ViewUserVendor(string search, int? page)
@@ -365,10 +509,8 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
 
-                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
-
+                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 5));
             }
-
         }
 
         [HttpGet]
@@ -456,7 +598,15 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 var subcontDev = db.SubcontDevVendors.Find(ID);
-                db.SubcontDevVendors.Remove(subcontDev);
+                List<SubcontDevVendor> subcontDevExist = db.SubcontDevVendors.Where(x => x.Username == subcontDev.Username).ToList();
+
+                if (subcontDevExist != null)
+                {
+                    foreach (var item in subcontDevExist)
+                    {
+                        db.SubcontDevVendors.Remove(item);
+                    }
+                }
                 db.SaveChanges();
 
                 return RedirectToAction("ViewVendorSubcontDev");
