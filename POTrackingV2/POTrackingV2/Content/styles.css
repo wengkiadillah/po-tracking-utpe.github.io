@@ -1118,7 +1118,6 @@ a[data-toggle="collapse"] {
         transition: all .2s ease-out;
         border: 1px solid #567FEF;
     }
-
         .info-stage .po-item-section-header__icon:hover + .pop-up-notification,
         .info-stage .pop-up-notification:hover {
             z-index: 2;
