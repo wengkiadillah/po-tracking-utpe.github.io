@@ -94,7 +94,7 @@
 
             $(".deleteUserVendor").click(function () {
                 //userVendorID = $(this).parent().prev().prev().prev().val();
-                subcontDevID = $(this).closest("table").find(".subcontdev-id").val();
+                subcontDevID = $(this).closest("td").find(".subcontdev-id").val();
                 if (confirm("Are you sure want to delete this user vendor?")) {
                     window.location.href = "@Url.Action("DeleteVendorSubcontDev", "MasterVendor")?id=" + subcontDevID;
                 };
