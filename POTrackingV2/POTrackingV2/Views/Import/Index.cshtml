@@ -10,6 +10,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
+<input hidden value="@ViewBag.myUserNRPs" />
 <h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
