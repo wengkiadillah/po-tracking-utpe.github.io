@@ -2678,6 +2678,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                         } else {
                             $("#ATAPB").removeAttr("disabled");
+                            $("#inputFilePB").removeAttr("disabled");
                         }
 
                         if ($("#ATASetting").val()) {
@@ -2687,7 +2688,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#inputFileSetting").attr("disabled", "disabled");
                             $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                         } else {
-                            $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                            $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
                         }
 
                         if ($("#ATAFullweld").val()) {
@@ -2697,14 +2698,14 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#inputFileFullweld").attr("disabled", "disabled");
                             $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
                         } else {
-                            $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                            $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
                         }
 
                         if ($("#ATAPrimer").val()){
                             $("#ATAPrimer").attr("disabled", "disabled");
                             $("#inputFilePrimer").attr("disabled", "disabled");
                         } else {
-                            $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                            $("#ATAFullweld").val() ? ($("#ATAPrimer").removeAttr("disabled"), $("#inputFilePrimer").removeAttr("disabled")) : ($("#ATAPrimer").attr("disabled", "disabled"), $("#inputFilePrimer").attr("disabled", "disabled"));
                         }
 
                         $("#ATAPB").attr("min", $("#ETAPB").val());
@@ -2852,6 +2853,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                                 } else {
                                     $("#ATAPB").removeAttr("disabled");
+                                    $("#inputFilePB").removeAttr("disabled");
                                 }
 
                                 if ($("#ATASetting").val()) {
@@ -2859,7 +2861,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
                                     $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                                 } else {
-                                    $("#ATAPB").val() ? $("#ATASetting").removeAttr("disabled") : $("#ATASetting").attr("disabled", "disabled");
+                                    $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
                                 }
 
                                 if ($("#ATAFullweld").val()) {
@@ -2867,7 +2869,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
                                     $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
                                 } else {
-                                    $("#ATASetting").val() ? $("#ATAFullweld").removeAttr("disabled") : $("#ATAFullweld").attr("disabled", "disabled");
+                                    $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
                                 }
 
                                 if ($("#ATAPrimer").val()) {
@@ -2884,7 +2886,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     }
                                     $("#close-input-progress").click();
                                 } else {
-                                    $("#ATAFullweld").val() ? $("#ATAPrimer").removeAttr("disabled") : $("#ATAPrimer").attr("disabled", "disabled");
+                                    $("#ATAFullweld").val() ? ($("#ATAPrimer").removeAttr("disabled"), $("#inputFilePrimer").removeAttr("disabled")) : ($("#ATAPrimer").attr("disabled", "disabled"), $("#inputFilePrimer").attr("disabled", "disabled"));
                                 }
 
                                 $("#ATAPB").attr("min", $("#ETAPB").val());
