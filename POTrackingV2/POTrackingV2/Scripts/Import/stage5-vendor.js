@@ -12,14 +12,6 @@ $(".st5-ship-booking-date").on('input focus', function (e) {
 });
 
 $(".st5-ATD").on('input focus', function (e) {
-    //this.setCustomValidity('');
-    //var thisDate = $(this).val();
-    //var maxDate = $(this).attr("maxdate");
-    //if ((!isNaN(thisDate) || thisDate !== '') && (!isNaN(maxDate) || maxDate !== '')) {
-    //    if (reverseDayMonth(thisDate) < reverseDayMonth(maxDate)) {
-    //        this.setCustomValidity("Value must be more than or equal " + $(this).attr("maxdate"));
-    //    }
-    //}
     this.reportValidity();
 });
 
@@ -108,7 +100,7 @@ $(".st5-ship-booking-date-confirm").on("click", function (obj) {
             });
         }
         else {
-            alert("The Date cannot be less than the Date agreed on stage 4");
+            alert("The Date cannot be greater than the Date agreed on stage 4");
             inputShipBookingDate.focus();
         }
     }
@@ -239,7 +231,7 @@ $(".st5-confirm-all").on("click", function (obj) {
                     inputIsShipBooked.addClass("row-updated-status");
                 }
                 else {
-                    alert("The Date cannot be less than the Date agreed on stage 4");
+                    alert("The Date cannot be greater than the Date agreed on stage 4");
                     inputShipBookingDate.focus();
                 }
             }

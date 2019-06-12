@@ -5,6 +5,7 @@
     ViewBag.Title = "PO Import";
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
+    var iisAppName = ViewBag.IISAppName;
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -48,10 +49,9 @@
             <input class="form-control form-control-lg filter-search with-icon">
             <datalist></datalist>
         </div>
-        <select class="form-control form-control-lg">
-        </select>
+        <select class="form-control form-control-lg"></select>
         <div class="form-group mr-0">
-            <label >PO Date</label>
+            <label>PO Date</label>
             <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
@@ -87,10 +87,10 @@
 </div>
 
 @*<div>
-    <span>MyUser : @ViewBag.MyUser</span>
-    <span>Role : @ViewBag.Role</span>
-    <span>RoleType : @ViewBag.RoleType</span>
-</div>*@
+        <span>MyUser : @ViewBag.MyUser</span>
+        <span>Role : @ViewBag.Role</span>
+        <span>RoleType : @ViewBag.RoleType</span>
+    </div>*@
 
 
 @foreach (var pO in Model)
@@ -426,16 +426,16 @@
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
 
-                                    if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
@@ -568,16 +568,16 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
 
-                                                        if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
                                                         }
@@ -1025,7 +1025,7 @@
                                 hiddenSkipProforma = "";
                                 hiddenInputDiv = "hidden";
                                 hiddenUploadedDiv = "";
-                                downloadPath = Path.Combine("Files\\Import\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
                                 if (roleID == "procurement")
                                 {
@@ -1153,7 +1153,7 @@
                                                 hiddenSkipProforma = "";
                                                 hiddenInputDiv = "hidden";
                                                 hiddenUploadedDiv = "";
-                                                downloadPath = Path.Combine("Files\\Import\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
                                                 if (roleID == "procurement")
                                                 {
@@ -1654,7 +1654,7 @@
                                                 <i class="far fa-calendar-alt form-type-icon"></i>
                                             </div>
                                             <div class="form-group mr-2">
-                                                <select id="delayReason" name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
+                                                <select name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
                                                     <option value="0">select reason</option>
                                                     @foreach (var delayReason in ViewBag.DelayReasons)
                                                     {
@@ -1684,7 +1684,7 @@
                                                     foreach (var progressPhoto in purchasingDocumentItem.ProgressPhotoes)
                                                     {
                                                         <span class="mr-2">
-                                                            <img src="@Path.Combine("Files\\Import\\ProgressPhotos", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                            <img src="@Path.Combine("/", iisAppName, "Files/Import/ProgressPhotos", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
                                                         </span>
                                                     }
                                                 }
@@ -1892,7 +1892,7 @@
                                                             <i class="far fa-calendar-alt form-type-icon"></i>
                                                         </div>
                                                         <div class="form-group mr-2">
-                                                            <select id="delayReason" name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
+                                                            <select name="delayReason" class="form-control @st4DelayReason" value="@valueDelayReason" @disabledDelayReason>
                                                                 <option value="0">select reason</option>
                                                                 @foreach (var delayReason in ViewBag.DelayReasons)
                                                                 {
@@ -1922,7 +1922,7 @@
                                                                 foreach (var progressPhoto in childPurchasingDocumentItem.ProgressPhotoes)
                                                                 {
                                                                     <span class="mr-2">
-                                                                        <img src="@Path.Combine("Files\\Import\\ProgressPhotos", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">
+                                                                        <img src="@Path.Combine("/", iisAppName, "Files/Import/ProgressPhotos", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">
                                                                     </span>
                                                                 }
                                                             }
@@ -2662,7 +2662,7 @@
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
-                                invoiceDownloadPath = Path.Combine("Files\\Import\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
                             }
@@ -2694,7 +2694,7 @@
                                         </div>
                                         <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
                                             <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            @if (roleID == "procurement")
+                                            @if (roleID == "vendor")
                                             {
                                                 <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
                                             }
@@ -2714,7 +2714,7 @@
 
                                             if (childPurchasingDocumentItem.InvoiceDocument != null)
                                             {
-                                                invoiceDownloadPath = Path.Combine("Files\\Import\\Invoice", childPurchasingDocumentItem.InvoiceDocument);
+                                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", childPurchasingDocumentItem.InvoiceDocument);
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
                                             }
@@ -2745,7 +2745,7 @@
                                                     </div>
                                                     <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
                                                         <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                        @if (roleID == "procurement")
+                                                        @if (roleID == "vendor")
                                                         {
                                                             <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
                                                         }
@@ -2931,7 +2931,7 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, searchPONumber = ViewBag.CurrentSearchPONumber,searchVendorName = ViewBag.CurrentSearchVendorName,searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+        new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
     @section scripts {
         <script src="~/Scripts/datepicker.min.js"></script>
         <script src="~/Scripts/donutty-jquery.min.js"></script>
