@@ -467,7 +467,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
             validateMinQuantity = false;
         }
 
-        if (inputPartialQuantity.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
+        if (inputPartialQuantity.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
             if (validateMaxQuantity === true) {
                 if (validateMinQuantity === true) {
                     if (validateDate === true) {
@@ -656,6 +656,7 @@ $(".st1-edit-row").on("click", function (obj) {
 
     parentRow.find(".st1-accept-item").removeAttr("disabled").removeClass("selected");
     parentRow.find(".st1-cancel-item").removeAttr("disabled").removeClass("selected-negative");
+    parentRow.find(".st1-checkbox-item").removeAttr("disabled");
 });
 
 $(".st1-confirmed-date").on("change", function (obj) {

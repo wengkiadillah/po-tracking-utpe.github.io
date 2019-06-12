@@ -95,7 +95,7 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "LandingPage");
+                        return RedirectToAction("Index", "Home");
                     }
                 //}
             }
