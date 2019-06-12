@@ -61,7 +61,7 @@ namespace POTrackingV2.Controllers
                 //  Filter Procurement cuman bisa liat PO yang dia bikin
 
                 //List<string> myUserNRPs = new List<string>();
-                ViewBag.myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                ViewBag.myUserNRPs = GetChildNRPsByUsername(myUser.UserName).FirstOrDefault();
                 //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 //if (myUserNRPs.Count > 0)
@@ -349,9 +349,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -464,9 +464,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
