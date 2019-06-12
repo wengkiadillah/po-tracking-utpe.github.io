@@ -63,7 +63,7 @@ namespace POTrackingV2.CustomAuthentication
             else
             {
                 if (Roles.ToLower().Equals(role.ToLower()))
-                    val = true;
+                        val = true;
             }
 
 

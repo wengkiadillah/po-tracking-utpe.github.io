@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
-    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class UserProcurementController : Controller
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();
