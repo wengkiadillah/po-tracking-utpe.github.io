@@ -894,9 +894,15 @@
                             var disabledFileInvoice = "";
                             var disabledFileInvoiceUpload = "";
                             var hiddenFormUploading = "";
+                            var hiddenRemoveFile = "";
                             var hiddenFormUploaded = "hidden";
                             var invoiceDownloadPath = "";
                             var grFullFill = "";
+
+                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
+                            {
+                                hiddenRemoveFile = "hidden";
+                            }
 
                             if (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             {
@@ -931,7 +937,7 @@
                                         </div>
                                         <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
                                             <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            <a href="#" class="danger-link file-invoice-remove">Remove?</a>
+                                            <a href="#" class="danger-link file-invoice-remove" @hiddenRemoveFile>Remove?</a>
                                         </div>
                                     </div>
                                 </div>
@@ -941,9 +947,15 @@
                                         disabledFileInvoice = "";
                                         disabledFileInvoiceUpload = "";
                                         hiddenFormUploading = "";
+                                        hiddenRemoveFile = "";
                                         hiddenFormUploaded = "hidden";
                                         invoiceDownloadPath = "";
                                         grFullFill = "";
+
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
+                                        {
+                                            hiddenRemoveFile = "hidden";
+                                        }
 
                                         if (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
                                         {
@@ -984,7 +996,7 @@
                                                 </div>
                                                 <div class="file-uploaded form-uploaded" @hiddenFormUploaded>
                                                     <p class="mb-0"> <a class="file-invoice-download" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                    <a href="#" class="danger-link file-invoice-remove">Remove?</a>
+                                                    <a href="#" class="danger-link file-invoice-remove" @hiddenRemoveFile>Remove?</a>
                                                 </div>
                                             </div>
                                         </div>

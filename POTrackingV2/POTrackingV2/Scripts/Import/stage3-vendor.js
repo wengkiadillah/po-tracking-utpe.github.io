@@ -253,4 +253,5 @@ $(".edit-row-st3").on("click", function (obj) {
     $(this).closest(".form-inline").find(".st3-item-confirm-payment-date").removeAttr("disabled");
     $(this).closest(".form-inline").find(".st3-confirm-payment-submit").removeAttr("disabled").removeClass("selected");
     $(this).closest(".form-inline").find(".st3-confirm-payment-skip").removeAttr("disabled").removeClass("selected-negative");
+    $(this).closest(".form-inline").find(".st3-checkbox-item").removeAttr("disabled");
 });

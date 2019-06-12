@@ -470,8 +470,8 @@ namespace POTrackingV2.Controllers
                             }
                             else
                             {
-                                Existed_PDI.ActiveStage = "4";
-                                notification.Stage = "4";
+                                Existed_PDI.ActiveStage = "2";
+                                notification.Stage = "2";
                                 notification.Role = "subcontdev";
                             }
                         }
@@ -631,8 +631,8 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            Existed_PDI.ActiveStage = "4";
-                            notification.Stage = "4";
+                            Existed_PDI.ActiveStage = "2";
+                            notification.Stage = "2";
                             notification.Role = "subcontdev";
                         }
                     }
