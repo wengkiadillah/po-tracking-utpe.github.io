@@ -15,7 +15,7 @@ using POTrackingV2.CustomAuthentication;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
@@ -60,16 +60,31 @@ namespace POTrackingV2.Controllers
         // GET: MasterVendor/Create
         public ActionResult Create()
         {
+            //POTrackingEntities db = new POTrackingEntities();
+            //ViewBag.Vendors = new SelectList(db.Vendors, "Code", "Name");
+            //return View();
+
             //using (POTrackingEntities db = new POTrackingEntities())
             //{
             //    var ViewModel = new MasterVendorViewModel
             //    {
 
-            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "ame")
+            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
             //    };
+
             //    return View(ViewModel);
             //}
-            return View();
+
+            POTrackingEntities db = new POTrackingEntities();
+            
+            var ViewModel = new MasterVendorViewModel
+            {
+
+                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
+            };
+            return View(ViewModel);
+            
+            //return View();
         }
 
         //public ActionResult CreateDropdown()

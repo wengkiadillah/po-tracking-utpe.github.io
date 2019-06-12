@@ -61,7 +61,7 @@ namespace POTrackingV2.Controllers
                 //  Filter Procurement cuman bisa liat PO yang dia bikin
 
                 //List<string> myUserNRPs = new List<string>();
-                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                ViewBag.myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 //if (myUserNRPs.Count > 0)
