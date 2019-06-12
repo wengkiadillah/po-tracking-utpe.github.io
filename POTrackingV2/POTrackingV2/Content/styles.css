@@ -1104,7 +1104,7 @@ a[data-toggle="collapse"] {
     .info-stage .pop-up-notification {
         position: fixed;
         background-color: #ffff;
-        min-width: 425px;
+        min-width: 300px;
         max-width: 425px;
         box-shadow: 0 0 8px 1px rgba(0,0,0,0.1);
         padding: 10px;
@@ -1112,10 +1112,11 @@ a[data-toggle="collapse"] {
         z-index: -1;
         left: 865px;
         top: 0;
-        -webkit-transition: all 1s ease-out;
-        -moz-transition: all 1s ease-out;
-        -o-transition: all 1s ease-out;
-        transition: all 1s ease-out;
+        -webkit-transition: all .2s ease-out;
+        -moz-transition: all .2s ease-out;
+        -o-transition: all .2s ease-out;
+        transition: all .2s ease-out;
+        transition-delay: 1s;
         border: 1px solid #567FEF;
     }
         .info-stage .po-item-section-header__icon:hover + .pop-up-notification,
