@@ -55,9 +55,10 @@ namespace POTrackingV2
                         //principal.Roles = serializeModel.Roles.FirstOrDefault();
 
                         principal.Roles = (from dbUser in db.Users
-                                           join userRole in db.UserRoles on dbUser.Username equals serializeModel.UserName
+                                           join userRole in db.UserRoles on dbUser.Username equals userRole.Username 
                                            join role in db.Roles on userRole.RoleID equals role.ID
-                                           where userRole.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
+                                           join ap in db.Applications on role.ApplicationID equals ap.ID
+                                           where ap.Name.ToLower() == ApplicationConstants.POTracking.ToLower() && userRole.Username== serializeModel.UserName
                                            select role.Name).FirstOrDefault();
                         HttpContext.Current.User = principal;
                     }
