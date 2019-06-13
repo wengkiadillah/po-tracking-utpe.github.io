@@ -32,29 +32,37 @@ namespace POTrackingV2
 
                 var serializeModel = JsonConvert.DeserializeObject<CustomSerializeModel>(authTicket.UserData);
 
-                //if (serializeModel.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
-                //{
-                //    CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
+                if (serializeModel.Roles.Any(x=>x.ToLower()== LoginConstants.RoleVendor.ToLower()))
+                {
+                    CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
-                //    principal.UserName = serializeModel.UserName;
-                //    principal.Name = serializeModel.Name;
-                //    principal.Roles = serializeModel.Roles;
+                    principal.UserName = serializeModel.UserName;
+                    principal.Name = serializeModel.Name;
+                    principal.Roles = serializeModel.Roles.FirstOrDefault();
 
-                //    HttpContext.Current.User = principal;
-                //}
-                //else
-                //{
+                    HttpContext.Current.User = principal;
+                }
+                else
+                {
                     //if (customRole.IsUserInApplicaiton(authTicket.Name, ApplicationConstants.POTracking))
                     //{
+                    using (UserManagementEntities db = new UserManagementEntities())
+                    {
                         CustomPrincipal principal = new CustomPrincipal(authTicket.Name);
 
                         principal.UserName = serializeModel.UserName;
                         principal.Name = serializeModel.Name;
-                        principal.Roles = serializeModel.Roles.FirstOrDefault();
+                        //principal.Roles = serializeModel.Roles.FirstOrDefault();
 
+                        principal.Roles = (from dbUser in db.Users
+                                           join userRole in db.UserRoles on dbUser.Username equals serializeModel.UserName
+                                           join role in db.Roles on userRole.RoleID equals role.ID
+                                           where userRole.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()
+                                           select role.Name).FirstOrDefault();
                         HttpContext.Current.User = principal;
+                    }
                     //}
-                //}              
+                }
             }
             else
             {

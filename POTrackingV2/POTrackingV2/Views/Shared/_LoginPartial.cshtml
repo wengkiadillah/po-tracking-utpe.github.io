@@ -22,7 +22,7 @@
 
         </div>
         <p class="user-info__name" id="userName">
-            @myRole.Name ! &nbsp; @*(@myRole.Roles)*@
+            @myRole.Name ! &nbsp; (@myRole.Roles)
             @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
             {
                 <a href="@Url.Action("ChangePassword", "Account")"><i class="fas fa-key"></i></a>
