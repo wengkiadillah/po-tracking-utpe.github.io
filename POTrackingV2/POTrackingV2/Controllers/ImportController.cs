@@ -64,7 +64,7 @@ namespace POTrackingV2.Controllers
                 //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                ViewBag.myUserNRPs = GetNRPByUsername(myUser.UserName);
+                //ViewBag.myUserNRPs = GetNRPByUsername(myUser.UserName);
 
                 //if (myUserNRPs.Count > 0)
                 //{
