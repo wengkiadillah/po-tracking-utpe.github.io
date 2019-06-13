@@ -50,7 +50,7 @@ namespace POTrackingV2
 
                         principal.UserName = serializeModel.UserName;
                         principal.Name = serializeModel.Name;
-                        principal.Roles = serializeModel.Roles;
+                        principal.Roles = serializeModel.Roles.FirstOrDefault();
 
                         HttpContext.Current.User = principal;
                     //}
