@@ -13,14 +13,16 @@ using POTrackingV2.CustomAuthentication;
 using System.Web.Security;
 using Newtonsoft.Json;
 using POTrackingV2.Constants;
+using System.Web.Configuration;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator +","+LoginConstants.RoleVendor + "," + LoginConstants.RoleSubcontDev)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleSubcontDev)]
     public class SubcontController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
         DateTime now = DateTime.Now;
+        private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         [HttpGet]
         public JsonResult GetDataFromValue(string filterBy, string value)
@@ -35,14 +37,14 @@ namespace POTrackingV2.Controllers
                 //        Data = x.Number
                 //    }).OrderByDescending(x => x.Data);
 
-                if (filterBy== "poNumber")
+                if (filterBy == "poNumber")
                 {
-                    data = db.POes.Where(x=> x.Number.Contains(value)).Select(x =>
-                    new
-                    {
-                        Data = x.Number,
-                        MatchEvaluation = x.Number.ToLower().IndexOf(value)
-                    }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
+                    data = db.POes.Where(x => x.Number.Contains(value)).Select(x =>
+                     new
+                     {
+                         Data = x.Number,
+                         MatchEvaluation = x.Number.ToLower().IndexOf(value)
+                     }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
                 }
                 else if (filterBy == "vendor")
                 {
@@ -62,7 +64,7 @@ namespace POTrackingV2.Controllers
                         MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
                 }
-                
+
                 if (data != null)
                 {
                     return Json(new { success = true, responseCode = "200", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
@@ -100,7 +102,7 @@ namespace POTrackingV2.Controllers
                     }
                     pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 }
-                else if(role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
                     string vendorCode = db.UserVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).FirstOrDefault();
                     //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
@@ -115,6 +117,7 @@ namespace POTrackingV2.Controllers
                 ViewBag.CurrentFilter = filterBy;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
+                ViewBag.IISAppName = iisAppName;
 
                 #region Filter
                 if (!String.IsNullOrEmpty(searchDataPONumber))
@@ -215,7 +218,7 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            string vendorCode = db.POes.Where(x=>x.ID == item.POID).Select(x=>x.VendorCode).FirstOrDefault();
+                            string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
@@ -824,7 +827,8 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    //url = Path.Combine("/", iisAppName, "Files/Subcont/SequencesProgress", x.FileName)
+                    url = "..\\Files\\Subcont\\SequencesProgress\\"+ x.FileName + iisAppName
                 });
 
                 var fileSetting = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Setting").Select(x =>
@@ -832,8 +836,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
-                    //@Path.Combine("..\\Files\\Subcont\\SequencesProgress", x.FileName)
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName + iisAppName
                 });
 
                 var fileFullweld = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Fullweld").Select(x =>
@@ -841,7 +844,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName + iisAppName
                 });
 
                 var filePrimer = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Primer").Select(x =>
@@ -849,13 +852,17 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName + iisAppName
                 });
 
 
                 if (purchasingDocumentItem != null)
                 {
-                    return Json(new { success = true, responseCode = "200", responseText = "OK",
+                    return Json(new
+                    {
+                        success = true,
+                        responseCode = "200",
+                        responseText = "OK",
                         arrayDataFilePB = JsonConvert.SerializeObject(filePB),
                         arrayDataFileSetting = JsonConvert.SerializeObject(fileSetting),
                         arrayDataFileFullweld = JsonConvert.SerializeObject(fileFullweld),

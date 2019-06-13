@@ -15,7 +15,7 @@ using POTrackingV2.CustomAuthentication;
 
 namespace POTrackingV2.Controllers
 {
-    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
@@ -58,6 +58,7 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: MasterVendor/Create
+        [HttpGet]
         public ActionResult Create()
         {
             //POTrackingEntities db = new POTrackingEntities();
@@ -76,14 +77,12 @@ namespace POTrackingV2.Controllers
             //}
 
             POTrackingEntities db = new POTrackingEntities();
-            
             var ViewModel = new MasterVendorViewModel
             {
 
                 ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
             };
             return View(ViewModel);
-            
             //return View();
         }
 
@@ -130,7 +129,7 @@ namespace POTrackingV2.Controllers
 
                     };
 
-
+                    ViewBag.Message = "Data Berhasil di Tambahkan";
                     db.SubcontComponentCapabilities.Add(subcontComponentCapability);
                     db.SaveChanges();
                 }
@@ -174,6 +173,7 @@ namespace POTrackingV2.Controllers
                     selectedSubContComponent.Fullweld = subcontComponent.Fullweld;
                     selectedSubContComponent.Primer = subcontComponent.Primer;
                     selectedSubContComponent.MonthlyCapacity = subcontComponent.MonthlyCapacity;
+                    ViewBag.Message = "Data Berhasil di Update";
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");
