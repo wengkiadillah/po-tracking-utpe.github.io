@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
-    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class UserProcurementController : Controller
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();
@@ -254,10 +254,9 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                string description = sResultSet.Properties["givenname"][0].ToString();
-                //string description = sResultSet.Properties["description"][0].ToString();
+                //string description = sResultSet.Properties["givenname"][0].ToString();
+                string description = sResultSet.Properties["description"][0].ToString();
                 return description;
-                //return Json(new { success = true, sResultSet }, JsonRequestBehavior.AllowGet);
             }
             return null;
         }

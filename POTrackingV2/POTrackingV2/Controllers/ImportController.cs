@@ -1334,7 +1334,7 @@ namespace POTrackingV2.Controllers
                         db.SaveChanges();
                     }
 
-                    return Json(new { responseText = $"One data affected" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -1671,7 +1671,7 @@ namespace POTrackingV2.Controllers
                 return Json(new { responseText = errorMessage }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { responseText = $"One data affected" }, JsonRequestBehavior.AllowGet);
+            return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
 
         }
 
@@ -1777,7 +1777,7 @@ namespace POTrackingV2.Controllers
 
         #endregion
 
-        #region STAGE 9
+        #region STAGE 10
 
         [HttpPost]
         public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
