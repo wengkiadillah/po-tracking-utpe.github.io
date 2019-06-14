@@ -364,3 +364,4 @@ ASALocalRun/
 
 /POTrackingV2/Files/Local/ProformaInvoice/*
 !/POTrackingV2/Files/Local/ProformaInvoice/donotdelete.txt
+*.pdf

@@ -109,7 +109,7 @@
                 var code = $(this).val();
 
                 $.ajax({
-                    url: '/MasterVendor/getById/' + code,
+                    url: '/MasterVendor/getById?code=' + code,
                     type: 'GET',
                     success: function (data) {
                         console.log(data)
