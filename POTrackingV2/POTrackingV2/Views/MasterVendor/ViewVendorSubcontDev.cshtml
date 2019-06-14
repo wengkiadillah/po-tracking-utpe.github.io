@@ -4,7 +4,7 @@
 @model IPagedList<POTrackingV2.Models.SubcontDevVendor>
 
 @{
-    ViewBag.Title = "List User Vendor";
+    ViewBag.Title = "List Vendor handled by SubcontDev";
 }
 
 @section styles {
@@ -13,7 +13,7 @@
 
 <div class="um">
     <h2 class="form-sub-header">
-        List User Vendor
+        List Vendor handled by SubcontDev
     </h2>
     <div class="filter-row">
         @using (Html.BeginForm("ViewVendorSubcontDev", "MasterVendor", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
