@@ -29,7 +29,7 @@ namespace POTrackingV2.CustomAuthentication
         /// <returns>Return 'True' jika sebuah Username termasuk ke dalam sebuah Role, 'False' jika tidak</returns>
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            return ((string.IsNullOrWhiteSpace(CurrentUser.Roles) ? true : (CurrentUser != null && !CurrentUser.IsInRole(Roles)) ) || (CurrentUser != null && string.IsNullOrWhiteSpace(CurrentUser.Roles)) || CurrentUser == null) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
+            return ((CurrentUser != null ? (string.IsNullOrWhiteSpace(CurrentUser.Roles) ? true : (CurrentUser != null && !CurrentUser.IsInRole(Roles)))  : true) || (CurrentUser != null && string.IsNullOrWhiteSpace(CurrentUser.Roles))) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
         }
 
         /// <summary>

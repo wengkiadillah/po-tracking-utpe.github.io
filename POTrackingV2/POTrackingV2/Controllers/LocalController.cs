@@ -23,6 +23,7 @@ namespace POTrackingV2.Controllers
     {
         public DateTime now = DateTime.Now;
         private POTrackingEntities db = new POTrackingEntities();
+        private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         #region PAGELIST
         // GET: Local
@@ -75,6 +76,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = roleID.ToLower();
             ViewBag.POCount = pOes.Count(); // DEBUG 
+            ViewBag.IISAppName = iisAppName;
 
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
 
@@ -399,11 +401,20 @@ namespace POTrackingV2.Controllers
                     PurchasingDocumentItem databasePurchasingDocumentItem = new PurchasingDocumentItem();
                     List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == inputPurchasingDocumentItem.ID && x.ID != inputPurchasingDocumentItem.ID).ToList();
 
-                    if (!childDatabasePurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
+                    if (childDatabasePurchasingDocumentItems.Count > 0)
                     {
-                        if (!inputPurchasingDocumentItem.ParentID.HasValue)
+                        if (childDatabasePurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
                         {
-                            // Child clean-up
+                            return Json(new { responseText = $"{counter} Item succesfully affected" }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+
+                    if (!inputPurchasingDocumentItem.ParentID.HasValue)
+                    {
+                        // Child clean-up
+
+                        if (childDatabasePurchasingDocumentItems.Count > 0)
+                        {
                             foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
                             {
                                 if (childDatabasePurchasingDocumentItem.ID != inputPurchasingDocumentItem.ID)
@@ -411,67 +422,67 @@ namespace POTrackingV2.Controllers
                                     db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
                                 }
                             }
-                            // finish
-
-                            databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
-
-                            if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
-                            {
-                                //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
-                                //databasePurchasingDocumentItem.ConfirmedItem = null;
-                                databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
-                                databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
-                                //databasePurchasingDocumentItem.ActiveStage = "1";
-                                databasePurchasingDocumentItem.LastModified = now;
-                                databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-                                counter++;
-
-                                if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
-                                {
-                                    databasePurchasingDocumentItem.ConfirmedItem = true;
-                                    databasePurchasingDocumentItem.ActiveStage = "2";
-                                    isSameAsProcs.Add(true);
-                                }
-                                else
-                                {
-                                    databasePurchasingDocumentItem.ConfirmedItem = null;
-                                    databasePurchasingDocumentItem.ActiveStage = "1";
-                                    isSameAsProcs.Add(false);
-                                }
-                            }
                         }
-                        else
+                        // finish
+
+                        databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
+
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
                         {
-                            databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID).FirstOrDefault();
+                            //databasePurchasingDocumentItem.ParentID = databasePurchasingDocumentItem.ID;
+                            //databasePurchasingDocumentItem.ConfirmedItem = null;
+                            databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
+                            databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
+                            //databasePurchasingDocumentItem.ActiveStage = "1";
+                            databasePurchasingDocumentItem.LastModified = now;
+                            databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+                            counter++;
 
-                            if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                            if (inputPurchasingDocumentItem.ConfirmedQuantity == databasePurchasingDocumentItem.Quantity && inputPurchasingDocumentItem.ConfirmedDate == databasePurchasingDocumentItem.DeliveryDate)
                             {
-                                inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
-                                inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
-                                inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
-                                inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
-                                inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
-                                inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
-                                inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                                inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-
-                                inputPurchasingDocumentItem.ActiveStage = "1";
-                                inputPurchasingDocumentItem.Created = now;
-                                inputPurchasingDocumentItem.CreatedBy = User.Identity.Name;
-                                inputPurchasingDocumentItem.LastModified = now;
-                                inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-
-                                db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
-                                counter++;
+                                databasePurchasingDocumentItem.ConfirmedItem = true;
+                                databasePurchasingDocumentItem.ActiveStage = "2";
+                                isSameAsProcs.Add(true);
+                            }
+                            else
+                            {
+                                databasePurchasingDocumentItem.ConfirmedItem = null;
+                                databasePurchasingDocumentItem.ActiveStage = "1";
+                                isSameAsProcs.Add(false);
                             }
                         }
-
                     }
+                    else
+                    {
+                        databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID).FirstOrDefault();
+
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                        {
+                            inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
+                            inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
+                            inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
+                            inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
+                            inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
+                            inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
+                            inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
+                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+
+                            inputPurchasingDocumentItem.ActiveStage = "1";
+                            inputPurchasingDocumentItem.Created = now;
+                            inputPurchasingDocumentItem.CreatedBy = User.Identity.Name;
+                            inputPurchasingDocumentItem.LastModified = now;
+                            inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+
+                            db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
+                            counter++;
+                        }
+                    }
+
                 }
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected",isSameAsProcs }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -546,39 +557,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        /*[HttpPost]
-        public ActionResult ProcurementConfirmAllItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
-        {
-            if (inputPurchasingDocumentItems == null)
-            {
-                return Json(new { responseText = $"No data affected" }, JsonRequestBehavior.AllowGet);
-            }
-
-            DateTime now = DateTime.Now;
-
-            try
-            {
-                foreach (var inputPurchasingDocumentItem in inputPurchasingDocumentItems)
-                {
-                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
-
-                    databasePurchasingDocumentItem.ConfirmedItem = true;
-                    databasePurchasingDocumentItem.OpenQuantity = databasePurchasingDocumentItem.Quantity - databasePurchasingDocumentItem.ConfirmedQuantity;
-                    databasePurchasingDocumentItem.ActiveStage = "2";
-                    databasePurchasingDocumentItem.LastModified = now;
-                    databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-                }
-
-                db.SaveChanges();
-
-                return Json(new { responseText = $"{inputPurchasingDocumentItems.Count()} data affected" }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = (ex.Message + ex.StackTrace);
-                return View(errorMessage);
-            }
-        }*/
+        
 
         [HttpPost]
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
@@ -773,7 +752,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)
+                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -843,7 +822,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)
+                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -959,15 +938,16 @@ namespace POTrackingV2.Controllers
 
                     db.SaveChanges();
 
-                    string downloadUrl = Path.Combine("..\\Files\\Local\\ProformaInvoice", fileName);
+                    //string downloadUrl = Path.Combine("..\\Files\\Local\\ProformaInvoice", fileName);
+                    string downloadUrl = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", fileName);
 
                     return Json(new { responseText = $"File successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
-                    //return Json();
+                    
                 }
                 else
                 {
                     return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
-                    //return Json 
+                     
                 }
 
             }
@@ -1105,7 +1085,7 @@ namespace POTrackingV2.Controllers
         //}
 
         [HttpPost]
-        public ActionResult VendorSkipPI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
+        public ActionResult VendorSkipPI(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
@@ -1113,9 +1093,11 @@ namespace POTrackingV2.Controllers
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
 
+            PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
             try
             {
-                PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
+                //PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
                 if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
                 {
@@ -1173,7 +1155,7 @@ namespace POTrackingV2.Controllers
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
-
+            
             if (inputPurchasingDocumentItems == null)
             {
                 return Json(new { responseText = $"No data affected" }, JsonRequestBehavior.AllowGet);
@@ -1351,7 +1333,7 @@ namespace POTrackingV2.Controllers
                         db.SaveChanges();
                     }
 
-                    return Json(new { responseText = $"One data affected" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -1439,8 +1421,9 @@ namespace POTrackingV2.Controllers
 
             foreach (var progressPhoto in progressPhotoes)
             {
-                string path = $"../Files/Local/ProgressProforma/{progressPhoto.FileName}";
-                imageSources.Add(path);
+                //string path = $"../Files/Local/ProgressProforma/{progressPhoto.FileName}";
+                string downloadurl = Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName);
+                imageSources.Add(downloadurl);
             }
 
             return Json(new { responseText = $"Files successfully uploaded", imageSources }, JsonRequestBehavior.AllowGet);
@@ -1520,7 +1503,8 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            string downloadUrl = Path.Combine("..\\Files\\Local\\Invoice", fileName);
+                            //string downloadUrl = Path.Combine("..\\Files\\Local\\Invoice", fileName);
+                            string downloadUrl = Path.Combine("/", iisAppName, "Files/Local/Invoice", fileName);
 
                             return Json(new { responseCode = "200", responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                         }
@@ -1559,59 +1543,59 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                //if (databasePurchasingDocumentItem.ActiveStage != "2a")
-                //{
-                if (Convert.ToInt32(databasePurchasingDocumentItem.ActiveStage) > 3)
+                if (databasePurchasingDocumentItem.ActiveStage != "2a")
                 {
-                    if (databasePurchasingDocumentItem.InvoiceDocument != null)
+                    if (Convert.ToInt32(databasePurchasingDocumentItem.ActiveStage) > 3)
                     {
-                        string user = User.Identity.Name;
-
-                        string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/Invoice"), databasePurchasingDocumentItem.InvoiceDocument);
-
-                        System.IO.File.Delete(pathWithfileName);
-
-                        databasePurchasingDocumentItem.InvoiceDocument = null;
-                        databasePurchasingDocumentItem.LastModified = now;
-                        databasePurchasingDocumentItem.LastModifiedBy = user;
-
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
-                        foreach (var previousNotification in previousNotifications)
+                        if (databasePurchasingDocumentItem.InvoiceDocument != null)
                         {
-                            previousNotification.isActive = false;
+                            string user = User.Identity.Name;
+
+                            string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/Invoice"), databasePurchasingDocumentItem.InvoiceDocument);
+
+                            System.IO.File.Delete(pathWithfileName);
+
+                            databasePurchasingDocumentItem.InvoiceDocument = null;
+                            databasePurchasingDocumentItem.LastModified = now;
+                            databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            foreach (var previousNotification in previousNotifications)
+                            {
+                                previousNotification.isActive = false;
+                            }
+
+                            Notification notification = new Notification();
+                            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                            notification.StatusID = 2;
+                            notification.Stage = "6";
+                            notification.Role = "procurement";
+                            notification.isActive = true;
+                            notification.Created = now;
+                            notification.CreatedBy = User.Identity.Name;
+                            notification.Modified = now;
+                            notification.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notification);
+
+                            db.SaveChanges();
+
+                            return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
                         }
-
-                        Notification notification = new Notification();
-                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 2;
-                        notification.Stage = "6";
-                        notification.Role = "procurement";
-                        notification.isActive = true;
-                        notification.Created = now;
-                        notification.CreatedBy = User.Identity.Name;
-                        notification.Modified = now;
-                        notification.ModifiedBy = User.Identity.Name;
-
-                        db.Notifications.Add(notification);
-
-                        db.SaveChanges();
-
-                        return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
+                        else
+                        {
+                            return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
+                        }
                     }
                     else
                     {
-                        return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                        return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
                     }
                 }
                 else
                 {
-                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
                 }
-                //}
-                //else
-                //{
-                //    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
-                //}
             }
             catch (Exception ex)
             {

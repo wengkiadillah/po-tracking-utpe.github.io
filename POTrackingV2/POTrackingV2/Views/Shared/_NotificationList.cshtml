@@ -132,6 +132,11 @@
                                 var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&activeStage=" + stage;
                                 message = "";
                             }
+                            else if (POTypeCategory == "Local") {
+                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&activeStage=" + stage;
+                                message = "";
+                            }
+
                             else {
                                 var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 message = "";

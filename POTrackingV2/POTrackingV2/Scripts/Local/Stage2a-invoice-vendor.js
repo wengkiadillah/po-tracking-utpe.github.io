@@ -109,9 +109,10 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                buttonSkipPI.addClass("selected").attr("disabled", "disabled");
+                //buttonSkipPI.addClass("selected").attr("disabled", "disabled");
                 buttonUploadPI.attr("disabled", "disabled");
                 inputFileProformaInvoice.attr("disabled", "disabled");
+                buttonSkipPI.attr("disabled", "disabled").addClass("selected-negative");
 
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
