@@ -156,17 +156,18 @@ namespace POTrackingV2.Controllers
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
 
-                if (roleType.RolesTypeID == 1)
+                if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
                 {
-                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") 
+                    && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                 }
-                else if (roleType.RolesTypeID == 2)
+                else if (roleType.RolesTypeID == 2) // Notif buat orang Local
                 {
                     notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                 }
-                else if (roleType.RolesTypeID == 3)
+                else if (roleType.RolesTypeID == 3) // Notif buat orang Import
                 {
                     notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
