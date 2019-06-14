@@ -5,6 +5,14 @@
     int number = 1;
 }
 
+<!-- Font-icon css-->
+<link rel="stylesheet" type="text/css"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Select Dropdown Style -->
+<link href="~/Content/bootstrap-select.min.css" rel="stylesheet">
+<!--Multiple Select Dropdown -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css" />
+
 <h2>Details</h2>
 
 <div>
@@ -27,8 +35,9 @@
 
     <div class="form-group">
         <p class="form-custom-label">Select Inferior User</p>
-        <select name="InferiorUser_Username" id="InferiorUser_Username" class="form-control" multiple></select>
-        <p class="material-preparation-process-validation text-danger"></p>
+        <div class="inline field">
+            <select name="InferiorUser_Username" id="InferiorUser_Username" multiple class="label ui selection fluid search dropdown"></select>
+        </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
@@ -77,6 +86,7 @@
                 }
             </tbody>
         </table>
+
     </div>
 </div>
 <p>
@@ -178,4 +188,7 @@
             }
         });
     </script>
+
+    <script src="~/Scripts/semantic.min.js"></script>
+    <script src="~/Scripts/create-multiple.js"></script>
 }
