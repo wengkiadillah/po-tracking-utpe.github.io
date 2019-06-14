@@ -58,18 +58,32 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: MasterVendor/Create
+        [HttpGet]
         public ActionResult Create()
         {
+            //POTrackingEntities db = new POTrackingEntities();
+            //ViewBag.Vendors = new SelectList(db.Vendors, "Code", "Name");
+            //return View();
+
             //using (POTrackingEntities db = new POTrackingEntities())
             //{
             //    var ViewModel = new MasterVendorViewModel
             //    {
 
-            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "ame")
+            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
             //    };
+
             //    return View(ViewModel);
             //}
-            return View();
+
+            POTrackingEntities db = new POTrackingEntities();
+            var ViewModel = new MasterVendorViewModel
+            {
+
+                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
+            };
+            return View(ViewModel);
+            //return View();
         }
 
         //public ActionResult CreateDropdown()
@@ -115,7 +129,7 @@ namespace POTrackingV2.Controllers
 
                     };
 
-
+                    ViewBag.Message = "Data Berhasil di Tambahkan";
                     db.SubcontComponentCapabilities.Add(subcontComponentCapability);
                     db.SaveChanges();
                 }
@@ -159,6 +173,7 @@ namespace POTrackingV2.Controllers
                     selectedSubContComponent.Fullweld = subcontComponent.Fullweld;
                     selectedSubContComponent.Primer = subcontComponent.Primer;
                     selectedSubContComponent.MonthlyCapacity = subcontComponent.MonthlyCapacity;
+                    ViewBag.Message = "Data Berhasil di Update";
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");

@@ -29,45 +29,48 @@
         </div>
         <nav>
             <ul class="main-menu list-unstyled">
-                <li class="main-menu-item">
-                    <a href="#" class="main-menu__link" data-menu="Performance Purchaser">
-                        <i class="fas fa-shopping-cart"></i><span>Performance Purchaser</span>
-                    </a>
-                    <ul class="main-menu-submenu list-unstyled">
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
-                        </li>
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="main-menu-item">
-                    <a href="#" class="main-menu__link" data-menu="Status Kedatangan Barang">
-                        <i class="fas fa-chart-pie"></i> <span>Status Kedatangan Barang</span>
-                    </a>
-                    <ul class="main-menu-submenu list-unstyled">
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
-                        </li>
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="main-menu-item">
-                    <a href="#" class="main-menu__link" data-menu="Performance Vendor">
-                        <i class="fas fa-industry"></i> <span>Performance Vendor</span>
-                    </a>
-                    <ul class="main-menu-submenu list-unstyled">
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
-                        </li>
-                        <li class="main-menu-submenu-item">
-                            <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
-                        </li>
-                    </ul>
-                </li>
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                {
+                    <li class="main-menu-item">
+                        <a href="#" class="main-menu__link" data-menu="Performance Purchaser">
+                            <i class="fas fa-shopping-cart"></i><span>Performance Purchaser</span>
+                        </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="main-menu-item">
+                        <a href="#" class="main-menu__link" data-menu="Status Kedatangan Barang">
+                            <i class="fas fa-chart-pie"></i> <span>Status Kedatangan Barang</span>
+                        </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="main-menu-item">
+                        <a href="#" class="main-menu__link" data-menu="Performance Vendor">
+                            <i class="fas fa-industry"></i> <span>Performance Vendor</span>
+                        </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
+                    </li>
+                }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import"))
                 {
                     <li class="main-menu-item">

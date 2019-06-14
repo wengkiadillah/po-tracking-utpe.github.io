@@ -27,6 +27,7 @@ namespace POTrackingV2.CustomAuthentication
         public string Name { get; set; }
         //public string Roles { get; set; }
         public string Roles { get; set; }
+
         //public int RolesType { get; set; }
         //public string VendorCode { get; set; }
 
@@ -57,12 +58,14 @@ namespace POTrackingV2.CustomAuthentication
                 foreach (var item in roles)
                 {
                     if (item.ToLower().Trim().Equals(Roles.ToLower()) && !val)
+                    //if (Roles.Any(x=>x.ToLower().Trim() == item.ToLower().Trim()) && !val)
                         val = true;
                 }
             }
             else
             {
                 if (Roles.ToLower().Equals(role.ToLower()))
+                //if (Roles.Any(x => x.ToLower().Trim() == role.ToLower().Trim()))
                     val = true;
             }
 

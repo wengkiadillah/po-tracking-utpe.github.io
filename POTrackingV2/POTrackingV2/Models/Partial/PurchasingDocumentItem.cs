@@ -30,7 +30,17 @@ namespace POTrackingV2.Models
                 }
                 else
                 {
-                    return db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).Sum(x => x.GoodsReceiptQuantity ?? 0);
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistories =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+
+                    if (dbPurchasingDocumentItemHistories.Count> 0)
+                    {
+                        return dbPurchasingDocumentItemHistories.Sum(x => x.GoodsReceiptQuantity ?? 0);
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+
                 }
             }
         }

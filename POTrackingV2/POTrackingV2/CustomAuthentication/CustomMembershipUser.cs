@@ -35,6 +35,7 @@ namespace POTrackingV2.CustomAuthentication
             //UserName = user.Username;
             //Name = user.User.Name;
             //Roles = user.Role.Name.ToLower();
+
             UserName = user.Username;
             Name = user.Name;
             Roles = user.RoleName.ToLower();

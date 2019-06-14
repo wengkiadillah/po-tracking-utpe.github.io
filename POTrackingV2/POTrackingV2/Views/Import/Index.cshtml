@@ -10,20 +10,21 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
+<input hidden value="@ViewBag.myUserNRPs" />
 <h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
-            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-ponumber"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
             <datalist id="data-list-vendorname"></datalist>
         </div>
         <div class="form-group mr-4 ml-0">
-            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
         <div class="form-group mr-0 ml-0">
@@ -78,7 +79,7 @@
             @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
             <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
-            @if (roleID == "procurement")
+            @if (roleID == "procurement" || roleID == "administrator")
             {
                 <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
             }
@@ -105,7 +106,7 @@
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.Contains(ViewBag.CurrentSearchMaterial) || x.Description.Contains(ViewBag.CurrentSearchMaterial));
     }
 
-    if (roleID == "procurement")
+    if (roleID == "procurement" || roleID == "administrator")
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
@@ -315,7 +316,7 @@
                             var st1CheckboxAll = "st1-checkbox-all";
                             var st1AcceptAll = "st1-accept-all-po";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1CheckboxAll = "st1-checkbox-all-proc";
                                 st1AcceptAll = "st1-accept-all-po-proc";
@@ -376,7 +377,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
                                 st1ItemIDInner = "st1-pd-item-id-inner-proc";
@@ -410,7 +411,7 @@
                             var isChecked = "";
                             var isPartial = "";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
@@ -554,7 +555,7 @@
                                                 isChecked = "";
                                                 isPartial = "";
 
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     disabledInputCheckbox = "disabled";
 
@@ -667,7 +668,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-2">
-                    @if (roleID == "procurement")
+                    @if (roleID == "procurement" || roleID == "administrator")
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -718,7 +719,7 @@
                             var st2ProcAcceptFirstEta = "";
                             var st2ProcDeclineFirstEta = "";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st2CheckboxItem = "st2-proc-checkbox-item";
                                 st2ItemId = "st2-proc-pd-item-id";
@@ -754,7 +755,7 @@
                                 valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hiddenButtonConfirmEtaDate = "hidden";
                                 hiddenButtonAcceptDecline = "";
@@ -859,7 +860,7 @@
                                                 valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
                                             }
 
-                                            if (roleID == "procurement")
+                                            if (roleID == "procurement" || roleID == "administrator")
                                             {
                                                 hiddenButtonConfirmEtaDate = "hidden";
                                                 hiddenButtonAcceptDecline = "";
@@ -965,7 +966,7 @@
                             var st2aDownloadProforma = "st2a-download-proforma";
                             var st2aSkipProforma = "st2a-skip-proforma";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 //st2aApproveProforma = "st2a-approve-proforma-proc";
                                 //st2aDisApproveProforma = "st2a-disapprove-proforma-proc";
@@ -990,7 +991,7 @@
                             {
                                 if (purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    if (roleID == "procurement")
+                                    if (roleID == "procurement" || roleID == "administrator")
                                     {
                                         disabledSkipProforma = "disabled";
                                         disabledFileProformaInvoice = "disabled";
@@ -1027,7 +1028,7 @@
                                 hiddenUploadedDiv = "";
                                 downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
-                                if (roleID == "procurement")
+                                if (roleID == "procurement" || roleID == "administrator")
                                 {
                                     disabledSkipProforma = "disabled";
                                     //disabledApproveProforma = "";
@@ -1118,7 +1119,7 @@
                                             {
                                                 if (childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    if (roleID == "procurement")
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
                                                         disabledSkipProforma = "disabled";
                                                         disabledFileProformaInvoice = "disabled";
@@ -1155,7 +1156,7 @@
                                                 hiddenUploadedDiv = "";
                                                 downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     disabledSkipProforma = "disabled";
                                                     //disabledApproveProforma = "";
@@ -1230,7 +1231,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == "procurement")
+                    @if (roleID == "procurement"|| roleID == "administrator")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1312,7 +1313,7 @@
                                 }
                             }
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1386,7 +1387,7 @@
                                                 }
                                             }
 
-                                            if (roleID == "procurement")
+                                            if (roleID == "procurement" || roleID == "administrator")
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -1586,7 +1587,7 @@
 
                                     valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                    if (roleID == "procurement")
+                                    if (roleID == "procurement" || roleID == "administrator")
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1825,7 +1826,7 @@
 
                                                     valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                                    if (roleID == "procurement")
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -2217,7 +2218,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-8">
-                    @if (roleID == "procurement")
+                    @if (roleID == "procurement" || roleID == "administrator")
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -2283,7 +2284,7 @@
 
                             if (purchasingDocumentItem.ActiveStageView == "7")
                             {
-                                if (roleID == "procurement")
+                                if (roleID == "procurement" || roleID == "administrator")
                                 {
                                     disabledCheckboxItem = "";
                                 }
@@ -2359,7 +2360,7 @@
 
                                             if (childPurchasingDocumentItem.ActiveStageView == "7")
                                             {
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     disabledCheckboxItem = "";
                                                 }
@@ -2761,7 +2762,7 @@
                         }
                     </div>
                 </div>
-                @if (roleID == "procurement")
+                @if (roleID == "procurement" || roleID == "administrator")
                 {
                     <div class="po-item-section stage-11">
                         <div class="po-item-section-header justify-content-center">
@@ -2955,86 +2956,6 @@
                     $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
                     $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
-                    $("#searchPONumber").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'poNumber', 'value': $("#searchPONumber").val() },
-                            beforeSend: function () {
-                                $("#searchPONumber").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-ponumber").html(element);
-                                    $("#searchPONumber").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
-                            }
-                        });
-                    });
-
-                    $("#searchVendorName").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'vendor', 'value': $("#searchVendorName").val() },
-                            beforeSend: function () {
-                                $("#searchVendorName").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-vendorname").html(element);
-                                    $("#searchVendorName").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
-                            }
-                        });
-                    });
-
-                    $("#searchMaterial").on("focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
-                            beforeSend: function () {
-                                $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-material").html(element);
-                                    $("#searchMaterial").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
-                            }
-                        });
-                    });
 
                     //stage scrollbar fixed
                     var chooseStagePosition = $('.filter-row').offset();
@@ -3126,6 +3047,31 @@
                 $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
                 count++;
                 });
+
+                $(".info-stage .pop-up-notification img").hover(function () {
+                    var height = $(this).prop('naturalHeight');
+                    var width = $(this).prop('naturalWidth');
+                    var heightScale = height / 150.0;
+                    if (heightScale < 1) {
+                        heightScale = 1;
+                    }
+                    var widthScale = width / 150.0;
+                    if (widthScale < 1) {
+                        widthScale = 1;
+                    }
+                    var scale = "scale(" + widthScale + "," + heightScale + ")";
+                    $(this).css({
+                        "-ms-transform": scale,
+                        "-webkit-transform": scale,
+                        "transform": scale
+                    });
+                }, function () {
+                    $(this).css({
+                        "-ms-transform": "scale(1)",
+                        "-webkit-transform": "scale(1)",
+                        "transform": "scale(1)"
+                    });
+                });
             });
 
 
@@ -3148,5 +3094,87 @@
 
                 $(this).get(0).selectedIndex = delayReasonID;
             });
+
+
+                    $("#searchPONumber").on("keyup focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': 'poNumber', 'value': $("#searchPONumber").val() },
+                            beforeSend: function () {
+                                $("#searchPONumber").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list-ponumber").html(element);
+                                    $("#searchPONumber").css("background", "");
+                                } else {
+                                    console.log(response.responseCode + response.responseText);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.status + " : " + error);
+                            }
+                        });
+                    });
+
+                    $("#searchVendorName").on("keyup focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': 'vendor', 'value': $("#searchVendorName").val() },
+                            beforeSend: function () {
+                                $("#searchVendorName").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list-vendorname").html(element);
+                                    $("#searchVendorName").css("background", "");
+                                } else {
+                                    console.log(response.responseCode + response.responseText);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.status + " : " + error);
+                            }
+                        });
+                    });
+
+                    $("#searchMaterial").on("keyup focus", function () {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetDataForSearch", "Import")",
+                            data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
+                            beforeSend: function () {
+                                $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                            },
+                            success: function (response) {
+                                if (response.responseCode == "200") {
+                                    var jsonObjSuggestion = $.parseJSON(response.data);
+                                    var element = "";
+                                    for (var k in jsonObjSuggestion) {
+                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                    }
+                                    $("#data-list-material").html(element);
+                                    $("#searchMaterial").css("background", "");
+                                } else {
+                                    console.log(response.responseCode + response.responseText);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.status + " : " + error);
+                            }
+                        });
+                    });
         </script>
     }
