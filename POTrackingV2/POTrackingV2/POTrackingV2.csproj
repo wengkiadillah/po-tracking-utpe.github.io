@@ -396,12 +396,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\all.min.css" />
+    <Content Include="Content\bootstrap-select.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\chosen.css" />
     <Content Include="Content\chosen.min.css" />
     <Content Include="Content\datepicker.min.css" />
     <Content Include="Content\PagedList.css" />
+    <Content Include="Content\semantic.min.css" />
     <Content Include="Content\styles.css" />
     <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
@@ -466,6 +468,7 @@
       <DependentUpon>UserManagement.edmx</DependentUpon>
       <LastGenOutput>UserManagement.cs</LastGenOutput>
     </Content>
+    <Content Include="Scripts\create-multiple.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -571,6 +574,7 @@
     <Content Include="Scripts\popper.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\semantic.min.js" />
     <Content Include="Scripts\utpe.js" />
     <Content Include="Scripts\vue-paginate.js" />
     <Content Include="Scripts\vue.min.js" />
