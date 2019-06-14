@@ -700,6 +700,7 @@ $(".st1-edit-row").on("click", function (obj) {
 
     parentRow.find(".st1-accept-item").removeAttr("disabled").removeClass("selected");
     parentRow.find(".st1-cancel-item").removeAttr("disabled").removeClass("selected-negative");
+    parentRow.find(".st1-checkbox-item").removeAttr("disabled");
 });
 
 

@@ -1020,7 +1020,8 @@
                                 disabledVendorSkipPI = "disabled";
                                 hiddenVendorSkipPI = "";
 
-                                downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
                                 if (roleID == "procurement")
                                 {
@@ -1155,7 +1156,8 @@
                                                 hiddenInputDiv = "hidden";
                                                 hiddenUploadedDiv = "";
                                                 hiddenVendorSkipPI = "";
-                                                downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
                                                 if (roleID == "procurement")
                                                 {

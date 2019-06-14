@@ -348,9 +348,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -465,7 +465,8 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            inputPurchasingDocumentItem.IsClosed = "";
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
