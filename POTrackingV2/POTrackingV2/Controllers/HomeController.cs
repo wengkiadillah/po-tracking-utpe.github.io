@@ -17,7 +17,6 @@ namespace POTrackingV2.Controllers
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
-        UserManagementEntities DBUser = new UserManagementEntities();
 
         public ActionResult Index()
         {
@@ -136,10 +135,28 @@ namespace POTrackingV2.Controllers
                 //int roleSearchDB = Convert.ToInt32(role);
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
 
+                UserManagementEntities DBUser = new UserManagementEntities();
+                string userName = User.Identity.Name;
+                List<string> vendorCode = new List<string>();
+
+                var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
+                if (userInternal != null)
+                {
+                    vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                }
+                else
+                {
+                    var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
+                    if (userEksternal != null)
+                    {
+                        vendorCode.Add(userEksternal.VendorCode);
+                    }
+                }
+
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
+                var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
 
                 if (roleType.RolesTypeID == 1)
                 {
