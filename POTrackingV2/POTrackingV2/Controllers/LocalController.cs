@@ -1462,9 +1462,9 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (databasePurchasingDocumentItem.ActiveStageToNumber > 3 && databasePurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= databasePurchasingDocumentItem.ConfirmedQuantity)
+                if (databasePurchasingDocumentItem.ActiveStage != "2a")
                 {
-                    if (fileInvoice.ContentLength > 0 )
+                    if (fileInvoice.ContentLength > 0 || Convert.ToInt32(databasePurchasingDocumentItem.ActiveStage) > 3)
                     {
                         if (databasePurchasingDocumentItem.InvoiceDocument == null)
                         {
@@ -1504,7 +1504,6 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            //string downloadUrl = Path.Combine("..\\Files\\Local\\Invoice", fileName);
                             string downloadUrl = Path.Combine("/", iisAppName, "Files/Local/Invoice", fileName);
 
                             return Json(new { responseCode = "200", responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
