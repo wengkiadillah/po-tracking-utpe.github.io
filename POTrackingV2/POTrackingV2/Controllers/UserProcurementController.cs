@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class UserProcurementController : Controller
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();
@@ -21,7 +21,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult Index(string searchUser)
         {
-            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
+            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == null).ToList();
 
             if (!string.IsNullOrEmpty(searchUser))
             {
@@ -174,11 +174,11 @@ namespace POTrackingV2.Controllers
         {
             List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).ToList();
 
-            List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
+            List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
             foreach (var item in userProcurementInferiors)
             {
-                users = users.Where(x => x.Username != item.Username).ToList();
+                users = users.Where(x => x.Username.ToLower() != item.Username.ToLower()).ToList();
             }
 
             SelectList selectListusers = new SelectList(users, "Username", "Name");

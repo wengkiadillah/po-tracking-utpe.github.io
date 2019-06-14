@@ -307,7 +307,8 @@ $(".st5-confirm-all").on("click", function (obj) {
                 $(".row-updated-donut").removeClass("row-updated-donut");
                 $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").find(".st6-fill-in-the-form").first().removeAttr("disabled");
+                $(".row-updated-next-content").find(".st6-fill-in-the-form").removeAttr("disabled");
+                $(".row-updated-next-content").removeClass("row-updated-next-content");
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);

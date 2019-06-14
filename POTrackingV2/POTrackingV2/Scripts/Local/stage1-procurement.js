@@ -243,4 +243,5 @@ $(".st1-edit-row-proc").on("click", function (obj) {
 
     parentRow.find(".st1-accept-item-proc").first().removeAttr("disabled").removeClass("selected");
     parentRow.find(".st1-cancel-item-proc").first().removeAttr("disabled").removeClass("selected-negative");
+    parentRow.find(".st1-checkbox-item-proc").first().removeAttr("disabled");
 });
