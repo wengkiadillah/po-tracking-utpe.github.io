@@ -135,24 +135,6 @@ namespace POTrackingV2.Controllers
                 //int roleSearchDB = Convert.ToInt32(role);
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
 
-                UserManagementEntities DBUser = new UserManagementEntities();
-                string userName = User.Identity.Name;
-                List<string> vendorCode = new List<string>();
-
-                var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                if (userInternal != null)
-                {
-                    vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
-                }
-                else
-                {
-                    var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                    if (userEksternal != null)
-                    {
-                        vendorCode.Add(userEksternal.VendorCode);
-                    }
-                }
-
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
@@ -160,8 +142,25 @@ namespace POTrackingV2.Controllers
 
                 if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
                 {
-                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") 
-                    && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                    UserManagementEntities DBUser = new UserManagementEntities();
+                    string userName = User.Identity.Name;
+                    List<string> vendorCode = new List<string>();
+
+                    var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
+                    if (userInternal != null)
+                    {
+                        vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                    }
+                    else
+                    {
+                        var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
+                        if (userEksternal != null)
+                        {
+                            vendorCode.Add(userEksternal.VendorCode);
+                        }
+                    }
+
+                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                 }
                 else if (roleType.RolesTypeID == 2) // Notif buat orang Local
                 {
@@ -171,31 +170,28 @@ namespace POTrackingV2.Controllers
                 {
                     notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
-                    if (role == LoginConstants.RoleProcurement.ToLower())
+                    if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
                     {
-                        //  Filter Procurement cuman bisa liat PO yang dia bikin dan anaknya
+                        List<string> myUserNRPs = new List<string>();
+                        myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                        myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        //List<string> myUserNRPs = new List<string>();
-                        //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                        //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+                        var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
-                        //if (myUserNRPs.Count > 0)
-                        //{
-                        //    var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+                        if (myUserNRPs.Count > 0)
+                        {
+                            foreach (var myUserNRP in myUserNRPs)
+                            {
+                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
+                            }
 
-                        //    foreach (var myUserNRP in myUserNRPs)
-                        //    {
-                        //        noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
-                        //    }
+                        }
 
-                        //    notifications = notifications.Except(noShowNotifications);
-                        //}
+                        notifications = notifications.Except(noShowNotifications);
                     }
                     else
                     {
-                        //  Filter Vendor cuman bisa liat PO yang punya dia
-
-                        //notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                        notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                     }
                 }
 
