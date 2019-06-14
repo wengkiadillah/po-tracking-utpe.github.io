@@ -190,11 +190,11 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
             $(".row-updated-donut").removeClass("row-updated-donut");
             $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            $("row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
-            $("row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
-            $("row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
-            $("row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
-            $("row-updated-next-content").removeClass("row-updated-next-content");
+            $(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+            $(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+            $(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+            $(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+            $(".row-updated-next-content").removeClass("row-updated-next-content");
         }
     });
 });
@@ -248,6 +248,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
                 nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
                 nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
                 nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
 
             },
             error: function (xhr, status, error) {

@@ -1413,7 +1413,7 @@ namespace POTrackingV2.Controllers
 
             db.SaveChanges();
 
-            List<ProgressPhoto> progressPhotoes = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+            List<ProgressPhoto> progressPhotoes = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == inputPurchasingDocumentItemID).ToList();
             List<string> imageSources = new List<string>();
 
             foreach (var progressPhoto in progressPhotoes)
