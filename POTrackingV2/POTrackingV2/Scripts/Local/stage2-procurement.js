@@ -210,4 +210,5 @@ $(".edit-row-st2-proc").on("click", function (obj) {
 
     formRow.find(".st2-proc-accept-first-eta").removeAttr("disabled").removeClass("selected");
     formRow.find(".st2-proc-decline-first-eta").removeAttr("disabled").removeClass("selected-negative");
+    formRow.find(".st2-proc-checkbox-item").removeAttr("disabled");
 });

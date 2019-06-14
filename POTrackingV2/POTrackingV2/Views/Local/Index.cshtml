@@ -5,6 +5,7 @@
     ViewBag.Title = "Local PO tracking";
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
+    var iisAppName = ViewBag.IISAppName;
 }
 
 @section styles {
@@ -167,7 +168,7 @@
                                 }
                                 else
                                 {
-                                    <td>Tidak Ada di Database</td>
+                                    <td>Not found in Database</td>
                                 }
                             </tr>
                         </table>
@@ -309,12 +310,12 @@
                             <p class="mb-0">Stage 1</p>
                         </div>
                         <div>
-                            <input class="btn btn-positive confirm-all-po @st1AcceptAll" type="submit" value="Accept All" />
+                            <input class="btn btn-positive confirm-all-po @st1AcceptAll" type="submit" value="Save All" />
                         </div>
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
-                            <span class="po-item-data-header__text confirm-delivery-date">Confirm Delivery Date</span>
+                            <span class="po-item-data-header__text confirm-delivery-date">Confirm PO Date</span>
                             <span class="po-item-data-header__text delivery-option">Delivery Method</span>
                             <span class="po-item-data-header__text quantity-form">Quantity</span>
                         </div>
@@ -325,7 +326,7 @@
                         {
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage1 = 1;
-                            var latestConfirmedDate = purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var latestConfirmedDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                             var latestConfirmedQuantity = purchasingDocumentItem.Quantity;
 
                             if (purchasingDocumentItem.ConfirmedDate.HasValue)
@@ -412,16 +413,16 @@
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    hideButtonEdit = "";
 
-                                    if (!purchasingDocumentItem.ConfirmedDate.HasValue || !purchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
@@ -460,7 +461,7 @@
                                             <div class="form-inline">
                                                 <input type="hidden" class="@st1ItemID" value="@purchasingDocumentItem.ID">
                                                 <input type="hidden" class="@st1ItemQuantity" value="@purchasingDocumentItem.Quantity">
-                                                <input type="hidden" class="@st1ItemDeliveryDate" value="@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")">
+                                                <input type="hidden" class="@st1ItemDeliveryDate" value="@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")">
                                                 <input type="hidden" class="@st1ItemIsEdit" value="false">
                                                 <div class="input-group">
                                                     <label class="checkbox-custom__label">
@@ -513,7 +514,7 @@
                                         {
                                             foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                             {
-                                                latestConfirmedDate = childPurchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                                                latestConfirmedDate = childPurchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                                 latestConfirmedQuantity = childPurchasingDocumentItem.Quantity;
 
                                                 if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
@@ -553,16 +554,16 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
 
-                                                        if (!childPurchasingDocumentItem.ConfirmedDate.HasValue || !childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
                                                         }
@@ -884,7 +885,7 @@
                                                 hiddenButtonConfirmEtaDate = "";
                                                 hiddenButtonAcceptDecline = "hidden";
 
-                                                if (childPurchasingDocumentItem.ActiveStage == "2" && !purchasingDocumentItem.HasETAHistory)
+                                                if (childPurchasingDocumentItem.ActiveStage == "2" && !childPurchasingDocumentItem.HasETAHistory)
                                                 {
                                                     disabledInputCheckbox = "";
                                                 }
@@ -1692,9 +1693,10 @@
                                                 {
                                                     foreach (var progressPhoto in purchasingDocumentItem.ProgressPhotoes)
                                                     {
-                                                        <span class="mr-2">
-                                                            <img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
-                                                        </span>
+                                                <span class="mr-2">
+                                                    @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">*@
+                                                    <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                </span>
                                                     }
                                                 }
                                             </div>
@@ -1938,9 +1940,10 @@
                                                             {
                                                                 foreach (var progressPhoto in childPurchasingDocumentItem.ProgressPhotoes)
                                                                 {
-                                                                    <span class="mr-2">
-                                                                        <img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">
-                                                                    </span>
+                                                            <span class="mr-2">
+                                                                @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">*@
+                                                                <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                            </span>
                                                                 }
                                                             }
                                                         </div>
@@ -2211,7 +2214,8 @@
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
-                                invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", purchasingDocumentItem.InvoiceDocument);
+                                
+                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Local/Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
 
@@ -2267,7 +2271,7 @@
 
                                             if (childPurchasingDocumentItem.InvoiceDocument != null)
                                             {
-                                                invoiceDownloadPath = Path.Combine("..\\Files\\Local\\Invoice", childPurchasingDocumentItem.InvoiceDocument);
+                                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Local/Invoice", childPurchasingDocumentItem.InvoiceDocument);                                              
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
 
