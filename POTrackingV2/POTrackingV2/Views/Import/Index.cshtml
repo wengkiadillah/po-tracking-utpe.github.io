@@ -6,6 +6,15 @@
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
     var iisAppName = ViewBag.IISAppName;
+    string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
+    if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    {
+        currentSearchForMaterial = currentSearchForMaterial.ToLower();
+    }
+    else
+    {
+        currentSearchForMaterial = string.Empty;
+    }
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -101,9 +110,9 @@
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
 
-    if (!string.IsNullOrEmpty(ViewBag.CurrentSearchMaterial))
+    if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.Contains(ViewBag.CurrentSearchMaterial) || x.Description.Contains(ViewBag.CurrentSearchMaterial));
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial));
     }
 
     if (roleID == "procurement" || roleID == "administrator")
