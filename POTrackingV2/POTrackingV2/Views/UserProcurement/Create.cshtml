@@ -4,18 +4,17 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>Create new User Procurement Superior</h2>
 
 <div class="form-horizontal">
-    <h4>UserProcurementSuperior</h4>
     <hr />
     <div class="form-group">
         <p class="form-custom-label">Procurement Superior User</p>
-        @Html.DropDownList("SuperiorUser_Username", Model.SuperiorUsernames, "Select", htmlAttributes: new { @class = "form-control full-width" })
+        @Html.DropDownList("SuperiorUser_Username", Model.SuperiorUsernames, "Select", htmlAttributes: new { @class = "form-control full-width chosen" })
     </div>
     <div class="form-group">
         <p class="form-custom-label">Select Inferior User</p>
-        <select name="InferiorUser_Username" id="InferiorUser_Username" class="form-control" multiple></select>
+        <select name="InferiorUser_Username" id="InferiorUser_Username" class="form-control chosen-select" multiple tabindex="3"></select>
         <p class="material-preparation-process-validation text-danger"></p>
     </div>
     <div class="form-group">
@@ -33,8 +32,15 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script type="text/javascript">
+        $(document).ready(function () {
+            $(".chosen").chosen();
+        });
+
         $('#SuperiorUser_Username').change(function () {
             $("#InferiorUser_Username").find('option').remove().end();
+
+            $(".search-choice").empty();
+            $(".chosen-results").empty();
 
             var username = $('#SuperiorUser_Username :selected').val();
             var data = {
@@ -49,6 +55,7 @@
                     data: data,
                     success: function (response) {
                         if (response.selectListusers != null && !jQuery.isEmptyObject(response.selectListusers)) {
+                            var count = response.selectListusers.length;
                             $.each(response.selectListusers, function (i, item) {
                                 $("#InferiorUser_Username").append($("<option />").val(this.Value).text(this.Text));
                             });

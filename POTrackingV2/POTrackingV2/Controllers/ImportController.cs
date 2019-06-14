@@ -78,6 +78,12 @@ namespace POTrackingV2.Controllers
                 //    pOes = pOes.Except(noShowPOes);
                 //}
             }
+            else if (role == LoginConstants.RoleAdministrator)
+            {
+                pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                                .AsQueryable();
+            }
             else
             {
                 //  Filter Vendor cuman bisa liat PO yang punya dia
@@ -100,17 +106,17 @@ namespace POTrackingV2.Controllers
             #region Filter
             if (!String.IsNullOrEmpty(searchPONumber))
             {
-                pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
             }
 
             if (!String.IsNullOrEmpty(searchVendorName))
             {
-                pOes = pOes.Where(x => x.Vendor.Name.Contains(searchVendorName));
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
             }
 
             if (!String.IsNullOrEmpty(searchMaterial))
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial)));
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower()) || y.Description.ToLower().Contains(searchMaterial.ToLower())));
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))
@@ -154,7 +160,7 @@ namespace POTrackingV2.Controllers
                 }
                 else if (searchFilterBy == "vendor")
                 {
-                    data = vendors.Where(x => x.Name.Contains(value)).Select(x =>
+                    data = vendors.Where(x => x.Name.ToLower().Contains(value.ToLower())).Select(x =>
                     new
                     {
                         Data = x.Name,
@@ -163,7 +169,7 @@ namespace POTrackingV2.Controllers
                 }
                 else if (searchFilterBy == "material")
                 {
-                    data = purchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
+                    data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value.ToLower()) || x.Description.ToLower().Contains(value.ToLower())).Select(x =>
                     new
                     {
                         Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
@@ -1412,8 +1418,8 @@ namespace POTrackingV2.Controllers
 
             foreach (var progressPhoto in progressPhotoes)
             {
-                string path = $"../Files/Import/ProgressPhotos/{progressPhoto.FileName}";
-                imageSources.Add(path);
+                string downloadurl = Path.Combine("/", iisAppName, "Files/Import/ProgressPhotos", progressPhoto.FileName);
+                imageSources.Add(downloadurl);
             }
 
             return Json(new { responseText = $"Files successfully uploaded", imageSources }, JsonRequestBehavior.AllowGet);
