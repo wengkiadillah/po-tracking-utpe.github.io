@@ -100,7 +100,7 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-    if (itemID !== null) {
+    if (inputPurchasingDocumentItem !== '') {
         $.ajax({
             type: "POST",
             url: stage2aVendorSkipPI,
