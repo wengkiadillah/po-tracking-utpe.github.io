@@ -29,7 +29,7 @@ namespace POTrackingV2.CustomAuthentication
         /// <returns>Return 'True' jika sebuah Username termasuk ke dalam sebuah Role, 'False' jika tidak</returns>
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            return ((CurrentUser != null && !CurrentUser.IsInRole(Roles)) || CurrentUser == null) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
+            return ((string.IsNullOrWhiteSpace(CurrentUser.Roles) ? true : (CurrentUser != null && !CurrentUser.IsInRole(Roles)) ) || (CurrentUser != null && string.IsNullOrWhiteSpace(CurrentUser.Roles)) || CurrentUser == null) ? false : true; //(CurrentUser != null && !CurrentUser.IsInRole(Roles)) ||
         }
 
         /// <summary>
@@ -58,14 +58,29 @@ namespace POTrackingV2.CustomAuthentication
             }
             else
             {
-                routeData = new RedirectToRouteResult
-                (new System.Web.Routing.RouteValueDictionary
-                 (new
-                 {
-                     controller = "Error",
-                     action = "AccessDenied"
-                 }
-                 ));
+                if (string.IsNullOrWhiteSpace(CurrentUser.Roles))
+                {
+                    routeData = new RedirectToRouteResult
+                    (new System.Web.Routing.RouteValueDictionary
+                     (new
+                     {
+                         controller = "Account",
+                         action = "Login",
+                         ReturnUrl = filterContext.HttpContext.Request.Url
+                     }
+                     ));
+                }
+                else
+                {
+                    routeData = new RedirectToRouteResult
+                    (new System.Web.Routing.RouteValueDictionary
+                     (new
+                     {
+                         controller = "Error",
+                         action = "AccessDenied"
+                     }
+                     ));
+                }
             }
 
             filterContext.Result = routeData;
