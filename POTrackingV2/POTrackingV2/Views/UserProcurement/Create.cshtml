@@ -3,7 +3,13 @@
 @{
     ViewBag.Title = "Create";
 }
-
+<!-- Font-icon css-->
+<link rel="stylesheet" type="text/css"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Select Dropdown Style -->
+<link href="~/Content/bootstrap-select.min.css" rel="stylesheet">
+<!--Multiple Select Dropdown -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css" />
 <h2>Create new User Procurement Superior</h2>
 
 <div class="form-horizontal">
@@ -22,8 +28,25 @@
             <input type="submit" id="buttonCreate" name="buttonCreate" value="Create" class="btn btn-default" />
         </div>
     </div>
-</div>
 
+    <div class="inline field">
+        <select name="actors" multiple="" class="label ui selection fluid dropdown">
+            <option value="">All</option>
+            <option>PB</option>
+            <option>Maintance</option>
+            <option>PPC</option>
+            <option>Procurement</option>
+            <option>Fabrikasi</option>
+            <option>Engineering</option>
+            <option>Assembly</option>
+            <option>Marketing Produk</option>
+            <option>Sales</option>
+            <option>Warehouse</option>
+            <option>Marketing Administratif</option>
+            <option>QC</option>
+        </select>
+    </div>
+</div>
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
@@ -98,5 +121,9 @@
                 alert("Please Choose Superior User");
             }
         });
+
     </script>
+
+    <script src="~/Scripts/semantic.min.js"></script>
+    <script src="~/Scripts/create-multiple.js"></script>
 }
