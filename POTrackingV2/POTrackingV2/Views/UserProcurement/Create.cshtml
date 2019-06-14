@@ -39,9 +39,6 @@
         $('#SuperiorUser_Username').change(function () {
             $("#InferiorUser_Username").find('option').remove().end();
 
-            $(".search-choice").empty();
-            $(".chosen-results").empty();
-
             var username = $('#SuperiorUser_Username :selected').val();
             var data = {
                 username: username
