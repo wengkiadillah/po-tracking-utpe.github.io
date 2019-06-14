@@ -17,7 +17,6 @@ namespace POTrackingV2.Controllers
     public class HomeController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
-        UserManagementEntities DBUser = new UserManagementEntities();
 
         public ActionResult Index()
         {
@@ -136,20 +135,39 @@ namespace POTrackingV2.Controllers
                 //int roleSearchDB = Convert.ToInt32(role);
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
 
+                UserManagementEntities DBUser = new UserManagementEntities();
+                string userName = User.Identity.Name;
+                List<string> vendorCode = new List<string>();
+
+                var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
+                if (userInternal != null)
+                {
+                    vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                }
+                else
+                {
+                    var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
+                    if (userEksternal != null)
+                    {
+                        vendorCode.Add(userEksternal.VendorCode);
+                    }
+                }
+
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
 
-                if (roleType.RolesTypeID == 1)
+                if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
                 {
-                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") 
+                    && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                 }
-                else if (roleType.RolesTypeID == 2)
+                else if (roleType.RolesTypeID == 2) // Notif buat orang Local
                 {
                     notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                 }
-                else if (roleType.RolesTypeID == 3)
+                else if (roleType.RolesTypeID == 3) // Notif buat orang Import
                 {
                     notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 

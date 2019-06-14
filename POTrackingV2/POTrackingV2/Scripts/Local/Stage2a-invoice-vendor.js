@@ -77,14 +77,14 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
     obj.preventDefault();
 
     var buttonSkipPI = $(this);
-    var buttonUploadPI = $(this).closest(".form-inline").find(".st2a-upload-proforma-invoice");
-    var inputFileProformaInvoice = $(this).closest(".form-inline").find(".st2a-file-proforma-invoice");
+    var buttonUploadPI = $(this).closest(".po-form-item-st2a").find(".st2a-upload-proforma-invoice");
+    var inputFileProformaInvoice = $(this).closest(".po-form-item-st2a").find(".st2a-file-proforma-invoice");
 
-    var itemID = $(this).closest(".form-inline").find(".st2a-item-id").val();
+    var inputPurchasingDocumentItemID = $(this).closest(".po-form-item-st2a").find(".st2a-item-id").val();
 
-    var inputPurchasingDocumentItem = {
-        ID: itemID
-    };
+    //var inputPurchasingDocumentItem = {
+    //    ID: itemID
+    //};
 
     // Donut Progress
     var donutProgressUnit = 75.39822368615503 / 8;
@@ -100,11 +100,11 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
     cssRow = "." + cssRow;
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-    if (itemID !== null) {
+    if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
             url: stage2aVendorSkipPI,
-            data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
+            data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
                 alert(response.responseText);

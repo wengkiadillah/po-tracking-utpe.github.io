@@ -81,7 +81,8 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: POSubcont
-        public ActionResult Index(string searchDataPONumber, string searchDataVendorName, string searchDataMaterial, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
+        //public ActionResult Index(string searchDataPONumber, string searchDataVendorName, string searchDataMaterial, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles;
@@ -111,26 +112,26 @@ namespace POTrackingV2.Controllers
 
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
-                ViewBag.CurrentDataPONumber = searchDataPONumber;
-                ViewBag.CurrentDataVendorName = searchDataVendorName;
-                ViewBag.CurrentDataMaterial = searchDataMaterial;
-                ViewBag.CurrentFilter = filterBy;
+                ViewBag.CurrentDataPONumber = searchPONumber;
+                ViewBag.CurrentDataVendorName = searchVendorName;
+                ViewBag.CurrentDataMaterial = searchMaterial;
+                //ViewBag.CurrentFilter = filterBy;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
 
                 #region Filter
-                if (!String.IsNullOrEmpty(searchDataPONumber))
+                if (!String.IsNullOrEmpty(searchPONumber))
                 {
-                    pOes = pOes.Where(po => po.Number.Contains(searchDataPONumber));
+                    pOes = pOes.Where(po => po.Number.Contains(searchPONumber));
                 }
-                if (!String.IsNullOrEmpty(searchDataVendorName))
+                if (!String.IsNullOrEmpty(searchVendorName))
                 {
-                    pOes = pOes.Where(po => po.Number.Contains(searchDataVendorName));
+                    pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
                 }
-                if (!String.IsNullOrEmpty(searchDataMaterial))
+                if (!String.IsNullOrEmpty(searchMaterial))
                 {
-                    pOes = pOes.Where(po => po.Number.Contains(searchDataMaterial));
+                    pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x=> x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
                 }
 
                 if (!String.IsNullOrEmpty(searchStartPODate))
@@ -207,7 +208,8 @@ namespace POTrackingV2.Controllers
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = Existed_PDI.ID;
                         notification.StatusID = 3;
-                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                        //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != item.ConfirmedQuantity || Existed_PDI.ConfirmedDate != item.ConfirmedDate))
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -591,7 +593,8 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     notification.StatusID = 3;
-                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                    //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != confirmedItemQty || Existed_PDI.ConfirmedDate != confirmedDate))
                     {
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;
@@ -663,6 +666,34 @@ namespace POTrackingV2.Controllers
         #endregion
 
         #region Stage 2
+
+        [HttpGet]
+        public JsonResult GetDataReasons()
+        {
+            try
+            {
+                object data = null;
+                data = db.SequencesProgressReasons.Select(x =>
+                new
+                {
+                    Data = x.Name
+                }).OrderBy(x => x.Data);
+               
+                if (data != null)
+                {
+                    return Json(new { success = true, responseCode = "200", responseText = "Bind Data Reason Success", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult GetSequenceData(int pdItemID)
         {

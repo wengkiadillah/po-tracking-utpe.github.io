@@ -24,16 +24,16 @@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
         <div class="form-group mr-4 frmSearch">
             @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
-            <input id="searchDataPONumber" name="searchDataPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
+            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
         <div class="form-group mr-4 frmSearch">
-            <input id="searchDataVendorName" name="searchDataVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
             <datalist id="data-list-vendor"></datalist>
         </div>
         <div class="form-group mr-4 frmSearch">
-            <input id="searchDataMaterial" name="searchDataMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
         @*<select id="filterBy" name="filterBy" class="form-control form-control-lg" value="@ViewBag.CurrentFilter">
@@ -60,7 +60,7 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-    <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+    @*<form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
         <div class="form-group mr-4 frmSearch">
             <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
             <datalist id="data-list"></datalist>
@@ -84,7 +84,7 @@
         <a class="btn btn-info mr-3" href="/Import">Clear</a>
         <input name="roleID" type="hidden" value="vendor">
 
-    </form>
+    </form>*@
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0">
@@ -195,7 +195,7 @@
                         //if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
                         if (!String.IsNullOrEmpty(ViewBag.CurrentDataMaterial))
                         {
-                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.Contains(ViewBag.CurrentDataMaterial) || pdi.Description.Contains(ViewBag.CurrentDataMaterial)).ToList();
+                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.ToLower().Contains(ViewBag.CurrentDataMaterial.ToLower()) || pdi.Description.ToLower().Contains(ViewBag.CurrentDataMaterial.ToLower())).ToList();
                         }
 
                     }
@@ -1053,8 +1053,8 @@
             </div>
         </li>
     </ul>
-                                poSignRow++;
-                            }
+    poSignRow++;
+}
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1182,13 +1182,13 @@
                             <div class="form-group col-md-3">
                                 <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
-                                <select class="form-control" id="ATAPBReasonID" disabled>
+                                <select class="form-control sequences-progress-reasons" id="ATAPBReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
-                                    <option value="1">Problem Teknis</option>
+                                    @*<option value="1">Problem Teknis</option>
                                     <option value="2">Perubahan DWG(Drawing)</option>
                                     <option value="3">Material Tidak Ada Dipasaran</option>
                                     <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>
+                                    <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1220,13 +1220,13 @@
                             <div class="form-group col-md-3">
                                 <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
-                                <select class="form-control" id="ATASettingReasonID" disabled>
+                                <select class="form-control sequences-progress-reasons" id="ATASettingReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
-                                    <option value="1">Problem Teknis</option>
+                                    @*<option value="1">Problem Teknis</option>
                                     <option value="2">Perubahan DWG(Drawing)</option>
                                     <option value="3">Material Tidak Ada Dipasaran</option>
                                     <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>
+                                    <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1258,13 +1258,13 @@
                             <div class="form-group col-md-3">
                                 <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
-                                <select class="form-control" id="ATAFullweldReasonID" disabled>
+                                <select class="form-control sequences-progress-reasons" id="ATAFullweldReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
-                                    <option value="1">Problem Teknis</option>
+                                    @*<option value="1">Problem Teknis</option>
                                     <option value="2">Perubahan DWG(Drawing)</option>
                                     <option value="3">Material Tidak Ada Dipasaran</option>
                                     <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>
+                                    <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1296,13 +1296,13 @@
                             <div class="form-group col-md-3">
                                 <label>Reason</label>
                                 @*<button class="btn btn-positive">Upload</button>*@
-                                <select class="form-control" id="ATAPrimerReasonID" disabled>
+                                <select class="form-control sequences-progress-reasons" id="ATAPrimerReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
-                                    <option value="1">Problem Teknis</option>
+                                    @*<option value="1">Problem Teknis</option>
                                     <option value="2">Perubahan DWG(Drawing)</option>
                                     <option value="3">Material Tidak Ada Dipasaran</option>
                                     <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>
+                                    <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1330,7 +1330,7 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
     //new { page, role = ViewBag.CurrentRoleID, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
-    new { page, searchDataPONumber = ViewBag.CurrentDataPONumber, searchDataVendorName = ViewBag.CurrentDataVendorName, searchDataMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -1346,22 +1346,23 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             //        $("#searchData").attr("placeholder", "Search " + $(this).text())
             //    }
             //});
+
             $(".filter-search").on("keyup focus", function () {
                 //poNumber vendor material
                 var filterBy = "";
                 var list = "";
                 var searchData = "";
-                if ($(this).attr("name") == "searchDataPONumber") {
+                if ($(this).attr("name") == "searchPONumber") {
                     filterBy = "poNumber";
-                    searchData = $("#searchDataPONumber");
+                    searchData = $("#searchPONumber");
                     list = "po";
-                } else if ($(this).attr("name") == "searchDataVendorName"){
+                } else if ($(this).attr("name") == "searchVendorName"){
                     filterBy = "vendor";
-                    searchData = $("#searchDataVendorName");
+                    searchData = $("#searchVendorName");
                     list = "vendor";
-                } else if ($(this).attr("name") == "searchDataMaterial") {
+                } else if ($(this).attr("name") == "searchMaterial") {
                     filterBy = "material";
-                    searchData = $("#searchDataMaterial");
+                    searchData = $("#searchMaterial");
                     list = "material";
                 }
 
@@ -2483,6 +2484,35 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         })
 
         /*-----------------------------------------------------------------Stage 2------------------------------------------------------------------------------*/
+        //Bind Reason
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetDataReasons", "Subcont")",
+            //data: { 'filterBy': filterBy, 'value': searchData.val() },
+            //beforeSend: function () {
+            //    searchData.css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+            //},
+            success: function (response) {
+                //sequences-progress-reasons
+                if (response.responseCode == "200") {
+                    var jsonObjSuggestion = $.parseJSON(response.data);
+                    var element = "";
+                    //console.log(response.data);
+                    var i = 1;
+                    for (var k in jsonObjSuggestion) {
+                        element += "<option value='" + i + "'>" + jsonObjSuggestion[k]['Data'] + "</option>";
+                        i++;
+                    }
+                    $(".sequences-progress-reasons").append(element);
+                } else {
+                    conole.log(response.responseCode + response.responseText);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.status + " : " + error);
+            }
+        });
+
 
         //Define Sequence Click
         $(".sequences-modal").on("click", function (obj) {
@@ -2725,7 +2755,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         $("#fileSetting").empty();
                         $("#fileFullweld").empty();
                         $("#filePrimer").empty();
-                        
+
                         for (var k in jsonObjFilePB) {
                             filePreview(jsonObjFilePB[k]['fileName'], jsonObjFilePB[k]['url'], "filePB");
                         }

@@ -1334,7 +1334,7 @@ namespace POTrackingV2.Controllers
                         db.SaveChanges();
                     }
 
-                    return Json(new { responseText = $"One data affected" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -1413,7 +1413,7 @@ namespace POTrackingV2.Controllers
 
             db.SaveChanges();
 
-            List<ProgressPhoto> progressPhotoes = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+            List<ProgressPhoto> progressPhotoes = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == inputPurchasingDocumentItemID).ToList();
             List<string> imageSources = new List<string>();
 
             foreach (var progressPhoto in progressPhotoes)
@@ -1671,7 +1671,7 @@ namespace POTrackingV2.Controllers
                 return Json(new { responseText = errorMessage }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { responseText = $"One data affected" }, JsonRequestBehavior.AllowGet);
+            return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
 
         }
 
