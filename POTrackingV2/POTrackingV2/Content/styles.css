@@ -1121,7 +1121,7 @@ a[data-toggle="collapse"] {
     }
         .info-stage .po-item-section-header__icon:hover + .pop-up-notification,
         .info-stage .pop-up-notification:hover {
-            z-index: 2;
+            z-index: 9999;
             top: 30%;
         }
 
