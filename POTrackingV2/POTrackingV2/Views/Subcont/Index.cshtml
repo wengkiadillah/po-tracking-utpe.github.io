@@ -195,7 +195,7 @@
                         //if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
                         if (!String.IsNullOrEmpty(ViewBag.CurrentDataMaterial))
                         {
-                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.Contains(ViewBag.CurrentDataMaterial) || pdi.Description.Contains(ViewBag.CurrentDataMaterial)).ToList();
+                            purchasingDocumentItems = purchasingDocumentItems.Where(pdi => pdi.Material.ToLower().Contains(ViewBag.CurrentDataMaterial.ToLower()) || pdi.Description.ToLower().Contains(ViewBag.CurrentDataMaterial.ToLower())).ToList();
                         }
 
                     }

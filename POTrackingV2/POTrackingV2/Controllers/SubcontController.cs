@@ -127,7 +127,7 @@ namespace POTrackingV2.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchVendorName))
                 {
-                    pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName));
+                    pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
                 }
                 if (!String.IsNullOrEmpty(searchMaterial))
                 {
