@@ -231,6 +231,31 @@ $(".st4-upload-progress-photoes-confirm").on("click", function (obj) {
                 buttonUploadProgressPhotoesConfirm.attr("disabled", "disabled");
                 inputUploadProgressPhotoes.attr("disabled", "disabled");
 
+                $(".info-stage .pop-up-notification img").hover(function () {
+                    var height = $(this).prop('naturalHeight');
+                    var width = $(this).prop('naturalWidth');
+                    var heightScale = height / 150.0;
+                    if (heightScale < 1) {
+                        heightScale = 1;
+                    }
+                    var widthScale = width / 150.0;
+                    if (widthScale < 1) {
+                        widthScale = 1;
+                    }
+                    var scale = "scale(" + widthScale + "," + heightScale + ")";
+                    $(this).css({
+                        "-ms-transform": scale,
+                        "-webkit-transform": scale,
+                        "transform": scale
+                    });
+                }, function () {
+                    $(this).css({
+                        "-ms-transform": "scale(1)",
+                        "-webkit-transform": "scale(1)",
+                        "transform": "scale(1)"
+                    });
+                });
+
                 /*donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
 
