@@ -73,7 +73,7 @@ namespace POTrackingV2.Controllers
             {
                 List<UserProcurementSuperior> databaseUserProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
-                string description = GetNPRByUsername(username);
+                string description = GetNRPByUsername(username);
 
                 UserProcurementSuperior userProcurementSuperior = new UserProcurementSuperior();
                 userProcurementSuperior.Username = username;
@@ -103,7 +103,7 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        description = GetNPRByUsername(item);
+                        description = GetNRPByUsername(item);
 
                         userProcurementInferior.ParentID = id;
                         userProcurementInferior.Username = item;
@@ -147,7 +147,7 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        string description = GetNPRByUsername(item);
+                        string description = GetNRPByUsername(item);
 
                         userProcurementInferior.ParentID = userSuperiorID;
                         userProcurementInferior.Username = item;
@@ -238,7 +238,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public string GetNPRByUsername(string username)
+        public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
@@ -254,10 +254,17 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                //string description = sResultSet.Properties["givenname"][0].ToString();
-                string description = sResultSet.Properties["description"][0].ToString();
-                return description;
+                try
+                {
+                    string description = sResultSet.Properties["description"][0].ToString();
+                    return description;
+                }
+                catch (Exception)
+                {
+                    return "-";
+                }
             }
+
             return null;
         }
     }
