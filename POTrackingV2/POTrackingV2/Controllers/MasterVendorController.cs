@@ -12,6 +12,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Collections;
 using POTrackingV2.CustomAuthentication;
+using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
@@ -31,11 +32,11 @@ namespace POTrackingV2.Controllers
             {
                 if (searchBy == "description")
                 {
-                    return View(db.SubcontComponentCapabilities.Where(x => x.Description == search || search == null).ToList().ToPagedList(page ?? 1, 10));
+                    return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
                 }
                 else
                 {
-                    return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.StartsWith(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                    return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
                 }
 
             }

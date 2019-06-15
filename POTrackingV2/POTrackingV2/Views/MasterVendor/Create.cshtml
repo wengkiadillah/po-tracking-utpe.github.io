@@ -109,8 +109,9 @@
                 var code = $(this).val();
 
                 $.ajax({
-                    url: 'potracking/MasterVendor/getById?code=' + code,
                     type: 'GET',
+                    url: "@Url.Action("getById" ,"MasterVendor")",
+                    data: {'code': code},
                     success: function (data) {
                         console.log(data)
                         $('input#subCont_VendorCode').val(data.vendorCode);
