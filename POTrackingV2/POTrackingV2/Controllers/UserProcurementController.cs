@@ -30,7 +30,7 @@ namespace POTrackingV2.Controllers
 
             ViewBag.CurrentSearchUser = searchUser;
 
-            return View(userProcurementSuperiors);
+            return View(userProcurementSuperiors.OrderBy(x=>x.Username));
         }
 
         public ActionResult Details(int id)

@@ -92,7 +92,7 @@
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed !=null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
 
-    if (roleID == "procurement")
+    if (roleID == "procurement" || roleID == "administrator")
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     }
@@ -294,7 +294,7 @@
                             var st1CheckboxAll = "st1-checkbox-all";
                             var st1AcceptAll = "st1-accept-all-po";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1CheckboxAll = "st1-checkbox-all-proc";
                                 st1AcceptAll = "st1-accept-all-po-proc";
@@ -363,7 +363,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
                                 st1ItemIDInner = "st1-pd-item-id-inner-proc";
@@ -397,7 +397,7 @@
                             var isChecked = "";
                             var isPartial = "";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hideCheckbox = "";
                                 hideChildButton = "";
@@ -540,7 +540,7 @@
                                                 isChecked = "";
                                                 isPartial = "";
 
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     disabledInputCheckbox = "disabled";
 
@@ -655,7 +655,7 @@
                         END STAGE 1
                 -->
                 <div class="po-item-section stage-2">
-                    @if (roleID == "procurement")
+                    @if (roleID == "procurement" || roleID == "administrator")
                     {
                         <div class="po-item-section-header stage-checkbox-header">
                             <div>
@@ -706,7 +706,7 @@
                             var st2ProcAcceptFirstEta = "";
                             var st2ProcDeclineFirstEta = "";
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st2CheckboxItem = "st2-proc-checkbox-item";
                                 st2ItemId = "st2-proc-pd-item-id";
@@ -742,7 +742,7 @@
                                 valueInputFirstEtaDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hiddenButtonConfirmEtaDate = "hidden";
                                 hiddenButtonAcceptDecline = "";
@@ -849,7 +849,7 @@
                                                 valueInputFirstEtaDate = childPurchasingDocumentItem.ConfirmedDateView;
                                             }
 
-                                            if (roleID == "procurement")
+                                            if (roleID == "procurement" || roleID == "administrator")
                                             {
                                                 hiddenButtonConfirmEtaDate = "hidden";
                                                 hiddenButtonAcceptDecline = "";
@@ -974,7 +974,7 @@
                             {
                                 if (purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    if (roleID == "procurement")
+                                    if (roleID == "procurement" || roleID == "administrator")
                                     {
                                         disabledFileProformaInvoice = "disabled";
                                         disabledUploadProformaInvoice = "disabled";
@@ -1023,7 +1023,7 @@
                                 //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
                                 downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
 
-                                if (roleID == "procurement")
+                                if (roleID == "procurement" || roleID == "administrator")
                                 {
                                     //disabledApproveProforma = "";
                                     //disabledDisApproveProforma = "";
@@ -1114,7 +1114,7 @@
                                             {
                                                 if (childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    if (roleID == "procurement")
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
                                                         disabledFileProformaInvoice = "disabled";
                                                         disabledUploadProformaInvoice = "disabled";
@@ -1159,7 +1159,7 @@
                                                 //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
                                                 downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
 
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     disabledVendorSkipPI = "disabled";
                                                     //disabledApproveProforma = "";
@@ -1235,7 +1235,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == "procurement")
+                    @if (roleID == "procurement" || roleID == "administrator")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1317,7 +1317,7 @@
                                 }
                             }
 
-                            if (roleID == "procurement")
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1391,7 +1391,7 @@
                                                 }
                                             }
 
-                                            if (roleID == "procurement")
+                                            if (roleID == "procurement" || roleID == "administrator")
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -1596,7 +1596,7 @@
 
                                     valueInputUpdateEtaDateOnTime = purchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                    if (roleID == "procurement")
+                                    if (roleID == "procurement" || roleID == "administrator")
                                     {
                                         disabledInputUploadProgressPhotoes = "disabled";
                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -1844,7 +1844,7 @@
 
                                                     valueInputUpdateEtaDateOnTime = childPurchasingDocumentItem.FirstETAHistory.ETADateView;
 
-                                                    if (roleID == "procurement")
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
                                                         disabledInputUploadProgressPhotoes = "disabled";
                                                         disabledInputUploadProgressPhotoesConfirm = "disabled";
@@ -2221,7 +2221,7 @@
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
 
-                                if (roleID == "procurement")
+                                if (roleID == "procurement" || roleID == "administrator")
                                 {
                                     hiddenst6FileInvoiceRemove = "hidden";
                                 }
@@ -2277,7 +2277,7 @@
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
 
-                                                if (roleID == "procurement")
+                                                if (roleID == "procurement" || roleID == "administrator")
                                                 {
                                                     hiddenst6FileInvoiceRemove = "hidden";
                                                 }
