@@ -87,8 +87,10 @@
                             //var status = jsonObj[k]['status'].toLowerCase();
                             var statusID = jsonObj[k]['statusID'];
                             var className = "fas fa-check-circle approved";
+                            var deletebutton = "";
                             if (statusID == 1){
                                 className = "fas fa-exclamation-circle important";
+
                             } else if (statusID ==2){
                                 className = "fas fa-times-circle rejected";
                             }
@@ -141,7 +143,6 @@
                                 var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 message = "";
                             }
-
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
                             if (POTypeCategory == "Import") {
@@ -260,8 +261,6 @@
                                     } else {
                                         message += " has updated invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
-                                }else {
-                                    message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                 }
                                 /*---------------------------------------------------------------END LOCAL------------------------------------------------------------*/
                             } else if (POTypeCategory == "Subcont") {

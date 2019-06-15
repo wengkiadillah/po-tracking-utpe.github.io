@@ -9,7 +9,7 @@
 {
 <div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
     <h2 class="form-sub-header">
-        Create New Vendor
+        Add New Vendor As SubCont
     </h2>
     <hr class="mb-4">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -18,62 +18,57 @@
     </div>*@
     <div class="row">
         <div class="col-lg-6 col-12 custom-form-field">
-            @Html.LabelFor(Model => Model.SelectedName, htmlAttributes: new { @class = "" })
+            <label class="" for="SelectedName">Selected Name</label>
             @Html.DropDownListFor(Model => Model.SelectedName, Model.ListName, "Select", htmlAttributes: new { @class = "form-control full-width" })
             @Html.ValidationMessageFor(model => model.SelectedName, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.VendorCode, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="" for="VendorCode">Vendor Code</label>
             @Html.EditorFor(model => model.subCont.VendorCode, new { htmlAttributes = new { @class = "form-control full-width employee-number text-box single-line", @disabled = "disabled" } })
             @Html.ValidationMessageFor(model => model.subCont.VendorCode, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.Material, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_Material">Material</label>
             @Html.EditorFor(model => model.subCont.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.Material, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.Description, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_Description">Description</label>
             @Html.EditorFor(model => model.subCont.Description, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.Description, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.DailyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_DailyLeadTime">Daily Lead Time</label>
             @Html.EditorFor(model => model.subCont.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.MonthlyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_MonthlyLeadTime">Monthly Lead Time</label>
             @Html.EditorFor(model => model.subCont.MonthlyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.MonthlyLeadTime, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.PB, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_PB">PB</label>
             @Html.EditorFor(model => model.subCont.PB, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.PB, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.Setting, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_Setting">Setting</label>
             @Html.EditorFor(model => model.subCont.Setting, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.Setting, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.Fullweld, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_Fullweld">Fullweld</label>
             @Html.EditorFor(model => model.subCont.Fullweld, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.Fullweld, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.DailyLeadTime, htmlAttributes: new { @class = "form-custom-label" })
-            @Html.EditorFor(model => model.subCont.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.subCont.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.Primer, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_Primer">Primer</label>
             @Html.EditorFor(model => model.subCont.Primer, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.Primer, "", new { @class = "field-validation-valid text-danger" })
         </div>
         <div class="col-lg-6 col-12 custom-form-field mb-3">
-            @Html.LabelFor(model => model.subCont.MonthlyCapacity, htmlAttributes: new { @class = "form-custom-label" })
+            <label class="form-custom-label" for="subCont_MonthlyCapacity">Monthly Capacity</label>
             @Html.EditorFor(model => model.subCont.MonthlyCapacity, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
             @Html.ValidationMessageFor(model => model.subCont.MonthlyCapacity, "", new { @class = "field-validation-valid text-danger" })
         </div>
