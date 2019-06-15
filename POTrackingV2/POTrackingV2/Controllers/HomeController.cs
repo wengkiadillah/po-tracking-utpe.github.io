@@ -170,7 +170,7 @@ namespace POTrackingV2.Controllers
                 {
                     notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
-                    if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+                    if (role == LoginConstants.RoleProcurement.ToLower())
                     {
                         List<string> myUserNRPs = new List<string>();
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
@@ -189,7 +189,7 @@ namespace POTrackingV2.Controllers
 
                         notifications = notifications.Except(noShowNotifications);
                     }
-                    else
+                    else if ( role == LoginConstants.RoleVendor.ToLower())
                     {
                         notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                     }
@@ -258,18 +258,25 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                string description = sResultSet.Properties["description"][0].ToString();
-                return description;
+                try
+                {
+                    string description = sResultSet.Properties["description"][0].ToString();
+                    return description;
+                }
+                catch (Exception)
+                {
+                    return "-";
+                }
             }
             return null;
         }
 
         public List<string> GetChildNRPsByUsername(string username)
         {
+            List<string> userNRPs = new List<string>();
+
             if (!string.IsNullOrEmpty(username))
             {
-                List<string> userNRPs = new List<string>();
-
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
@@ -289,10 +296,9 @@ namespace POTrackingV2.Controllers
                         userNRPs.Add(childUser.NRP);
                     }
                 }
-
-                return userNRPs;
             }
-            return null;
+
+            return userNRPs;
         }
     }
 }

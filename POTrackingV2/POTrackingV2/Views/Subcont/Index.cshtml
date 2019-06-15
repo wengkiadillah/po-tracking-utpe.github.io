@@ -22,17 +22,17 @@
     {
         @*<div class="filter-form-container form-inline">*@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
-        <div class="form-group mr-4 frmSearch">
+        <div class="form-group mr-4 ml-0 frmSearch">
             @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
             <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
-        <div class="form-group mr-4 frmSearch">
+        <div class="form-group mr-4 ml-0 frmSearch">
             <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
             <datalist id="data-list-vendor"></datalist>
         </div>
-        <div class="form-group mr-4 frmSearch">
+        <div class="form-group mr-4 ml-0 frmSearch">
             <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
@@ -60,8 +60,8 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-    @*<form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
-        <div class="form-group mr-4 frmSearch">
+    <form action="/" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+        <div class="form-group mr-4">
             <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
             <datalist id="data-list"></datalist>
         </div>
@@ -84,7 +84,7 @@
         <a class="btn btn-info mr-3" href="/Import">Clear</a>
         <input name="roleID" type="hidden" value="vendor">
 
-    </form>*@
+    </form>
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0">
@@ -553,7 +553,7 @@
                                             </div>
                                             <div class="po-item-data-header__column">
                                                 <div class="form-inline">
-                                                    <div class="form-group">
+                                                    <div class="form-group mr-2">
                                                         <input type="text" class="form-control form-date partial-date with-icon" autofocus="" required="" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="@comfirmPartialDateChild" disabled>
                                                         <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
                                                         <div class="input-group-prepend">

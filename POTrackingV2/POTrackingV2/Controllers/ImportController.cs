@@ -202,18 +202,26 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                string description = sResultSet.Properties["description"][0].ToString();
-                return description;
+                try
+                {
+                    string description = sResultSet.Properties["description"][0].ToString();
+                    return description;
+                }
+                catch (Exception)
+                {
+                    return "-";
+                }
             }
+
             return null;
         }
 
         public List<string> GetChildNRPsByUsername(string username)
         {
+            List<string> userNRPs = new List<string>();
+
             if (!string.IsNullOrEmpty(username))
             {
-                List<string> userNRPs = new List<string>();
-
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
@@ -233,10 +241,9 @@ namespace POTrackingV2.Controllers
                         userNRPs.Add(childUser.NRP);
                     }
                 }
-
-                return userNRPs;
             }
-            return null;
+
+            return userNRPs;
         }
 
         #region STAGE 1
