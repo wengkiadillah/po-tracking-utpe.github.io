@@ -1179,3 +1179,7 @@ a[data-toggle="collapse"] {
     left: 335px;
     /* justify-content: flex-end; */
 }
+
+.po-item-data-content__outer .icon-display {
+    min-width: 43.516px;
+}
