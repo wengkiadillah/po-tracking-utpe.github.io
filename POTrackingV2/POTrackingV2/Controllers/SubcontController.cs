@@ -396,7 +396,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                db.SaveChanges();
+                //db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -654,7 +654,7 @@ namespace POTrackingV2.Controllers
 
                 db.Notifications.Add(notification);
 
-                db.SaveChanges();
+                //db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
