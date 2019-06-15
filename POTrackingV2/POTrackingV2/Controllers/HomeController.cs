@@ -155,13 +155,13 @@ namespace POTrackingV2.Controllers
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+                        var noShowNotifications = db.Notifications.ToList();
 
                         if (myUserNRPs.Count > 0)
                         {
                             foreach (var myUserNRP in myUserNRPs)
                             {
-                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
+                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP).ToList();
                             }
                         }
 
