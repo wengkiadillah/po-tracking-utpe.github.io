@@ -259,9 +259,6 @@
     <Compile Include="Models\NotificationStatu.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\OrganizationGroup.cs">
-      <DependentUpon>AlertTools.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Partial\ETAHistory.cs" />
     <Compile Include="Models\Partial\UserRoleType.cs" />
     <Compile Include="Models\Partial\SubcontDevVendor.cs" />
@@ -321,6 +318,9 @@
     <Compile Include="Models\RawMaterialOrderProgressFile.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReceiverPrivilege.cs">
+      <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Role.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
     </Compile>
@@ -346,7 +346,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
+      <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -513,13 +513,6 @@
     <Content Include="Scripts\chosen.jquery.js" />
     <Content Include="Scripts\chosen.jquery.min.js" />
     <Content Include="Scripts\data.json" />
-    <EntityDeploy Include="Models\AlertTools.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\AlertTools.edmx.diagram">
-      <DependentUpon>AlertTools.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\UserManagement.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>UserManagement.Designer.cs</LastGenOutput>
@@ -533,6 +526,13 @@
     </EntityDeploy>
     <Content Include="Models\POTracking.edmx.diagram">
       <DependentUpon>POTracking.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\AlertTools.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\AlertTools.edmx.diagram">
+      <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />

@@ -18,7 +18,7 @@ namespace POTrackingV2.Models
         public int MachineBreakDownDetailsID { get; set; }
         public string UpdatedParameter { get; set; }
         public string LastModifiedBy { get; set; }
-        public System.DateTime LastModifiedAt { get; set; }
+        public Nullable<System.DateTime> LastModified { get; set; }
     
         public virtual MachineBreakdownDetail MachineBreakdownDetail { get; set; }
     }

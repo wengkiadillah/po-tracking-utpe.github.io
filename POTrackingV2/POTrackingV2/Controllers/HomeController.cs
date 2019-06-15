@@ -149,19 +149,21 @@ namespace POTrackingV2.Controllers
                     if (myUser.Roles == LoginConstants.RoleSubcontDev)
                     {
                         vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+
+                        notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                     }
                     else
                     {
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.ToList();
+                        var noShowNotifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
 
                         if (myUserNRPs.Count > 0)
                         {
                             foreach (var myUserNRP in myUserNRPs)
                             {
-                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP).ToList();
+                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
                             }
                         }
 
@@ -171,10 +173,12 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                    if (userEksternal != null)
-                    {
-                        vendorCode.Add(userEksternal.VendorCode);
-                    }
+
+                    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == userEksternal.VendorCode);
+                    //if (userEksternal != null)
+                    //{
+                    //    vendorCode.Add(userEksternal.VendorCode);
+                    //}
                 }
 
                 //if (roleType.RolesTypeID == 1) // Notif buat orang Subcont

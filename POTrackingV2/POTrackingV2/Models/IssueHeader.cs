@@ -26,6 +26,7 @@ namespace POTrackingV2.Models
             this.MaterialIssueDetails = new HashSet<MaterialIssueDetail>();
             this.MaterialProcurementPOTrackings = new HashSet<MaterialProcurementPOTracking>();
             this.QualityControlPOTrackings = new HashSet<QualityControlPOTracking>();
+            this.QualityReceivePOTrackings = new HashSet<QualityReceivePOTracking>();
         }
     
         public int ID { get; set; }
@@ -60,5 +61,7 @@ namespace POTrackingV2.Models
         public virtual ICollection<MaterialProcurementPOTracking> MaterialProcurementPOTrackings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<QualityControlPOTracking> QualityControlPOTrackings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QualityReceivePOTracking> QualityReceivePOTrackings { get; set; }
     }
 }
