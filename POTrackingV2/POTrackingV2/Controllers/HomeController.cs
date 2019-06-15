@@ -132,47 +132,26 @@ namespace POTrackingV2.Controllers
         {
             try
             {
+                UserManagementEntities DBUser = new UserManagementEntities();
                 //int roleSearchDB = Convert.ToInt32(role);
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
-
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
+                string userName = User.Identity.Name;
+                List<string> vendorCode = new List<string>();
+                List<string> myUserNRPs = new List<string>();
 
-                if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
+                if (myUser.Roles == LoginConstants.RoleProcurement || myUser.Roles == LoginConstants.RoleSubcontDev)
                 {
-                    UserManagementEntities DBUser = new UserManagementEntities();
-                    string userName = User.Identity.Name;
-                    List<string> vendorCode = new List<string>();
-
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                    if (userInternal != null)
+                    if (myUser.Roles == LoginConstants.RoleSubcontDev)
                     {
                         vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
                     }
                     else
                     {
-                        var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                        if (userEksternal != null)
-                        {
-                            vendorCode.Add(userEksternal.VendorCode);
-                        }
-                    }
-
-                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                }
-                else if (roleType.RolesTypeID == 2) // Notif buat orang Local
-                {
-                    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                }
-                else if (roleType.RolesTypeID == 3) // Notif buat orang Import
-                {
-                    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
-
-                    if (role == LoginConstants.RoleProcurement.ToLower())
-                    {
-                        List<string> myUserNRPs = new List<string>();
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
@@ -184,16 +163,71 @@ namespace POTrackingV2.Controllers
                             {
                                 noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
                             }
-
                         }
 
                         notifications = notifications.Except(noShowNotifications);
                     }
-                    else if ( role == LoginConstants.RoleVendor.ToLower())
+                }
+                else
+                {
+                    var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
+                    if (userEksternal != null)
                     {
-                        notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                        vendorCode.Add(userEksternal.VendorCode);
                     }
                 }
+
+                //if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
+                //{
+                //    List<string> vendorCode = new List<string>();
+
+                //    var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
+                //    if (userInternal != null)
+                //    {
+                //        vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                //    }
+                //    else
+                //    {
+                //        var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
+                //        if (userEksternal != null)
+                //        {
+                //            vendorCode.Add(userEksternal.VendorCode);
+                //        }
+                //    }
+
+                //    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                //}
+                //else if (roleType.RolesTypeID == 2) // Notif buat orang Local
+                //{
+                //    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                //}
+                //else if (roleType.RolesTypeID == 3) // Notif buat orang Import
+                //{
+                //    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+
+                //    if (role == LoginConstants.RoleProcurement.ToLower())
+                //    {
+                //        List<string> myUserNRPs = new List<string>();
+                //        myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                //        myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                //        var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+
+                //        if (myUserNRPs.Count > 0)
+                //        {
+                //            foreach (var myUserNRP in myUserNRPs)
+                //            {
+                //                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
+                //            }
+                //        }
+
+                //        notifications = notifications.Except(noShowNotifications);
+                //    }
+                //    else if ( role == LoginConstants.RoleVendor.ToLower())
+                //    {
+                //        notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                //    }
+                //}
 
                 var notificationsDTO = notifications.Select(x =>
                   new
