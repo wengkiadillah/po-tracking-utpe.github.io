@@ -49,7 +49,6 @@ namespace POTrackingV2.Controllers
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                             .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                            .OrderBy(x => x.Number)
                             .AsQueryable();
 
             if (role == LoginConstants.RoleProcurement.ToLower())
@@ -128,7 +127,7 @@ namespace POTrackingV2.Controllers
             }
             #endregion
 
-            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         [HttpGet]
