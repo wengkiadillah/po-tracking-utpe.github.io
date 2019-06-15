@@ -164,6 +164,13 @@ body {
         margin-right: 20px;
     }
 
+        .notification-list-item > i.delete-icon {
+            color: #C0C0C0;
+            font-size: 0.8rem;
+            margin-top: 0;
+            margin-right: 0px;
+        }
+
         .notification-list-item > i.approved {
             color: #62DA62;
         }
@@ -175,6 +182,7 @@ body {
         .notification-list-item > i.rejected {
             color: #F98E72;
         }
+
 
 .notification-container.not-show,
 .notification-container.not-show .notification-header,
