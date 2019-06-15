@@ -58,27 +58,27 @@ namespace POTrackingV2.Controllers
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                                 .AsQueryable();
 
-                List<string> myUserNRPs = new List<string>();
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+                //List<string> myUserNRPs = new List<string>();
+                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
+                //var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
 
-                if (myUserNRPs.Count > 0)
-                {
-                    foreach (var myUserNRP in myUserNRPs)
-                    {
-                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                    }
-                }
+                //if (myUserNRPs.Count > 0)
+                //{
+                //    foreach (var myUserNRP in myUserNRPs)
+                //    {
+                //        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                //    }
+                //}
 
-                pOes = pOes.Except(noShowPOes);
+                //pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator)
             {
-                pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                                .AsQueryable();
+                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                //                .AsQueryable();
             }
             else
             {
@@ -186,7 +186,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public string GetNRPByUsername(string username)
+        public JsonResult GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
@@ -202,18 +202,19 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                string description = sResultSet.Properties["description"][0].ToString();
-                return description;
+                //string description = sResultSet.Properties["description"][0].ToString();
+                var description = sResultSet;
+                return Json(new { sResultSet}, JsonRequestBehavior.AllowGet);
             }
             return null;
         }
 
         public List<string> GetChildNRPsByUsername(string username)
         {
+            List<string> userNRPs = new List<string>();
+
             if (!string.IsNullOrEmpty(username))
             {
-                List<string> userNRPs = new List<string>();
-
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
@@ -233,10 +234,9 @@ namespace POTrackingV2.Controllers
                         userNRPs.Add(childUser.NRP);
                     }
                 }
-
-                return userNRPs;
             }
-            return null;
+
+            return userNRPs;
         }
 
         #region STAGE 1

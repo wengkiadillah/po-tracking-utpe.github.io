@@ -170,26 +170,26 @@ namespace POTrackingV2.Controllers
                 {
                     notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
-                    if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+                    if (role == LoginConstants.RoleProcurement.ToLower())
                     {
-                        List<string> myUserNRPs = new List<string>();
-                        myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                        myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+                        //List<string> myUserNRPs = new List<string>();
+                        //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                        //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
+                        //var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
 
-                        if (myUserNRPs.Count > 0)
-                        {
-                            foreach (var myUserNRP in myUserNRPs)
-                            {
-                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
-                            }
+                        //if (myUserNRPs.Count > 0)
+                        //{
+                        //    foreach (var myUserNRP in myUserNRPs)
+                        //    {
+                        //        noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
+                        //    }
 
-                        }
+                        //}
 
-                        notifications = notifications.Except(noShowNotifications);
+                        //notifications = notifications.Except(noShowNotifications);
                     }
-                    else
+                    else if ( role == LoginConstants.RoleVendor.ToLower())
                     {
                         notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                     }
@@ -240,59 +240,6 @@ namespace POTrackingV2.Controllers
             {
                 return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
             }
-        }
-
-        public string GetNRPByUsername(string username)
-        {
-            if (!string.IsNullOrEmpty(username))
-            {
-                SearchResult sResultSet;
-
-                string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
-                string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
-                string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
-                {
-                    DirectorySearcher dSearch = new DirectorySearcher(entry);
-                    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
-                    sResultSet = dSearch.FindOne();
-                }
-
-                string description = sResultSet.Properties["description"][0].ToString();
-                return description;
-            }
-            return null;
-        }
-
-        public List<string> GetChildNRPsByUsername(string username)
-        {
-            if (!string.IsNullOrEmpty(username))
-            {
-                List<string> userNRPs = new List<string>();
-
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
-
-                if (userProcurementSuperior != null)
-                {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
-
-                    foreach (var childUser in childUsers)
-                    {
-                        foreach (var item in db.UserProcurementSuperiors)
-                        {
-                            if (item.ParentID == childUser.ID)
-                            {
-                                userNRPs.Add(item.NRP);
-                            }
-                        }
-
-                        userNRPs.Add(childUser.NRP);
-                    }
-                }
-
-                return userNRPs;
-            }
-            return null;
         }
     }
 }
