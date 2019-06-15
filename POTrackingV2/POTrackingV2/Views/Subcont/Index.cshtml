@@ -294,7 +294,15 @@
                                     <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity</span>
                                     <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
                                     <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
-                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")</span>
+                                    @*<span class="po-item-data-header__column delivery">@purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy")</span>*@
+                                    @if (purchasingDocumentItem.DeliveryDate != null)
+                                    {
+                                        <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.Value.ToString("dd/MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
                                 </div>
                                 <div class="po-item-data-content__child"></div>
                             </div>
@@ -409,7 +417,9 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)))
+                            //if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)))
+                            if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
+                            //if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity))
                             //if (ViewBag.CurrentRoleID == 3 && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
@@ -1969,6 +1979,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
                 var rowNumber = $(this).closest(".po-item-data-content").attr("row");
                 var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
+                var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
                 //var pDItemID = $(this).find(".pd-item-id").val();
                 var pdiIdParent = $(this).find(".pd-item-id");
@@ -1999,7 +2010,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             confirmedQtyParent.addClass("isUpdated");
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
-                            btnEditItem.addClass("editable");
+                            if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
+                                btnEditItem.addClass("editable");
+                            }
                             if (role == "subcontdev") {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
@@ -2072,7 +2085,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         $(this).find(".btn").addClass("isUpdated");
                                         $(this).find(".edit-row").addClass("editable");
                                         stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + "-" + $(this).closest(".po-item-data-content").attr("child") + " .sequences-modal").addClass("enableButton");
-
                                     }
 
                                     confirmedEtaDate.addClass("isUpdated");
@@ -2200,6 +2212,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
             var rowNumber = $(this).closest(".po-item-data-content").attr("row");
             var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
+            var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
             var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
             var btnConfirmPO = $(this).closest(".po-item-data-content__outer").find("button.btn.btn-positive");
             var btnCancelPO = $(this).closest(".po-item-data-content__outer").find("button.btn.btn-negative");
@@ -2247,7 +2260,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 btnConfirmPO.attr("disabled", "disabled");
                                 btnCancelPO.attr("disabled", "disabled");
                                 inputQty.attr("disabled", "disabled");
-                                btnEditItem.attr("style", "visibility:display");
+                                if (maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
+                                    btnEditItem.attr("style", "visibility:display");
+                                }
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
@@ -2449,9 +2464,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".edit-row").on("click", function (obj) {
             var role = $("#role").val();
             var lastRowChild = $(this).closest(".po-item-data-content").find(".po-item-data-content__child .po-item-data-content").last();
+            var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method").val();
             if (role == "vendor") {
-                $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
-                $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
+                if (deliveryMethod == "partial") {
+                    $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
+                    $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
+                }
                 $(this).closest(".po-item-data-content__outer").find(".checkbox-item").removeAttr("disabled");
                 $(this).closest(".po-item-data-content__outer").find(".delivery-method").removeAttr("disabled");
                 $(this).closest(".po-item-data-content__outer").find(".confirmed-date").removeAttr("disabled");
@@ -2473,8 +2491,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(this).closest(".po-item-data-content__outer").find(".btn").removeAttr("disabled");
                     $(this).closest(".po-item-data-content__outer").find(".btn").removeClass("selected selected-negative");
                 }
-
-
             }
 
             $(this).parent().find("button").removeAttr("disabled");
