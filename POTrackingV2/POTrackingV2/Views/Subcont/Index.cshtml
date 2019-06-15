@@ -3074,7 +3074,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         });
 
         $(".file-invoice-remove").on("click", function (obj) {
-            var saveButton = $(this);
+            var saveButton = $(this).closest(".po-item-data-header__column").find(".save-invoice");
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content__outer").attr("row");
 
