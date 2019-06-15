@@ -143,10 +143,10 @@ namespace POTrackingV2.Controllers
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
 
-                if (myUser.Roles == LoginConstants.RoleProcurement || myUser.Roles == LoginConstants.RoleSubcontDev)
+                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                    if (myUser.Roles == LoginConstants.RoleSubcontDev)
+                    if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
 
@@ -315,7 +315,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
