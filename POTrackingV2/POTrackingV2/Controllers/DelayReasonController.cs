@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using POTrackingV2.Constants;
 using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
+using PagedList;
 
 namespace POTracking.Controllers
 {
@@ -15,12 +16,12 @@ namespace POTracking.Controllers
         POTrackingEntities db = new POTrackingEntities();
 
         // GET: DelayReason
-        public ActionResult Index()
+        public ActionResult Index(string search, int? page)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.DelayReasons.ToList());
-
+                //return View(db.DelayReasons.ToList());
+                return View(db.DelayReasons.Where(x => x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
             }
         }
 
@@ -116,33 +117,46 @@ namespace POTracking.Controllers
         }
 
         // GET: DelayReason/Delete/5
+        //public ActionResult Delete(int id)
+        //{
+        //    using (POTrackingEntities db = new POTrackingEntities())
+        //    {
+        //        return View(db.DelayReasons.Where(x => x.ID == id).FirstOrDefault());
+        //    }
+        //}
+
+        // POST: DelayReason/Delete/5
+        //[HttpPost]
+        //public ActionResult Delete(int id, DelayReason delayReason)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add delete logic here
+        //        using (POTrackingEntities db = new POTrackingEntities())
+        //        {
+        //            delayReason = db.DelayReasons.Where(x => x.ID == id).FirstOrDefault();
+        //            db.DelayReasons.Remove(delayReason);
+        //            db.SaveChanges();
+        //        }
+
+        //            return RedirectToAction("Index");
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
+
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.DelayReasons.Where(x => x.ID == id).FirstOrDefault());
-            }
-        }
+                var delayReason = db.DelayReasons.Find(id);
+                db.DelayReasons.Remove(delayReason);
+                db.SaveChanges();
 
-        // POST: DelayReason/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, DelayReason delayReason)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-                using (POTrackingEntities db = new POTrackingEntities())
-                {
-                    delayReason = db.DelayReasons.Where(x => x.ID == id).FirstOrDefault();
-                    db.DelayReasons.Remove(delayReason);
-                    db.SaveChanges();
-                }
-
-                    return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
+                return RedirectToAction("Index");
             }
         }
     }
