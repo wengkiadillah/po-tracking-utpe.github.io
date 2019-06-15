@@ -2013,7 +2013,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
                                 btnEditItem.addClass("editable");
                             }
-                            if (role == "subcontdev") {
+                            if (role == "subcontdev" || (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -2266,7 +2266,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
-                                    if (role == "subcontdev") {
+                                    if (role == "subcontdev" || (maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val())) {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                     }
                                     btnConfirmPO.addClass("selected");

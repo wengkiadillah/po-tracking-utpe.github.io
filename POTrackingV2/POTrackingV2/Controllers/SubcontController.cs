@@ -209,7 +209,7 @@ namespace POTrackingV2.Controllers
                         notification.PurchasingDocumentItemID = Existed_PDI.ID;
                         notification.StatusID = 3;
                         //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != item.ConfirmedQuantity || Existed_PDI.ConfirmedDate != item.ConfirmedDate))
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != item.ConfirmedQuantity || Existed_PDI.DeliveryDate != item.ConfirmedDate))
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -594,7 +594,7 @@ namespace POTrackingV2.Controllers
                 {
                     notification.StatusID = 3;
                     //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != confirmedItemQty || Existed_PDI.ConfirmedDate != confirmedDate))
+                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != confirmedItemQty || Existed_PDI.DeliveryDate != confirmedDate))
                     {
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;
