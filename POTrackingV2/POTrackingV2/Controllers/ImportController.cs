@@ -49,7 +49,6 @@ namespace POTrackingV2.Controllers
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                             .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                            .OrderBy(x => x.Number)
                             .AsQueryable();
 
             if (role == LoginConstants.RoleProcurement.ToLower())
@@ -58,27 +57,29 @@ namespace POTrackingV2.Controllers
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                                 .AsQueryable();
 
-                //List<string> myUserNRPs = new List<string>();
-                //myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                //myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+                List<string> myUserNRPs = new List<string>();
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                //var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
+                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
 
-                //if (myUserNRPs.Count > 0)
-                //{
-                //    foreach (var myUserNRP in myUserNRPs)
-                //    {
-                //        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                //    }
-                //}
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
 
-                //pOes = pOes.Except(noShowPOes);
+                pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator)
             {
-                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                //                .AsQueryable();
+                pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                                .AsQueryable();
             }
             else
             {
@@ -128,7 +129,7 @@ namespace POTrackingV2.Controllers
             }
             #endregion
 
-            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         [HttpGet]
@@ -186,7 +187,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public JsonResult GetNRPByUsername(string username)
+        public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
@@ -202,10 +203,17 @@ namespace POTrackingV2.Controllers
                     sResultSet = dSearch.FindOne();
                 }
 
-                //string description = sResultSet.Properties["description"][0].ToString();
-                var description = sResultSet;
-                return Json(new { sResultSet}, JsonRequestBehavior.AllowGet);
+                try
+                {
+                    string description = sResultSet.Properties["description"][0].ToString();
+                    return description;
+                }
+                catch (Exception)
+                {
+                    return "-";
+                }
             }
+
             return null;
         }
 
@@ -215,7 +223,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
@@ -362,7 +370,21 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.LastModified = now;
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
 
-                            db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
+                            int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
+
+                            Notification notification = new Notification();
+                            notification.PurchasingDocumentItemID = idNewPDI;
+                            notification.StatusID = 3;
+                            notification.Stage = "1";
+                            notification.Role = "vendor";
+                            notification.isActive = true;
+                            notification.Created = now;
+                            notification.CreatedBy = User.Identity.Name;
+                            notification.Modified = now;
+                            notification.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notification);
+
                             counter++;
                         }
                     }
@@ -572,6 +594,7 @@ namespace POTrackingV2.Controllers
                 {
                     databasePurchasingDocumentItem.ConfirmedItem = false;
                     databasePurchasingDocumentItem.OpenQuantity = null;
+                    databasePurchasingDocumentItem.ActiveStage = "1";
 
                     if (!databasePurchasingDocumentItem.ParentID.HasValue || databasePurchasingDocumentItem.ID == databasePurchasingDocumentItem.ParentID)
                     {

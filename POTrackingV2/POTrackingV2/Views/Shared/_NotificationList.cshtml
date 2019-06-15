@@ -147,63 +147,61 @@
                             if (POTypeCategory == "Import") {
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
-                                }else if (stage == "1") {
+                                } else if (stage == "1") {
                                     if (confirmedItem == true) {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >, please proceed to update ETA";
-                                    }else if (confirmedItem == false) {
+                                    } else if (confirmedItem == false) {
                                         message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
-                                    }else if (POQty != null) {
+                                    } else if (POQty != null) {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     }
-                                }else if (stage == "2") {
+                                } else if (stage == "2") {
                                     if (confirmFirstETA == true) {
                                         message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >, please proceed to upload Proforma Invoice";
-                                    }else if (confirmFirstETA == false) {
+                                    } else if (confirmFirstETA == false) {
                                         message += " has declined ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
-                                    }else if (countEtaHistory > 0) {
+                                    } else if (countEtaHistory > 0) {
                                         message += " has updated ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >, please proceed to Confirm ETA";
                                     }
-                                }else if (stage == "2a") {
+                                } else if (stage == "2a") {
                                     if (proformaInvoice != null) {
                                         message += " has uploaded proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
-                                    }else if (proformaInvoice == null) {
+                                    } else if (proformaInvoice == null) {
                                         message += " has skipped proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "3") {
+                                } else if (stage == "3") {
                                     if (confirmedPaymentReceive != null) {
                                         message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
-                                    }else if (confirmedPaymentReceive == null) {
+                                    } else if (confirmedPaymentReceive == null) {
                                         message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "4") {
+                                } else if (stage == "4") {
                                     if (countProgressPhotos > 0) {
                                         message += " has uploaded Progress photos for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
-                                    }else if (secondETAHistory != null) {
+                                    } else if (secondETAHistory != null) {
                                         message += " has updated the ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "5") {
+                                } else if (stage == "5") {
                                     if (shipmentATD != null) {
                                         message += " has updated shipment Actual Time Delivery date at " + shipmentATD + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
-                                    }else if (shipmentBookingDate != null) {
+                                    } else if (shipmentBookingDate != null) {
                                         message += " has updated shipment booking date at " + shipmentBookingDate + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "6") {
+                                } else if (stage == "6") {
                                     if (shipmentCopyBLDate != null) {
                                         message += " has updated shipment form and documents for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >, please continue to fill the shipment ATA";
                                     }
-                                }else if (stage == "7") {
+                                } else if (stage == "7") {
                                     if (shipmentATA != null) {
                                         message += " has updated shipment ATA at " + shipmentATA + " for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else if (stage == "9") {
+                                } else if (stage == "9") {
                                     if (invoiceDocument != null) {
                                         message += " has uploaded Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
                                     else {
                                         message += " has removed Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >";
                                     }
-                                }else {
-                                    message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                 }
                                 /*-------------------------------------------------------------END IMPORT-----------------------------------------------------------*/
                             }
@@ -323,7 +321,7 @@
                                 assignedFrom + message +
                                 "</p>"+
                                 "<p class='secondary-text mb-0'>" + created.newDateFormatMMDD() + "</p>"+
-                                "</div>"+
+                                "</div><a href ='#'><i class='fas fa-trash delete-icon'></i></a>"+
                             "</li>");
                         }
                     }

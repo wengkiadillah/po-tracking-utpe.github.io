@@ -473,9 +473,9 @@
                                         </div>
                                     </div>
                                     <div class="po-item-data-header__column">
-                                        <div class="form-inline">
-                                            <a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
-                                            <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
+                                        <div class="form-inline icon-display">
+                                            @*<a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                            <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>*@
                                             <a href="#" class="btn-icon edit-row" @hideEditButton><i class="far fa-edit"></i></a>
                                         </div>
                                     </div>
@@ -553,7 +553,7 @@
                                             </div>
                                             <div class="po-item-data-header__column">
                                                 <div class="form-inline">
-                                                    <div class="form-group mr-2">
+                                                    <div class="input-group mr-2">
                                                         <input type="text" class="form-control form-date partial-date with-icon" autofocus="" required="" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="@comfirmPartialDateChild" disabled>
                                                         <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
                                                         <div class="input-group-prepend">
@@ -564,7 +564,9 @@
                                                 </div>
                                             </div>
                                             <div class="po-item-data-header__column">
-                                                <div class="form-inline">
+                                                <div class="form-inline icon-display">
+                                                    @*<a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                                    <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>*@
                                                     <a href="#" class="btn-icon edit-row" @hideEditBtnChild><i class="far fa-edit"></i></a>
                                                 </div>
                                             </div>
@@ -2013,7 +2015,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
                                 btnEditItem.addClass("editable");
                             }
-                            if (role == "subcontdev") {
+                            if (role == "subcontdev" || (deliveryDate == confirmedDate.val() || maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -2266,7 +2268,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
-                                    if (role == "subcontdev") {
+                                    if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                     }
                                     btnConfirmPO.addClass("selected");
@@ -3072,7 +3074,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         });
 
         $(".file-invoice-remove").on("click", function (obj) {
-            var saveButton = $(this);
+            var saveButton = $(this).closest(".po-item-data-header__column").find(".save-invoice");
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content__outer").attr("row");
 

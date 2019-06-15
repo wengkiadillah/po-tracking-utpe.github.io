@@ -209,7 +209,7 @@ namespace POTrackingV2.Controllers
                         notification.PurchasingDocumentItemID = Existed_PDI.ID;
                         notification.StatusID = 3;
                         //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != item.ConfirmedQuantity || Existed_PDI.ConfirmedDate != item.ConfirmedDate))
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != item.ConfirmedQuantity || Existed_PDI.DeliveryDate != item.ConfirmedDate))
                         {
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -223,6 +223,12 @@ namespace POTrackingV2.Controllers
                             string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
+
+                            if (Existed_PDI.Quantity == item.ConfirmedQuantity && Existed_PDI.DeliveryDate == item.ConfirmedDate)
+                            {
+                                Existed_PDI.ConfirmedDate = item.ConfirmedDate;
+                                Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
+                            }
 
                             Existed_PDI.ConfirmedItem = true;
                             if (scc != null)
@@ -594,7 +600,7 @@ namespace POTrackingV2.Controllers
                 {
                     notification.StatusID = 3;
                     //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.ConfirmedQuantity != confirmedItemQty || Existed_PDI.ConfirmedDate != confirmedDate))
+                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != confirmedItemQty || Existed_PDI.DeliveryDate != confirmedDate))
                     {
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;
@@ -610,6 +616,12 @@ namespace POTrackingV2.Controllers
                         int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                         Existed_PDI.ConfirmedItem = true;
+
+                        if(Existed_PDI.Quantity == confirmedItemQty && Existed_PDI.DeliveryDate == confirmedDate)
+                        {
+                            Existed_PDI.ConfirmedDate = confirmedDate;
+                            Existed_PDI.ConfirmedQuantity = confirmedItemQty;
+                        }
 
                         if (scc != null)
                         {

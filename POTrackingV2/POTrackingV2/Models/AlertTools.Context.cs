@@ -31,18 +31,18 @@ namespace POTrackingV2.Models
         public virtual DbSet<HistoryIssue> HistoryIssues { get; set; }
         public virtual DbSet<HistoryIssueUser> HistoryIssueUsers { get; set; }
         public virtual DbSet<IssueHeader> IssueHeaders { get; set; }
+        public virtual DbSet<LateDrawingLog> LateDrawingLogs { get; set; }
         public virtual DbSet<MachineBreakdownDetail> MachineBreakdownDetails { get; set; }
         public virtual DbSet<MachineBreakdownLog> MachineBreakdownLogs { get; set; }
         public virtual DbSet<MasterIssue> MasterIssues { get; set; }
         public virtual DbSet<MaterialIssueDetail> MaterialIssueDetails { get; set; }
+        public virtual DbSet<MaterialIssueLog> MaterialIssueLogs { get; set; }
         public virtual DbSet<MaterialProcurementPOTracking> MaterialProcurementPOTrackings { get; set; }
-        public virtual DbSet<OrganizationGroup> OrganizationGroups { get; set; }
         public virtual DbSet<QualityControlPOTracking> QualityControlPOTrackings { get; set; }
         public virtual DbSet<QualityReceivePOTracking> QualityReceivePOTrackings { get; set; }
+        public virtual DbSet<ReceiverPrivilege> ReceiverPrivileges { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<UserGroup> UserGroups { get; set; }
         public virtual DbSet<AlertNotification> AlertNotifications { get; set; }
-        public virtual DbSet<LateDrawingLog> LateDrawingLogs { get; set; }
-        public virtual DbSet<MaterialIssueLog> MaterialIssueLogs { get; set; }
     }
 }

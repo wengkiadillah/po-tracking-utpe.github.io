@@ -164,6 +164,17 @@ body {
         margin-right: 20px;
     }
 
+        .notification-list-item > i .delete-icon {
+            color: #C0C0C0;
+            font-size: 0.8rem;
+            margin-top: 0;
+            margin-right: 0px;
+        }
+
+        .notification-list-item a {
+            color: #C0C0C0;
+        }
+
         .notification-list-item > i.approved {
             color: #62DA62;
         }
@@ -175,6 +186,7 @@ body {
         .notification-list-item > i.rejected {
             color: #F98E72;
         }
+
 
 .notification-container.not-show,
 .notification-container.not-show .notification-header,
@@ -1166,4 +1178,8 @@ a[data-toggle="collapse"] {
     width: 82%;
     left: 335px;
     /* justify-content: flex-end; */
+}
+
+.po-item-data-content__outer .icon-display {
+    min-width: 43.516px;
 }
