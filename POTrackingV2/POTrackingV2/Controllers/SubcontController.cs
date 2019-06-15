@@ -224,6 +224,12 @@ namespace POTrackingV2.Controllers
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
+                            if (Existed_PDI.Quantity == item.ConfirmedQuantity && Existed_PDI.DeliveryDate == item.ConfirmedDate)
+                            {
+                                Existed_PDI.ConfirmedDate = item.ConfirmedDate;
+                                Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
+                            }
+
                             Existed_PDI.ConfirmedItem = true;
                             if (scc != null)
                             {
@@ -610,6 +616,12 @@ namespace POTrackingV2.Controllers
                         int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
                         Existed_PDI.ConfirmedItem = true;
+
+                        if(Existed_PDI.Quantity == confirmedItemQty && Existed_PDI.DeliveryDate == confirmedDate)
+                        {
+                            Existed_PDI.ConfirmedDate = confirmedDate;
+                            Existed_PDI.ConfirmedQuantity = confirmedItemQty;
+                        }
 
                         if (scc != null)
                         {
