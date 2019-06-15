@@ -14,11 +14,12 @@ namespace POTracking.Controllers
     public class ReasonSubContController : Controller
     {
         // GET: ReasonSubCont
-        public ActionResult Index()
+        public ActionResult Index(string search, int? page)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.SequencesProgressReasons.ToList());
+                //return View(db.SequencesProgressReasons.ToList());
+                return View(db.SequencesProgressReasons.Where(x => x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
             }
                 
         }
@@ -126,33 +127,17 @@ namespace POTracking.Controllers
             }
         }
 
-        // GET: ReasonSubCont/Delete/5
+        // POST: ReasonSubCont/Delete/5
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.SequencesProgressReasons.Where(x => x.ID == id).FirstOrDefault());
-            }
-        }
+                var reasonSubCont = db.SequencesProgressReasons.Find(id);
+                db.SequencesProgressReasons.Remove(reasonSubCont);
+                db.SaveChanges();
 
-        // POST: ReasonSubCont/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, SequencesProgressReason sequencesProgress)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-                using (POTrackingEntities db = new POTrackingEntities())
-                {
-                    sequencesProgress = db.SequencesProgressReasons.Where(x => x.ID == id).FirstOrDefault();
-                    db.SequencesProgressReasons.Remove(sequencesProgress);
-                    db.SaveChanges();
-                }
-                    return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
+                return RedirectToAction("Index");
             }
         }
     }

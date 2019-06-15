@@ -1,4 +1,7 @@
-﻿@model IEnumerable<POTrackingV2.Models.DelayReason>
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<POTrackingV2.Models.DelayReason>
 
 @{
     ViewBag.Title = "Index";
@@ -11,7 +14,7 @@
         @using (Html.BeginForm("Index", "DelayReason", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
         {
             <div class="form-group mr-4">
-                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchString" />
+                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search Name" value="@ViewBag.CurrentSearchString" />
                 <i class="fas fa-search form-type-icon hint"></i>
             </div>
 
@@ -27,36 +30,46 @@
     <table class="table table-striped table-bordered">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>Action</th>
         </tr>
-
-        @foreach (var item in Model)
+        @if (Model.Count() == 0)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    <span>
-                        <a class="col-xs-2" href="@Url.Action("Details", "DelayReason", new { id = item.ID })" alt="Details">
-                            <i class="fa fa-info-circle fa-lg"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a class="col-xs-2" href="@Url.Action("Edit", "DelayReason", new { id = item.ID })" alt="Edit" style="color:green;">
-                            <i class="fa fa-edit fa-lg"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a class="col-xs-2" href="@Url.Action("Delete", "DelayReason", new { id = item.ID })" alt="Delete" style="color:red;">
-                            <i class="fa fa-trash fa-lg"></i>
-                        </a>
-                    </span>
-                </td>
+                <td colspan="12">No rows match search criteria</td>
             </tr>
         }
-
+        else
+        {
+            foreach (var item in Model)
+            {
+                using (Html.BeginForm("Delete", "DelayReason", new { id = item.ID }))
+                {
+                    <tr style="background-color:white;">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            <span>
+                                <a class="col-xs-2" href="@Url.Action("Details", "DelayReason", new { id = item.ID })" alt="Details">
+                                    <i class="fa fa-info-circle fa-lg"></i>
+                                </a>
+                            </span>
+                            <span>
+                                <a class="col-xs-2" href="@Url.Action("Edit", "DelayReason", new { id = item.ID })" alt="Edit" style="color:green;">
+                                    <i class="fa fa-edit fa-lg"></i>
+                                </a>
+                            </span>
+                            <span>
+                                <button type="submit" style="color:red;" value="Delete" onclick="return confirm('Are you sure want to delete this @item.Name')"><i class="fa fa-trash fa-lg"></i></button>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+        }
     </table>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, search = Request.QueryString["search"] }),
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
 </div>
