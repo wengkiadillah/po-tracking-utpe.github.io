@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AlertTools.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="AlertToolsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <!--Errors Found During Generation:
 warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AlertNotification">
@@ -108,16 +108,13 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="LastModified" Type="datetime" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'patria-db-alert-tools.dbo.LateDrawingLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="LateDrawingLogs">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="LateDrawingID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LateDrawingID" Type="int" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedParameter" Type="varchar(max)" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="LastModified" Type="datetime" />
         </EntityType>
@@ -142,9 +139,9 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.LateDrawingLogs' does no
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MachineBreakDownDetailsID" Type="int" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastModifiedBy" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="LastModifiedAt" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedParameter" Type="varchar(max)" />
+          <Property Name="LastModifiedBy" Type="varchar" MaxLength="100" />
+          <Property Name="LastModified" Type="datetime" />
         </EntityType>
         <EntityType Name="MasterIssues">
           <Key>
@@ -178,16 +175,13 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.LateDrawingLogs' does no
           <Property Name="PRNumber" Type="varchar" MaxLength="50" />
           <Property Name="PONumber" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MaterialIssueLogs">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="MaterialIssueID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MaterialIssueID" Type="int" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="varchar" MaxLength="50" />
+          <Property Name="UpdatedParameter" Type="varchar(max)" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="LastModified" Type="datetime" />
         </EntityType>
@@ -207,18 +201,6 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="LastModified" Type="datetime" />
-        </EntityType>
-        <EntityType Name="OrganizationGroups">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Created" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastModified" Type="datetime" Nullable="false" />
-          <Property Name="LastModifiedBy" Type="nchar" MaxLength="10" />
-          <Property Name="RoleID" Type="int" />
         </EntityType>
         <EntityType Name="QualityControlPOTracking">
           <Key>
@@ -243,6 +225,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IssueHeaderID" Type="int" Nullable="false" />
           <Property Name="PONumber" Type="varchar" MaxLength="50" />
+          <Property Name="PRNumber" Type="varchar" MaxLength="10" />
           <Property Name="PartNumber" Type="varchar" MaxLength="30" />
           <Property Name="MaterialName" Type="varchar" MaxLength="50" />
           <Property Name="MovementType" Type="int" />
@@ -251,6 +234,24 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastModified" Type="datetime" Nullable="false" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ReceiverPrivileges">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserGroupID" Type="int" />
+          <Property Name="ArrivalDate" Type="bit" />
+          <Property Name="ServiceDate" Type="bit" />
+          <Property Name="PRNumber" Type="bit" />
+          <Property Name="PONumber" Type="bit" />
+          <Property Name="Quantity" Type="bit" />
+          <Property Name="FinishDate" Type="bit" />
+          <Property Name="SparepartDate" Type="bit" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="20" />
+          <Property Name="Modified" Type="nchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -267,16 +268,15 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MasterIssueID" Type="int" Nullable="false" />
+          <Property Name="RoleID" Type="int" Nullable="false" />
           <Property Name="IsSender" Type="bit" Nullable="false" />
           <Property Name="IsReceiver" Type="bit" Nullable="false" />
           <Property Name="IsCloser" Type="bit" Nullable="false" />
-          <Property Name="MasterIssueID" Type="int" Nullable="false" />
-          <Property Name="OrganizationGroupID" Type="int" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="Modified" Type="datetime" />
-          <Property Name="RoleID" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
           <End Role="IssueHeaders" Type="Self.IssueHeaders" Multiplicity="1" />
@@ -434,6 +434,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_QualityReceivePOTracking_IssueHeaders">
+          <End Role="IssueHeaders" Type="Self.IssueHeaders" Multiplicity="1" />
+          <End Role="QualityReceivePOTracking" Type="Self.QualityReceivePOTracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IssueHeaders">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QualityReceivePOTracking">
+              <PropertyRef Name="IssueHeaderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserGroup_MasterIssues">
           <End Role="MasterIssues" Type="Self.MasterIssues" Multiplicity="1" />
           <End Role="UserGroup" Type="Self.UserGroup" Multiplicity="*" />
@@ -446,33 +458,35 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserGroup_OrganizationGroups">
-          <End Role="OrganizationGroups" Type="Self.OrganizationGroups" Multiplicity="1" />
-          <End Role="UserGroup" Type="Self.UserGroup" Multiplicity="*" />
+        <Association Name="FK_UserGroup_Receiverprivilege">
+          <End Role="UserGroup" Type="Self.UserGroup" Multiplicity="0..1" />
+          <End Role="ReceiverPrivileges" Type="Self.ReceiverPrivileges" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="OrganizationGroups">
+            <Principal Role="UserGroup">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserGroup">
-              <PropertyRef Name="OrganizationGroupID" />
+            <Dependent Role="ReceiverPrivileges">
+              <PropertyRef Name="UserGroupID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AlertToolsStoreContainer">
+        <EntityContainer Name="AlertToolsModelStoreContainer">
           <EntitySet Name="CustomerComponentsDetails" EntityType="Self.CustomerComponentsDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeliveryLatenesses" EntityType="Self.DeliveryLatenesses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DrawingLatenesses" EntityType="Self.DrawingLatenesses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HistoryIssues" EntityType="Self.HistoryIssues" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HistoryIssueUsers" EntityType="Self.HistoryIssueUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IssueHeaders" EntityType="Self.IssueHeaders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LateDrawingLogs" EntityType="Self.LateDrawingLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MachineBreakdownDetails" EntityType="Self.MachineBreakdownDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MachineBreakdownLogs" EntityType="Self.MachineBreakdownLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MasterIssues" EntityType="Self.MasterIssues" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaterialIssueDetails" EntityType="Self.MaterialIssueDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MaterialIssueLogs" EntityType="Self.MaterialIssueLogs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaterialProcurementPOTrackings" EntityType="Self.MaterialProcurementPOTrackings" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="OrganizationGroups" EntityType="Self.OrganizationGroups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QualityControlPOTracking" EntityType="Self.QualityControlPOTracking" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QualityReceivePOTracking" EntityType="Self.QualityReceivePOTracking" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ReceiverPrivileges" EntityType="Self.ReceiverPrivileges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserGroup" EntityType="Self.UserGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AlertNotification" EntityType="Self.AlertNotification" store:Type="Tables" store:Schema="dbo">
@@ -486,24 +500,6 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
     [AlertNotification].[Modified] AS [Modified], 
     [AlertNotification].[ModifiedBy] AS [ModifiedBy]
     FROM [dbo].[AlertNotification] AS [AlertNotification]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="LateDrawingLogs" EntityType="Self.LateDrawingLogs" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [LateDrawingLogs].[ID] AS [ID], 
-    [LateDrawingLogs].[LateDrawingID] AS [LateDrawingID], 
-    [LateDrawingLogs].[UpdatedParameter] AS [UpdatedParameter], 
-    [LateDrawingLogs].[LastModifiedBy] AS [LastModifiedBy], 
-    [LateDrawingLogs].[LastModified] AS [LastModified]
-    FROM [dbo].[LateDrawingLogs] AS [LateDrawingLogs]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="MaterialIssueLogs" EntityType="Self.MaterialIssueLogs" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [MaterialIssueLogs].[ID] AS [ID], 
-    [MaterialIssueLogs].[MaterialIssueID] AS [MaterialIssueID], 
-    [MaterialIssueLogs].[UpdatedParameter] AS [UpdatedParameter], 
-    [MaterialIssueLogs].[LastModifiedBy] AS [LastModifiedBy], 
-    [MaterialIssueLogs].[LastModified] AS [LastModified]
-    FROM [dbo].[MaterialIssueLogs] AS [MaterialIssueLogs]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" Association="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
@@ -557,20 +553,24 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
             <End Role="QualityControlPOTracking" EntitySet="QualityControlPOTracking" />
           </AssociationSet>
+          <AssociationSet Name="FK_QualityReceivePOTracking_IssueHeaders" Association="Self.FK_QualityReceivePOTracking_IssueHeaders">
+            <End Role="IssueHeaders" EntitySet="IssueHeaders" />
+            <End Role="QualityReceivePOTracking" EntitySet="QualityReceivePOTracking" />
+          </AssociationSet>
           <AssociationSet Name="FK_UserGroup_MasterIssues" Association="Self.FK_UserGroup_MasterIssues">
             <End Role="MasterIssues" EntitySet="MasterIssues" />
             <End Role="UserGroup" EntitySet="UserGroup" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserGroup_OrganizationGroups" Association="Self.FK_UserGroup_OrganizationGroups">
-            <End Role="OrganizationGroups" EntitySet="OrganizationGroups" />
+          <AssociationSet Name="FK_UserGroup_Receiverprivilege" Association="Self.FK_UserGroup_Receiverprivilege">
             <End Role="UserGroup" EntitySet="UserGroup" />
+            <End Role="ReceiverPrivileges" EntitySet="ReceiverPrivileges" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="AlertTools" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="AlertToolsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="CustomerComponentsDetail">
           <Key>
             <PropertyRef Name="ID" />
@@ -670,6 +670,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <NavigationProperty Name="MaterialIssueDetails" Relationship="Self.FK_MaterialIssueDetails_IssueHeaders_IssueHeaderID" FromRole="IssueHeaders" ToRole="MaterialIssueDetails" />
           <NavigationProperty Name="MaterialProcurementPOTrackings" Relationship="Self.FK_MaterialProcurementPOTrackings_IssueHeaders" FromRole="IssueHeaders" ToRole="MaterialProcurementPOTrackings" />
           <NavigationProperty Name="QualityControlPOTrackings" Relationship="Self.FK_QualityControlPOTracking_IssueHeaders" FromRole="IssueHeaders" ToRole="QualityControlPOTracking" />
+          <NavigationProperty Name="QualityReceivePOTrackings" Relationship="Self.FK_QualityReceivePOTracking_IssueHeaders" FromRole="IssueHeaders" ToRole="QualityReceivePOTracking" />
+        </EntityType>
+        <EntityType Name="LateDrawingLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LateDrawingID" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedParameter" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="DrawingLateness" Relationship="Self.FK_LateDrawingLogs_DrawingLatenesses" FromRole="LateDrawingLogs" ToRole="DrawingLatenesses" />
         </EntityType>
         <EntityType Name="MachineBreakdownDetail">
           <Key>
@@ -694,9 +706,9 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MachineBreakDownDetailsID" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModifiedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedParameter" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
           <NavigationProperty Name="MachineBreakdownDetail" Relationship="Self.FK_MachineBreakdownLogs_MachineBreakdownDetails_MachineBreakDownDetailsID" FromRole="MachineBreakdownLogs" ToRole="MachineBreakdownDetails" />
         </EntityType>
         <EntityType Name="MasterIssue">
@@ -735,6 +747,17 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <NavigationProperty Name="IssueHeader" Relationship="Self.FK_MaterialIssueDetails_IssueHeaders_IssueHeaderID" FromRole="MaterialIssueDetails" ToRole="IssueHeaders" />
           <NavigationProperty Name="MaterialIssueLogs" Relationship="Self.FK_MaterialIssueLogs_MaterialIssueDetails" FromRole="MaterialIssueDetails" ToRole="MaterialIssueLogs" />
         </EntityType>
+        <EntityType Name="MaterialIssueLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaterialIssueID" Type="Int32" Nullable="false" />
+          <Property Name="UpdatedParameter" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MaterialIssueDetail" Relationship="Self.FK_MaterialIssueLogs_MaterialIssueDetails" FromRole="MaterialIssueLogs" ToRole="MaterialIssueDetails" />
+        </EntityType>
         <EntityType Name="MaterialProcurementPOTracking">
           <Key>
             <PropertyRef Name="ID" />
@@ -752,19 +775,6 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="LastModified" Type="DateTime" Precision="3" />
           <NavigationProperty Name="IssueHeader" Relationship="Self.FK_MaterialProcurementPOTrackings_IssueHeaders" FromRole="MaterialProcurementPOTrackings" ToRole="IssueHeaders" />
-        </EntityType>
-        <EntityType Name="OrganizationGroup">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="RoleID" Type="Int32" />
-          <NavigationProperty Name="UserGroups" Relationship="Self.FK_UserGroup_OrganizationGroups" FromRole="OrganizationGroups" ToRole="UserGroup" />
         </EntityType>
         <EntityType Name="QualityControlPOTracking">
           <Key>
@@ -790,6 +800,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IssueHeaderID" Type="Int32" Nullable="false" />
           <Property Name="PONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PRNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="PartNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="MaterialName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="MovementType" Type="Int32" />
@@ -798,6 +809,26 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="IssueHeader" Relationship="Self.FK_QualityReceivePOTracking_IssueHeaders" FromRole="QualityReceivePOTracking" ToRole="IssueHeaders" />
+        </EntityType>
+        <EntityType Name="ReceiverPrivilege">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserGroupID" Type="Int32" />
+          <Property Name="ArrivalDate" Type="Boolean" />
+          <Property Name="ServiceDate" Type="Boolean" />
+          <Property Name="PRNumber" Type="Boolean" />
+          <Property Name="PONumber" Type="Boolean" />
+          <Property Name="Quantity" Type="Boolean" />
+          <Property Name="FinishDate" Type="Boolean" />
+          <Property Name="SparepartDate" Type="Boolean" />
+          <Property Name="CreatedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Modified" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="UserGroup" Relationship="Self.FK_UserGroup_Receiverprivilege" FromRole="ReceiverPrivileges" ToRole="UserGroup" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -814,18 +845,17 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MasterIssueID" Type="Int32" Nullable="false" />
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
           <Property Name="IsSender" Type="Boolean" Nullable="false" />
           <Property Name="IsReceiver" Type="Boolean" Nullable="false" />
           <Property Name="IsCloser" Type="Boolean" Nullable="false" />
-          <Property Name="MasterIssueID" Type="Int32" Nullable="false" />
-          <Property Name="OrganizationGroupID" Type="Int32" Nullable="false" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Modified" Type="DateTime" Precision="3" />
-          <Property Name="RoleID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MasterIssue" Relationship="Self.FK_UserGroup_MasterIssues" FromRole="UserGroup" ToRole="MasterIssues" />
-          <NavigationProperty Name="OrganizationGroup" Relationship="Self.FK_UserGroup_OrganizationGroups" FromRole="UserGroup" ToRole="OrganizationGroups" />
+          <NavigationProperty Name="ReceiverPrivileges" Relationship="Self.FK_UserGroup_Receiverprivilege" FromRole="UserGroup" ToRole="ReceiverPrivileges" />
         </EntityType>
         <EntityType Name="AlertNotification">
           <Key>
@@ -843,30 +873,6 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Modified" Type="DateTime" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="LateDrawingLog">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="LateDrawingID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="LateDrawingID" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="LastModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="DrawingLateness" Relationship="Self.FK_LateDrawingLogs_DrawingLatenesses" FromRole="LateDrawingLogs" ToRole="DrawingLatenesses" />
-        </EntityType>
-        <EntityType Name="MaterialIssueLog">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="MaterialIssueID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="MaterialIssueID" Type="Int32" Nullable="false" />
-          <Property Name="UpdatedParameter" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="LastModified" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="MaterialIssueDetail" Relationship="Self.FK_MaterialIssueLogs_MaterialIssueDetails" FromRole="MaterialIssueLogs" ToRole="MaterialIssueDetails" />
         </EntityType>
         <Association Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
           <End Role="IssueHeaders" Type="Self.IssueHeader" Multiplicity="1" />
@@ -1000,6 +1006,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_QualityReceivePOTracking_IssueHeaders">
+          <End Role="IssueHeaders" Type="Self.IssueHeader" Multiplicity="1" />
+          <End Role="QualityReceivePOTracking" Type="Self.QualityReceivePOTracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IssueHeaders">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QualityReceivePOTracking">
+              <PropertyRef Name="IssueHeaderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MachineBreakdownLogs_MachineBreakdownDetails_MachineBreakDownDetailsID">
           <End Role="MachineBreakdownDetails" Type="Self.MachineBreakdownDetail" Multiplicity="1" />
           <End Role="MachineBreakdownLogs" Type="Self.MachineBreakdownLog" Multiplicity="*" />
@@ -1036,15 +1054,15 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserGroup_OrganizationGroups">
-          <End Role="OrganizationGroups" Type="Self.OrganizationGroup" Multiplicity="1" />
-          <End Role="UserGroup" Type="Self.UserGroup" Multiplicity="*" />
+        <Association Name="FK_UserGroup_Receiverprivilege">
+          <End Role="UserGroup" Type="Self.UserGroup" Multiplicity="0..1" />
+          <End Role="ReceiverPrivileges" Type="Self.ReceiverPrivilege" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="OrganizationGroups">
+            <Principal Role="UserGroup">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="UserGroup">
-              <PropertyRef Name="OrganizationGroupID" />
+            <Dependent Role="ReceiverPrivileges">
+              <PropertyRef Name="UserGroupID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1055,19 +1073,19 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
           <EntitySet Name="HistoryIssues" EntityType="Self.HistoryIssue" />
           <EntitySet Name="HistoryIssueUsers" EntityType="Self.HistoryIssueUser" />
           <EntitySet Name="IssueHeaders" EntityType="Self.IssueHeader" />
+          <EntitySet Name="LateDrawingLogs" EntityType="Self.LateDrawingLog" />
           <EntitySet Name="MachineBreakdownDetails" EntityType="Self.MachineBreakdownDetail" />
           <EntitySet Name="MachineBreakdownLogs" EntityType="Self.MachineBreakdownLog" />
           <EntitySet Name="MasterIssues" EntityType="Self.MasterIssue" />
           <EntitySet Name="MaterialIssueDetails" EntityType="Self.MaterialIssueDetail" />
+          <EntitySet Name="MaterialIssueLogs" EntityType="Self.MaterialIssueLog" />
           <EntitySet Name="MaterialProcurementPOTrackings" EntityType="Self.MaterialProcurementPOTracking" />
-          <EntitySet Name="OrganizationGroups" EntityType="Self.OrganizationGroup" />
           <EntitySet Name="QualityControlPOTrackings" EntityType="Self.QualityControlPOTracking" />
           <EntitySet Name="QualityReceivePOTrackings" EntityType="Self.QualityReceivePOTracking" />
+          <EntitySet Name="ReceiverPrivileges" EntityType="Self.ReceiverPrivilege" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="UserGroups" EntityType="Self.UserGroup" />
           <EntitySet Name="AlertNotifications" EntityType="Self.AlertNotification" />
-          <EntitySet Name="LateDrawingLogs" EntityType="Self.LateDrawingLog" />
-          <EntitySet Name="MaterialIssueLogs" EntityType="Self.MaterialIssueLog" />
           <AssociationSet Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" Association="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
             <End Role="CustomerComponentsDetails" EntitySet="CustomerComponentsDetails" />
@@ -1112,6 +1130,10 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
             <End Role="QualityControlPOTracking" EntitySet="QualityControlPOTrackings" />
           </AssociationSet>
+          <AssociationSet Name="FK_QualityReceivePOTracking_IssueHeaders" Association="Self.FK_QualityReceivePOTracking_IssueHeaders">
+            <End Role="IssueHeaders" EntitySet="IssueHeaders" />
+            <End Role="QualityReceivePOTracking" EntitySet="QualityReceivePOTrackings" />
+          </AssociationSet>
           <AssociationSet Name="FK_MachineBreakdownLogs_MachineBreakdownDetails_MachineBreakDownDetailsID" Association="Self.FK_MachineBreakdownLogs_MachineBreakdownDetails_MachineBreakDownDetailsID">
             <End Role="MachineBreakdownDetails" EntitySet="MachineBreakdownDetails" />
             <End Role="MachineBreakdownLogs" EntitySet="MachineBreakdownLogs" />
@@ -1124,9 +1146,9 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             <End Role="MaterialIssueDetails" EntitySet="MaterialIssueDetails" />
             <End Role="MaterialIssueLogs" EntitySet="MaterialIssueLogs" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserGroup_OrganizationGroups" Association="Self.FK_UserGroup_OrganizationGroups">
-            <End Role="OrganizationGroups" EntitySet="OrganizationGroups" />
+          <AssociationSet Name="FK_UserGroup_Receiverprivilege" Association="Self.FK_UserGroup_Receiverprivilege">
             <End Role="UserGroup" EntitySet="UserGroups" />
+            <End Role="ReceiverPrivileges" EntitySet="ReceiverPrivileges" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -1134,9 +1156,9 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AlertToolsStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="AlertToolsModelStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="CustomerComponentsDetails">
-            <EntityTypeMapping TypeName="AlertTools.CustomerComponentsDetail">
+            <EntityTypeMapping TypeName="AlertToolsModel.CustomerComponentsDetail">
               <MappingFragment StoreEntitySet="CustomerComponentsDetails">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1155,7 +1177,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DeliveryLatenesses">
-            <EntityTypeMapping TypeName="AlertTools.DeliveryLateness">
+            <EntityTypeMapping TypeName="AlertToolsModel.DeliveryLateness">
               <MappingFragment StoreEntitySet="DeliveryLatenesses">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1171,7 +1193,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DrawingLatenesses">
-            <EntityTypeMapping TypeName="AlertTools.DrawingLateness">
+            <EntityTypeMapping TypeName="AlertToolsModel.DrawingLateness">
               <MappingFragment StoreEntitySet="DrawingLatenesses">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1185,7 +1207,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="HistoryIssues">
-            <EntityTypeMapping TypeName="AlertTools.HistoryIssue">
+            <EntityTypeMapping TypeName="AlertToolsModel.HistoryIssue">
               <MappingFragment StoreEntitySet="HistoryIssues">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1197,7 +1219,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="HistoryIssueUsers">
-            <EntityTypeMapping TypeName="AlertTools.HistoryIssueUser">
+            <EntityTypeMapping TypeName="AlertToolsModel.HistoryIssueUser">
               <MappingFragment StoreEntitySet="HistoryIssueUsers">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1208,7 +1230,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="IssueHeaders">
-            <EntityTypeMapping TypeName="AlertTools.IssueHeader">
+            <EntityTypeMapping TypeName="AlertToolsModel.IssueHeader">
               <MappingFragment StoreEntitySet="IssueHeaders">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="MasterIssueID" ColumnName="MasterIssueID" />
@@ -1225,8 +1247,19 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="LateDrawingLogs">
+            <EntityTypeMapping TypeName="AlertToolsModel.LateDrawingLog">
+              <MappingFragment StoreEntitySet="LateDrawingLogs">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="LateDrawingID" ColumnName="LateDrawingID" />
+                <ScalarProperty Name="UpdatedParameter" ColumnName="UpdatedParameter" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="MachineBreakdownDetails">
-            <EntityTypeMapping TypeName="AlertTools.MachineBreakdownDetail">
+            <EntityTypeMapping TypeName="AlertToolsModel.MachineBreakdownDetail">
               <MappingFragment StoreEntitySet="MachineBreakdownDetails">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1242,18 +1275,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MachineBreakdownLogs">
-            <EntityTypeMapping TypeName="AlertTools.MachineBreakdownLog">
+            <EntityTypeMapping TypeName="AlertToolsModel.MachineBreakdownLog">
               <MappingFragment StoreEntitySet="MachineBreakdownLogs">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="MachineBreakDownDetailsID" ColumnName="MachineBreakDownDetailsID" />
                 <ScalarProperty Name="UpdatedParameter" ColumnName="UpdatedParameter" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
-                <ScalarProperty Name="LastModifiedAt" ColumnName="LastModifiedAt" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MasterIssues">
-            <EntityTypeMapping TypeName="AlertTools.MasterIssue">
+            <EntityTypeMapping TypeName="AlertToolsModel.MasterIssue">
               <MappingFragment StoreEntitySet="MasterIssues">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1268,7 +1301,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MaterialIssueDetails">
-            <EntityTypeMapping TypeName="AlertTools.MaterialIssueDetail">
+            <EntityTypeMapping TypeName="AlertToolsModel.MaterialIssueDetail">
               <MappingFragment StoreEntitySet="MaterialIssueDetails">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1286,8 +1319,19 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="MaterialIssueLogs">
+            <EntityTypeMapping TypeName="AlertToolsModel.MaterialIssueLog">
+              <MappingFragment StoreEntitySet="MaterialIssueLogs">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="MaterialIssueID" ColumnName="MaterialIssueID" />
+                <ScalarProperty Name="UpdatedParameter" ColumnName="UpdatedParameter" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="MaterialProcurementPOTrackings">
-            <EntityTypeMapping TypeName="AlertTools.MaterialProcurementPOTracking">
+            <EntityTypeMapping TypeName="AlertToolsModel.MaterialProcurementPOTracking">
               <MappingFragment StoreEntitySet="MaterialProcurementPOTrackings">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1304,21 +1348,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="OrganizationGroups">
-            <EntityTypeMapping TypeName="AlertTools.OrganizationGroup">
-              <MappingFragment StoreEntitySet="OrganizationGroups">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="QualityControlPOTrackings">
-            <EntityTypeMapping TypeName="AlertTools.QualityControlPOTracking">
+            <EntityTypeMapping TypeName="AlertToolsModel.QualityControlPOTracking">
               <MappingFragment StoreEntitySet="QualityControlPOTracking">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
@@ -1335,11 +1366,12 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="QualityReceivePOTrackings">
-            <EntityTypeMapping TypeName="AlertTools.QualityReceivePOTracking">
+            <EntityTypeMapping TypeName="AlertToolsModel.QualityReceivePOTracking">
               <MappingFragment StoreEntitySet="QualityReceivePOTracking">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
                 <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PRNumber" ColumnName="PRNumber" />
                 <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
                 <ScalarProperty Name="MaterialName" ColumnName="MaterialName" />
                 <ScalarProperty Name="MovementType" ColumnName="MovementType" />
@@ -1351,8 +1383,27 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ReceiverPrivileges">
+            <EntityTypeMapping TypeName="AlertToolsModel.ReceiverPrivilege">
+              <MappingFragment StoreEntitySet="ReceiverPrivileges">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+                <ScalarProperty Name="ArrivalDate" ColumnName="ArrivalDate" />
+                <ScalarProperty Name="ServiceDate" ColumnName="ServiceDate" />
+                <ScalarProperty Name="PRNumber" ColumnName="PRNumber" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="FinishDate" ColumnName="FinishDate" />
+                <ScalarProperty Name="SparepartDate" ColumnName="SparepartDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="AlertTools.sysdiagram">
+            <EntityTypeMapping TypeName="AlertToolsModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -1363,24 +1414,23 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserGroups">
-            <EntityTypeMapping TypeName="AlertTools.UserGroup">
+            <EntityTypeMapping TypeName="AlertToolsModel.UserGroup">
               <MappingFragment StoreEntitySet="UserGroup">
                 <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="MasterIssueID" ColumnName="MasterIssueID" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="IsSender" ColumnName="IsSender" />
                 <ScalarProperty Name="IsReceiver" ColumnName="IsReceiver" />
                 <ScalarProperty Name="IsCloser" ColumnName="IsCloser" />
-                <ScalarProperty Name="MasterIssueID" ColumnName="MasterIssueID" />
-                <ScalarProperty Name="OrganizationGroupID" ColumnName="OrganizationGroupID" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="Modified" ColumnName="Modified" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AlertNotifications">
-            <EntityTypeMapping TypeName="AlertTools.AlertNotification">
+            <EntityTypeMapping TypeName="AlertToolsModel.AlertNotification">
               <MappingFragment StoreEntitySet="AlertNotification">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -1390,28 +1440,6 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.MaterialIssueLogs' does 
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Modified" ColumnName="Modified" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="LateDrawingLogs">
-            <EntityTypeMapping TypeName="AlertTools.LateDrawingLog">
-              <MappingFragment StoreEntitySet="LateDrawingLogs">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="LateDrawingID" ColumnName="LateDrawingID" />
-                <ScalarProperty Name="UpdatedParameter" ColumnName="UpdatedParameter" />
-                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
-                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MaterialIssueLogs">
-            <EntityTypeMapping TypeName="AlertTools.MaterialIssueLog">
-              <MappingFragment StoreEntitySet="MaterialIssueLogs">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="MaterialIssueID" ColumnName="MaterialIssueID" />
-                <ScalarProperty Name="UpdatedParameter" ColumnName="UpdatedParameter" />
-                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
-                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

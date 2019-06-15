@@ -14,19 +14,25 @@ namespace POTrackingV2.Models
     
     public partial class UserGroup
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public UserGroup()
+        {
+            this.ReceiverPrivileges = new HashSet<ReceiverPrivilege>();
+        }
+    
         public int ID { get; set; }
+        public int MasterIssueID { get; set; }
+        public int RoleID { get; set; }
         public bool IsSender { get; set; }
         public bool IsReceiver { get; set; }
         public bool IsCloser { get; set; }
-        public int MasterIssueID { get; set; }
-        public int OrganizationGroupID { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime Created { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> Modified { get; set; }
-        public int RoleID { get; set; }
     
         public virtual MasterIssue MasterIssue { get; set; }
-        public virtual OrganizationGroup OrganizationGroup { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ReceiverPrivilege> ReceiverPrivileges { get; set; }
     }
 }

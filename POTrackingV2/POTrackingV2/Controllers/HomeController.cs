@@ -143,25 +143,27 @@ namespace POTrackingV2.Controllers
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
 
-                if (myUser.Roles == LoginConstants.RoleProcurement || myUser.Roles == LoginConstants.RoleSubcontDev)
+                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                    if (myUser.Roles == LoginConstants.RoleSubcontDev)
+                    if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+
+                        notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                     }
                     else
                     {
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.ToList();
+                        var noShowNotifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
 
                         if (myUserNRPs.Count > 0)
                         {
                             foreach (var myUserNRP in myUserNRPs)
                             {
-                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP).ToList();
+                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
                             }
                         }
 
@@ -171,10 +173,12 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                    if (userEksternal != null)
-                    {
-                        vendorCode.Add(userEksternal.VendorCode);
-                    }
+
+                    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == userEksternal.VendorCode);
+                    //if (userEksternal != null)
+                    //{
+                    //    vendorCode.Add(userEksternal.VendorCode);
+                    //}
                 }
 
                 //if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
@@ -311,7 +315,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {

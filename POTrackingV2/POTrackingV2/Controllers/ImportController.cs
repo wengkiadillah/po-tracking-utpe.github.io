@@ -61,7 +61,9 @@ namespace POTrackingV2.Controllers
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08");
+                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -221,7 +223,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
@@ -368,7 +370,21 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.LastModified = now;
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
 
-                            db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
+                            int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
+
+                            Notification notification = new Notification();
+                            notification.PurchasingDocumentItemID = idNewPDI;
+                            notification.StatusID = 3;
+                            notification.Stage = "1";
+                            notification.Role = "vendor";
+                            notification.isActive = true;
+                            notification.Created = now;
+                            notification.CreatedBy = User.Identity.Name;
+                            notification.Modified = now;
+                            notification.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notification);
+
                             counter++;
                         }
                     }
@@ -578,6 +594,7 @@ namespace POTrackingV2.Controllers
                 {
                     databasePurchasingDocumentItem.ConfirmedItem = false;
                     databasePurchasingDocumentItem.OpenQuantity = null;
+                    databasePurchasingDocumentItem.ActiveStage = "1";
 
                     if (!databasePurchasingDocumentItem.ParentID.HasValue || databasePurchasingDocumentItem.ID == databasePurchasingDocumentItem.ParentID)
                     {
