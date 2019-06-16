@@ -398,6 +398,8 @@ namespace POTrackingV2.Controllers
 
                             db.Notifications.Add(notification);
 
+                            db.SaveChanges();
+
                             counter++;
                         }
                     }
