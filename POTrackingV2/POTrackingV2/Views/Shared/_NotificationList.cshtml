@@ -106,6 +106,7 @@
                         }
 
                         for (var k in jsonObj) {
+                            var PDIID = jsonObj[k]['PDIID'];
                             var ID = jsonObj[k]['ID'];
                             var statusID = jsonObj[k]['statusID'];
                             var className = "fas fa-check-circle approved";
@@ -167,7 +168,8 @@
                             }
 
                             else {
-                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                                //var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                                var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 message = "";
                             }
 
@@ -304,10 +306,16 @@
                                         message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     } else if (POQty != null) {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                    } else {
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
                                 } else if (stage == "2") {
                                     if (statusID == 3) {
-                                        message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        if (POQty != null) {
+                                            message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        } else {
+                                            message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        }
                                     } else if (POQty != null) {
                                         message += " has updated Define Sequences item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     }else {
@@ -315,7 +323,11 @@
                                     }
                                 } else if (stage == "3") {
                                     if (statusID == 3) {
-                                        message += " asked to update Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        if (POQty != null) {
+                                            message += " asked to update Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        } else {
+                                            message += " asked to update Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        }
                                     } else if (POQty != null) {
                                         message += " has updated Sequences Progress item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
@@ -324,14 +336,22 @@
                                     }
                                 } else if (stage == "4") {
                                     if (statusID == 3) {
-                                        message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        if (POQty != null) {
+                                            message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        } else {
+                                            message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        }
                                     }
                                     //else {
                                     //    message += " asked to update GR for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     //}
                                 } else if (stage == "5") {
                                     if (statusID == 3) {
-                                        message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        if (POQty != null) {
+                                            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        } else {
+                                            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        }
                                     } else if (POQty != null) {
                                         message += " has updated invoice method item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
@@ -339,7 +359,11 @@
                                     }
                                 } else if (stage == "6") {
                                     if (statusID == 3) {
-                                        message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        if (POQty != null) {
+                                            message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        } else {
+                                            message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        }
                                     } else if (POQty != null) {
                                         message += " has uploaded invoice item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
@@ -351,7 +375,7 @@
                                 /*--------------------------------------------------------------END SUBCONT-----------------------------------------------------------*/
                             }
 
-                            $(".list-unstyled.notification-list").append("<li class='notification-list-item' id='" + ID + "'>" +
+                            $(".list-unstyled.notification-list").append("<li class='notification-list-item'  id='" + ID + "'>" + 
                                 "<i class='" + className + "'></i>" +
                                 "<div class='notification-message-container'>" +
                                 "<p class='mb-1'>" +
