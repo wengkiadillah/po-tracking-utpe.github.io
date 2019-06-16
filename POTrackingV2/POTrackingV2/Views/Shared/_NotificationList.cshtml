@@ -179,11 +179,11 @@
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
                                 } else if (stage == "1") {
                                     if (confirmedItem == true) {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >, please proceed to update ETA";
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty + ", please proceed to update ETA";
                                     } else if (confirmedItem == false) {
-                                        message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                        message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty;
                                     } else if (POQty != null) {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty;
                                     }
                                 } else if (stage == "2") {
                                     if (confirmFirstETA == true) {
