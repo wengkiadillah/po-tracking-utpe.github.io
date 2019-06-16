@@ -1525,7 +1525,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 activeStages.sort();
                 findID = ".po-sign-row-" + count;
                 var biggestActiveStages = activeStages[activeStages.length - 1];
-                console.log("ini" + biggestActiveStages);
+                //console.log("ini" + biggestActiveStages);
                 $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
                 count++;
             });

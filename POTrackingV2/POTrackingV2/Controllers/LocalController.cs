@@ -55,7 +55,6 @@ namespace POTrackingV2.Controllers
                                 //.Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
                                 .Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
                                 .Include(x => x.Vendor)
-                                .OrderBy(x => x.Number)
                                 .AsQueryable();
 
 
@@ -65,7 +64,6 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Include(x => x.PurchasingDocumentItems)
                                 .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                                 .Include(x => x.Vendor)
-                                .OrderBy(x => x.Number)
                                 .AsQueryable();
 
                 List<string> myUserNRPs = new List<string>();
@@ -145,7 +143,8 @@ namespace POTrackingV2.Controllers
             //indexLocalViewModel.POes = pOes.ToPagedList(page ?? 1, Constants.PageSize);
             //indexLocalViewModel.InputPurchasingDocumentItem = new PurchasingDocumentItem();
 
-            return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            //return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         [HttpGet]
