@@ -871,7 +871,7 @@ namespace POTrackingV2.Controllers
                     id = x.ID,
                     fileName = x.FileName,
                     //url = Path.Combine("/", iisAppName, "Files/Subcont/SequencesProgress", x.FileName)
-                    url = "..\\Files\\Subcont\\SequencesProgress\\"+ x.FileName
+                    url = "..\\"+ iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var fileSetting = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Setting").Select(x =>
@@ -879,7 +879,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\" + iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var fileFullweld = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Fullweld").Select(x =>
@@ -887,7 +887,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\" + iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var filePrimer = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Primer").Select(x =>
@@ -895,7 +895,7 @@ namespace POTrackingV2.Controllers
                 {
                     id = x.ID,
                     fileName = x.FileName,
-                    url = "..\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\" + iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
 
@@ -1127,7 +1127,7 @@ namespace POTrackingV2.Controllers
                 notification.ModifiedBy = User.Identity.Name;
                 db.Notifications.Add(notification);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
