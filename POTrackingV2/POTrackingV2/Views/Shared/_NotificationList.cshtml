@@ -132,7 +132,11 @@
                             var targetRole = jsonObj[k]['role'].toLowerCase();
                             var assignedFrom = "Vendor";
                             if (targetRole == "vendor") {
-                                assignedFrom = "Procurement";
+                                if (POTypeCategory == "Subcont") {
+                                    assignedFrom = "SubcontDev";
+                                } else {
+                                    assignedFrom = "Procurement";
+                                }
                             }
                             var GRDate = jsonObj[k]['GRDate'];
                             var GRQty = jsonObj[k]['GRQty'];
@@ -304,14 +308,18 @@
                                 } else if (stage == "2") {
                                     if (statusID == 3) {
                                         message += " asked to Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
-                                    } else {
+                                    } else if (POQty != null) {
+                                        message += " has updated Define Sequences item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
+                                    }else {
                                         message += " has updated Define Sequences for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
                                 } else if (stage == "3") {
                                     if (statusID == 3) {
                                         message += " asked to update Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    } else if (POQty != null) {
+                                        message += " has updated Sequences Progress item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
-                                        assignedFrom = "";
+                                        //assignedFrom = "";
                                         message += " has updated Sequences Progress for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
                                 } else if (stage == "4") {
@@ -324,15 +332,20 @@
                                 } else if (stage == "5") {
                                     if (statusID == 3) {
                                         message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    } else if (POQty != null) {
+                                        message += " has updated invoice method item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
                                         message += " has updated invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
                                 } else if (stage == "6") {
                                     if (statusID == 3) {
                                         message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
+                                    } else if (POQty != null) {
+                                        message += " has uploaded invoice item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty;
                                     } else {
                                         message += " has uploaded invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     }
+
                                 }
 
                                 /*--------------------------------------------------------------END SUBCONT-----------------------------------------------------------*/
