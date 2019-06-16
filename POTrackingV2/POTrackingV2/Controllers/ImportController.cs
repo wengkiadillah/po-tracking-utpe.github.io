@@ -386,7 +386,7 @@ namespace POTrackingV2.Controllers
                             int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
 
                             Notification notification = new Notification();
-                            notification.PurchasingDocumentItemID = inputPurchasingDocumentItem.ParentID.GetValueOrDefault();
+                            notification.PurchasingDocumentItemID = idNewPDI;
                             notification.StatusID = 3;
                             notification.Stage = "1";
                             notification.Role = "procurement";

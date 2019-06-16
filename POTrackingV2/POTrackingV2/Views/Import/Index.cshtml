@@ -117,7 +117,7 @@
 
     if (roleID == "procurement" || roleID == "administrator")
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue);
     }
 
     if (purchasingDocumentItems.Count() < 1)
@@ -788,7 +788,7 @@
                                     isChecked = "checked";
                                     selectedButtonDecline = "selected-negative";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    if (purchasingDocumentItem.ActiveStage == "2")
                                     {
                                         hideButtonEdit = "style=visibility:display";
                                     }
@@ -893,7 +893,7 @@
                                                     isChecked = "checked";
                                                     selectedButtonDecline = "selected-negative";
 
-                                                    if (childPurchasingDocumentItem.ActiveStage == "2a")
+                                                    if (childPurchasingDocumentItem.ActiveStage == "2")
                                                     {
                                                         hideButtonEdit = "style=visibility:display";
                                                     }
