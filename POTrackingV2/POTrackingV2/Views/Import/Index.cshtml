@@ -802,7 +802,7 @@
                                     isChecked = "checked";
                                     selectedButtonConfirm = "selected";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2" || purchasingDocumentItem.ActiveStage == "2a") && purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:display";
                                     }
@@ -907,7 +907,7 @@
                                                     isChecked = "checked";
                                                     selectedButtonConfirm = "selected";
 
-                                                    if (childPurchasingDocumentItem.ActiveStage == "2" && childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                                    if ((childPurchasingDocumentItem.ActiveStage == "2" || childPurchasingDocumentItem.ActiveStage == "2a") && childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                                     {
                                                         hideButtonEdit = "style=visibility:display";
                                                     }

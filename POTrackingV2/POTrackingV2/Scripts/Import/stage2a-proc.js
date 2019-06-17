@@ -90,6 +90,7 @@ $(".st2a-ask-first-eta-all").on("click", function (obj) {
         if (inputCheckboxItem.prop("checked") === true && inputCheckboxItem.attr("disabled") !== "disabled") {
             inputPurchasingDocumentItemIDs.push(inputPurchasingDocumentItemID);
 
+            inputCheckboxItem.addClass("row-updated");
             buttonUploadProformaInvoice.addClass("row-updated");
             inputFileProformaInvoice.addClass("row-updated");
             buttonSkipProforma.addClass("row-updated");
@@ -246,7 +247,7 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
                 $(".row-updated-donut").removeClass("row-updated-donut");
                 $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").find(".st3-checkbox-item").removeAttr("disabled");
+                $(".row-updated-next-content").find(".st3-checkbox-item").first().removeAttr("disabled");
             }
         });
     }
