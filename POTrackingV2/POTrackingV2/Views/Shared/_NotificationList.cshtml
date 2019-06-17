@@ -257,7 +257,12 @@
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
                                 } else if (stage == "1") {
                                     if (confirmedItem == true) {
+                                        if (assignedFrom = "vendor") {
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty + " without delay";
+                                        }
+                                        else {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >, please proceed to update ETA";
+                                        }
                                     } else if (confirmedItem == false) {
                                         message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     } else if (POQty != null) {

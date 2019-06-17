@@ -1723,14 +1723,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var stage2 = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 .po-item-data-content.row-" + row + " .po-item-data-content__child");
                 var itemID = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .pd-item-id").val();
                 var newDate = confirmedDate.replaceDayMonth();
-
-                //if (!isNaN(Date.parse(newDate))) {
-                //    var date = new Date(newDate);
-                //    date.setDate(date.getDate() - 10);
-                //    $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").datepicker('setDate', date.newDateFormat());
-                //}
-
-                //$(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .partial-date").removeAttr("disabled");
+                
                 var currentRow = 1;
                 $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
@@ -1742,7 +1735,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     "<input type='hidden' class='pd-item-parent-id' value='" + itemID + "'>" +
                     "<div class='input-group'>" +
                     "<label class='checkbox-custom__label'>" +
-                    //"<input class='checkbox-custom checkbox-item' checked='' type='checkbox' disabled=''>" +
                     "<input class='checkbox-custom checkbox-item' type='checkbox'>" +
                     "<span class='checkmark'></span>" +
                     "</label>" +
@@ -1765,14 +1757,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     "</div>" +
                     "<div class='po-item-data-header__column'>" +
                     "<div class='form-inline'>" +
-                    //"<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
                     "<input type='number' class='form-control pd-item-confirm-qty' min='1' autofocus required pattern='[0-9]'>" +
                     "</div>" +
                     "</div>" +
                     "<div class='po-item-data-header__column'>" +
                     "<div class='form-inline'>" +
                     "<div class='input-group mr-2'>" +
-                    //"<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy' value='" + confirmedDate + "' max='" + confirmedDate + "' disabled>" +
                     "<input type='text' class='form-control form-date partial-date with-icon' autofocus required pattern='\\d{1,2}/\\d{1,2}/\\d{4}' placeholder='dd/mm/yyyy'>" +
                     "<i class='fas fa-calendar-alt form-type-icon'></i>" +
                     "</div>" +
@@ -1819,22 +1809,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .partial-date").removeAttr("disabled");
 
             var newDate = confirmedDate.replaceDayMonth();
-            //if (!isNaN(Date.parse(newDate))) {
-            //if (currentRowChild > 0) {
-            //    var date = new Date(newDate);
-            //    date.setDate(date.getDate() - 10);
-            //    for (i = currentRowChild; i > 0; i--) {
-            //        $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date").val(date.newDateFormat());
-            //        date.setDate(date.getDate() - 10);
-            //    }
-            //    stage1Outer.find(".partial-date").val(date.newDateFormat());
-            //}
-            //if (currentRowChild > 0) {
-            //    var date = new Date(newDate);
-            //    //$(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + currentRowChild + " .partial-date").val(date.newDateFormat());
-            //    $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + currentRowChild + " .partial-date").datepicker('setDate', date.newDateFormat());
-            //}
-            //}
 
             if (typeof (currentRowChild) === "undefined" || typeof (currentRowChild) === "NaN") {
                 currentRowChild = 1;
@@ -2180,10 +2154,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     //row.find(".partial-date").removeAttr("disabled");
                     row.find(".confirmed-date").removeAttr("disabled");
                     row.find(".delivery-method").removeAttr("disabled");
-
-                    //if (typeof row.find(".pd-item-confirm-qty").attr("placeholder") !== typeof undefined && row.find(".pd-item-confirm-qty").attr("placeholder") !== false) {
-                    //    row.find(".pd-item-confirm-qty").val(row.find(".pd-item-confirm-qty").attr("placeholder").replace('Qty available ', ''));
-                    //}
                 }
                 row.find(".btn.btn-positive").removeAttr("disabled");
                 row.find(".btn.btn-negative").removeAttr("disabled");
@@ -2193,9 +2163,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     row.find(".partial-date").attr("disabled", "disabled");
                     row.find(".confirmed-date").attr("disabled", "disabled");
                     row.find(".delivery-method").attr("disabled", "disabled");
-                    //row.find(".pd-item-confirm-qty").val("");
-                    //row.find(".partial-date").val("dd/mm/yyyy");
-                    //row.find(".confirmed-date").val("dd/mm/yyyy");
 
                     resetRowItem($(this).closest(".po-item-data-content"));
                     resetRowHeightToFull($(this).closest(".po-item-container"));
@@ -2496,8 +2463,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
             $(this).parent().find("button").removeAttr("disabled");
             $(this).parent().find("button").removeClass("selected selected-negative");
-            //alert($(this).parent().find("button").html());
-            //$(this).closest(".input-group").find("button.btn-positive").removeAttr("disabled");
         })
 
         /*-----------------------------------------------------------------Stage 2------------------------------------------------------------------------------*/
@@ -2843,23 +2808,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 fileUploadATA = inputFilePrimer;
             }
 
-            //var newETADate = new Date(ETADate);
-            //var newATADate;
-
-            //if (ATADate == null) {
-            //    errorMessage += "- Actual Date Must Be Filled\n";
-            //    isValid = false;
-            //}
-            //else
-            //{
-            //    newATADate = new Date(ATADate);
-            //    alert(newATADate);
-            //    if (newETADate < newATADate && ATALate == "") {
-            //        errorMessage += "- Reason Must Be Filled\n";
-            //        isValid = false;
-            //    }
-            //}
-
             if (ETADate < ATADate && ATALate == null) {
                 errorMessage += "- Reason Must Be Filled\n";
                 isValid = false;
@@ -3004,11 +2952,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (response) {
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
-                        //if (invoiceMethod.val() == "partial") {
-                        //    stage6Child.find(".form-upload").removeAttr("hidden");
-                        //} else {
-                        //    stage6Child.find(".form-upload").attr("hidden", true);
-                        //}
                         stage6Parent.find(".gr-full-fill").removeAttr("disabled");
                         stage6Child.find(".gr-full-fill").removeAttr("disabled");
                         alert(response.responseText);
