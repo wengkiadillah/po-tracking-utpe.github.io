@@ -77,6 +77,14 @@
                         <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
                             <i class="fas fa-plane"></i> <span>PO Import</span>
                         </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
                     </li>
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local"))
@@ -85,6 +93,14 @@
                         <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
                             <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
                         </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
                     </li>
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont"))
@@ -93,6 +109,14 @@
                         <a href="~/SubCont/index" class="main-menu__link" data-menu="Subcontract">
                             <i class="fas fa-cogs"></i> <span>Subcontract</span>
                         </a>
+                        <ul class="main-menu-submenu list-unstyled">
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Import</a>
+                            </li>
+                            <li class="main-menu-submenu-item">
+                                <a href="#" class="main-menu-submenu__link" data-menu="performance purchaser">Local</a>
+                            </li>
+                        </ul>
                     </li>
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
