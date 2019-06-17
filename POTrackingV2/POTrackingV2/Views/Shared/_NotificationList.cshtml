@@ -170,7 +170,13 @@
 
                             else {
                                 //var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                                //onclick ='javascript:myFunc(" + ID + ")'
+                                //var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                                if (statusID == 1) {
+                                    url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage + "'onclick ='javascript:myFunc(" + ID + ")";
+                                }
+                                //'url' onclick ='javascript:myFunc(" + ID + ")'
                                 message = "";
                             }
 
