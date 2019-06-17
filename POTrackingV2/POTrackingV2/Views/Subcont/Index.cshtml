@@ -475,8 +475,8 @@
                                     </div>
                                     <div class="po-item-data-header__column">
                                         <div class="form-inline icon-display">
-                                            @*<a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
-                                            <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>*@
+                                            <a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                            <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
                                             <a href="#" class="btn-icon edit-row" @hideEditButton><i class="far fa-edit"></i></a>
                                         </div>
                                     </div>
@@ -566,8 +566,8 @@
                                             </div>
                                             <div class="po-item-data-header__column">
                                                 <div class="form-inline icon-display">
-                                                    @*<a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
-                                                    <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>*@
+                                                    <a href="#" class="btn-icon add-row" style="visibility:hidden"><i class="fas fa-plus-circle"></i></a>
+                                                    <a href="#" class="btn-icon del-row" style="visibility:hidden"><i class="fas fa-minus-circle"></i></a>
                                                     <a href="#" class="btn-icon edit-row" @hideEditBtnChild><i class="far fa-edit"></i></a>
                                                 </div>
                                             </div>
@@ -1908,17 +1908,17 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var currentRowChild = stage1Child.find(".po-item-data-content").last().attr("child");
 
             if (lastRowStage1.attr("child") > 1) {
-                if (currentRowChild > 1) {
-                    stage1Outer.find(".partial-date").val($(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + 1 + " .partial-date").val());
-                    for (i = 1; i < currentRowChild; i++) {
-                        var child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date");
-                        var nextChild = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + (i + 1) + " .partial-date");
-                        child.val(nextChild.val()).change();
-                        if (i == currentRowChild - 1) {
-                            child.attr("disabled", "disabled");
-                        }
-                    }
-                }
+                //if (currentRowChild > 1) {
+                //    stage1Outer.find(".partial-date").val($(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + 1 + " .partial-date").val());
+                //    for (i = 1; i < currentRowChild; i++) {
+                //        var child = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + i + " .partial-date");
+                //        var nextChild = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__child .row-" + row + "-" + (i + 1) + " .partial-date");
+                //        child.val(nextChild.val()).change();
+                //        if (i == currentRowChild - 1) {
+                //            child.attr("disabled", "disabled");
+                //        }
+                //    }
+                //}
 
                 lastRowStage1.remove();
                 lastRowStage2.remove();
