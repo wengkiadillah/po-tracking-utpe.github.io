@@ -1,4 +1,5 @@
-﻿// Validations
+﻿//procurement
+// Validations
 $(".st3-item-confirm-payment-date").on('input focus', function (e) {
     this.reportValidity();
 });

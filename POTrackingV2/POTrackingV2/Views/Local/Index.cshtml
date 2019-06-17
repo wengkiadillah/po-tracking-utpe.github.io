@@ -1236,7 +1236,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == "procurement" || roleID == "administrator")
+                    @if (roleID == "vendor")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -1318,7 +1318,7 @@
                                 }
                             }
 
-                            if (roleID == "procurement" || roleID == "administrator")
+                            if (roleID == "vendor")
                             {
                                 hiddenCheckbox = "style=visibility:hidden";
                                 hiddenEditButton = "hidden";
@@ -1392,7 +1392,7 @@
                                                 }
                                             }
 
-                                            if (roleID == "procurement" || roleID == "administrator")
+                                            if (roleID == "vendor")
                                             {
                                                 hiddenCheckbox = "style=visibility:hidden";
                                                 hiddenEditButton = "hidden";
@@ -2500,7 +2500,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 });
             });
 
-            $("#searchMaterial").on("focus", function () {
+            $("#searchMaterial").on("keyup focus", function () {
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetDataForSearch", "Local")",
