@@ -96,13 +96,6 @@
     </div>
 </div>
 
-@*<div>
-        <span>MyUser : @ViewBag.MyUser</span>
-        <span>Role : @ViewBag.Role</span>
-        <span>RoleType : @ViewBag.RoleType</span>
-    </div>*@
-
-
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
@@ -115,10 +108,10 @@
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial));
     }
 
-    if (roleID == "procurement" || roleID == "administrator")
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue);
-    }
+    //if (roleID == "procurement" || roleID == "administrator")
+    //{
+    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue);
+    //}
 
     if (purchasingDocumentItems.Count() < 1)
     {

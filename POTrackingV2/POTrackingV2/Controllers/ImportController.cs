@@ -53,9 +53,9 @@ namespace POTrackingV2.Controllers
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
-                pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                                .AsQueryable();
+                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                //                .AsQueryable();
 
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
@@ -77,9 +77,9 @@ namespace POTrackingV2.Controllers
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
             {
-                pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                                .AsQueryable();
+                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                //                .AsQueryable();
             }
             else
             {
