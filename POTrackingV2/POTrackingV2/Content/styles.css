@@ -171,8 +171,12 @@ body {
             margin-right: 0px;
         }
 
-        .notification-list-item a {
+        .notification-list-item i {
             color: #C0C0C0;
+        }
+
+        .notification-list-item a {
+            color: #007bff;
         }
 
         .notification-list-item > i.approved {
