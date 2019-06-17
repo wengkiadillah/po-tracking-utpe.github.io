@@ -303,6 +303,18 @@ namespace POTrackingV2.Controllers
 
                             if (Existed_PDI.Quantity == item.ConfirmedQuantity && Existed_PDI.DeliveryDate == item.ConfirmedDate)
                             {
+                                Notification notificationInfo = new Notification();
+                                notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
+                                notificationInfo.StatusID = 1;
+                                notificationInfo.Stage = "1";
+                                notificationInfo.Role = "subcontdev";
+                                notificationInfo.isActive = true;
+                                notificationInfo.Created = now;
+                                notificationInfo.CreatedBy = User.Identity.Name;
+                                notificationInfo.Modified = now;
+                                notificationInfo.ModifiedBy = User.Identity.Name;
+                                db.Notifications.Add(notificationInfo);
+
                                 Existed_PDI.ConfirmedDate = item.ConfirmedDate;
                                 Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
                             }
@@ -694,8 +706,21 @@ namespace POTrackingV2.Controllers
 
                         Existed_PDI.ConfirmedItem = true;
 
+                        //kalo qty & date sama
                         if(Existed_PDI.Quantity == confirmedItemQty && Existed_PDI.DeliveryDate == confirmedDate)
                         {
+                            Notification notificationInfo = new Notification();
+                            notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
+                            notificationInfo.StatusID = 1;
+                            notificationInfo.Stage = "1";
+                            notificationInfo.Role = "subcontdev";
+                            notificationInfo.isActive = true;
+                            notificationInfo.Created = now;
+                            notificationInfo.CreatedBy = User.Identity.Name;
+                            notificationInfo.Modified = now;
+                            notificationInfo.ModifiedBy = User.Identity.Name;
+                            db.Notifications.Add(notificationInfo);
+
                             Existed_PDI.ConfirmedDate = confirmedDate;
                             Existed_PDI.ConfirmedQuantity = confirmedItemQty;
                         }
