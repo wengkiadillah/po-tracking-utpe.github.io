@@ -265,6 +265,7 @@ namespace POTrackingV2.Controllers
                       POSubcont = (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode),
                       PONumber = x.PurchasingDocumentItem.PO.Number,
                       POQty = x.PurchasingDocumentItem.ConfirmedQuantity,
+                      PDIID = x.PurchasingDocumentItem.ID,
                       material = x.PurchasingDocumentItem.Material,
                       GRDate = x.GoodsReceiptDate,
                       GRQty = x.GoodsReceiptQuantity,
