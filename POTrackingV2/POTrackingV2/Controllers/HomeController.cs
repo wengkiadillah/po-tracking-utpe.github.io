@@ -127,6 +127,28 @@ namespace POTrackingV2.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult DeleteNotification(int notificationID)
+        {
+            DateTime now = DateTime.Now;
+            try
+            {
+                Notification existedNotification = db.Notifications.Where(x => x.ID == notificationID).FirstOrDefault();
+                if (existedNotification != null)
+                {
+                    existedNotification.isActive = false;
+                    existedNotification.Modified = now;
+                    existedNotification.ModifiedBy = User.Identity.Name;
+                }
+                db.SaveChanges();
+                return Json(new { success = true, responseCode = "200", responseText = "item deleted" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = true, responseCode = "200", responseText = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpGet]
         public JsonResult GetNotificationByRole(string role)
         {
@@ -143,25 +165,27 @@ namespace POTrackingV2.Controllers
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
 
-                if (myUser.Roles == LoginConstants.RoleProcurement || myUser.Roles == LoginConstants.RoleSubcontDev)
+                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                    if (myUser.Roles == LoginConstants.RoleSubcontDev)
+                    if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+
+                        notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                     }
                     else
                     {
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.ToList();
+                        var noShowNotifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
 
                         if (myUserNRPs.Count > 0)
                         {
                             foreach (var myUserNRP in myUserNRPs)
                             {
-                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP).ToList();
+                                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
                             }
                         }
 
@@ -171,10 +195,12 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                    if (userEksternal != null)
-                    {
-                        vendorCode.Add(userEksternal.VendorCode);
-                    }
+
+                    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == userEksternal.VendorCode);
+                    //if (userEksternal != null)
+                    //{
+                    //    vendorCode.Add(userEksternal.VendorCode);
+                    //}
                 }
 
                 //if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
@@ -232,13 +258,14 @@ namespace POTrackingV2.Controllers
                 var notificationsDTO = notifications.Select(x =>
                   new
                   {
-                      id = x.ID,
+                      ID = x.ID,
                       VendorCode = x.PurchasingDocumentItem.PO.VendorCode,
                       POImport = x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08",
                       POLocal = (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode),
                       POSubcont = (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode),
                       PONumber = x.PurchasingDocumentItem.PO.Number,
                       POQty = x.PurchasingDocumentItem.ConfirmedQuantity,
+                      PDIID = x.PurchasingDocumentItem.ID,
                       material = x.PurchasingDocumentItem.Material,
                       GRDate = x.GoodsReceiptDate,
                       GRQty = x.GoodsReceiptQuantity,
@@ -311,7 +338,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username == username).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {

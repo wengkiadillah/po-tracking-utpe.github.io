@@ -17,6 +17,7 @@ namespace POTrackingV2.Models
         public int ID { get; set; }
         public int IssueHeaderID { get; set; }
         public string PONumber { get; set; }
+        public string PRNumber { get; set; }
         public string PartNumber { get; set; }
         public string MaterialName { get; set; }
         public Nullable<int> MovementType { get; set; }
@@ -25,5 +26,7 @@ namespace POTrackingV2.Models
         public string CreatedBy { get; set; }
         public System.DateTime LastModified { get; set; }
         public string LastModifiedBy { get; set; }
+    
+        public virtual IssueHeader IssueHeader { get; set; }
     }
 }

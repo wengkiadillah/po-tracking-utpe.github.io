@@ -1525,7 +1525,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 activeStages.sort();
                 findID = ".po-sign-row-" + count;
                 var biggestActiveStages = activeStages[activeStages.length - 1];
-                console.log("ini" + biggestActiveStages);
+                //console.log("ini" + biggestActiveStages);
                 $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
                 count++;
             });
@@ -2015,7 +2015,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
                                 btnEditItem.addClass("editable");
                             }
-                            if (role == "subcontdev" || (deliveryDate == confirmedDate.val() || maxQuantity == confirmedQtyParent.val())) {
+                            if (role == "subcontdev" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                             }
 
@@ -2080,7 +2080,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         //Material:
                                         //Description:
                                     });
-
                                     if (role == "subcontdev") {
                                         $(this).find(".checkbox-item").addClass("isUpdated");
                                         $(this).find(".btn-positive").addClass("buttonClicked");
@@ -2246,7 +2245,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var newDate = confirmedDate.val().replaceDayMonth();
                     if (!isNaN(Date.parse(newDate))) {
                         obj.preventDefault();
-                        console.log("masuk sini");
+                        //console.log("masuk sini");
                         //console.log("role = " + role + "pdItemID = " + pdItemID + "confirmedItemQty = " + confirmedItemQty.val() + "confirmedDate = " + newDate + "isCanceledPOItem = " + isCanceledPOItem);
                         $.ajax({
                             type: "POST",
@@ -2876,7 +2875,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var formData = new FormData();
                     for (var i = 0; i < fileUploadATA.files.length; i++) {
                         var file = fileUploadATA.files[i];
-
                         formData.append("pdItemID", pdItemID);
                         formData.append("PBActualDate", newPBActualDate);
                         formData.append("settingActualDate", newSettingActualDate);
@@ -2888,6 +2886,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         formData.append("primerActualReason", newPrimerActualReason);
                         formData.append("invoices", file);
                     }
+                    //for (var value of formData.values()) {
+                    //    console.log(value);
+                    //}
                     $.ajax({
                         type: "POST",
                         url: "@Url.Action("SaveSequencesProgress", "Subcont")",
@@ -2897,7 +2898,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         success: function (response) {
                             if (response.responseCode == "200") {
                                 alert(response.responseText);
-
                                 if ($("#ATAPB").val()) {
                                     var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                                     ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
@@ -3074,7 +3074,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         });
 
         $(".file-invoice-remove").on("click", function (obj) {
-            var saveButton = $(this);
+            var saveButton = $(this).closest(".po-item-data-header__column").find(".save-invoice");
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content__outer").attr("row");
 
