@@ -240,7 +240,7 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
             $(".row-updated-donut").removeClass("row-updated-donut");
             $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            $(".row-updated-next-content").find(".st3-checkbox-item").first().removeAttr("disabled");
+            $(".row-updated-next-content").find(".st3-checkbox-item").removeAttr("disabled");
         }
     });
 });
