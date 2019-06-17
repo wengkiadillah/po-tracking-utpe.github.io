@@ -249,9 +249,13 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".row-updated-donut-text").first().text("2");
                                     $(".row-updated-donut").first().removeClass("row-updated-donut");
                                     $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                    editButton.attr("style", "visibility:display");
                                 }
                                 else {
+                                    $(".next-row-updated").first().attr("disabled");
                                     $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().attr("mindate", "");
                                     $(".next-row-updated-input").first().removeClass("next-row-updated-input");
 
                                     $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
@@ -560,6 +564,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
 
+                        $(".row-updated-link").attr("style", "visibility:display");
                         $(".row-updated-link").removeClass("row-updated-link");
                     }
                     else {

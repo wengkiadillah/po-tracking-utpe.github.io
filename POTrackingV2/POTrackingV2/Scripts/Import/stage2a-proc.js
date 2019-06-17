@@ -1,78 +1,115 @@
-﻿//// Donut Progress
-//var donutProgressUnit = 75.39822368615503 / 12;
-//var donutProgress = 75.39822368615503 - 4 * donutProgressUnit;
+﻿// Procurement Ask Proforma
+$(".st2a-ask-proforma").on("click", function (obj) {
 
-////Procurement Approve Proforma Invoice uploaded by Vendor
-//$(".st2a-approve-proforma-proc").on("click", function (obj) {
-//    obj.preventDefault();
+    var stage2aProcurementAskProformaInvoice = $("#stage2aProcurementAskProformaInvoice").val();
+    obj.preventDefault();
 
-//    var buttonApprovePI = $(this);
-//    var buttonDisapprovePI = $(this).closest(".form-inline").find(".st2a-disapprove-proforma-proc");
+    var buttonAskProforma = $(this);
+    var buttonSkipProforma = $(this).closest(".po-form-item-st2a").find(".st2a-skip-proforma");
+    var buttonUploadProformaInvoice = $(this).closest(".po-form-item-st2a").find(".st2a-upload-proforma-invoice");
+    var inputFileProformaInvoice = $(this).closest(".po-form-item-st2a").find(".st2a-file-proforma-invoice");
 
-//    var itemID = $(this).closest(".form-inline").find(".st2a-item-id").val();
+    var inputPurchasingDocumentItemID = $(this).closest(".po-form-item-st2a").find(".st2a-item-id").val();
 
-//    var inputPurchasingDocumentItem = {
-//        ID: itemID
-//    };
+    //// Donut Progress
+    //var donutProgressUnit = 75.39822368615503 / 13;
+    //var donutProgress = 75.39822368615503 - 4 * donutProgressUnit;
+    //var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    //cssRow = cssRow.replace(" ", ".");
+    //cssRow = "." + cssRow;
+    //var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-//    //Donut
-//    var cssRow = $(this).closest(".po-item-data-content").prop("class");
-//    cssRow = cssRow.replace(" ", ".");
-//    cssRow = "." + cssRow;
-//    donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+    //// Next stage Controller
+    //cssRow = $(this).closest(".po-item-data-content").prop("class");
+    //cssRow = cssRow.replace(" ", ".");
+    //cssRow = "." + cssRow;
+    //var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
-//    if (itemID !== null) {
-//        $.ajax({
-//            type: "POST",
-//            url: "ProcurementApprovePI",
-//            data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
-//            contentType: "application/json; charset=utf-8",
-//            success: function (response) {
-//                alert(response.responseText);
+    if (inputPurchasingDocumentItemID !== '') {
+        $.ajax({
+            type: "POST",
+            url: stage2aProcurementAskProformaInvoice,
+            data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                alert(response.responseText);
 
-//                buttonApprovePI.addClass("selected").attr("disabled", "disabled");
-//                buttonDisapprovePI.attr("disabled", "disabled");
+                buttonUploadProformaInvoice.attr("disabled", "disabled");
+                inputFileProformaInvoice.attr("disabled", "disabled");
+                buttonSkipProforma.attr("disabled", "disabled");
+                buttonAskProforma.attr("disabled", "disabled").addClass("selected");
 
-//                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-//                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
-//            },
-//            error: function (xhr, status, error) {
-//                alert(xhr.status + " : " + error);
-//            }
-//        });
-//    }
-//});
+                //donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                //donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
 
+                //nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-checkbox-item").first().attr("checked", "checked");
+                //nextDataContent.find(".st3-item-confirm-payment-date").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-confirm-payment-submit").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-skip-confirm-payment").first().removeAttr("disabled");
 
-////Procurement Disapprove Proforma Invoice uploaded by Vendor
-//$(".st2a-disapprove-proforma-proc").on("click", function (obj) {
-//    obj.preventDefault();
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.status + " : " + error);
+            }
+        });
+    }
+});
 
-//    var buttonDisapprovePI = $(this);
-//    var buttonApprovePI = $(this).closest(".form-inline").find(".st2a-approve-proforma-proc");
-//    var proformaInvoiceItemIDBox = $(this).closest(".form-inline").find(".st2a-item-id");
+// Procurement Skip Proforma
+$(".st2a-skip-proforma").on("click", function (obj) {
 
-//    var proformaInvoiceItemID = proformaInvoiceItemIDBox.val();
+    var stage2aProcurementSkipProformaInvoice = $("#stage2aProcurementSkipProformaInvoice").val();
+    obj.preventDefault();
 
-//    var inputPurchasingDocumentItem = {
-//        ID: proformaInvoiceItemID
-//    };
+    var buttonSkipProforma = $(this);
+    var buttonAskProforma = $(this).closest(".po-form-item-st2a").find(".st2a-ask-proforma");
+    var buttonUploadProformaInvoice = $(this).closest(".po-form-item-st2a").find(".st2a-upload-proforma-invoice");
+    var inputFileProformaInvoice = $(this).closest(".po-form-item-st2a").find(".st2a-file-proforma-invoice");
 
-//    if (proformaInvoiceItemID !== null) {
-//        $.ajax({
-//            type: "POST",
-//            url: "ProcurementDisapprovePI",
-//            data: JSON.stringify({ 'inputPurchasingDocumentItem': inputPurchasingDocumentItem }),
-//            contentType: "application/json; charset=utf-8",
-//            success: function (response) {
-//                alert(response.responseText);
+    var inputPurchasingDocumentItemID = $(this).closest(".po-form-item-st2a").find(".st2a-item-id").val();
 
-//                buttonApprovePI.attr("disabled", "disabled");
-//                buttonDisapprovePI.addClass("selected-negative").attr("disabled", "disabled");
-//            },
-//            error: function (xhr, status, error) {
-//                alert(xhr.status + " : " + error);
-//            }
-//        });
-//    }
-//});
+    // Donut Progress
+    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgress = 75.39822368615503 - 4 * donutProgressUnit;
+    var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+    if (inputPurchasingDocumentItemID !== '') {
+        $.ajax({
+            type: "POST",
+            url: stage2aProcurementSkipProformaInvoice,
+            data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                alert(response.responseText);
+
+                buttonUploadProformaInvoice.attr("disabled", "disabled");
+                inputFileProformaInvoice.attr("disabled", "disabled");
+                buttonSkipProforma.attr("disabled", "disabled").addClass("selected-negative");
+                buttonAskProforma.attr("disabled", "disabled");
+
+                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
+
+                nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-checkbox-item").first().attr("checked", "checked");
+                //nextDataContent.find(".st3-item-confirm-payment-date").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-confirm-payment-submit").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-skip-confirm-payment").first().removeAttr("disabled");
+
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.status + " : " + error);
+            }
+        });
+    }
+});

@@ -277,6 +277,7 @@ namespace POTrackingV2.Controllers
                       POConfirmedItem = x.PurchasingDocumentItem.ConfirmedItem,
                       CountEtaHistory = x.PurchasingDocumentItem.ETAHistories.Count,
                       ConfirmFirstETA = x.PurchasingDocumentItem.ETAHistories.OrderBy(y => y.Created).FirstOrDefault().AcceptedByProcurement,
+                      AskProformaInvoice = x.PurchasingDocumentItem.ApproveProformaInvoiceDocument,
                       ProformaInvoice = x.PurchasingDocumentItem.ProformaInvoiceDocument,
                       ConfirmedPaymentReceive = x.PurchasingDocumentItem.ConfirmReceivedPaymentDate,
                       SecondETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderByDescending(y => y.Created).FirstOrDefault().ETADate,

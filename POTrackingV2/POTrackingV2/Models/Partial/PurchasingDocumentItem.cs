@@ -662,6 +662,29 @@ namespace POTrackingV2.Models
             }
         }
 
+        public string QuantityView
+        {
+            get
+            {
+                int length = this.Quantity.ToString().Length;
+                int count = 0;
+
+                string quantityView = this.Quantity.ToString();
+
+                for (int i = length; i > 0; i--)
+                {
+                    if (count == 3)
+                    {
+                        quantityView = quantityView.Insert(i, ".");
+                        count = 0;
+                    }
+                    count++;
+                }
+
+                return quantityView;
+            }
+        }
+
         public string NetPriceView
         {
             get
@@ -728,7 +751,7 @@ namespace POTrackingV2.Models
                 if (this.ParentID == null || this.ParentID == this.ID)
                 {
                     List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == this.ID).ToList();
-                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "E").ToList();
+                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "Q" && x.DocumentNumber!=null).ToList();
 
                     string empty = "-";
 
@@ -763,7 +786,7 @@ namespace POTrackingV2.Models
                 if (this.ParentID == null || this.ParentID == this.ID)
                 {
                     List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == this.ID).ToList();
-                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "E").ToList();
+                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "Q" && x.DocumentNumber != null).ToList();
 
                     List<string> TermDateViews = new List<string>();
 
@@ -777,7 +800,7 @@ namespace POTrackingV2.Models
                         {
                             if (purchasingDocumentItemHistory.PayTerms.Length >= 2)
                             {
-                                var result = purchasingDocumentItemHistory.PayTerms.Substring(purchasingDocumentItemHistory.PayTerms.Length - 2);
+                                var result = purchasingDocumentItemHistory.PayTerms.Substring(purchasingDocumentItemHistory.PayTerms.Length - 3);
                                 int number;
                                 int days;
                                 bool success = Int32.TryParse(result, out number);
