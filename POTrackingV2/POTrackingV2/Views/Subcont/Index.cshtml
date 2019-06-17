@@ -418,10 +418,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            //if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)))
                             if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
-                            //if (ViewBag.CurrentRoleID == "vendor" && (purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity))
-                            //if (ViewBag.CurrentRoleID == 3 && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -2009,9 +2006,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             confirmedQtyParent.addClass("isUpdated");
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
-                            if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
+                            //if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
                                 btnEditItem.addClass("editable");
-                            }
+                            //}
                             if (role == "subcontdev" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                                 donutRow.addClass("progressChanged");
@@ -2264,9 +2261,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 btnConfirmPO.attr("disabled", "disabled");
                                 btnCancelPO.attr("disabled", "disabled");
                                 inputQty.attr("disabled", "disabled");
-                                if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
+                                //if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
                                     btnEditItem.attr("style", "visibility:display");
-                                }
+                                //}
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
                                 } else {
