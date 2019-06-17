@@ -1092,12 +1092,84 @@ namespace POTrackingV2.Controllers
 
                     string downloadUrl = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", fileName);
 
-                    return Json(new { responseText = $"File successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"Proforma Invoice successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"Proforma Invoice not uploaded" }, JsonRequestBehavior.AllowGet);
                 }
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+                return View(errorMessage);
+            }
+        }
+
+        // POST: Import/VendorUploadProformaInvoice
+        [HttpPost]
+        public ActionResult VendorUploadAllProformaInvoice(List<int> inputPurchasingDocumentItemIDs, HttpPostedFileBase[] fileProformaInvoices)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+            {
+                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                int count = 0;
+                List<string> downloadURLs = new List<string>();
+
+                foreach (var inputPurchasingDocumentItemID in inputPurchasingDocumentItemIDs)
+                {
+                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+                    if (fileProformaInvoices[count].ContentLength > 0 && databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                    {
+                        string user = User.Identity.Name;
+
+                        string fileName = $"{inputPurchasingDocumentItemID.ToString()}_{Path.GetFileName(fileProformaInvoices[count].FileName)}";
+                        string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Import/ProformaInvoice"), fileName);
+
+                        using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
+                        {
+                            fileProformaInvoices[count].InputStream.CopyTo(fileStream);
+                        }
+
+                        databasePurchasingDocumentItem.ProformaInvoiceDocument = fileName;
+                        databasePurchasingDocumentItem.ActiveStage = "3";
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 1;
+                        notification.Stage = "2a";
+                        notification.Role = "procurement";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        downloadURLs.Add(Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", fileName));
+                        count++;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new { responseText = $"{count} Proforma Invoice successfully uploaded", proformaInvoiceUrls = downloadURLs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
