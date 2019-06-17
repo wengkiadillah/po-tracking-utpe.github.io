@@ -16,7 +16,7 @@
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 @*<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>*@
-<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
+<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Outstanding</a><span class="page-subtitle">History</span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -353,7 +353,7 @@
                             var hideEditButton = "";
                             var disabledInputQty = "";
                             var disabledBtnConfirmCancel = "";
-                            var disabledCheckbox = "";
+                            var disabledCheckbox = "disabled";
                             var selectedBtnConfirm = "";
                             var selectedBtnCancel = "";
                             var checkItem = "";
