@@ -302,7 +302,7 @@
                         {
                             <div class="po-item-data-content row-@rowInformation">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.QuantityView</span>
+                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity.ToString()</span>
                                     <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
                                     <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
                                     <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
@@ -945,8 +945,34 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-3">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 2a</p>
+                    @{
+                        var st2aCheckboxAll = "st2a-checkbox-all";
+                        var st2aConfirmAll = "st2a-ask-first-eta-all";
+                        var st2aSkipAll = "st2a-skip-first-eta-all";
+                        var disabledst2aConfirmAll = "";
+                        var disabledst2aSkipAll = "";
+
+                        if (roleID == "vendor")
+                        {
+                            st2aCheckboxAll = "";
+                            st2aConfirmAll = "";
+                            st2aSkipAll = "";
+                            disabledst2aConfirmAll = "disabled";
+                            disabledst2aSkipAll = "disabled";
+                        }
+                    }
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom @st2aCheckboxAll" type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div><p class="mb-0">Stage 2a</p></div>
+                        <div>
+                            <input class="btn btn-positive @st2aConfirmAll" type="submit" value="Need All" @disabledst2aConfirmAll />
+                            <input class="btn btn-negative @st2aSkipAll" type="submit" value="Skip All" @disabledst2aSkipAll />
+                        </div>
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
@@ -960,6 +986,7 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage2a = 1;
 
+                            var st2aCheckboxItem = "st2a-checkbox-item";
                             var st2aItemId = "st2a-item-id";
                             var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
                             var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
@@ -967,6 +994,7 @@
                             var st2aAskProforma = "st2a-ask-proforma";
                             var st2aSkipProforma = "st2a-skip-proforma";
 
+                            var disabledInputCheckbox = "disabled";
                             var disabledFileProformaInvoice = "disabled";
                             var disabledUploadProformaInvoice = "disabled";
                             var disabledSkipProforma = "disabled";
@@ -979,6 +1007,7 @@
                             var hiddenAskProforma = "hidden";
                             var hiddenSkipProforma = "hidden";
                             var downloadPath = "";
+                            var isChecked = "";
 
 
                             if (roleID == "procurement" || roleID == "administrator")
@@ -994,10 +1023,9 @@
                                     hiddenUploadedDiv = "";
                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
                                 }
-                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null && purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    disabledAskProforma = "";
-                                    disabledSkipProforma = "";
+                                    disabledInputCheckbox = "";
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                 {
@@ -1035,6 +1063,7 @@
                                     disabledSkipProforma = "disabled";
                                     selectedAskProforma = "selected";
                                     disabledUploadProformaInvoice = "";
+                                    disabledFileProformaInvoice = "";
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                 {
@@ -1049,6 +1078,10 @@
                                     <form class="po-form-item-st2a">
                                         <div class="po-item-data-header__column">
                                             <div class="form-inline" @hiddenInputDiv>
+                                                <label class="checkbox-custom__label">
+                                                    <input class="checkbox-custom @st2aCheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                    <span class="checkmark"></span>
+                                                </label>
                                                 <div class="form-group mr-2">
                                                     <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
                                                     <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
@@ -1073,7 +1106,7 @@
                                     {
                                         foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
-
+                                            disabledInputCheckbox = "disabled";
                                             disabledFileProformaInvoice = "disabled";
                                             disabledUploadProformaInvoice = "disabled";
                                             disabledSkipProforma = "disabled";
@@ -1086,6 +1119,9 @@
                                             hiddenAskProforma = "hidden";
                                             hiddenSkipProforma = "hidden";
                                             downloadPath = "";
+                                            isChecked = "";
+
+
 
                                             if (roleID == "procurement" || roleID == "administrator")
                                             {
@@ -1100,10 +1136,9 @@
                                                     hiddenUploadedDiv = "";
                                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
                                                 }
-                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null && childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    disabledAskProforma = "";
-                                                    disabledSkipProforma = "";
+                                                    disabledInputCheckbox = "";
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                                 {
@@ -1141,6 +1176,7 @@
                                                     disabledSkipProforma = "disabled";
                                                     selectedAskProforma = "selected";
                                                     disabledUploadProformaInvoice = "";
+                                                    disabledFileProformaInvoice = "";
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                                 {
@@ -1154,6 +1190,10 @@
                                                 <form class="po-form-item-st2a">
                                                     <div class="po-item-data-header__column">
                                                         <div class="form-inline" @hiddenInputDiv>
+                                                            <label class="checkbox-custom__label">
+                                                                <input class="checkbox-custom @st2aCheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                                <span class="checkmark"></span>
+                                                            </label>
                                                             <div class="form-group mr-2">
                                                                 <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
                                                                 <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
@@ -1897,7 +1937,7 @@
                 </div>
                 <div class="po-item-section stage-6">
                     @{
-                        var st5CheckboxAll =  "st5-checkbox-all";
+                        var st5CheckboxAll = "st5-checkbox-all";
                         var st5ConfirmAll = "st5-confirm-all";
                         var disabledst5ConfirmAll = "";
 
@@ -1907,7 +1947,7 @@
                             st5ConfirmAll = "";
                             disabledst5ConfirmAll = "disabled";
                         }
-                     }
+                    }
 
                     <div class="po-item-section-header stage-checkbox-header">
                         <div>
@@ -2186,7 +2226,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-8">
-                    @{  
+                    @{
                         var st7CheckboxAll = "st7-checkbox-all";
                         var st7ConfirmAllOnAirport = "st7-confirm-all-on-airport";
                         var disabledst7ConfirmAllOnAirport = "";
@@ -2734,78 +2774,92 @@
                         }
                     </div>
                 </div>
-                @if (roleID == "procurement" || roleID == "administrator")
-                {
-                    <div class="po-item-section stage-11">
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 10</p>
+                <div class="po-item-section stage-11">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 10</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Parking Date</span>
+                            <span class="po-item-data-header__text delivery">Term Date</span>
                         </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text document_number">Parking Date</span>
-                                <span class="po-item-data-header__text delivery">Term Date</span>
-                            </div>
-                            @{
-                                var rowStage11 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        @{
+                            var rowStage11 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage11 = 1;
+
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
+
+                            if (parkingDateViews != null)
                             {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage11 = 1;
+                                maxCount = parkingDateViews.Count;
+                            }
 
-                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                                var termDateViews = purchasingDocumentItem.TermDateViews;
-                                var maxCount = 0;
+                            var count = 0;
 
-                                if (parkingDateViews != null)
-                                {
-                                    maxCount = parkingDateViews.Count;
-                                }
+                            <div class="po-item-data-content row-@rowStage11">
+                                <div class="po-item-data-content__outer">
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
 
-                                var count = 0;
-
-                                <div class="po-item-data-content row-@rowStage11">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                             <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">-</span>
                                             <span class="po-item-data-header__column delivery">-</span>
                                         }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                    }
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        count++;
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage11-@childRowStage11 mt-customize" row="@rowStage11" child="@childRowStage11">
-                                                    @if (maxCount >= count + 1)
+                                            <div class="po-item-data-content row-@rowStage11-@childRowStage11 mt-customize" row="@rowStage11" child="@childRowStage11">
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                                         <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">-</span>
                                                         <span class="po-item-data-header__column delivery">-</span>
                                                     }
-                                                </div>
-                                                childRowStage11++;
-                                                count++;
-                                            }
+                                                }
+                                            </div>
+                                            childRowStage11++;
+                                            count++;
                                         }
-                                    </div>
+                                    }
                                 </div>
-                                rowStage11++;
-                            }
-                        </div>
+                            </div>
+                            rowStage11++;
+                        }
                     </div>
-                }
+                </div>
+
             </div>
         </li>
     </ul>
