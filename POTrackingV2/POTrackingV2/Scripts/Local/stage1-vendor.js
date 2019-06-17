@@ -526,6 +526,8 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".row-updated-donut-text").first().text("2");
                                     $(".row-updated-donut").first().removeClass("row-updated-donut");
                                     $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                    editButton.attr("style", "visibility:display");
                                 }
                                 else {
                                     $(".next-row-updated").first().removeClass("next-row-updated");
