@@ -549,7 +549,7 @@
     <Content Include="Scripts\Import\stage2-vendor.js" />
     <Content Include="Scripts\Import\stage2a-proc.js" />
     <Content Include="Scripts\Import\stage2a-vendor.js" />
-    <Content Include="Scripts\Import\stage3-vendor.js" />
+    <Content Include="Scripts\Import\stage3-procurement.js" />
     <Content Include="Scripts\Import\stage4-vendor.js" />
     <Content Include="Scripts\Import\stage5-vendor.js" />
     <Content Include="Scripts\Import\stage6-vendor.js" />

@@ -84,10 +84,23 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
                 success: function (response) {
                     alert(response.responseText);
 
-                    buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
-                    checkboxItem.attr("disabled", "disabled");
-                    inputFirstEtaDate.attr("disabled", "disabled");
-                    buttonEdit.attr("style", "visibility:display");
+                    for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                        if (response.isSameAsProcs[i] === true) {
+                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                            checkboxItem.attr("disabled", "disabled");
+                            inputFirstEtaDate.attr("disabled", "disabled");
+                            buttonEdit.attr("style", "visibility:display");
+
+                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+                        }
+                        else {
+                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                            checkboxItem.attr("disabled", "disabled");
+                            inputFirstEtaDate.attr("disabled", "disabled");
+                            buttonEdit.attr("style", "visibility:display");
+                        }
+                    }
 
                     //donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                     //donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
@@ -135,11 +148,11 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
         var etaDate = inputFirstEtaDate.val();
         var etaDateObject = reverseDayMonth(etaDate);
 
-        ////progress donutpie
-        //var cssRow = $(this).closest(".po-item-data-content").prop("class");
-        //cssRow = cssRow.replace(" ", ".");
-        //cssRow = "." + cssRow;
-        //var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+        //progress donutpie
+        var cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
         ////next stage Controller
         //cssRow = $(this).closest(".po-item-data-content").prop("class");
@@ -163,8 +176,8 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                     //nextDataContent.find(".st2a-file-proforma-invoice").first().addClass("next-row-updated");
                     //nextDataContent.find(".st2a-upload-proforma-invoice").first().addClass("next-row-updated");
 
-                    //donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
-                    //donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+                    donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                 }
                 else {
                     alert("The Date cannot be less than the Date agreed on stage 1");
@@ -187,20 +200,40 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                $(".row-updated-link").attr("style", "visibility:display");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").removeClass("row-updated-button");
-                $(".row-updated-link").removeClass("row-updated-link");
+                for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                    if (response.isSameAsProcs[i] === true) {
+                        $(".row-updated").attr("disabled", "disabled");
+                        $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                        $(".row-updated-link").attr("style", "visibility:display");
+                        $(".row-updated").removeClass("row-updated");
+                        $(".row-updated-button").removeClass("row-updated-button");
+                        $(".row-updated-link").removeClass("row-updated-link");
 
-                //$(".next-row-updated").removeAttr("disabled");
-                //$(".next-row-updated").removeClass("next-row-updated");
+                        //$(".next-row-updated").removeAttr("disabled");
+                        //$(".next-row-updated").removeClass("next-row-updated");
 
-                //$(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                //$(".row-updated-donut-text").text("2a");
-                //$(".row-updated-donut").removeClass("row-updated-donut");
-                //$(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                        $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                        $(".row-updated-donut-text").text("2a");
+                        $(".row-updated-donut").removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    }
+                    else {
+                        $(".row-updated").attr("disabled", "disabled");
+                        $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                        $(".row-updated-link").attr("style", "visibility:display");
+                        $(".row-updated").removeClass("row-updated");
+                        $(".row-updated-button").removeClass("row-updated-button");
+                        $(".row-updated-link").removeClass("row-updated-link");
+
+                        //$(".next-row-updated").removeAttr("disabled");
+                        //$(".next-row-updated").removeClass("next-row-updated");
+
+                        //$(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                        //$(".row-updated-donut-text").text("2a");
+                        $(".row-updated-donut").removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    }
+                }
 
             },
             error: function (xhr, status, error) {

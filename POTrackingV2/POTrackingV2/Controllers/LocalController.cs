@@ -378,6 +378,19 @@ namespace POTrackingV2.Controllers
                                 notification.ModifiedBy = User.Identity.Name;
 
                                 db.Notifications.Add(notification);
+
+                                notification = new Notification();
+                                notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notification.StatusID = 1;
+                                notification.Stage = "1";
+                                notification.Role = "procurement";
+                                notification.isActive = true;
+                                notification.Created = now;
+                                notification.CreatedBy = User.Identity.Name;
+                                notification.Modified = now;
+                                notification.ModifiedBy = User.Identity.Name;
+
+                                db.Notifications.Add(notification);
                             }
                             else
                             {
@@ -650,6 +663,8 @@ namespace POTrackingV2.Controllers
 
                 if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "2" || databasePurchasingDocumentItem.ActiveStage == "0")
                 {
+                    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+
                     databasePurchasingDocumentItem.ConfirmedItem = false;
                     databasePurchasingDocumentItem.OpenQuantity = null;
                     databasePurchasingDocumentItem.ActiveStage = "1";
@@ -668,32 +683,37 @@ namespace POTrackingV2.Controllers
                         previousNotification.isActive = false;
                     }
 
-                    Notification notificationProc = new Notification();
-                    notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notificationProc.StatusID = 2;
-                    notificationProc.Stage = "1";
-                    notificationProc.Role = "procurement";
-                    notificationProc.isActive = true;
-                    notificationProc.Created = now;
-                    notificationProc.CreatedBy = User.Identity.Name;
-                    notificationProc.Modified = now;
-                    notificationProc.ModifiedBy = User.Identity.Name;
+                    if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+                    {
 
-                    db.Notifications.Add(notificationProc);
+                        Notification notificationVend = new Notification();
+                        notificationVend.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationVend.StatusID = 2;
+                        notificationVend.Stage = "1";
+                        notificationVend.Role = "vendor";
+                        notificationVend.isActive = true;
+                        notificationVend.Created = now;
+                        notificationVend.CreatedBy = User.Identity.Name;
+                        notificationVend.Modified = now;
+                        notificationVend.ModifiedBy = User.Identity.Name;
 
+                        db.Notifications.Add(notificationVend);
+                    }
+                    else
+                    {
+                        Notification notificationProc = new Notification();
+                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationProc.StatusID = 2;
+                        notificationProc.Stage = "1";
+                        notificationProc.Role = "procurement";
+                        notificationProc.isActive = true;
+                        notificationProc.Created = now;
+                        notificationProc.CreatedBy = User.Identity.Name;
+                        notificationProc.Modified = now;
+                        notificationProc.ModifiedBy = User.Identity.Name;
 
-                    Notification notificationVend = new Notification();
-                    notificationVend.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notificationVend.StatusID = 2;
-                    notificationVend.Stage = "1";
-                    notificationVend.Role = "vendor";
-                    notificationVend.isActive = true;
-                    notificationVend.Created = now;
-                    notificationVend.CreatedBy = User.Identity.Name;
-                    notificationVend.Modified = now;
-                    notificationVend.ModifiedBy = User.Identity.Name;
-
-                    db.Notifications.Add(notificationVend);
+                        db.Notifications.Add(notificationProc);
+                    }                    
                 }
 
                 db.SaveChanges();
