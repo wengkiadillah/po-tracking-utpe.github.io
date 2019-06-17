@@ -235,7 +235,7 @@
                                     var isChild = "style=visibility:hidden";
                                     donutProgressValue = Convert.ToDouble(purchasingDocumentItemChild.ActiveStageToNumber) / 7 * 100;
 
-                                    <div class="po-item-data-content row-@row-rowChild" row="@row" child="@rowChild">
+                                    <div class="po-item-data-content row-@row-@rowChild" row="@row" child="@rowChild">
                                         <span class="po-item-data-header__column item-id" @isChild>@purchasingDocumentItemChild.ItemNumber</span>
                                         <span class="po-item-data-header__column material" @isChild>@purchasingDocumentItemChild.Material</span>
                                         <span class="po-item-data-header__column description" @isChild>
@@ -259,6 +259,7 @@
                                             </div>
                                         }
                                     </div>
+                                    rowChild++;
                                 }
                             </div>
                         </div>
@@ -918,6 +919,7 @@
                             }
 
                             if (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                            //if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             {
                                 grFullFill = "gr-full-fill";
                             }
@@ -972,6 +974,7 @@
                                         }
 
                                         if (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
+                                        //if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
                                         {
                                             grFullFill = "gr-full-fill";
                                         }
@@ -1035,23 +1038,33 @@
                         @{
                             row = 1;
                             rowChild = 1;
+                            var hidden = "";
                         }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
+                            if (purchasingDocumentItem.ActiveStageToNumber < 7)
+                            {
+                                hidden = "hidden";
+                            }
                             var dateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column parking-date">@dateNewFormat</span>
-                                    <span class="po-item-data-header__column term-date">@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
+                                    <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat</span>
+                                    <span class="po-item-data-header__column term-date" @hidden>@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
+                                        hidden = "";
+                                        if (purchasingDocumentItem.ActiveStageToNumber < 7)
+                                        {
+                                            hidden = "hidden";
+                                        }
                                         dateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                            <span class="po-item-data-header__column document-number">@dateNewFormat</span>
-                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
+                                            <span class="po-item-data-header__column document-number"@hidden>@dateNewFormat</span>
+                                            <span class="po-item-data-header__column gr-date"@hidden>@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
                                         </div>
                                         rowChild++;
                                     }
@@ -1954,6 +1967,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var checkedItemParent = $(this).find(".checkbox-item");
                 var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
                 var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+                var childNumber = $(this).closest(".po-item-data-content").attr("child");
                 var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
                 var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
                 var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
@@ -1967,6 +1981,15 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var btnEditItem = $(this).find(".edit-row");
                 var btnAddItem = $(this).find(".add-row");
                 var btnDellItem = $(this).find(".del-row");
+
+                var progressNumber = 2;
+                var donutProgressUnit = 75.39822368615503 / 7;
+                var donutProgress = (7 - progressNumber) * donutProgressUnit;
+                var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+                if (childNumber > 0) {
+                    donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+                }
+
 
                 if (checkedItemParent.attr("disabled") != "disabled" && checkedItemParent.prop("checked") == true) {
                     if (confirmedDate.val().length == 10 && partialDateOuter.val().length == 10) {
@@ -1991,8 +2014,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                             if (role == "subcontdev" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
+                                donutRow.addClass("progressChanged");
                             }
-
                         } else {
                             partialDateOuter.focus();
                             isValidDate = false;
@@ -2060,6 +2083,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         $(this).find(".btn").addClass("isUpdated");
                                         $(this).find(".edit-row").addClass("editable");
                                         stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + "-" + $(this).closest(".po-item-data-content").attr("child") + " .sequences-modal").addClass("enableButton");
+                                        donutRow.addClass("progressChanged");
                                     }
 
                                     confirmedEtaDate.addClass("isUpdated");
@@ -2114,6 +2138,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $(".editable").attr("style", "visibility:display");
                             $(".po-item-data-content").removeClass("isUpdated buttonClicked editable");
                             $(".enableButton").removeAttr("disabled");
+
+                            $(".progressChanged").find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                            $(".progressChanged").find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+                            $(".po-item-section-body").removeClass("progressChanged");
+
                             saveAll.closest(".stage-1").find(".add-row").attr("style", "visibility:hidden");
                             saveAll.closest(".stage-1").find(".del-row").attr("style", "visibility:hidden");
                         } else {
@@ -2179,6 +2208,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var checkedItem = $(this).closest(".po-item-data-content__outer").find(".checkbox-item");
             var information = $(this).closest(".custom-scrollbar").find(".po-item-section.information");
             var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+            var childNumber = $(this).closest(".po-item-data-content").attr("child");
             var maxQuantity = information.find(".po-item-data-content.row-" + rowNumber + ".information .quantity").text();
             var deliveryDate = information.find(".po-item-data-content.row-" + rowNumber + ".information .delivery").text();
             var deliveryMethod = $(this).closest(".po-item-data-content__outer").find(".delivery-method");
@@ -2190,6 +2220,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var isCanceledPOItem = false;
             var stage2 = $(this).closest(".custom-scrollbar").find(".stage-2");
             var row = $(this);
+            var progressNumber = 2;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
+            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            if (childNumber > 0) {
+                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+            }
 
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                 deliveryMethod = $(this).closest(".po-item-data-content").find(".delivery-method-child");
@@ -2212,7 +2249,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var newDate = confirmedDate.val().replaceDayMonth();
                     if (!isNaN(Date.parse(newDate))) {
                         obj.preventDefault();
-                        //console.log("masuk sini");
                         //console.log("role = " + role + "pdItemID = " + pdItemID + "confirmedItemQty = " + confirmedItemQty.val() + "confirmedDate = " + newDate + "isCanceledPOItem = " + isCanceledPOItem);
                         $.ajax({
                             type: "POST",
@@ -2228,7 +2264,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 btnConfirmPO.attr("disabled", "disabled");
                                 btnCancelPO.attr("disabled", "disabled");
                                 inputQty.attr("disabled", "disabled");
-                                if (maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
+                                if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
                                     btnEditItem.attr("style", "visibility:display");
                                 }
                                 if (isCanceledPOItem == true) {
@@ -2236,22 +2272,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 } else {
                                     if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
+                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                                     }
                                     btnConfirmPO.addClass("selected");
                                 }
-                                //var result = $(response).find("#rowPlan" + idUnit);
-                                //$("#rowPlan" + idUnit).html(result);
-                                ////calculateLayout();
-                                //$('.loading').addClass('hide');
-
-                                ////$("body").html(response);
-                                //calculateLayout();
-                                //feather.replace();
-                                //$(".tooltip").remove();
-                                //$('[data-toggle="tooltip"]').tooltip();
-                                ////setTimeout(function () {
-                                ////    $(".loading-background").remove();
-                                ////}, 1000);
                             },
                             error: function (xhr, status, error) {
                                 alert(xhr.status + " : " + error);
@@ -2403,6 +2428,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             } else {
                                 if (role == "subcontdev") {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
+                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                                 }
                                 btnConfirmPO.addClass("selected");
                             }
@@ -2590,6 +2617,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
         //Save Define Sequence Vendor or Confirm sequence Procurement
         $("#btnSaveDefineSequences").on("click", function (obj) {
+            var rowNumber = $("#sequencesModal").attr("row");
+            var childNumber = $("#sequencesModal").attr("child");
             var stage3 = $(this).closest(".custom-scrollbar").find(".stage-3");
             var pdItemID = $("#item-id-sequences").val();
             var pb = parseInt($("#PB").val());
@@ -2598,6 +2627,14 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var primer = parseInt($("#Primer").val());
             var totalLeadTime = parseInt($("#LeadTime").text());
             var total = pb + setting + fullweld + primer;
+
+            var progressNumber = 3;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
+            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            if (childNumber > 0) {
+                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+            }
 
             if (totalLeadTime == 0) {
                 alert("Data Component Not Found");
@@ -2614,11 +2651,15 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (response) {
                         //$(".open-edit-sequences").attr("disabled", "disabled");
                         //$(".sequences-modal").removeClass("open-edit-sequences");
-                        if (typeof ($("#sequencesModal").attr("child")) === "undefined" || typeof ($("#sequencesModal").attr("child")) === "NaN") {
-                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
+                        if (childNumber > 0) {
+                            stage3.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + " .input-progress").removeAttr("disabled");
                         } else {
-                            stage3.find(".po-item-data-content.row-" + $("#sequencesModal").attr("row") + "-" + $("#sequencesModal").attr("child") + " .input-progress").removeAttr("disabled");
+                            stage3.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
                         }
+
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+
                         $("#close-sequence").click();
                         alert(response.responseText);
                     },
@@ -2635,7 +2676,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
-
+            $(".input-progress").removeClass("modal-progess-show");
+            $(this).addClass("modal-progess-show");
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                 $("#inputProgressModalLabel").attr("child", $(this).closest(".po-item-data-content").attr("child"));
             } else {
@@ -2761,12 +2803,20 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         //Save Progress Data
         $("#SaveSequencesProgress").on("click", function (obj) {
             var pdItemID = $("#inputProgressModalLabel").attr("item-id");
-            var row = $("#inputProgressModalLabel").attr("row");
-            var stage5Outer = $(this).closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
-            var stage4Outer = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
-            var stage4Child = $(this).closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + row + " .po-item-data-content__child");
-
-
+            var rowNumber = $("#inputProgressModalLabel").attr("row");
+            var childNumber = $("#inputProgressModalLabel").attr("child");
+            var stage5Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var stage4Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var stage4Child = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child");
+            
+            var progressNumber = 4;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
+            var donutRow = $(".modal-progess-show").closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            if (childNumber > 0) {
+                donutRow = $(".modal-progess-show").closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+            }
+            
             var isValid = true;
             var errorMessage = "";
 
@@ -2823,7 +2873,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var formData = new FormData();
                     for (var i = 0; i < fileUploadATA.files.length; i++) {
                         var file = fileUploadATA.files[i];
-
                         formData.append("pdItemID", pdItemID);
                         formData.append("PBActualDate", newPBActualDate);
                         formData.append("settingActualDate", newSettingActualDate);
@@ -2875,15 +2924,23 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAPrimer").val()) {
                                     $("#ATAPrimer").attr("disabled", "disabled");
                                     $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
-                                        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
-                                        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
-                                    }
-                                    if ($("#inputProgressModalLabel").attr("child") > 0) {
-                                        stage4Child.find(".po-item-data-content").attr("style", "visibility:display");
+                                   
+                                    if (childNumber > 0) {
+                                        stage4Child.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber).attr("style", "visibility:display");
                                     } else {
                                         stage4Outer.attr("style", "visibility:display");
                                     }
+
+                                    if (stage5Outer.find(".invoice-method-parent").val() == "" || stage5Outer.find(".invoice-method-parent").val() == "undefined") {
+                                        stage5Outer.find(".invoice-method-parent").removeAttr("disabled");
+                                        stage5Outer.find(".save-invoice-method-parent").removeAttr("disabled");
+                                        var progressNumber = 5;
+                                        var donutProgressUnit = 75.39822368615503 / 7;
+                                        var donutProgress = (7 - progressNumber) * donutProgressUnit;
+                                    }
+
+                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                                     $("#close-input-progress").click();
                                 } else {
                                     $("#ATAFullweld").val() ? ($("#ATAPrimer").removeAttr("disabled"), $("#inputFilePrimer").removeAttr("disabled")) : ($("#ATAPrimer").attr("disabled", "disabled"), $("#inputFilePrimer").attr("disabled", "disabled"));
@@ -2941,6 +2998,16 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var row = $(this).closest(".po-item-data-content").attr("row");
             var stage6Parent = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
+            var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+            var childNumber = $(this).closest(".po-item-data-content").attr("child");
+
+            var progressNumber = 6;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
+            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            if (childNumber > 0) {
+                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+            }
 
             if (invoiceMethod.val() != "") {
                 $.ajax({
@@ -2950,11 +3017,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     contentType: "application/x-www-form-urlencoded; charset=utf-8",
                     //dataType: "json",
                     success: function (response) {
+                        alert(response.responseText);
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
                         stage6Parent.find(".gr-full-fill").removeAttr("disabled");
                         stage6Child.find(".gr-full-fill").removeAttr("disabled");
-                        alert(response.responseText);
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                     },
                     error: function (xhr, status, error) {
                         alert(xhr.status + " : " + error);
@@ -2968,27 +3037,35 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".save-invoice").on("click", function (obj) {
             var saveButton = $(this);
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
-            var row = $(this).closest(".po-item-data-content__outer").attr("row");
-
+            var rowNumber = $(this).closest(".po-item-data-content").attr("row");
+            var childNumber = $(this).closest(".po-item-data-content").attr("child");
+            var stage7 = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-7 .po-item-data-content.row-" + rowNumber + "");
+            if (childNumber > 0) {
+                $(this).closest(".custom-scrollbar").find(".po-item-section.stage-7 .po-item-data-content.row-" + rowNumber + "-" + childNumber);
+            }
             var fileInvoice = $(this).closest(".po-item-data-header__column").find(".file-invoice");
             var fileInvoiceDOM = $(this).closest(".po-item-data-header__column").find(".file-invoice").get(0);
             var formUploaded = $(this).closest(".po-item-data-header__column").find(".form-uploaded");
             var formUploading = $(this).closest(".po-item-data-header__column").find(".form-upload");
 
-            if ($(this).closest(".po-item-data-content").attr("child") > 0) {
+            if (childNumber > 0) {
                 pdItemID = $(this).closest(".po-item-data-content").find(".pd-item-id").val();
-                row = $(this).closest(".po-item-data-content").attr("row");
+            }
+            var progressNumber = 7;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
+            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            if (childNumber > 0) {
+                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
             }
 
             var formData = new FormData();
             for (var i = 0; i < fileInvoiceDOM.files.length; i++) {
                 var file = fileInvoiceDOM.files[i];
-
                 formData.append("fileInvoice", file);
                 formData.append("inputPurchasingDocumentItemID", pdItemID);
             }
             if (fileInvoiceDOM.files.length > 0) {
-
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("VendorUploadInvoice", "Subcont")",
@@ -3002,8 +3079,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             fileInvoice.attr("disabled", "disabled");
                             formUploading.attr("hidden", true);
                             formUploaded.removeAttr("hidden");
-
                             formUploaded.find(".file-invoice-download").attr("href", response.invoiceUrl);
+                            stage7.find(".po-item-data-header__column").removeAttr("hidden");
+                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                         } else {
                             alert(response.responseCode+response.responseText);
                         }
