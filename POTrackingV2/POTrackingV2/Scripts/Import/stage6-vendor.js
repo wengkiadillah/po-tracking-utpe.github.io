@@ -55,30 +55,30 @@ $(document).on("click", ".st6-fill-in-the-form", function () {
                 modalContent.find(".st6-fill-the-form").addClass("selected");
             }
             else {
-                modalContent.find(".st6-copy-bl-date").val("");
+                //modalContent.find(".st6-copy-bl-date").val("");
                 modalContent.find(".st6-copy-bl-date").removeAttr("disabled");
 
                 modalContent.find(".st6-group-copy-bl-document").removeAttr("hidden");
                 modalContent.find(".st6-copy-bl-document").removeAttr("disabled");
-                modalContent.find(".st6-copy-bl-document").val('');
+                //modalContent.find(".st6-copy-bl-document").val('');
                 modalContent.find(".st6-group-copy-bl-document-uploaded").attr("hidden", true);
                 modalContent.find(".st6-copy-bl-document-download").attr("href", "");
 
                 modalContent.find(".st6-group-packing-list-document").removeAttr("hidden");
                 modalContent.find(".st6-packing-list-document").removeAttr("disabled");
-                modalContent.find(".st6-packing-list-document").val('');
+                //modalContent.find(".st6-packing-list-document").val('');
                 modalContent.find(".st6-group-packing-list-document-uploaded").attr("hidden", true);
                 modalContent.find(".st6-packing-list-document-download").attr("href", "");
 
                 modalContent.find(".st6-group-invoice-document").removeAttr("hidden");
                 modalContent.find(".st6-invoice-document").removeAttr("disabled");
-                modalContent.find(".st6-invoice-document").val('');
+                //modalContent.find(".st6-invoice-document").val('');
                 modalContent.find(".st6-group-invoice-document-uploaded").attr("hidden", true);
                 modalContent.find(".st6-invoice-document-download").attr("href", "");
 
-                modalContent.find(".st6-AWB").val("");
+                //modalContent.find(".st6-AWB").val("");
                 modalContent.find(".st6-AWB").removeAttr("disabled");
-                modalContent.find(".st6-courier-name").val("");
+                //modalContent.find(".st6-courier-name").val("");
                 modalContent.find(".st6-courier-name").removeAttr("disabled");
 
                 modalContent.find(".st6-fill-the-form").removeAttr("disabled");
