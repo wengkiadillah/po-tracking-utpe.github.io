@@ -243,6 +243,7 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".next-row-updated").first().removeAttr("disabled");
                                     $(".next-row-updated").first().removeClass("next-row-updated");
                                     $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
+                                    $(".next-row-updated-input").first().val(inputConfirmedDate.val());
                                     $(".next-row-updated-input").first().removeClass("next-row-updated-input");
 
                                     $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
@@ -557,6 +558,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".next-row-updated").first().removeAttr("disabled");
                         $(".next-row-updated").first().removeClass("next-row-updated");
                         $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
+                        $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
                         $(".next-row-updated-input").first().removeClass("next-row-updated-input");
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
