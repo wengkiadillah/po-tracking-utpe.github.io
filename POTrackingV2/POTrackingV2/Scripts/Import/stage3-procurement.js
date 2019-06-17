@@ -149,7 +149,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-                //nextDataContent.addClass("row-updated-next-content");
+                //nextDataContent.first().addClass("row-updated-next-content");
             }
             else {
                 alert("Date cannot be empty");
