@@ -366,31 +366,31 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ActiveStage = "2";
                                 isSameAsProcs.Add(true);
 
-                                Notification notification = new Notification();
-                                notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                                notification.StatusID = 3;
-                                notification.Stage = "1";
-                                notification.Role = "vendor";
-                                notification.isActive = true;
-                                notification.Created = now;
-                                notification.CreatedBy = User.Identity.Name;
-                                notification.Modified = now;
-                                notification.ModifiedBy = User.Identity.Name;
+                                Notification notificationVendor = new Notification();
+                                notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notificationVendor.StatusID = 3;
+                                notificationVendor.Stage = "1";
+                                notificationVendor.Role = "vendor";
+                                notificationVendor.isActive = true;
+                                notificationVendor.Created = now;
+                                notificationVendor.CreatedBy = User.Identity.Name;
+                                notificationVendor.Modified = now;
+                                notificationVendor.ModifiedBy = User.Identity.Name;
 
-                                db.Notifications.Add(notification);
+                                db.Notifications.Add(notificationVendor);
 
-                                notification = new Notification();
-                                notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                                notification.StatusID = 1;
-                                notification.Stage = "1";
-                                notification.Role = "procurement";
-                                notification.isActive = true;
-                                notification.Created = now;
-                                notification.CreatedBy = User.Identity.Name;
-                                notification.Modified = now;
-                                notification.ModifiedBy = User.Identity.Name;
+                                Notification notificationProcurement = new Notification();
+                                notificationProcurement.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notificationProcurement.StatusID = 1;
+                                notificationProcurement.Stage = "1";
+                                notificationProcurement.Role = "procurement";
+                                notificationProcurement.isActive = true;
+                                notificationProcurement.Created = now;
+                                notificationProcurement.CreatedBy = User.Identity.Name;
+                                notificationProcurement.Modified = now;
+                                notificationProcurement.ModifiedBy = User.Identity.Name;
 
-                                db.Notifications.Add(notification);
+                                db.Notifications.Add(notificationProcurement);
                             }
                             else
                             {
@@ -452,6 +452,8 @@ namespace POTrackingV2.Controllers
                             notification.ModifiedBy = User.Identity.Name;
 
                             db.Notifications.Add(notification);
+
+                            db.SaveChanges();
                             counter++;
                         }
                     }
