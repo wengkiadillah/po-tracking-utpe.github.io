@@ -171,8 +171,12 @@ body {
             margin-right: 0px;
         }
 
-        .notification-list-item a {
+        .notification-list-item i {
             color: #C0C0C0;
+        }
+
+        .notification-list-item a {
+            color: #007bff;
         }
 
         .notification-list-item > i.approved {
@@ -1182,4 +1186,35 @@ a[data-toggle="collapse"] {
 
 .po-item-data-content__outer .icon-display {
     min-width: 43.516px;
+}
+
+span.pull-right-container {
+    position: absolute;
+    right: 10px;
+}
+
+small.label.pull-right.bg-yellow {
+    background-color: #f39c12 !important;
+}
+
+small.label.pull-right.bg-green {
+    background-color: #00a65a !important;
+}
+
+small.label.pull-right.bg-red {
+    background-color: #dd4b39 !important;
+    margin-right: 4px;
+}
+
+small.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
 }
