@@ -2875,7 +2875,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var formData = new FormData();
                     for (var i = 0; i < fileUploadATA.files.length; i++) {
                         var file = fileUploadATA.files[i];
-
                         formData.append("pdItemID", pdItemID);
                         formData.append("PBActualDate", newPBActualDate);
                         formData.append("settingActualDate", newSettingActualDate);
@@ -2887,6 +2886,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         formData.append("primerActualReason", newPrimerActualReason);
                         formData.append("invoices", file);
                     }
+                    //for (var value of formData.values()) {
+                    //    console.log(value);
+                    //}
                     $.ajax({
                         type: "POST",
                         url: "@Url.Action("SaveSequencesProgress", "Subcont")",
@@ -2896,7 +2898,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         success: function (response) {
                             if (response.responseCode == "200") {
                                 alert(response.responseText);
-
                                 if ($("#ATAPB").val()) {
                                     var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                                     ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
