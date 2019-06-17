@@ -288,6 +288,7 @@ namespace POTrackingV2.Controllers
                         //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                         if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != item.ConfirmedQuantity || Existed_PDI.DeliveryDate != item.ConfirmedDate))
                         {
+                            Existed_PDI.ConfirmedItem = null;
                             Existed_PDI.ActiveStage = "1";
                             Existed_PDI.ConfirmedDate = item.ConfirmedDate;
                             Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
@@ -351,7 +352,8 @@ namespace POTrackingV2.Controllers
                                 notification.Role = "vendor";
                             }
 
-                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                            //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
                             if (Existed_notification != null)
                             {
                                 Existed_notification.isActive = false;
@@ -667,7 +669,8 @@ namespace POTrackingV2.Controllers
             {
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
 
-                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
                 if (Existed_notification != null)
                 {
                     Existed_notification.isActive = false;
@@ -691,6 +694,7 @@ namespace POTrackingV2.Controllers
                     //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                     if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != confirmedItemQty || Existed_PDI.DeliveryDate != confirmedDate))
                     {
+                        Existed_PDI.ConfirmedItem = null;
                         Existed_PDI.ActiveStage = "1";
                         Existed_PDI.ConfirmedDate = confirmedDate;
                         Existed_PDI.ConfirmedQuantity = confirmedItemQty;
