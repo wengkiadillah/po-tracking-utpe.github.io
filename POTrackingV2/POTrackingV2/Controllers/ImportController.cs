@@ -187,6 +187,27 @@ namespace POTrackingV2.Controllers
             }
         }
 
+        public JsonResult GetUserDataFromAD(string username)
+        {
+            if (!string.IsNullOrEmpty(username))
+            {
+                SearchResult sResultSet;
+
+                string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
+                string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
+                string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
+                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                {
+                    DirectorySearcher dSearch = new DirectorySearcher(entry);
+                    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
+                    sResultSet = dSearch.FindOne();
+                }
+
+                return Json(new { sResultSet }, JsonRequestBehavior.AllowGet);
+            }
+            return null;
+        }
+
         public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
