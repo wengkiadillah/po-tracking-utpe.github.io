@@ -88,6 +88,8 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
                     nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
                     nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
                     nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-upload-progress-photoes").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-upload-progress-photoes-confirm").first().removeAttr("disabled");
                 },
                 error: function (xhr, status, error) {
                     alert(xhr.status + " : " + error);
