@@ -173,7 +173,7 @@ namespace POTrackingV2.Controllers
                 else if (searchFilterBy == "vendor")
                 {
                     //IEnumerable<Vendor> vendors = db.Vendors.Where(x => x.POes.Any(y => (y.Type.ToLower() == "zo05" || y.Type.ToLower() == "zo09" || y.Type.ToLower() == "zo10") && !vendorSubcont.Contains(y.VendorCode)));
-                    data = vendors.Where(x => x.Name.Contains(value)).Select(x =>
+                    data = vendors.Where(x => x.Name.ToLower().Contains(value.ToLower())).Select(x =>
                     new
                     {
                         Data = x.Name,
