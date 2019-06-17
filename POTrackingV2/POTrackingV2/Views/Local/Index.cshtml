@@ -92,10 +92,11 @@
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed !=null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
 
-    if (roleID == "procurement" || roleID == "administrator")
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
-    }
+  
+    //if (roleID == "procurement" || roleID == "administrator")
+    //{
+    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
+    //}
 
     if (purchasingDocumentItems.Count() < 1)
     {

@@ -1233,7 +1233,7 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == "procurement"|| roleID == "administrator")
+                    @if (roleID == "procurement" || roleID == "administrator")
                     {
                         <div class="po-item-section-header justify-content-center">
                             <p class="mb-0">Stage 3</p>
@@ -3027,20 +3027,19 @@
                         var findID = "#activeStagePo-" + count;
                         var textStage = $(this).find(findID).first().text();
 
-                        if (textStage === "cancel") {
-                            textStage = 0;
-                        }
-                        else if (textStage === "2a") {
-                            textStage = 3;
-                        }
-                        else if (textStage >= 3) {
-                            textStage = parseInt(textStage) + 1;
-                        }
-                        else{
-                            textStage = parseInt(textStage);
-                        }
+                        if (textStage != "") {
+                            if (textStage === "2a") {
+                                textStage = 3;
+                            }
+                            else if (textStage >= 3) {
+                                textStage = parseInt(textStage) + 1;
+                            }
+                            else {
+                                textStage = parseInt(textStage);
+                            }
 
-                        activeStages.push(textStage);
+                            activeStages.push(textStage);
+                        }
                     });
 
                 activeStages.sort();
