@@ -137,7 +137,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-                nextDataContent.first().addClass("row-updated-next-content");
+                nextDataContent.find(".st2a-checkbox-item").first().addClass("row-updated-next-content");
             }
             else {
                 alert("Something went wrong!");
@@ -166,7 +166,7 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
                 $(".row-updated-donut").removeClass("row-updated-donut");
                 $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").find(".st2a-checkbox-item").first().removeAttr("disabled");
+                $(".row-updated-next-content").removeAttr("disabled");
                 $(".row-updated-next-content").removeClass("row-updated-next-content");
             },
             error: function (xhr, status, error) {
