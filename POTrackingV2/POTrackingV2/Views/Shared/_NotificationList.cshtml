@@ -41,7 +41,7 @@
             }
             return parms;
         }
-        function myFunc(id) {
+        function deleteNotification(id, buttonID) {
             if (id != "" && id != null) {
                 $.ajax({
                     type: "POST",
@@ -51,7 +51,7 @@
                     //dataType: "json",
                     success: function (response) {
                         var notificationCount = $(".user-info-notification__count").text();
-                        if (notificationCount != "") {
+                        if (notificationCount != "" && buttonID==1) {
                             $(".user-info-notification__count").text(notificationCount-1);
                         }
                         $(".notification-list-item[id=" + id + "]").remove();
@@ -114,7 +114,7 @@
                             if (statusID == 1) {
                                 className = "fas fa-exclamation-circle important";
                                 //onclick="Data('year', this)"
-                                deletebutton = "<a class='notification-info' href='#' onclick ='javascript:myFunc(" + ID + ")'><i class='fas fa-trash delete-icon'></i></a>";
+                                deletebutton = "<a class='notification-info' href='#' onclick ='javascript:deleteNotification(" + ID + ",1" + ")'><i class='fas fa-trash delete-icon'></i></a>";
                             } else if (statusID == 2) {
                                 className = "fas fa-times-circle rejected";
                             }
@@ -174,7 +174,7 @@
                                 //var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
                                 if (statusID == 1) {
-                                    url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage + "'onclick ='javascript:myFunc(" + ID + ")";
+                                    url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
                                 }
                                 //'url' onclick ='javascript:myFunc(" + ID + ")'
                                 message = "";
