@@ -18,10 +18,14 @@ $(".st2a-checkbox-item").on("change", function (obj) {
 
         row.find(".st2a-ask-proforma").removeAttr("disabled");
         row.find(".st2a-skip-proforma").removeAttr("disabled");
+        row.find(".st2a-file-proforma-invoice").removeAttr("disabled");
+        row.find(".st2a-upload-proforma-invoice").removeAttr("disabled");
 
     } else {
-        row.find(".st2a-ask-proforma").attr("disabled");
-        row.find(".st2a-skip-proforma").attr("disabled");
+        row.find(".st2a-ask-proforma").attr("disabled","disabled");
+        row.find(".st2a-skip-proforma").attr("disabled","disabled");
+        row.find(".st2a-file-proforma-invoice").attr("disabled","disabled");
+        row.find(".st2a-upload-proforma-invoice").attr("disabled","disabled");
     }
 });
 
@@ -220,7 +224,7 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
     $.ajax({
         type: "POST",
         url: stage2aProcurementSkipProformaInvoice,
-        data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
+        data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {

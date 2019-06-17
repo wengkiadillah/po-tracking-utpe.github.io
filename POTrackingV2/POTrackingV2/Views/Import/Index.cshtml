@@ -949,16 +949,26 @@
                         var st2aCheckboxAll = "st2a-checkbox-all";
                         var st2aConfirmAll = "st2a-ask-first-eta-all";
                         var st2aSkipAll = "st2a-skip-first-eta-all";
+                        var st2aUploadAll = "";
                         var disabledst2aConfirmAll = "";
                         var disabledst2aSkipAll = "";
+                        var disabledst2aUploadAll = "disabled";
+                        var hiddenst2aConfirmAll = "";
+                        var hiddenst2aSkipAll = "";
+                        var hiddenst2aUploadAll = "hidden";
 
                         if (roleID == "vendor")
                         {
                             st2aCheckboxAll = "";
                             st2aConfirmAll = "";
                             st2aSkipAll = "";
+                            st2aUploadAll = "st2a-upload-first-eta-all";
                             disabledst2aConfirmAll = "disabled";
                             disabledst2aSkipAll = "disabled";
+                            disabledst2aUploadAll = "";
+                            hiddenst2aConfirmAll = "hidden";
+                            hiddenst2aSkipAll = "hidden";
+                            hiddenst2aUploadAll = "";
                         }
                     }
                     <div class="po-item-section-header stage-checkbox-header">
@@ -970,8 +980,9 @@
                         </div>
                         <div><p class="mb-0">Stage 2a</p></div>
                         <div>
-                            <input class="btn btn-positive @st2aConfirmAll" type="submit" value="Need All" @disabledst2aConfirmAll />
-                            <input class="btn btn-negative @st2aSkipAll" type="submit" value="Skip All" @disabledst2aSkipAll />
+                            <input class="btn btn-positive @st2aUploadAll" type="submit" value="Need All" @disabledst2aUploadAll @hiddenst2aUploadAll />
+                            <input class="btn btn-positive @st2aConfirmAll" type="submit" value="Need All" @disabledst2aConfirmAll @hiddenst2aConfirmAll />
+                            <input class="btn btn-negative @st2aSkipAll" type="submit" value="Skip All" @disabledst2aSkipAll @hiddenst2aSkipAll />
                         </div>
                     </div>
                     <div class="po-item-section-body">
@@ -1032,12 +1043,14 @@
                                     disabledAskProforma = "disabled";
                                     disabledSkipProforma = "disabled";
                                     selectedAskProforma = "selected";
+                                    isChecked = "checked";
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                 {
                                     disabledAskProforma = "disabled";
                                     disabledSkipProforma = "disabled";
                                     selectedSkipProforma = "selected-negative";
+                                    isChecked = "checked";
                                 }
                             }
                             else
@@ -1051,6 +1064,8 @@
                                     hiddenInputDiv = "hidden";
                                     hiddenUploadedDiv = "";
                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                    isChecked = "checked";
+                                    disabledInputCheckbox = "disabled";
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                 {
@@ -1062,8 +1077,7 @@
                                     disabledAskProforma = "disabled";
                                     disabledSkipProforma = "disabled";
                                     selectedAskProforma = "selected";
-                                    disabledUploadProformaInvoice = "";
-                                    disabledFileProformaInvoice = "";
+                                    disabledInputCheckbox = "";
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                 {
@@ -1088,7 +1102,7 @@
                                                     <i class="fas fa-paperclip form-type-icon"></i>
                                                 </div>
                                                 <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                <button class="btn btn-negative @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                 <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                             </div>
                                             <div class="form-inline" @hiddenUploadedDiv>
@@ -1145,12 +1159,14 @@
                                                     disabledAskProforma = "disabled";
                                                     disabledSkipProforma = "disabled";
                                                     selectedAskProforma = "selected";
+                                                    isChecked = "checked";
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                                 {
                                                     disabledAskProforma = "disabled";
                                                     disabledSkipProforma = "disabled";
                                                     selectedSkipProforma = "selected-negative";
+                                                    isChecked = "checked";
                                                 }
                                             }
                                             else
@@ -1164,6 +1180,8 @@
                                                     hiddenInputDiv = "hidden";
                                                     hiddenUploadedDiv = "";
                                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                    isChecked = "checked";
+                                                    disabledInputCheckbox = "disabled";
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                                 {
@@ -1175,8 +1193,7 @@
                                                     disabledAskProforma = "disabled";
                                                     disabledSkipProforma = "disabled";
                                                     selectedAskProforma = "selected";
-                                                    disabledUploadProformaInvoice = "";
-                                                    disabledFileProformaInvoice = "";
+                                                    disabledInputCheckbox = "";
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
                                                 {
@@ -1200,7 +1217,7 @@
                                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                                             </div>
                                                             <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                            <button class="btn btn-negative @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                             <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                                         </div>
 
