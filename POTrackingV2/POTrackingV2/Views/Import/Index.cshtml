@@ -2800,7 +2800,10 @@
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text document_number">Parking Date</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
+                            {
                             <span class="po-item-data-header__text delivery">Term Date</span>
+                            }
                         </div>
                         @{
                             var rowStage11 = 1;
