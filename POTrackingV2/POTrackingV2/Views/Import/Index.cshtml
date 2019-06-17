@@ -3026,19 +3026,20 @@
                     $(this).find(".po-item-section.po-item-sticky .po-item-section-body .po-item-data-content").each(function (index) {
                         var findID = "#activeStagePo-" + count;
                         var textStage = $(this).find(findID).first().text();
-                        var intStage = 0;
 
-                        if (textStage === "2a") {
-                            intStage = 3;
-                        }
-                        else if (textStage >= 3) {
-                            intStage = parseInt(textStage) + 1;
-                        }
-                        else{
-                            intStage = parseInt(textStage);
-                        }
+                        if (textStage != "") {
+                            if (textStage === "2a") {
+                                textStage = 3;
+                            }
+                            else if (textStage >= 3) {
+                                textStage = parseInt(textStage) + 1;
+                            }
+                            else {
+                                textStage = parseInt(textStage);
+                            }
 
-                        activeStages.push(intStage);
+                            activeStages.push(textStage);
+                        }
                     });
 
                 activeStages.sort();
