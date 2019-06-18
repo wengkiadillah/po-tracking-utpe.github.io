@@ -607,7 +607,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var disableDefineSequences = "";
-                            if (purchasingDocumentItem.ActiveStageToNumber < 2)
+                            if (purchasingDocumentItem.ActiveStageToNumber < 2 || purchasingDocumentItem.ConfirmedItem == false)
                             {
                                 disableDefineSequences = "disabled";
                             }
@@ -625,7 +625,7 @@
                                         disableDefineSequences = "";
 
                                         //if ((purchasingDocumentItemChild.ActiveStage != null && Convert.ToInt32(purchasingDocumentItemChild.ActiveStage) < 2) || purchasingDocumentItemChild.ActiveStage == null)
-                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 2)
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 2 || purchasingDocumentItemChild.ConfirmedItem == false)
                                         {
                                             disableDefineSequences = "disabled";
                                         }
@@ -2690,6 +2690,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
+
+            $("#inputFilePB").val("");
+            $("#inputFileSetting").val("");
+            $("#inputFileFullweld").val("");
+            $("#inputFilePrimer").val("");
+
             $(".input-progress").removeClass("modal-progess-show");
             $(this).addClass("modal-progess-show");
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
