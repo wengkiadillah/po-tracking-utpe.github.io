@@ -418,7 +418,21 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
+                            //if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
+                            if (ViewBag.CurrentRoleID == "vendor" &&
+                                    (
+                                        //(purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || 
+                                        //(purchasingDocumentItem.ConfirmedItem == true ||
+                                        //(purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || 
+                                        //purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)
+                                        //)
+                                        /*
+                                        (purchasingDocumentItem.PB != null || purchasingDocumentItem.Setting != null || purchasingDocumentItem.Fullweld != null || purchasingDocumentItem.Primer != null) ||
+                                        (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x=> x.PB != null || x.Setting != null || x.Fullweld != null || x.Primer != null))
+                                        */
+                                        (purchasingDocumentItem.ActiveStageToNumber>2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber >2))
+                                    )
+                                )
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -2616,6 +2630,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $("#btnSaveDefineSequences").on("click", function (obj) {
             var rowNumber = $("#sequencesModal").attr("row");
             var childNumber = $("#sequencesModal").attr("child");
+            var stage1 = $(this).closest(".custom-scrollbar").find(".stage-1");
             var stage3 = $(this).closest(".custom-scrollbar").find(".stage-3");
             var pdItemID = $("#item-id-sequences").val();
             var pb = parseInt($("#PB").val());
@@ -2650,8 +2665,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         //$(".sequences-modal").removeClass("open-edit-sequences");
                         if (childNumber > 0) {
                             stage3.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + " .input-progress").removeAttr("disabled");
+                            stage1.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + " .edit-row").attr("style", "visibility:hidden");
                         } else {
                             stage3.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
+                            stage1.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .edit-row").attr("style", "visibility:hidden");
                         }
 
                         donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
