@@ -32,13 +32,13 @@ $(".st2-checkbox-item").on("change", function (obj) {
         row.find("button.st2-confirm-first-eta").removeAttr("disabled");
     } else {
         row.find("input.st2-first-eta-date").attr("disabled", "disabled");
-        //row.find("input.st2-first-eta-date").val("");
         row.find("button.st2-confirm-first-eta").attr("disabled", "disabled");
     }
 });
 
 // Vendor one input ETA DATE
 $(".st2-confirm-first-eta").on("click", function (obj) {
+
     var stage2VendorConfirmFirstETA = $("#stage2VendorConfirmFirstETA").val();
 
     obj.preventDefault();
@@ -61,7 +61,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     });
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 8;
+    var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -84,17 +84,29 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
                 success: function (response) {
                     alert(response.responseText);
 
-                    buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
-                    checkboxItem.attr("disabled", "disabled");
-                    inputFirstEtaDate.attr("disabled", "disabled");
-                    buttonEdit.attr("style", "visibility:display");
+                    for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                        if (response.isSameAsProcs[i] === true) {
+                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                            checkboxItem.attr("disabled", "disabled");
+                            inputFirstEtaDate.attr("disabled", "disabled");
+                            buttonEdit.attr("style", "visibility:display");
+
+                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+                        }
+                        else {
+                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                            checkboxItem.attr("disabled", "disabled");
+                            inputFirstEtaDate.attr("disabled", "disabled");
+                            buttonEdit.attr("style", "visibility:display");
+                        }
+                    }
 
                     //donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                     //donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
 
                     //nextDataContent.find(".st2a-file-proforma-invoice").first().removeAttr("disabled");
                     //nextDataContent.find(".st2a-upload-proforma-invoice").first().removeAttr("disabled");
-                    //nextDataContent.find(".st2a-vendor-skip-PI").first().removeAttr("disabled");
 
                 },
                 error: function (xhr, status, error) {
@@ -108,7 +120,7 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
         }
     }
     else {
-        alert("Date cannot be empty");
+        alert("Dates cannot be empty");
         inputFirstEtaDate.focus();
     }
 });
@@ -116,9 +128,10 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
 //Vendor input All ETA DATE
 $(".st2-confirm-first-eta-all").on("click", function (obj) {
     var stage2VendorConfirmFirstETA = $("#stage2VendorConfirmFirstETA").val();
+
     obj.preventDefault();
 
-    var donutProgressUnit = 75.39822368615503 / 8;
+    var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
 
     var inputETAHistories = [];
@@ -136,16 +149,16 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
         var etaDateObject = reverseDayMonth(etaDate);
 
         //progress donutpie
-        /*var cssRow = $(this).closest(".po-item-data-content").prop("class");
+        var cssRow = $(this).closest(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-        //next stage Controller
-        cssRow = $(this).closest(".po-item-data-content").prop("class");
-        cssRow = cssRow.replace(" ", ".");
-        cssRow = "." + cssRow;
-        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);*/
+        ////next stage Controller
+        //cssRow = $(this).closest(".po-item-data-content").prop("class");
+        //cssRow = cssRow.replace(" ", ".");
+        //cssRow = "." + cssRow;
+        //var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
         if (inputFirstEtaDate.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
             if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
@@ -160,12 +173,11 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                     inputFirstEtaDate.addClass("row-updated");
                     buttonEdit.addClass("row-updated-link");
 
-                    /*nextDataContent.find(".st2a-file-proforma-invoice").first().addClass("next-row-updated");
-                    nextDataContent.find(".st2a-upload-proforma-invoice").first().addClass("next-row-updated");
-                    nextDataContent.find(".st2a-vendor-skip-PI").first().removeAttr("disabled");
+                    //nextDataContent.find(".st2a-file-proforma-invoice").first().addClass("next-row-updated");
+                    //nextDataContent.find(".st2a-upload-proforma-invoice").first().addClass("next-row-updated");
 
                     donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");*/
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
                 }
                 else {
                     alert("The Date cannot be less than the Date agreed on stage 1");
@@ -173,7 +185,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                 }
             }
             else {
-                alert("The Date cannot be empty");
+                alert("Dates cannot be empty");
                 inputFirstEtaDate.focus();
             }
         }
@@ -188,20 +200,40 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                $(".row-updated-link").attr("style", "visibility:display");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").removeClass("row-updated-button");
-                $(".row-updated-link").removeClass("row-updated-link");
+                for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                    if (response.isSameAsProcs[i] === true) {
+                        $(".row-updated").attr("disabled", "disabled");
+                        $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                        $(".row-updated-link").attr("style", "visibility:display");
+                        $(".row-updated").removeClass("row-updated");
+                        $(".row-updated-button").removeClass("row-updated-button");
+                        $(".row-updated-link").removeClass("row-updated-link");
 
-                /*$(".next-row-updated").removeAttr("disabled");
-                $(".next-row-updated").removeClass("next-row-updated");
+                        //$(".next-row-updated").removeAttr("disabled");
+                        //$(".next-row-updated").removeClass("next-row-updated");
 
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("2a");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");*/
+                        $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                        $(".row-updated-donut-text").text("2a");
+                        $(".row-updated-donut").removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    }
+                    else {
+                        $(".row-updated").attr("disabled", "disabled");
+                        $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                        $(".row-updated-link").attr("style", "visibility:display");
+                        $(".row-updated").removeClass("row-updated");
+                        $(".row-updated-button").removeClass("row-updated-button");
+                        $(".row-updated-link").removeClass("row-updated-link");
+
+                        //$(".next-row-updated").removeAttr("disabled");
+                        //$(".next-row-updated").removeClass("next-row-updated");
+
+                        //$(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                        //$(".row-updated-donut-text").text("2a");
+                        $(".row-updated-donut").removeClass("row-updated-donut");
+                        $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    }
+                }
 
             },
             error: function (xhr, status, error) {
@@ -219,7 +251,3 @@ $(".edit-row-st2").on("click", function (obj) {
     formRow.find(".st2-confirm-first-eta").removeAttr("disabled").removeClass("selected");
     formRow.find(".st2-checkbox-item").removeAttr("disabled");
 });
-
-
-// Helper
-

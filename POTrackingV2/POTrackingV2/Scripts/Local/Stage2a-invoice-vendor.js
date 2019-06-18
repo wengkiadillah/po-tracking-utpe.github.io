@@ -1,6 +1,6 @@
 ﻿//Vendor upload one Proforma Invoice
 $(".st2a-upload-proforma-invoice").on("click", function (obj) {
-    var stage2aVendorUploadInvoice = $("#stage2aVendorUploadInvoice").val();
+    var stage2aVendorUploadProformaInvoice = $("#stage2aVendorUploadProformaInvoice").val();
 
     obj.preventDefault();
 
@@ -29,16 +29,16 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-    // Next stage Controller
-    cssRow = $(this).closest(".po-item-data-content").prop("class");
-    cssRow = cssRow.replace(" ", ".");
-    cssRow = "." + cssRow;
-    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+    //// Next stage Controller
+    //cssRow = $(this).closest(".po-item-data-content").prop("class");
+    //cssRow = cssRow.replace(" ", ".");
+    //cssRow = "." + cssRow;
+    //var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     if (inputFileProformaInvoiceDOM.files.length > 0) {
         $.ajax({
             type: "POST",
-            url: stage2aVendorUploadInvoice,
+            url: stage2aVendorUploadProformaInvoice,
             data: formData,
             processData: false,
             contentType: false,
@@ -49,15 +49,13 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
                 inputFileProformaInvoice.attr("disabled", "disabled");
                 formUploading.attr("hidden", true);
                 formUploaded.removeAttr("hidden");
-                formUploaded.find(".st2a-approve-proforma-proc").attr("hidden", true);
-                formUploaded.find(".st2a-disapprove-proforma-proc").attr("hidden", true);
 
                 formUploaded.find(".st2a-download-proforma").attr("href", response.proformaInvoiceUrl);
 
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
 
-                nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+                //nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
 
             },
             error: function (xhr, status, error) {
@@ -71,7 +69,7 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
 });
 
 // Vendor Skip Proforma
-$(".st2a-vendor-skip-PI").on("click", function (obj) {
+/*$(".st2a-vendor-skip-PI").on("click", function (obj) {
     var stage2aVendorSkipPI = $("#stage2aVendorSkipPI").val();
 
     obj.preventDefault();
@@ -124,4 +122,4 @@ $(".st2a-vendor-skip-PI").on("click", function (obj) {
             }
         });
     }
-});
+});*/

@@ -1,5 +1,4 @@
-﻿//procurement
-// Validations
+﻿// Validations
 $(".st3-item-confirm-payment-date").on('input focus', function (e) {
     this.reportValidity();
 });
@@ -32,7 +31,8 @@ $(".st3-checkbox-item").on("change", function (obj) {
 
 //Vendor click Confirm button Item Quantity
 $(".st3-confirm-payment-submit").on("click", function (obj) {
-    var stage3VendorConfirmPaymentReceived = $("#stage3VendorConfirmPaymentReceived").val();
+
+    var stage3ProcurementConfirmPaymentReceived = $("#stage3ProcurementConfirmPaymentReceived").val();
     obj.preventDefault();
 
     var inputPurchasingDocumentItems = [];
@@ -52,7 +52,7 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
     });
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 8;
+    var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -66,52 +66,44 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     if (confirmedReceivedPaymentDate !== '' && !isNaN(confirmedReceivedPaymentDate.getTime())) {
-        //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
-            $.ajax({
-                type: "POST",
-                url: stage3VendorConfirmPaymentReceived,
-                data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    alert(response.responseText);
+        $.ajax({
+            type: "POST",
+            url: stage3ProcurementConfirmPaymentReceived,
+            data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert(response.responseText);
 
-                    buttonConfirmPayment.attr("disabled", "disabled").addClass("selected");
-                    buttonConfirmPaymentSkip.attr("disabled", "disabled");
-                    inputCheckboxItem.attr("disabled", "disabled");
-                    inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
-                    editRow.attr("style", "visibility:display");
+                buttonConfirmPayment.attr("disabled", "disabled").addClass("selected");
+                buttonConfirmPaymentSkip.attr("disabled", "disabled");
+                inputCheckboxItem.attr("disabled", "disabled");
+                inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
+                editRow.attr("style", "visibility:display");
 
-                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
+                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
 
-                    nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
-                    nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                    nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
-                    nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
-                    //nextDataContent.find(".st4-upload-progress-photoes").first().removeAttr("disabled");
-                    //nextDataContent.find(".st4-upload-progress-photoes-confirm").first().removeAttr("disabled");
-                },
-                error: function (xhr, status, error) {
-                    alert(xhr.status + " : " + error);
-                }
-            });
-            //}
-            //else {
-            //    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
-            //    inputConfirmReceivedPaymentDate.focus();
-            //}
+                //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.status + " : " + error);
+            }
+        });
     }
     else {
-        alert("Date can not be empty");
+        alert("Date cannot be empty");
         inputConfirmReceivedPaymentDate.focus();
     }
 });
 
 //Vendor Confirm All PO -- Save All buat item yang aktif (gak disabled)
 $(".st3-confirm-payment-all").on("click", function (obj) {
-    var stage3VendorConfirmPaymentReceived = $("#stage3VendorConfirmPaymentReceived").val();
 
+    var stage3ProcurementConfirmPaymentReceived = $("#stage3ProcurementConfirmPaymentReceived").val();
     var inputPurchasingDocumentItems = [];
     var donutProgress;
 
@@ -128,7 +120,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
         var confirmedReceivedPaymentDate = reverseDayMonth(inputConfirmReceivedPaymentDate.val());
 
         // Donut Progress
-        var donutProgressUnit = 75.39822368615503 / 8;
+        var donutProgressUnit = 75.39822368615503 / 13;
         donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
         var cssRow = $(this).closest(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");
@@ -143,7 +135,6 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
         if (inputConfirmReceivedPaymentDate.attr("disabled") !== "disabled" && inputCheckboxItem.prop("checked") === true && inputCheckboxItem.attr("disabled") !== "disabled") {
             if (inputConfirmReceivedPaymentDate.val() !== '' && !isNaN(confirmedReceivedPaymentDate.getTime())) {
-                //if (confirmedReceivedPaymentDate >= minDateConfirmReceivedPaymentDate) {
                 inputPurchasingDocumentItems.push({
                     ID: itemID,
                     ConfirmReceivedPaymentDate: confirmedReceivedPaymentDate
@@ -158,12 +149,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-                nextDataContent.addClass("row-updated-next-content");
-                //}
-                //else {
-                //    alert("Tanggal tidak bisa lebih kecil dari kesepakatan di stage 1");
-                //    inputConfirmReceivedPaymentDate.focus();
-                //}
+                //nextDataContent.first().addClass("row-updated-next-content");
             }
             else {
                 alert("Date cannot be empty");
@@ -174,7 +160,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 
     $.ajax({
         type: "POST",
-        url: stage3VendorConfirmPaymentReceived,
+        url: stage3ProcurementConfirmPaymentReceived,
         data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -193,19 +179,18 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
             $(".row-updated-donut").removeClass("row-updated-donut");
             $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            $(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
-            $(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
-            $(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
-            $(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
-            $(".row-updated-next-content").removeClass("row-updated-next-content");
+            //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+            //$(".row-updated-next-content").removeClass("row-updated-next-content");
         }
     });
 });
 
 // Vendor skip Stage 3
 $(".st3-confirm-payment-skip").on("click", function (obj) {
-    var stage3VendorSkipConfirmPayment = $("#stage3VendorSkipConfirmPayment").val();
-
+    var stage3ProcurementSkipConfirmPayment = $("#stage3ProcurementSkipConfirmPayment").val();
     obj.preventDefault();
 
     var buttonConfirmPaymentSkip = $(this);
@@ -217,7 +202,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     var inputPurchasingDocumentItemID = $(this).closest(".form-inline").find("input.st3-item-id").val();
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 8;
+    var donutProgressUnit = 75.39822368615503 / 13;
     var donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -233,7 +218,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     if (inputPurchasingDocumentItemID !== '') {
         $.ajax({
             type: "POST",
-            url: stage3VendorSkipConfirmPayment,
+            url: stage3ProcurementSkipConfirmPayment,
             data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -248,10 +233,10 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
 
-                nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
-                nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
-                nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
 
             },
             error: function (xhr, status, error) {

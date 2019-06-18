@@ -86,7 +86,7 @@ $(".st1-checkbox-item").on("change", function (obj) {
 //Vendor Confirm All PO -- Save All buat item yang aktif (gak disabled)
 $(".st1-accept-all-po").on("click", function (obj) {
     var stage1VendorConfirmQuantity = $("#stage1VendorConfirmQuantity").val();
-    
+
 
     obj.preventDefault();
     var inputPurchasingDocumentItems = [];
@@ -282,16 +282,13 @@ $(".st1-accept-all-po").on("click", function (obj) {
             dataType: "json",
             success: function (response) {
                 alert(response.responseText);
-                //alert(response.isSameAsProcs);
 
                 $(".row-updated").attr("disabled", "disabled");
                 $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                //$(".row-updated-link").attr("style", "visibility:display");
                 $(".row-updated-link-negative").attr("style", "visibility:hidden");
 
                 $(".row-updated").removeClass("selected-negative").removeClass("row-updated");
                 $(".row-updated-button").removeClass("row-updated-button");
-                //$(".row-updated-link").removeClass("row-updated-link");
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
 
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
@@ -300,6 +297,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".next-row-updated").first().removeAttr("disabled");
                         $(".next-row-updated").first().removeClass("next-row-updated");
                         $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
+                        $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
                         $(".next-row-updated-input").first().removeClass("next-row-updated-input");
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
@@ -307,6 +305,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
 
+                        $(".row-updated-link").attr("style", "visibility:display");
                         $(".row-updated-link").removeClass("row-updated-link");
                     }
                     else {
@@ -467,8 +466,6 @@ $(".st1-accept-item").on("click", function (obj) {
         });
     }
 
-    //console.log(inputPurchasingDocumentItems);
-
     if (allQuantity > maxQuantity) {
         validateMaxQuantity = false;
     }
@@ -476,76 +473,71 @@ $(".st1-accept-item").on("click", function (obj) {
         validateMinQuantity = false;
     }
 
-    //progress donutpie
-    //var cssRow = $(this).closest(".po-item-data-content").prop("class");
-    //cssRow = cssRow.replace(" ", ".");
-    //cssRow = "." + cssRow;
-    //var informationDataContent = $(this).closest(".custom-scrollbar").prev().find(cssRow);
-    //var donutProgressUnit = 75.39822368615503 / 12;
-    //var donutProgress = 75.39822368615503 - 1 * donutProgressUnit;
-
     if (validateMaxQuantity === true) {
         if (validateMinQuantity === true) {
             if (validateDate === true) {
                 //if (isEdit === "false") {
-                    $.ajax({
-                        type: "POST",
-                        url: stage1VendorConfirmQuantity,
-                        data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            alert(response.responseText);
+                $.ajax({
+                    type: "POST",
+                    url: stage1VendorConfirmQuantity,
+                    data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        alert(response.responseText);
 
-                            checkboxItem.attr("disabled", "disabled");
-                            inputConfirmedDate.attr("disabled", "disabled");
-                            inputDeliveryMethod.attr("disabled", "disabled");
-                            inputPartialQuantity.attr("disabled", "disabled");
-                            inputPartialDate.attr("disabled", "disabled");
-                            buttonAddRow.attr("style", "visibility:hidden");
-                            buttonDelRow.attr("style", "visibility:hidden");
-                            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
-                            buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
-                            //editButton.attr("style", "visibility:display");
+                        checkboxItem.attr("disabled", "disabled");
+                        inputConfirmedDate.attr("disabled", "disabled");
+                        inputDeliveryMethod.attr("disabled", "disabled");
+                        inputPartialQuantity.attr("disabled", "disabled");
+                        inputPartialDate.attr("disabled", "disabled");
+                        buttonAddRow.attr("style", "visibility:hidden");
+                        buttonDelRow.attr("style", "visibility:hidden");
+                        buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
+                        buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
+                        //editButton.attr("style", "visibility:display");
 
-                            if (deliveryMethod === "partial") {
-                                childRow.find(".po-item-data-content").each(function (index) {
-                                    $(this).find(".st1-partial-confirm-qty").attr("disabled", "disabled");
-                                    $(this).find(".st1-partial-date").attr("disabled", "disabled");
-                                });
-                            }
-
-                            for (var i = 0; i < response.isSameAsProcs.length; i++) {
-                                if (response.isSameAsProcs[i] === true) {
-                                    $(".next-row-updated").first().removeAttr("disabled");
-                                    $(".next-row-updated").first().removeClass("next-row-updated");
-                                    $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
-                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
-
-                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
-                                    $(".row-updated-donut-text").first().text("2");
-                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
-                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
-
-                                    editButton.attr("style", "visibility:display");
-                                }
-                                else {
-                                    $(".next-row-updated").first().removeClass("next-row-updated");
-                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
-
-                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
-                                    $(".row-updated-donut-text").first().text("1");
-                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
-                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
-
-                                    editButton.attr("style", "visibility:display");
-                                }
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            alert(xhr.status + " : " + error);
+                        if (deliveryMethod === "partial") {
+                            childRow.find(".po-item-data-content").each(function (index) {
+                                $(this).find(".st1-partial-confirm-qty").attr("disabled", "disabled");
+                                $(this).find(".st1-partial-date").attr("disabled", "disabled");
+                            });
                         }
-                    });
+
+                        for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                            if (response.isSameAsProcs[i] === true) {
+                                $(".next-row-updated").first().removeAttr("disabled");
+                                $(".next-row-updated").first().removeClass("next-row-updated");
+                                $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
+                                $(".next-row-updated-input").first().val(inputConfirmedDate.val());
+                                $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
+                                $(".row-updated-donut-text").first().text("2");
+                                $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                editButton.attr("style", "visibility:display");
+                            }
+                            else {
+                                $(".next-row-updated").first().attr("disabled");
+                                $(".next-row-updated").first().removeClass("next-row-updated");
+                                $(".next-row-updated-input").first().attr("mindate", "");
+                                $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
+                                $(".row-updated-donut-text").first().text("1");
+                                $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                editButton.attr("style", "visibility:display");
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
                 //}
                 //else {
                 //    $.ajax({
@@ -709,11 +701,6 @@ $(".st1-edit-row").on("click", function (obj) {
 $(".st1-confirmed-date").on("change", function (obj) {
     var confirmedDate = $(this).val();
     $(this).closest(".po-item-data-content").find(".st1-partial-date").first().val(confirmedDate);
-    /*$(this).closest(".po-item-data-content").find(".st1-partial-date").each(function () {
-        if ($(this).attr("disabled") === "disabled") {
-            $(this).attr("value", confirmedDate);
-        }
-    */
 });
 
 
@@ -786,17 +773,17 @@ $(".st1-delivery-method").on("change", function (obj) {
             "<div class='form-inline'>" +
             "<div class='input-group'>" +
             "<label class='checkbox-custom__label'>" +
-            "<input class='checkbox-custom' checked='' type='checkbox' disabled>" +
+            "<input class='checkbox-custom st1-checkbox-item' checked='' type='checkbox' disabled>" +
             "<span class='checkmark'></span>" +
             "</label>" +
-            "<div class='form-group'>" +
-            "<input type='text' class='form-control form-date' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy' disabled>" +
+            "<div class='form-group' style='visibility:hidden'>" +
+            "<input type='text' class='form-control form-date with-icon' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy' disabled>" +
             "<i class='fas fa-calendar-alt form-type-icon'></i>" +
             "</div>" +
             "</div>" +
             "</div>" +
             "</div>" +
-            "<div class='po-item-data-header__column'  style='visibility:hidden'>" +
+            "<div class='po-item-data-header__column' style='visibility:hidden'>" +
             "<div class='form-inline'>" +
             "<div class='form-group'>" +
             "<select class='form-control'>" +
@@ -813,7 +800,7 @@ $(".st1-delivery-method").on("change", function (obj) {
             "</div>" +
             "<div class='po-item-data-header__column'>" +
             "<div class='form-inline'>" +
-            "<div class='form-group'>" +
+            "<div class='input-group mr-2'>" +
             "<input type='text' class='form-control form-date with-icon st1-partial-date' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy'>" +
             "<i class='fas fa-calendar-alt form-type-icon'></i>" +
             "</div>" +
@@ -834,14 +821,6 @@ $(".st1-delivery-method").on("change", function (obj) {
         $(".form-date.st1-partial-date").on('input focus', function (e) {
             this.reportValidity();
         });
-
-        //currentRowHeight = $(this).closest(".po-item-data-content").height();
-        //newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").height();
-        //rowHeights.push(currentRowHeight);
-        //initialHeight = rowHeights[0];
-        //totalRowHeight = initialHeight + newChildHeight;
-        //$(this).closest(".po-item-data-content").height(totalRowHeight);
-        //increaseRowHeight($(this).closest(".po-item-container"));
 
         currentRowHeight = $(this).closest(".po-item-data-content").height();
         newChildHeight = $(this).closest(".po-item-data-content").find(".po-item-data-content__child").outerHeight(true);
@@ -893,20 +872,20 @@ $(".st1-add-row").on("click", function (obj) {
         "<div class='form-inline'>" +
         "<div class='input-group'>" +
         "<label class='checkbox-custom__label'>" +
-        "<input class='checkbox-custom' checked='' type='checkbox' disabled>" +
+        "<input class='checkbox-custom st1-checkbox-item' checked='' type='checkbox' disabled>" +
         "<span class='checkmark'></span>" +
         "</label>" +
-        "<div class='form-group'>" +
-        "<input type='text' class='form-control form-date' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy' disabled>" +
+        "<div class='form-group' style='visibility:hidden'>" +
+        "<input type='text' class='form-control form-date with-icon' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy' disabled>" +
         "<i class='fas fa-calendar-alt form-type-icon'></i>" +
         "</div>" +
         "</div>" +
         "</div>" +
         "</div>" +
-        "<div class='po-item-data-header__column'  style='visibility:hidden'>" +
+        "<div class='po-item-data-header__column' style='visibility:hidden'>" +
         "<div class='form-inline'>" +
         "<div class='form-group'>" +
-        "<select class='form-control'>" +
+        "<select class='form-control' disabled>" +
         "<option>Full</option>" +
         "<option>Partial</option>" +
         "</select>" +
@@ -920,9 +899,9 @@ $(".st1-add-row").on("click", function (obj) {
         "</div>" +
         "<div class='po-item-data-header__column'>" +
         "<div class='form-inline'>" +
-        "<div class='form-group'>" +
+        "<div class='input-group mr-2'>" +
         "<input type='text' class='form-control form-date with-icon st1-partial-date' required autofocus pattern='^([0-2][0-9]|(3)[0-1])(\\/)(((0)[0-9])|((1)[0-2]))(\\/)\\d{4}$' maxlength='10' placeholder='dd/mm/yyyy'>" +
-        "<i class='fas fa-calendar-alt form-type-icon'></i>" +
+        "<i class='fas fa-calendar-alt form-type-icon' style='visibility:hidden'></i>" +
         "</div>" +
         "</div>" +
         "</div>" +

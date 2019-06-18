@@ -73,7 +73,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");    
+            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
             buttonEditItem.attr("style", "visibility:display");
@@ -114,7 +114,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-        if (buttonAcceptItem.attr("disabled") !== "disabled" && checkboxItem.prop("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
+        if (buttonAcceptItem.attr("disabled") !== "disabled" && checkboxItem.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
 
             inputPurchasingDocumentItems.push({
                 ID: itemID
@@ -161,8 +161,6 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
         });
     });
 
-    //console.log(inputPurchasingDocumentItems);
-
     $.ajax({
         type: "POST",
         url: stage1ProcurementConfirmItem,
@@ -180,6 +178,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 
             $(".row-updated-link").attr("style", "visibility:display");
             $(".row-updated-link").removeClass("row-updated-link");
+
 
             $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
             $(".row-updated-donut-text").text("2");
@@ -216,8 +215,6 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
     var inputPurchasingDocumentItem = {
         ID: itemID
     };
-
-    //console.log(inputPurchasingDocumentItem);
 
     $.ajax({
         type: "POST",
