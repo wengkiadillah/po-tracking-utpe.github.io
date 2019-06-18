@@ -730,6 +730,7 @@
                             {
                                 isComplete = "Yes";
                             }
+                            
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer" @hideGR>
                                     <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
@@ -745,6 +746,8 @@
                                                     <tr>
                                                         <td>GR / Inspection Date</td>
                                                         <td>&nbsp;</td>
+                                                        <td>Movement Type</td>
+                                                        <td>&nbsp;</td>
                                                         <td>Qty</td>
                                                     </tr>
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
@@ -753,6 +756,8 @@
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.MovementType</td>
                                                             <td>&nbsp;</td>
                                                             <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                         </tr>
