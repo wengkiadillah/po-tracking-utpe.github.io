@@ -22,10 +22,10 @@ $(".st2a-checkbox-item").on("change", function (obj) {
         row.find(".st2a-upload-proforma-invoice").removeAttr("disabled");
 
     } else {
-        row.find(".st2a-ask-proforma").attr("disabled","disabled");
-        row.find(".st2a-skip-proforma").attr("disabled","disabled");
-        row.find(".st2a-file-proforma-invoice").attr("disabled","disabled");
-        row.find(".st2a-upload-proforma-invoice").attr("disabled","disabled");
+        row.find(".st2a-ask-proforma").attr("disabled", "disabled");
+        row.find(".st2a-skip-proforma").attr("disabled", "disabled");
+        row.find(".st2a-file-proforma-invoice").attr("disabled", "disabled");
+        row.find(".st2a-upload-proforma-invoice").attr("disabled", "disabled");
     }
 });
 
@@ -90,6 +90,7 @@ $(".st2a-ask-first-eta-all").on("click", function (obj) {
         if (inputCheckboxItem.prop("checked") === true && inputCheckboxItem.attr("disabled") !== "disabled") {
             inputPurchasingDocumentItemIDs.push(inputPurchasingDocumentItemID);
 
+            inputCheckboxItem.addClass("row-updated");
             buttonUploadProformaInvoice.addClass("row-updated");
             inputFileProformaInvoice.addClass("row-updated");
             buttonSkipProforma.addClass("row-updated");
@@ -97,21 +98,26 @@ $(".st2a-ask-first-eta-all").on("click", function (obj) {
         }
     });
 
-    $.ajax({
-        type: "POST",
-        url: stage2aProcurementAskProformaInvoice,
-        data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            alert(response.responseText);
+    if (inputPurchasingDocumentItemIDs.length > 0) {
+        $.ajax({
+            type: "POST",
+            url: stage2aProcurementAskProformaInvoice,
+            data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert(response.responseText);
 
-            $(".row-updated").attr("disabled", "disabled");
-            $(".row-updated").removeClass("row-updated");
-            $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-            $(".row-updated-button").removeClass("row-updated-button");
-        }
-    });
+                $(".row-updated").attr("disabled", "disabled");
+                $(".row-updated").removeClass("row-updated");
+                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                $(".row-updated-button").removeClass("row-updated-button");
+            }
+        });
+    }
+    else {
+        alert("0 Data affected");
+    }
 });
 
 // Procurement ONE Skip Proforma
@@ -217,30 +223,36 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
             donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
             donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-            nextDataContent.addClass("row-updated-next-content");
+            nextDataContent.find(".st3-checkbox-item").first().addClass("row-updated-next-content");
         }
     });
 
-    $.ajax({
-        type: "POST",
-        url: stage2aProcurementSkipProformaInvoice,
-        data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            alert(response.responseText);
+    if (inputPurchasingDocumentItemIDs.length > 0) {
+        $.ajax({
+            type: "POST",
+            url: stage2aProcurementSkipProformaInvoice,
+            data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert(response.responseText);
 
-            $(".row-updated").attr("disabled", "disabled");
-            $(".row-updated").removeClass("row-updated");
-            $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
-            $(".row-updated-button").removeClass("row-updated-button");
+                $(".row-updated").attr("disabled", "disabled");
+                $(".row-updated").removeClass("row-updated");
+                $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
+                $(".row-updated-button").removeClass("row-updated-button");
 
-            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-            $(".row-updated-donut-text").text("3");
-            $(".row-updated-donut").removeClass("row-updated-donut");
-            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                $(".row-updated-donut-text").text("3");
+                $(".row-updated-donut").removeClass("row-updated-donut");
+                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            $(".row-updated-next-content").find(".st3-checkbox-item").first().removeAttr("disabled");
-        }
-    });
+                $(".row-updated-next-content").removeAttr("disabled");
+                $(".row-updated-next-content").removeClass("row-updated-next-content");
+            }
+        });
+    }
+    else {
+        alert("0 Data affected");
+    }
 });
