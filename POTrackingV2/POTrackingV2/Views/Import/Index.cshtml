@@ -802,7 +802,7 @@
                                     isChecked = "checked";
                                     selectedButtonConfirm = "selected";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2" || purchasingDocumentItem.ActiveStage == "2a") && purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:display";
                                     }
@@ -907,7 +907,7 @@
                                                     isChecked = "checked";
                                                     selectedButtonConfirm = "selected";
 
-                                                    if (childPurchasingDocumentItem.ActiveStage == "2" && childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                                    if ((childPurchasingDocumentItem.ActiveStage == "2" || childPurchasingDocumentItem.ActiveStage == "2a") && childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                                     {
                                                         hideButtonEdit = "style=visibility:display";
                                                     }
@@ -980,7 +980,7 @@
                         </div>
                         <div><p class="mb-0">Stage 2a</p></div>
                         <div>
-                            <input class="btn btn-positive @st2aUploadAll" type="submit" value="Need All" @disabledst2aUploadAll @hiddenst2aUploadAll />
+                            @*<input class="btn btn-positive @st2aUploadAll" type="submit" value="Upload All" @disabledst2aUploadAll @hiddenst2aUploadAll />*@
                             <input class="btn btn-positive @st2aConfirmAll" type="submit" value="Need All" @disabledst2aConfirmAll @hiddenst2aConfirmAll />
                             <input class="btn btn-negative @st2aSkipAll" type="submit" value="Skip All" @disabledst2aSkipAll @hiddenst2aSkipAll />
                         </div>
@@ -2800,7 +2800,10 @@
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text document_number">Parking Date</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
+                            {
                             <span class="po-item-data-header__text delivery">Term Date</span>
+                            }
                         </div>
                         @{
                             var rowStage11 = 1;
@@ -2961,6 +2964,7 @@
 <input type="text" id="stage2ProcurementAcceptFirstEta" hidden value="@Url.Action("ProcurementAcceptFirstEta", "Import")" />
 <input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Import")" />
 <input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadProformaInvoice", "Import")" />
+<input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Import")" />
 <input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Import")" />
 <input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Import")" />
 <input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Import")" />

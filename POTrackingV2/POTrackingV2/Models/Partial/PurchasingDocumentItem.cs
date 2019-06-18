@@ -26,21 +26,17 @@ namespace POTrackingV2.Models
                 //return this.PurchasingDocumentItemHistories.Sum(x => x.GoodsReceiptQuantity ?? 0);
                 if (this.ParentID == null)
                 {
-                    return this.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => pdih.MovementType == 101 || pdih.MovementType == 105)).Sum(x => x.GoodsReceiptQuantity ?? 0);
+                    int totalApprovedItems = this.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => pdih.MovementType == 101 || pdih.MovementType == 105)).Sum(x => x.GoodsReceiptQuantity ?? 0);
+                    int totalRejectedItems = this.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => pdih.MovementType == 102 || pdih.MovementType == 106 || pdih.MovementType == 124)).Sum(x => x.GoodsReceiptQuantity ?? 0);
+                    return totalApprovedItems - totalRejectedItems;
                 }
                 else
                 {
-                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistories =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
-
-                    if (dbPurchasingDocumentItemHistories.Count> 0)
-                    {
-                        return dbPurchasingDocumentItemHistories.Sum(x => x.GoodsReceiptQuantity ?? 0);
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesAppovedItems =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesRejectedItems =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 102 || pdih.MovementType == 106 || pdih.MovementType == 124) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+                    int totalApprovedItems = dbPurchasingDocumentItemHistoriesAppovedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesAppovedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
+                    int totalRejectedItems = dbPurchasingDocumentItemHistoriesRejectedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesRejectedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
+                    return totalApprovedItems - totalRejectedItems;
                 }
             }
         }
@@ -55,18 +51,22 @@ namespace POTrackingV2.Models
 
                 PurchasingDocumentItemHistory purchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
 
+
                 if (this.ParentID == null)
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ID || x.ParentID == this.ID).OrderBy(x => x.ConfirmedDate).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ID).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.PurchasingDocumentItemID == this.ID).ToList();
                 }
                 else
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ParentID || x.ParentID == this.ParentID).OrderBy(x => x.ConfirmedDate).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                 }
 
-                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                //if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0)
                 {
                     int otherConfirmedQty = 0;
                     int currentGRQty = 0;
@@ -167,16 +167,17 @@ namespace POTrackingV2.Models
 
                 if (this.ParentID == null)
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ID || x.ParentID == this.ID).OrderBy(x => x.ConfirmedDate).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
                     purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() == "q") && pdih.PurchasingDocumentItemID == this.ID).ToList();
                 }
                 else
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ParentID || x.ParentID == this.ParentID).OrderBy(x => x.ConfirmedDate).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
                     purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() == "q") && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                 }
 
-                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                //if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0)
                 {
                     DateTime? currentGRDate = null;
                     string documentNumber = null;
@@ -225,18 +226,20 @@ namespace POTrackingV2.Models
 
                 if (this.ParentID == null)
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ID || x.ParentID == this.ID).OrderBy(x => x.ConfirmedDate).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ID).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q") && pdih.PurchasingDocumentItemID == this.ID).ToList();
                 }
                 else
                 {
-                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ID == this.ParentID || x.ParentID == this.ParentID).OrderBy(x => x.ConfirmedDate).ToList();
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem == true).OrderBy(x => x.ConfirmedDate).ToList();
                     //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
-
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q") && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                 }
 
-                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                //if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0)
                 {
                     int otherConfirmedQty = 0;
                     bool isMatch = false;
@@ -265,6 +268,7 @@ namespace POTrackingV2.Models
                                             {
                                                 totalGR += Math.Abs(otherConfirmedQty);
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
                                                 listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
@@ -272,6 +276,7 @@ namespace POTrackingV2.Models
                                             else
                                             {
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty;
                                                 listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
@@ -286,6 +291,7 @@ namespace POTrackingV2.Models
                                         if (totalGR > confirmQty)
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                             newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
                                             listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
@@ -293,6 +299,7 @@ namespace POTrackingV2.Models
                                         else
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                             newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
                                             listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
@@ -318,6 +325,7 @@ namespace POTrackingV2.Models
                                     if (totalGR > confirmQty)
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
                                         listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
@@ -325,6 +333,7 @@ namespace POTrackingV2.Models
                                     else
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
                                         listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);

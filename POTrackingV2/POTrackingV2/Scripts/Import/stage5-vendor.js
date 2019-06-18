@@ -254,7 +254,7 @@ $(".st5-confirm-all").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-                nextDataContent.addClass("row-updated-next-content");
+                nextDataContent.find(".st6-fill-in-the-form").first().addClass("row-updated-next-content");
             }
         }
     });
@@ -307,7 +307,7 @@ $(".st5-confirm-all").on("click", function (obj) {
                 $(".row-updated-donut").removeClass("row-updated-donut");
                 $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").find(".st6-fill-in-the-form").removeAttr("disabled");
+                $(".row-updated-next-content").removeAttr("disabled");
                 $(".row-updated-next-content").removeClass("row-updated-next-content");
             },
             error: function (xhr, status, error) {
