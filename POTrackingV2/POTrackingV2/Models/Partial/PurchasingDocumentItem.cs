@@ -32,8 +32,8 @@ namespace POTrackingV2.Models
                 }
                 else
                 {
-                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesAppovedItems =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
-                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesRejectedItems =  db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 102 || pdih.MovementType == 106 || pdih.MovementType == 124) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesAppovedItems = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesRejectedItems = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 102 || pdih.MovementType == 106 || pdih.MovementType == 124) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
                     int totalApprovedItems = dbPurchasingDocumentItemHistoriesAppovedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesAppovedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
                     int totalRejectedItems = dbPurchasingDocumentItemHistoriesRejectedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesRejectedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
                     return totalApprovedItems - totalRejectedItems;
@@ -84,7 +84,16 @@ namespace POTrackingV2.Models
                                     int grQty = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
                                     if (otherConfirmedQty > 0)
                                     {
-                                        otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        //otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+                                        else
+                                        {
+                                            otherConfirmedQty += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+
                                         if (otherConfirmedQty < 0)
                                         {
                                             currentGRDate = pdih.GoodsReceiptDate;
@@ -104,13 +113,35 @@ namespace POTrackingV2.Models
                                     {
                                         currentGRDate = pdih.GoodsReceiptDate;
                                         documentNumber = pdih.DocumentNumber;
-                                        if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                        //if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                        //{
+                                        //    currentGRQty += grQty;
+                                        //}
+                                        //else
+                                        //{
+                                        //    currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                        //}
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
                                         {
-                                            currentGRQty += grQty;
+                                            if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                            {
+                                                currentGRQty += grQty;
+                                            }
+                                            else
+                                            {
+                                                currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                            }
                                         }
                                         else
                                         {
-                                            currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                            if ((currentGRQty - grQty) < this.ConfirmedQuantity)
+                                            {
+                                                currentGRQty -= grQty;
+                                            }
+                                            else
+                                            {
+                                                currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                            }
                                         }
                                     }
                                 }
@@ -126,13 +157,35 @@ namespace POTrackingV2.Models
                                     int grQty = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
                                     currentGRDate = pdih.GoodsReceiptDate;
                                     documentNumber = pdih.DocumentNumber;
-                                    if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                    //if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                    //{
+                                    //    currentGRQty += grQty;
+                                    //}
+                                    //else
+                                    //{
+                                    //    currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                    //}
+                                    if (pdih.MovementType == 101 || pdih.MovementType == 105)
                                     {
-                                        currentGRQty += grQty;
+                                        if ((currentGRQty + grQty) < this.ConfirmedQuantity)
+                                        {
+                                            currentGRQty += grQty;
+                                        }
+                                        else
+                                        {
+                                            currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                        }
                                     }
                                     else
                                     {
-                                        currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                        if ((currentGRQty - grQty) < this.ConfirmedQuantity)
+                                        {
+                                            currentGRQty -= grQty;
+                                        }
+                                        else
+                                        {
+                                            currentGRQty = this.ConfirmedQuantity.HasValue ? this.ConfirmedQuantity.Value : 0;
+                                        }
                                     }
                                 }
 
@@ -221,7 +274,6 @@ namespace POTrackingV2.Models
                 List<PurchasingDocumentItem> purchasingDocumentItems = new List<PurchasingDocumentItem>();
                 //List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = this.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => pdih.MovementType == 101 || pdih.MovementType == 105)).ToList();
                 List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = new List<PurchasingDocumentItemHistory>();
-
                 List<PurchasingDocumentItemHistory> listPurchasingDocumentItemHistory = new List<PurchasingDocumentItemHistory>();
 
                 if (this.ParentID == null)
@@ -259,15 +311,32 @@ namespace POTrackingV2.Models
                                 {
                                     if (otherConfirmedQty > 0)
                                     {
-                                        //if (otherConfirmedQty > pdih.GoodsReceiptQuantity)
-                                        //{
-                                        otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        //otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+                                        else
+                                        {
+                                            otherConfirmedQty += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+                                            
                                         if (otherConfirmedQty < 0)
                                         {
                                             if (Math.Abs(otherConfirmedQty) < confirmQty)
                                             {
-                                                totalGR += Math.Abs(otherConfirmedQty);
+                                                //totalGR += Math.Abs(otherConfirmedQty);
+                                                if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                                {
+                                                    totalGR += Math.Abs(otherConfirmedQty);
+                                                }
+                                                else
+                                                {
+                                                    totalGR -= Math.Abs(otherConfirmedQty);
+                                                }
+                                                
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
@@ -276,6 +345,7 @@ namespace POTrackingV2.Models
                                             else
                                             {
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty;
@@ -285,20 +355,40 @@ namespace POTrackingV2.Models
                                     }
                                     else
                                     {
-                                        totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        //totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+                                        else
+                                        {
+                                            totalGR -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+
                                         currentGR = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
 
                                         if (totalGR > confirmQty)
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
-                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                            //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                            if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                            {
+                                                newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                            }
+                                            else
+                                            {
+                                                newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR + currentGR);
+                                            }
+
                                             listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
                                         }
                                         else
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                             newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
@@ -306,7 +396,22 @@ namespace POTrackingV2.Models
                                         }
                                         if (totalGR >= confirmQty)
                                         {
-                                            break;
+                                            ////isMatch = true;
+                                            //break;
+                                            if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = "break atas : " + totalGR + confirmQty;
+                                                newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                                newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                                newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                                listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                            }
                                         }
                                     }
                                 }
@@ -320,19 +425,38 @@ namespace POTrackingV2.Models
 
                                 foreach (var pdih in purchasingDocumentItemHistories)
                                 {
-                                    totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    //totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                    {
+                                        totalGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    }
+                                    else
+                                    {
+                                        totalGR -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    }
                                     currentGR = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
                                     if (totalGR > confirmQty)
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
-                                        newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                        //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR - currentGR);
+                                        }
+                                        else
+                                        {
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalGR + currentGR);
+                                        }
+                                            
                                         listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
                                     }
                                     else
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
@@ -340,8 +464,22 @@ namespace POTrackingV2.Models
                                     }
                                     if (totalGR >= confirmQty)
                                     {
-                                        //isMatch = true;
-                                        break;
+                                        ////isMatch = true;
+                                        //break;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = "break bawah : " + totalGR + confirmQty;
+                                            newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                            listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                        }
                                     }
                                 }
                             }
@@ -760,7 +898,7 @@ namespace POTrackingV2.Models
                 if (this.ParentID == null || this.ParentID == this.ID)
                 {
                     List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == this.ID).ToList();
-                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "Q" && x.DocumentNumber!=null).ToList();
+                    purchasingDocumentItemHistories = purchasingDocumentItemHistories.Where(x => x.POHistoryCategory == "Q" && x.DocumentNumber != null).ToList();
 
                     string empty = "-";
 
@@ -776,7 +914,7 @@ namespace POTrackingV2.Models
                         {
                             importParkingDateViews.Add(purchasingDocumentItemHistory.GoodsReceiptDate.GetValueOrDefault().ToString("dd/MM/yyyy"));
                         }
-                        
+
                     }
 
                     return importParkingDateViews;
@@ -829,7 +967,7 @@ namespace POTrackingV2.Models
                                 TermDateViews.Add(grDate.ToString("dd/MM/yyyy"));
                             }
                         }
-                        
+
                     }
 
                     return TermDateViews;
