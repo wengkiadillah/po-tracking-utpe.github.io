@@ -1977,6 +1977,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var isValidQty = true;
             var isNullChecked = false;
             var stage2 = $(this).closest(".custom-scrollbar").find(".stage-2");
+            var progressNumber = 2;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
 
             $(this).closest(".stage-1").find(".po-item-data-content__outer").each(function (index) {
                 //console.log(index + ": " + $(this).html());
@@ -1998,10 +2001,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var btnEditItem = $(this).find(".edit-row");
                 var btnAddItem = $(this).find(".add-row");
                 var btnDellItem = $(this).find(".del-row");
-
-                var progressNumber = 2;
-                var donutProgressUnit = 75.39822368615503 / 7;
-                var donutProgress = (7 - progressNumber) * donutProgressUnit;
+                
                 var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
                 if (childNumber > 0) {
                     donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
