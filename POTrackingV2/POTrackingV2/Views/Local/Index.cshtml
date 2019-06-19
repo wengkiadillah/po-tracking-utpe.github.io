@@ -364,6 +364,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
+
                             if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
@@ -946,7 +947,8 @@
                         var hiddenst2aUploadAll = "hidden";
 
                         if (roleID == "vendor")
-                        {
+                        {                            
+
                             st2aCheckboxAll = "";
                             st2aConfirmAll = "";
                             st2aSkipAll = "";
@@ -1012,6 +1014,7 @@
                             {
                                 hiddenAskProforma = "";
                                 hiddenSkipProforma = "";
+                                st2aFileProformaInvoice = "";
 
                                 if (purchasingDocumentItem.ProformaInvoiceDocument != null)
                                 {
@@ -2425,10 +2428,10 @@
     <input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Local")" />
     <input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Local")" />*@
 <input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Local")" />
-<input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Import")" />
-<input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Import")" />
-<input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Import")" />
-<input type="text" id="stage3ProcurementSkipConfirmPayment" hidden value="@Url.Action("ProcurementSkipConfirmPayment", "Import")" />
+<input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Local")" />
+<input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Local")" />
+<input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Local")" />
+<input type="text" id="stage3ProcurementSkipConfirmPayment" hidden value="@Url.Action("ProcurementSkipConfirmPayment", "Local")" />
 <input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Local")" />
 <input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Local")" />
 <input type="text" id="stage6VendorUploadInvoice_2" hidden value="@Url.Action("VendorUploadInvoice_2", "Local")" />
