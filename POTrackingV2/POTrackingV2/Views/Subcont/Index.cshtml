@@ -2319,6 +2319,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         if (!isNaN(Date.parse(newPartialDate))) {
                             dataPurchasingDocumentItems.push({
                                 ID: pdiIdParent.val(),
+                                ParentID: pdiIdParent.val(),
                                 ConfirmedQuantity: confirmedQtyParent.val(),
                                 ConfirmedDate: newPartialDate
                             });

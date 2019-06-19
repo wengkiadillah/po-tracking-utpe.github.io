@@ -133,7 +133,7 @@ namespace POTrackingV2.Controllers
                 }
                 if (!String.IsNullOrEmpty(searchMaterial))
                 {
-                    pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x=> x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
+                    pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
                 }
 
                 if (!String.IsNullOrEmpty(searchStartPODate))
@@ -407,7 +407,7 @@ namespace POTrackingV2.Controllers
                     {
                         foreach (PurchasingDocumentItem item in purchasingDocumentItemChilds)
                         {
-                            PurchasingDocumentItem parent = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
+                            PurchasingDocumentItem parent = db.PurchasingDocumentItems.Where(x => x.ID == item.ParentID).FirstOrDefault();
 
                             Notification notificationChild = new Notification();
                             notificationChild.StatusID = 3;
@@ -514,7 +514,7 @@ namespace POTrackingV2.Controllers
                 catch (Exception ex)
                 {
                     return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
-                } 
+                }
             }
             //return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
         }
@@ -532,14 +532,13 @@ namespace POTrackingV2.Controllers
                 {
                     foreach (PurchasingDocumentItem item in purchasingDocumentItems)
                     {
-                        PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
-
-                        Notification notification = new Notification();
-                        notification.PurchasingDocumentItemID = Existed_PDI.ID;
-                        notification.StatusID = 3;
-
                         if (purchasingDocumentItems.First() == item)
                         {
+                            PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
+
+                            Notification notification = new Notification();
+                            notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                            notification.StatusID = 3;
                             if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                             {
                                 Existed_PDI.ActiveStage = "1";
@@ -608,40 +607,42 @@ namespace POTrackingV2.Controllers
                             if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                             {
                                 // Child clean-up
-                                List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
-                                foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
+                                List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ParentID).ToList();
+                                List<int> listIDPurchasingDocumentItems = childDatabasePurchasingDocumentItems.Select(x => x.ID).ToList();
+                                if (listIDPurchasingDocumentItems.Count>0)
                                 {
-                                    if (childDatabasePurchasingDocumentItem.ID != item.ID)
+                                    List<Notification> notifications = db.Notifications.Where(x => listIDPurchasingDocumentItems.Contains(x.PurchasingDocumentItemID)).ToList();
+                                    foreach (var curentNotification in notifications)
                                     {
-                                        db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
+                                        db.Notifications.Remove(curentNotification);
                                     }
                                 }
 
-                                List<Notification> notifications = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
-                                foreach (var childDatabasePurchasingDocumentItem in notifications)
+                                foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
                                 {
-                                    db.Notifications.Remove(childDatabasePurchasingDocumentItem);
+                                    db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
                                 }
                                 // finish
                             }
-
                             db.Notifications.Add(notification);
                         }
                         else
                         {
-                            if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                            PurchasingDocumentItem Parent_PDI = db.PurchasingDocumentItems.Where(x => x.ID == item.ParentID).FirstOrDefault();
+
+                            if (Parent_PDI != null && role.ToLower() == LoginConstants.RoleVendor.ToLower())
                             {
                                 Notification notificationChild = new Notification();
 
                                 PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
-                                purchasingDocumentItem.POID = Existed_PDI.POID;
-                                purchasingDocumentItem.ItemNumber = Existed_PDI.ItemNumber;
-                                purchasingDocumentItem.Currency = Existed_PDI.Currency;
-                                purchasingDocumentItem.Quantity = Existed_PDI.Quantity;
-                                purchasingDocumentItem.NetPrice = Existed_PDI.NetPrice;
-                                purchasingDocumentItem.NetValue = Existed_PDI.NetValue;
-                                purchasingDocumentItem.Material = Existed_PDI.Material;
-                                purchasingDocumentItem.Description = Existed_PDI.Description;
+                                purchasingDocumentItem.POID = Parent_PDI.POID;
+                                purchasingDocumentItem.ItemNumber = Parent_PDI.ItemNumber;
+                                purchasingDocumentItem.Currency = Parent_PDI.Currency;
+                                purchasingDocumentItem.Quantity = Parent_PDI.Quantity;
+                                purchasingDocumentItem.NetPrice = Parent_PDI.NetPrice;
+                                purchasingDocumentItem.NetValue = Parent_PDI.NetValue;
+                                purchasingDocumentItem.Material = Parent_PDI.Material;
+                                purchasingDocumentItem.Description = Parent_PDI.Description;
                                 purchasingDocumentItem.ActiveStage = "1";
                                 purchasingDocumentItem.ParentID = item.ParentID;
                                 purchasingDocumentItem.ConfirmedQuantity = item.ConfirmedQuantity;
@@ -653,7 +654,6 @@ namespace POTrackingV2.Controllers
                                 purchasingDocumentItem.LastModified = now;
                                 purchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                                 db.PurchasingDocumentItems.Add(purchasingDocumentItem);
-
                                 db.SaveChanges();
 
                                 notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
@@ -684,8 +684,9 @@ namespace POTrackingV2.Controllers
                 catch (Exception ex)
                 {
                     ViewBag.Exception(ex.Message + ex.StackTrace);
-                    return View("Error");
-                } 
+                    //return View("Error");
+                    return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+                }
             }
         }
 
@@ -742,7 +743,7 @@ namespace POTrackingV2.Controllers
                         Existed_PDI.ConfirmedItem = true;
 
                         //kalo qty & date sama
-                        if(Existed_PDI.Quantity == confirmedItemQty && Existed_PDI.DeliveryDate == confirmedDate)
+                        if (Existed_PDI.Quantity == confirmedItemQty && Existed_PDI.DeliveryDate == confirmedDate)
                         {
                             Notification notificationInfo = new Notification();
                             notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
@@ -828,7 +829,7 @@ namespace POTrackingV2.Controllers
                 {
                     Data = x.Name
                 }).OrderBy(x => x.Data);
-               
+
                 if (data != null)
                 {
                     return Json(new { success = true, responseCode = "200", responseText = "Bind Data Reason Success", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
@@ -1012,7 +1013,7 @@ namespace POTrackingV2.Controllers
                     id = x.ID,
                     fileName = x.FileName,
                     //url = Path.Combine("/", iisAppName, "Files/Subcont/SequencesProgress", x.FileName)
-                    url = "..\\"+ iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
+                    url = "..\\" + iisAppName + "\\Files\\Subcont\\SequencesProgress\\" + x.FileName
                 });
 
                 var fileSetting = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName == "Setting").Select(x =>
