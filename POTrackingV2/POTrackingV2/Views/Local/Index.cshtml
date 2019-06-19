@@ -2319,78 +2319,94 @@
                         }
                     </div>
                 </div>
-                @if (roleID == "procurement" || roleID == "administrator")
-                {
-                    <div class="po-item-section stage-8">
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 7</p>
-                        </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text document_number">Parking Date</span>
-                                <span class="po-item-data-header__text delivery">Term Date</span>
-                            </div>
-                            @{
-                                var rowStage7 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                <div class="po-item-section stage-8">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Parking Date</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
                             {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage7 = 1;
+                                <span class="po-item-data-header__text delivery">Term Date</span>
+                            }
+                        </div>
+                        @{
+                            var rowStage7 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage7 = 1;
 
-                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                                var termDateViews = purchasingDocumentItem.TermDateViews;
-                                var maxCount = 0;
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
 
-                                if (parkingDateViews != null)
-                                {
-                                    maxCount = parkingDateViews.Count;
-                                }
+                            if (parkingDateViews != null)
+                            {
+                                maxCount = parkingDateViews.Count;
+                            }
 
-                                var count = 0;
+                            var count = 0;
 
-                                <div class="po-item-data-content row-@rowStage7">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
+                            <div class="po-item-data-content row-@rowStage7">
+                                <div class="po-item-data-content__outer">
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                             <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">-</span>
                                             <span class="po-item-data-header__column delivery">-</span>
                                         }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                    }
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        count++;
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
-                                                    @if (maxCount >= count + 1)
+                                            <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                                         <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">-</span>
                                                         <span class="po-item-data-header__column delivery">-</span>
                                                     }
-                                                </div>
-                                                childRowStage7++;
-                                                count++;
-                                            }
+                                                }
+                                            </div>
+                                            childRowStage7++;
+                                            count++;
                                         }
-                                    </div>
+                                    }
                                 </div>
-                                rowStage7++;
-                            }
-                        </div>
+                            </div>
+                            rowStage7++;
+                        }
                     </div>
-                }
+                </div>
             </div>
         </li>
     </ul>
