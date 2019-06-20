@@ -429,18 +429,31 @@
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3))
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
+                                    }
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
                                     }
                                 }
                             }
