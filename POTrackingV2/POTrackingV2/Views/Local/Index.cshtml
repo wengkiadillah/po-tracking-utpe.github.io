@@ -419,7 +419,7 @@
                                     //hideButtonEdit = "";
 
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStageView) == 3))
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3))
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
@@ -435,7 +435,7 @@
                                     isChecked = "checked";
                                     //hideButtonEdit = "";
 
-                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStageView) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
