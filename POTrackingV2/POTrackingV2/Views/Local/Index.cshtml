@@ -412,10 +412,16 @@
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
+
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
                                     hideButtonEdit = "";
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || Convert.ToInt32(purchasingDocumentItem.ActiveStageView) >= 3)
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
@@ -424,7 +430,7 @@
                                     isChecked = "checked";
                                     hideButtonEdit = "";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || Convert.ToInt32(purchasingDocumentItem.ActiveStageView) >= 3) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
                                     }
