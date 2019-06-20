@@ -584,18 +584,31 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
+
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3))
+                                                        {
+                                                            hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
+                                                        }
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
 
-                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+                                                        if ((childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3)) && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
                                                         }
                                                     }
                                                 }
