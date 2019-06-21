@@ -412,21 +412,36 @@
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
+
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
+
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3))
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
+                                    }
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
                                     }
                                 }
                             }
@@ -556,18 +571,31 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
+
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3))
+                                                        {
+                                                            hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
+                                                        }
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
 
-                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+                                                        if ((childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3)) && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
                                                         }
                                                     }
                                                 }
@@ -949,7 +977,7 @@
                         if (roleID == "vendor")
                         {                            
 
-                            st2aCheckboxAll = "";
+                            //st2aCheckboxAll = "";
                             st2aConfirmAll = "";
                             st2aSkipAll = "";
                             st2aUploadAll = "st2a-upload-first-eta-all";
