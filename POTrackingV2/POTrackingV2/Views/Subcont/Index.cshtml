@@ -720,20 +720,21 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
-                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 4)
-                            {
-                                hideGR = "style=visibility:hidden";
-                            }
+                            //if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 4)
+                            //{
+                            //    hideGR = "style=visibility:hidden";
+                            //}
                             var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                             var isComplete = "No";
                             if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             {
                                 isComplete = "Yes";
                             }
-                            
+
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer" @hideGR>
                                     <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                    @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                     <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     @*<span class="po-item-data-header__column inspection-date"></span>
@@ -779,13 +780,14 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 4)
-                                        {
-                                            hideGR = "style=visibility:hidden";
-                                        }
+                                        //if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        //{
+                                        //    hideGR = "style=visibility:hidden";
+                                        //}
 
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
                                             <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
@@ -798,6 +800,8 @@
                                                             <tr>
                                                                 <td>GR / Inspection Date</td>
                                                                 <td>&nbsp;</td>
+                                                                <td>Movement Type</td>
+                                                                <td>&nbsp;</td>
                                                                 <td>Qty</td>
                                                             </tr>
                                                             @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
@@ -805,6 +809,9 @@
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
                                                                     <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.MovementType</td>
                                                                     <td>&nbsp;</td>
                                                                     <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                                 </tr>
@@ -2545,6 +2552,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".sequences-modal").on("click", function (obj) {
             var pdItemID = $(this).parent().find(".pd-item-id").val();
 
+            //stage open
+            $(".custom-scrollbar").removeClass("scrollbar-open");
+            $(this).closest(".custom-scrollbar").addClass("scrollbar-open");
+
             $("#sequencesModal").attr("row", $(this).closest(".po-item-data-content").attr("row"));
             if (typeof ($(this).closest(".po-item-data-content").attr("child")) === "undefined" || typeof ($(this).closest(".po-item-data-content").attr("child")) === "NaN") {
                 $("#sequencesModal").removeAttr("child");
@@ -2637,8 +2648,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $("#btnSaveDefineSequences").on("click", function (obj) {
             var rowNumber = $("#sequencesModal").attr("row");
             var childNumber = $("#sequencesModal").attr("child");
-            var stage1 = $(this).closest(".custom-scrollbar").find(".stage-1");
-            var stage3 = $(this).closest(".custom-scrollbar").find(".stage-3");
+            var currentScrollbar = $(".scrollbar-open");
+            var stage1 = currentScrollbar.find(".stage-1");
+            var stage3 = currentScrollbar.find(".stage-3");
             var pdItemID = $("#item-id-sequences").val();
             var pb = parseInt($("#PB").val());
             var setting = parseInt($("#Setting").val());
@@ -2650,10 +2662,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var progressNumber = 3;
             var donutProgressUnit = 75.39822368615503 / 7;
             var donutProgress = (7 - progressNumber) * donutProgressUnit;
-            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var donutRow = currentScrollbar.prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             if (childNumber > 0) {
-                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+                donutRow = currentScrollbar.prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
             }
+            console.log(donutRow.html());
 
             if (totalLeadTime == 0) {
                 alert("Data Component Not Found");
@@ -2677,7 +2690,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             stage3.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
                             stage1.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .edit-row").attr("style", "visibility:hidden");
                         }
-
+                        
                         donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
 
