@@ -1244,7 +1244,7 @@
                                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                                             </div>
                                                             <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                             <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                                         </div>
 
@@ -3069,6 +3069,26 @@
                             }
                         }
                     });
+
+                    var outHeightArray = [];
+                    var tempOuterHeight = 0;
+                    $(".po-item-container").each(function () {
+                        var ptr = 1;
+
+                        while (ptr > 0) {
+                            if ($(this).find(".row-" + ptr).length > 0) {
+                                outHeightArray = [];
+                                $(this).find(".po-item-data-content__outer").each(function () {
+                                    outHeightArray.push($(this).height());
+                                });
+                                tempOuterHeight = Math.max(...outHeightArray);
+                                $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
+                                ptr++;
+                            } else {
+                                ptr = -1;
+                            }
+                        }
+                    })
 
                     tempArray = [];
                     $(".po-item-section.information").each(function () {
