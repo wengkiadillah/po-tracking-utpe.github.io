@@ -451,6 +451,7 @@
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
+                                    hideButtonEdit = "";
 
                                 }
                                 else if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -605,6 +606,7 @@
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
+                                                        hideButtonEdit = "";
 
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -612,7 +614,7 @@
                                                         disabledInputCheckbox = "disabled";
                                                         isChecked = "checked";
                                                         selectedButtonConfirm = "selected";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
 
                                                     if (childPurchasingDocumentItem.ActiveStage != "1")
