@@ -275,14 +275,14 @@ namespace POTrackingV2.Controllers
         [HttpPost]
         public ActionResult SaveAllPOItem(List<PurchasingDocumentItem> purchasingDocumentItems, List<PurchasingDocumentItem> purchasingDocumentItemChilds)
         {
-            using (TransactionScope transaction = new TransactionScope())
+            //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
+            try
             {
                 POTrackingEntities db = new POTrackingEntities();
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 string role = myUser.Roles;
-                //return RedirectToAction("Index", new { searchPoNumber, searchStartPODate, searchEndPODate, page });
-                try
-                {
+                //using (TransactionScope transaction = new TransactionScope())
+                //{
                     if (purchasingDocumentItems != null)
                     {
                         foreach (PurchasingDocumentItem item in purchasingDocumentItems)
@@ -381,6 +381,16 @@ namespace POTrackingV2.Controllers
                             if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                             {
                                 // Child clean-up
+                                List<Notification> notifications = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
+                                foreach (var notificationDatabasePurchasingDocumentItem in notifications)
+                                {
+                                    db.Notifications.Remove(notificationDatabasePurchasingDocumentItem);
+                                }
+                                List<ProgressPhoto> progressPhotos = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
+                                foreach (var progressDatabasePurchasingDocumentItem in progressPhotos)
+                                {
+                                    db.ProgressPhotoes.Remove(progressDatabasePurchasingDocumentItem);
+                                }
                                 List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
                                 foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
                                 {
@@ -388,12 +398,6 @@ namespace POTrackingV2.Controllers
                                     {
                                         db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
                                     }
-                                }
-
-                                List<Notification> notifications = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
-                                foreach (var childDatabasePurchasingDocumentItem in notifications)
-                                {
-                                    db.Notifications.Remove(childDatabasePurchasingDocumentItem);
                                 }
                                 // finish
                             }
@@ -456,38 +460,41 @@ namespace POTrackingV2.Controllers
                                 SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                                 int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
 
-                                Existed_child.ConfirmedItem = true;
-                                notificationChild.PurchasingDocumentItemID = Existed_child.ID;
-
-                                if (scc != null)
+                                if (Existed_child != null)
                                 {
-                                    if (scc.isNeedSequence == true)
+                                    Existed_child.ConfirmedItem = true;
+                                    notificationChild.PurchasingDocumentItemID = Existed_child.ID;
+
+                                    if (scc != null)
+                                    {
+                                        if (scc.isNeedSequence == true)
+                                        {
+                                            Existed_child.ActiveStage = "2";
+                                            notificationChild.Stage = "2";
+                                            notificationChild.Role = "vendor";
+                                        }
+                                        else
+                                        {
+                                            if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                            {
+                                                Existed_child.ActiveStage = "6";
+                                                notificationChild.Stage = "6";
+                                                notificationChild.Role = "vendor";
+                                            }
+                                            else
+                                            {
+                                                Existed_child.ActiveStage = "4";
+                                                notificationChild.Stage = "4";
+                                                notificationChild.Role = "subcontdev";
+                                            }
+                                        }
+                                    }
+                                    else
                                     {
                                         Existed_child.ActiveStage = "2";
                                         notificationChild.Stage = "2";
                                         notificationChild.Role = "vendor";
                                     }
-                                    else
-                                    {
-                                        if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
-                                        {
-                                            Existed_child.ActiveStage = "6";
-                                            notificationChild.Stage = "6";
-                                            notificationChild.Role = "vendor";
-                                        }
-                                        else
-                                        {
-                                            Existed_child.ActiveStage = "4";
-                                            notificationChild.Stage = "4";
-                                            notificationChild.Role = "subcontdev";
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    Existed_child.ActiveStage = "2";
-                                    notificationChild.Stage = "2";
-                                    notificationChild.Role = "vendor";
                                 }
                             }
 
@@ -503,20 +510,20 @@ namespace POTrackingV2.Controllers
                     try
                     {
                         db.SaveChanges();
-                        transaction.Complete();
+                        //transaction.Complete();
                         return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
                     }
                     catch (Exception ex)
                     {
                         return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
                     }
-                }
-                catch (Exception ex)
-                {
-                    return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
-                }
+                //}
             }
-            //return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+            //return Json(new { success = false, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -541,6 +548,7 @@ namespace POTrackingV2.Controllers
                             notification.StatusID = 3;
                             if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                             {
+                                Existed_PDI.ConfirmedItem = null;
                                 Existed_PDI.ActiveStage = "1";
                                 Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
                                 Existed_PDI.ConfirmedDate = item.ConfirmedDate;
@@ -609,13 +617,19 @@ namespace POTrackingV2.Controllers
                                 // Child clean-up
                                 List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ParentID).ToList();
                                 List<int> listIDPurchasingDocumentItems = childDatabasePurchasingDocumentItems.Select(x => x.ID).ToList();
-                                if (listIDPurchasingDocumentItems.Count>0)
+                                if (listIDPurchasingDocumentItems.Count > 0)
                                 {
                                     List<Notification> notifications = db.Notifications.Where(x => listIDPurchasingDocumentItems.Contains(x.PurchasingDocumentItemID)).ToList();
                                     foreach (var curentNotification in notifications)
                                     {
                                         db.Notifications.Remove(curentNotification);
                                     }
+                                }
+
+                                List<ProgressPhoto> progressPhotos = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
+                                foreach (var progressDatabasePurchasingDocumentItem in progressPhotos)
+                                {
+                                    db.ProgressPhotoes.Remove(progressDatabasePurchasingDocumentItem);
                                 }
 
                                 foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
@@ -1271,7 +1285,7 @@ namespace POTrackingV2.Controllers
                 notification.ModifiedBy = User.Identity.Name;
                 db.Notifications.Add(notification);
 
-                db.SaveChanges();
+                //db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

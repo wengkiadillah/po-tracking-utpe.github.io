@@ -1218,3 +1218,8 @@ small.label {
     vertical-align: baseline;
     border-radius: .25em;
 }
+
+.dvPreview img:hover
+{
+    transform: scale(3.5);
+}
