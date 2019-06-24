@@ -3395,7 +3395,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             var reader = new FileReader();
                             var img = document.createElement("IMG");
                             img.height = "100";
-                            img.width = "100";
+                            //img.width = "100";
                             img.title = file.name.toLowerCase();
                             reader.onload = function (e) {
                                 img.src = e.target.result;
@@ -3406,7 +3406,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                             var img = document.createElement("IMG");
                             img.height = "100";
-                            img.width = "100";
+                            //img.width = "100";
                             img.title = file.name.toLowerCase();
 
                             var filename = file.name.toLowerCase();
@@ -3445,7 +3445,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 if (regexOffice.test(fileName.toLowerCase())) {
                     var img = document.createElement("IMG");
                     img.height = "100";
-                    img.width = "100";
+                    //img.width = "100";
                     img.title = fileName.toLowerCase();
 
                     if (fileName.includes(".doc") || fileName.includes(".docx")) {
@@ -3463,7 +3463,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 } else {
                     var img = document.createElement("IMG");
                     img.height = "100";
-                    img.width = "100";
+                    //img.width = "100";
                     img.title = fileName.toLowerCase();
                     img.src = url;
                 }

@@ -451,6 +451,7 @@
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
+                                    hideButtonEdit = "";
 
                                 }
                                 else if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -605,6 +606,7 @@
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
+                                                        //hideButtonEdit = "";
 
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -612,7 +614,7 @@
                                                         disabledInputCheckbox = "disabled";
                                                         isChecked = "checked";
                                                         selectedButtonConfirm = "selected";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        //hideButtonEdit = "";
                                                     }
 
                                                     if (childPurchasingDocumentItem.ActiveStage != "1")
@@ -1120,7 +1122,7 @@
                                                     <i class="fas fa-paperclip form-type-icon"></i>
                                                 </div>
                                                 <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                 <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                             </div>
                                             <div class="form-inline" @hiddenUploadedDiv>
@@ -1236,7 +1238,7 @@
                                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                                             </div>
                                                             <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                             <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                                         </div>
 
@@ -2613,6 +2615,26 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     }
                 }
             });
+
+            var outHeightArray = [];
+            var tempOuterHeight = 0;
+            $(".po-item-container").each(function () {
+                var ptr = 1;
+
+                while (ptr > 0) {
+                    if ($(this).find(".row-" + ptr).length > 0) {
+                        outHeightArray = [];
+                        $(this).find(".po-item-data-content__outer").each(function () {
+                            outHeightArray.push($(this).height());
+                        });
+                        tempOuterHeight = Math.max(...outHeightArray);
+                        $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
+                        ptr++;
+                    } else {
+                        ptr = -1;
+                    }
+                }
+            })
 
             tempArray = [];
             $(".po-item-section.information").each(function () {
