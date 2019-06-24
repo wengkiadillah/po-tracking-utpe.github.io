@@ -73,7 +73,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");    
+            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
             buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
             buttonEditItem.attr("style", "visibility:display");
@@ -114,7 +114,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-        if (buttonAcceptItem.attr("disabled") !== "disabled" && checkboxItem.prop("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
+        if (buttonAcceptItem.attr("disabled") !== "disabled" && checkboxItem.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true) {
 
             inputPurchasingDocumentItems.push({
                 ID: itemID
@@ -161,8 +161,6 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
         });
     });
 
-    //console.log(inputPurchasingDocumentItems);
-
     $.ajax({
         type: "POST",
         url: stage1ProcurementConfirmItem,
@@ -180,6 +178,7 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
 
             $(".row-updated-link").attr("style", "visibility:display");
             $(".row-updated-link").removeClass("row-updated-link");
+
 
             $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
             $(".row-updated-donut-text").text("2");
@@ -203,6 +202,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
     var checkboxItem = $(this).closest(".po-item-data-content").find(".st1-checkbox-item-proc").first();
     var buttonCancelItem = $(this);
     var buttonAcceptItem = $(this).closest(".form-inline").find(".st1-accept-item-proc").first();
+    var buttonEditItem = $(this).closest(".po-item-data-content").find(".st1-edit-row-proc").first();
 
     var isChild = $(this).closest(".po-item-data-content").attr("child");
 
@@ -217,8 +217,6 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
         ID: itemID
     };
 
-    //console.log(inputPurchasingDocumentItem);
-
     $.ajax({
         type: "POST",
         url: stage1CancelItem,
@@ -230,6 +228,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
             buttonAcceptItem.attr("disabled", "disabled").removeClass("selected");
             buttonCancelItem.attr("disabled", "disabled").addClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
+            buttonEditItem.attr("style", "visibility:display");
         },
         error: function (xhr, status, error) {
             alert(xhr.status + " : " + error);

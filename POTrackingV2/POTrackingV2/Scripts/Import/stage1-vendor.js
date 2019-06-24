@@ -604,6 +604,7 @@ $(".st1-cancel-item").on("click", function (obj) {
     var buttonCancelItem = $(this);
     var buttonAcceptItem = $(this).closest(".form-inline").find(".st1-accept-item");
     var childRow = $(this).closest(".po-item-data-content").find(".po-item-data-content__child");
+    var buttonEditItem = $(this).closest(".po-item-data-content").find(".st1-edit-row").first();
 
     var itemID = $(this).closest(".po-item-data-content__outer").find("input.st1-pd-item-id").val();
     var deliveryMethod = inputDeliveryMethod.val();
@@ -627,6 +628,7 @@ $(".st1-cancel-item").on("click", function (obj) {
             inputPartialDate.attr("disabled", "disabled");
             buttonAcceptItem.attr("disabled", "disabled").removeClass("selected");
             buttonCancelItem.attr("disabled", "disabled").addClass("selected-negative");
+            buttonEditItem.attr("style", "visibility:display");
 
 
             if (deliveryMethod === "partial") {

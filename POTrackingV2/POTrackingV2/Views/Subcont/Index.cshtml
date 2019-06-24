@@ -418,7 +418,21 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
+                            //if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
+                            if (ViewBag.CurrentRoleID == "vendor" &&
+                                    (
+                                        //(purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || 
+                                        //(purchasingDocumentItem.ConfirmedItem == true ||
+                                        //(purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || 
+                                        //purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)
+                                        //)
+                                        /*
+                                        (purchasingDocumentItem.PB != null || purchasingDocumentItem.Setting != null || purchasingDocumentItem.Fullweld != null || purchasingDocumentItem.Primer != null) ||
+                                        (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x=> x.PB != null || x.Setting != null || x.Fullweld != null || x.Primer != null))
+                                        */
+                                        (purchasingDocumentItem.ActiveStageToNumber>2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber >2))
+                                    )
+                                )
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -593,7 +607,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var disableDefineSequences = "";
-                            if (purchasingDocumentItem.ActiveStageToNumber < 2)
+                            if (purchasingDocumentItem.ActiveStageToNumber < 2 || purchasingDocumentItem.ConfirmedItem == false)
                             {
                                 disableDefineSequences = "disabled";
                             }
@@ -611,7 +625,7 @@
                                         disableDefineSequences = "";
 
                                         //if ((purchasingDocumentItemChild.ActiveStage != null && Convert.ToInt32(purchasingDocumentItemChild.ActiveStage) < 2) || purchasingDocumentItemChild.ActiveStage == null)
-                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 2)
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 2 || purchasingDocumentItemChild.ConfirmedItem == false)
                                         {
                                             disableDefineSequences = "disabled";
                                         }
@@ -699,9 +713,7 @@
                         </div>
                         @{
                             row = 1;
-                            rowChild = 1;
                         }
-
 
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
@@ -716,9 +728,11 @@
                             {
                                 isComplete = "Yes";
                             }
+
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer" @hideGR>
                                     <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                    @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                     <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     @*<span class="po-item-data-header__column inspection-date"></span>
@@ -731,6 +745,8 @@
                                                     <tr>
                                                         <td>GR / Inspection Date</td>
                                                         <td>&nbsp;</td>
+                                                        <td>Movement Type</td>
+                                                        <td>&nbsp;</td>
                                                         <td>Qty</td>
                                                     </tr>
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
@@ -739,6 +755,9 @@
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.MovementType</td>
                                                             <td>&nbsp;</td>
                                                             <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                         </tr>
@@ -750,6 +769,9 @@
 
                                 </div>
                                 <div class="po-item-data-content__child">
+                                    @{ 
+                                        rowChild = 1;
+                                    }
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         isComplete = "No";
@@ -766,6 +788,7 @@
 
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
                                             <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
@@ -778,6 +801,8 @@
                                                             <tr>
                                                                 <td>GR / Inspection Date</td>
                                                                 <td>&nbsp;</td>
+                                                                <td>Movement Type</td>
+                                                                <td>&nbsp;</td>
                                                                 <td>Qty</td>
                                                             </tr>
                                                             @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
@@ -785,6 +810,9 @@
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
                                                                     <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.MovementType</td>
                                                                     <td>&nbsp;</td>
                                                                     <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                                 </tr>
@@ -918,7 +946,7 @@
                             if (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             //if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                             {
-                                grFullFill = "gr-full-fill";
+                                //grFullFill = "gr-full-fill";
                             }
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
@@ -973,7 +1001,7 @@
                                         if (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
                                         //if (purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItemChild.ConfirmedQuantity)
                                         {
-                                            grFullFill = "gr-full-fill";
+                                            //grFullFill = "gr-full-fill";
                                         }
 
                                         if (purchasingDocumentItemChild.InvoiceDocument != null)
@@ -1957,6 +1985,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var isValidQty = true;
             var isNullChecked = false;
             var stage2 = $(this).closest(".custom-scrollbar").find(".stage-2");
+            var progressNumber = 2;
+            var donutProgressUnit = 75.39822368615503 / 7;
+            var donutProgress = (7 - progressNumber) * donutProgressUnit;
 
             $(this).closest(".stage-1").find(".po-item-data-content__outer").each(function (index) {
                 //console.log(index + ": " + $(this).html());
@@ -1978,10 +2009,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var btnEditItem = $(this).find(".edit-row");
                 var btnAddItem = $(this).find(".add-row");
                 var btnDellItem = $(this).find(".del-row");
-
-                var progressNumber = 2;
-                var donutProgressUnit = 75.39822368615503 / 7;
-                var donutProgress = (7 - progressNumber) * donutProgressUnit;
+                
                 var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
                 if (childNumber > 0) {
                     donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
@@ -2147,7 +2175,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert(xhr.status + " : " + error);
+                        alert(xhr.status + status + " : " + error);
                     }
                 });
             }
@@ -2299,6 +2327,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         if (!isNaN(Date.parse(newPartialDate))) {
                             dataPurchasingDocumentItems.push({
                                 ID: pdiIdParent.val(),
+                                ParentID: pdiIdParent.val(),
                                 ConfirmedQuantity: confirmedQtyParent.val(),
                                 ConfirmedDate: newPartialDate
                             });
@@ -2524,6 +2553,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $(".sequences-modal").on("click", function (obj) {
             var pdItemID = $(this).parent().find(".pd-item-id").val();
 
+            //stage open
+            $(".custom-scrollbar").removeClass("scrollbar-open");
+            $(this).closest(".custom-scrollbar").addClass("scrollbar-open");
+
             $("#sequencesModal").attr("row", $(this).closest(".po-item-data-content").attr("row"));
             if (typeof ($(this).closest(".po-item-data-content").attr("child")) === "undefined" || typeof ($(this).closest(".po-item-data-content").attr("child")) === "NaN") {
                 $("#sequencesModal").removeAttr("child");
@@ -2616,7 +2649,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         $("#btnSaveDefineSequences").on("click", function (obj) {
             var rowNumber = $("#sequencesModal").attr("row");
             var childNumber = $("#sequencesModal").attr("child");
-            var stage3 = $(this).closest(".custom-scrollbar").find(".stage-3");
+            var currentScrollbar = $(".scrollbar-open");
+            var stage1 = currentScrollbar.find(".stage-1");
+            var stage3 = currentScrollbar.find(".stage-3");
             var pdItemID = $("#item-id-sequences").val();
             var pb = parseInt($("#PB").val());
             var setting = parseInt($("#Setting").val());
@@ -2628,10 +2663,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var progressNumber = 3;
             var donutProgressUnit = 75.39822368615503 / 7;
             var donutProgress = (7 - progressNumber) * donutProgressUnit;
-            var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var donutRow = currentScrollbar.prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             if (childNumber > 0) {
-                donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
+                donutRow = currentScrollbar.prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
             }
+            console.log(donutRow.html());
 
             if (totalLeadTime == 0) {
                 alert("Data Component Not Found");
@@ -2650,10 +2686,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         //$(".sequences-modal").removeClass("open-edit-sequences");
                         if (childNumber > 0) {
                             stage3.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + " .input-progress").removeAttr("disabled");
+                            stage1.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + " .edit-row").attr("style", "visibility:hidden");
                         } else {
                             stage3.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
+                            stage1.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .edit-row").attr("style", "visibility:hidden");
                         }
-
+                        
                         donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
 
@@ -2673,6 +2711,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
+
+            $("#inputFilePB").val("");
+            $("#inputFileSetting").val("");
+            $("#inputFileFullweld").val("");
+            $("#inputFilePrimer").val("");
+
             $(".input-progress").removeClass("modal-progess-show");
             $(this).addClass("modal-progess-show");
             if ($(this).closest(".po-item-data-content").attr("child") > 0) {
@@ -2805,7 +2849,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var stage5Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             var stage4Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             var stage4Child = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child");
-            
+            var stage6Parent = $(".modal-progess-show").closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var stage6Child = $(".modal-progess-show").closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child");
+            var invoiceMethod = stage5Outer.find(".invoice-method-parent");
             var progressNumber = 4;
             var donutProgressUnit = 75.39822368615503 / 7;
             var donutProgress = (7 - progressNumber) * donutProgressUnit;
@@ -2936,6 +2982,25 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         var donutProgress = (7 - progressNumber) * donutProgressUnit;
                                     }
 
+                                    //remove disable invoice method
+                                    stage4Outer.find(".gr-complete").each(function () {
+                                        //if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content").attr("style") != "disabled") {
+                                        if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content__outer").attr("style") != "visibility:hidden") {
+                                            stage6Parent.find(".file-invoice").removeAttr("disabled");
+                                            stage6Parent.find(".save-invoice").removeAttr("disabled");
+                                        }
+                                    });
+                                    if (invoiceMethod.val() == "partial") {
+                                        stage4Child.find(".gr-complete").each(function () {
+                                            if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content").attr("style") != "visibility:hidden") {
+                                                childNumber = $(this).closest(".po-item-data-content").attr("child");
+                                                stage6Child.find("[child=" + childNumber + "] .file-invoice").removeAttr("disabled");
+                                                stage6Child.find("[child=" + childNumber + "] .save-invoice").removeAttr("disabled");
+                                            }
+                                        });
+                                    }
+                                    //end remove disable invoice method
+
                                     donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                                     donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                                     $("#close-input-progress").click();
@@ -2977,7 +3042,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
         /*---------------------------------------------------------------------------------- Stage 5 ----------------------------------------------------------------------------*/
         $(".invoice-method-parent").on("change", function (obj) {
-            console.log($(this).val());
             var row = $(this).closest(".po-item-data-content").attr("row");
             var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
             //console.log(stage6Child);
@@ -2992,11 +3056,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var saveButton = $(this);
             var pdItemID = $(this).closest(".po-item-data-content__outer").find(".pd-item-id").val();
             var invoiceMethod = $(this).closest(".form-inline").find(".invoice-method-parent");
-            var row = $(this).closest(".po-item-data-content").attr("row");
-            var stage6Parent = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__outer");
-            var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + row + " .po-item-data-content__child .po-item-data-content");
             var rowNumber = $(this).closest(".po-item-data-content").attr("row");
             var childNumber = $(this).closest(".po-item-data-content").attr("child");
+            var stage4Outer = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var stage4Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child .po-item-data-content");
+            var stage6Parent = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
+            var stage6Child = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-6 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child");
 
             var progressNumber = 6;
             var donutProgressUnit = 75.39822368615503 / 7;
@@ -3007,6 +3072,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             }
 
             if (invoiceMethod.val() != "") {
+                
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("SaveInvoiceMethod", "Subcont")",
@@ -3017,8 +3083,24 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         alert(response.responseText);
                         saveButton.attr("disabled", "disabled");
                         invoiceMethod.closest(".po-item-data-content__outer").find(".invoice-method-parent").attr("disabled", "disabled");
-                        stage6Parent.find(".gr-full-fill").removeAttr("disabled");
-                        stage6Child.find(".gr-full-fill").removeAttr("disabled");
+                        stage4Outer.find(".gr-complete").each(function () {
+                            //if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content").attr("style") != "disabled") {
+                            if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content__outer").attr("style") != "visibility:hidden") {
+                                stage6Parent.find(".file-invoice").removeAttr("disabled");
+                                stage6Parent.find(".save-invoice").removeAttr("disabled");
+                            }
+                        });
+                        if (invoiceMethod.val() == "partial"){
+                            stage4Child.find(".gr-complete").each(function () {
+                                if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content").attr("style") != "visibility:hidden") {
+                                    childNumber = $(this).closest(".po-item-data-content").attr("child");
+                                    stage6Child.find("[child=" + childNumber + "] .file-invoice").removeAttr("disabled");
+                                    stage6Child.find("[child=" + childNumber +"] .save-invoice").removeAttr("disabled");
+                                }
+                            });
+                        }
+                        //stage6Parent.find(".gr-full-fill").removeAttr("disabled");
+                        //stage6Child.find(".gr-full-fill").removeAttr("disabled");
                         donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                     },
@@ -3247,7 +3329,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             var reader = new FileReader();
                             var img = document.createElement("IMG");
                             img.height = "100";
-                            img.width = "100";
+                            //img.width = "100";
                             img.title = file.name.toLowerCase();
                             reader.onload = function (e) {
                                 img.src = e.target.result;
@@ -3258,7 +3340,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                             var img = document.createElement("IMG");
                             img.height = "100";
-                            img.width = "100";
+                            //img.width = "100";
                             img.title = file.name.toLowerCase();
 
                             var filename = file.name.toLowerCase();
@@ -3297,7 +3379,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 if (regexOffice.test(fileName.toLowerCase())) {
                     var img = document.createElement("IMG");
                     img.height = "100";
-                    img.width = "100";
+                    //img.width = "100";
                     img.title = fileName.toLowerCase();
 
                     if (fileName.includes(".doc") || fileName.includes(".docx")) {
@@ -3315,7 +3397,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 } else {
                     var img = document.createElement("IMG");
                     img.height = "100";
-                    img.width = "100";
+                    //img.width = "100";
                     img.title = fileName.toLowerCase();
                     img.src = url;
                 }

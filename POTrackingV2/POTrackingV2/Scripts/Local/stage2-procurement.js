@@ -51,6 +51,12 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+    // Next stage Controller
+    cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         $.ajax({
             type: "POST",
@@ -69,6 +75,8 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
 
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+
+                nextDataContent.find(".st2a-checkbox-item").first().removeAttr("disabled");
 
             },
             error: function (xhr, status, error) {
@@ -110,6 +118,12 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
+        // Next stage Controller
+        cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
         if (checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
             if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
 
@@ -122,6 +136,8 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
 
                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+
+                nextDataContent.find(".st2a-checkbox-item").first().addClass("row-updated-next-content");
             }
             else {
                 alert("Something went wrong!");
@@ -149,6 +165,9 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
                 $(".row-updated-donut-text").text("2a");
                 $(".row-updated-donut").removeClass("row-updated-donut");
                 $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+
+                $(".row-updated-next-content").removeAttr("disabled");
+                $(".row-updated-next-content").removeClass("row-updated-next-content");
 
             },
             error: function (xhr, status, error) {

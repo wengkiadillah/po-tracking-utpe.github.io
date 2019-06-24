@@ -346,7 +346,7 @@ namespace POTrackingV2.Controllers
 
                         databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
 
-                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                         {
                             databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
                             databasePurchasingDocumentItem.ConfirmedDate = inputPurchasingDocumentItem.ConfirmedDate;
@@ -419,7 +419,7 @@ namespace POTrackingV2.Controllers
                     {
                         databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID).FirstOrDefault();
 
-                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0")
+                        if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                         {
                             inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
                             inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
@@ -586,8 +586,6 @@ namespace POTrackingV2.Controllers
         //    }
         //}
         
-
-
         [HttpPost]
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
@@ -688,21 +686,6 @@ namespace POTrackingV2.Controllers
                     if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
                     {
 
-                        Notification notificationVend = new Notification();
-                        notificationVend.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notificationVend.StatusID = 2;
-                        notificationVend.Stage = "1";
-                        notificationVend.Role = "vendor";
-                        notificationVend.isActive = true;
-                        notificationVend.Created = now;
-                        notificationVend.CreatedBy = User.Identity.Name;
-                        notificationVend.Modified = now;
-                        notificationVend.ModifiedBy = User.Identity.Name;
-
-                        db.Notifications.Add(notificationVend);
-                    }
-                    else
-                    {
                         Notification notificationProc = new Notification();
                         notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                         notificationProc.StatusID = 2;
@@ -715,6 +698,21 @@ namespace POTrackingV2.Controllers
                         notificationProc.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notificationProc);
+                    }
+                    else
+                    {
+                        Notification notificationVend = new Notification();
+                        notificationVend.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationVend.StatusID = 2;
+                        notificationVend.Stage = "1";
+                        notificationVend.Role = "vendor";
+                        notificationVend.isActive = true;
+                        notificationVend.Created = now;
+                        notificationVend.CreatedBy = User.Identity.Name;
+                        notificationVend.Modified = now;
+                        notificationVend.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationVend);
                     }                    
                 }
 
@@ -752,55 +750,22 @@ namespace POTrackingV2.Controllers
             {
                 int count = 0;
                 string user = User.Identity.Name;
+                List<bool> isSameAsProcs = new List<bool>();
 
                 foreach (var inputETAHistory in inputETAHistories)
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputETAHistory.PurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2")
-                    {
-                        inputETAHistory.Created = now;
-                        inputETAHistory.CreatedBy = user;
-                        inputETAHistory.LastModified = now;
-                        inputETAHistory.LastModifiedBy = user;
-
-                        //databasePurchasingDocumentItem.ActiveStage = "2a";
-                        databasePurchasingDocumentItem.LastModified = now;
-                        databasePurchasingDocumentItem.LastModifiedBy = user;
-
-                        if (!databasePurchasingDocumentItem.HasETAHistory)
-                        {
-                            db.ETAHistories.Add(inputETAHistory);
-
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-                            foreach (var previousNotification in previousNotifications)
-                            {
-                                previousNotification.isActive = false;
-                            }
-
-                            Notification notification = new Notification();
-                            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 3;
-                            notification.Stage = "2";
-                            notification.Role = "procurement";
-                            notification.isActive = true;
-                            notification.Created = now;
-                            notification.CreatedBy = User.Identity.Name;
-                            notification.Modified = now;
-                            notification.ModifiedBy = User.Identity.Name;
-
-                            db.Notifications.Add(notification);
-                        }
-
-                        count++;
-                    }
-                    else if (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null) // EDIT
+                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == null))
                     {
                         List<ETAHistory> databaseEtaHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == inputETAHistory.PurchasingDocumentItemID).ToList();
 
-                        foreach (var databaseEtaHistory in databaseEtaHistories)
+                        if (databaseEtaHistories.Count > 0)
                         {
-                            db.ETAHistories.Remove(databaseEtaHistory);
+                            foreach (var databaseEtaHistory in databaseEtaHistories)
+                            {
+                                db.ETAHistories.Remove(databaseEtaHistory);
+                            }
                         }
 
                         inputETAHistory.Created = now;
@@ -808,21 +773,110 @@ namespace POTrackingV2.Controllers
                         inputETAHistory.LastModified = now;
                         inputETAHistory.LastModifiedBy = user;
 
-                        //databasePurchasingDocumentItem.ActiveStage = "2a";
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
                         if (!databasePurchasingDocumentItem.HasETAHistory)
                         {
-                            db.ETAHistories.Add(inputETAHistory);
+                            if (inputETAHistory.ETADate.GetValueOrDefault() == databasePurchasingDocumentItem.ConfirmedDate)
+                            {
+                                inputETAHistory.AcceptedByProcurement = true;
+                                databasePurchasingDocumentItem.ActiveStage = "2a";
+
+                                db.ETAHistories.Add(inputETAHistory);
+
+                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                                foreach (var previousNotification in previousNotifications)
+                                {
+                                    previousNotification.isActive = false;
+                                }
+
+                                Notification notificationProcurement = new Notification();
+                                notificationProcurement.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notificationProcurement.StatusID = 3;
+                                notificationProcurement.Stage = "2";
+                                notificationProcurement.Role = "procurement";
+                                notificationProcurement.isActive = true;
+                                notificationProcurement.Created = now;
+                                notificationProcurement.CreatedBy = User.Identity.Name;
+                                notificationProcurement.Modified = now;
+                                notificationProcurement.ModifiedBy = User.Identity.Name;
+
+                                db.Notifications.Add(notificationProcurement);
+
+                                Notification notificationVendor = new Notification();
+                                notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notificationVendor.StatusID = 1;
+                                notificationVendor.Stage = "2";
+                                notificationVendor.Role = "vendor";
+                                notificationVendor.isActive = true;
+                                notificationVendor.Created = now;
+                                notificationVendor.CreatedBy = User.Identity.Name;
+                                notificationVendor.Modified = now;
+                                notificationVendor.ModifiedBy = User.Identity.Name;
+
+                                db.Notifications.Add(notificationVendor);
+
+                                isSameAsProcs.Add(true);
+                            }
+                            else
+                            {
+                                db.ETAHistories.Add(inputETAHistory);
+
+                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                                foreach (var previousNotification in previousNotifications)
+                                {
+                                    previousNotification.isActive = false;
+                                }
+
+                                Notification notification = new Notification();
+                                notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                                notification.StatusID = 3;
+                                notification.Stage = "2";
+                                notification.Role = "procurement";
+                                notification.isActive = true;
+                                notification.Created = now;
+                                notification.CreatedBy = User.Identity.Name;
+                                notification.Modified = now;
+                                notification.ModifiedBy = User.Identity.Name;
+
+                                db.Notifications.Add(notification);
+
+                                isSameAsProcs.Add(false);
+                            }
                         }
 
                         count++;
                     }
+                    //else if (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null) // EDIT
+                    //{
+                    //    List<ETAHistory> databaseEtaHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == inputETAHistory.PurchasingDocumentItemID).ToList();
+
+                    //    foreach (var databaseEtaHistory in databaseEtaHistories)
+                    //    {
+                    //        db.ETAHistories.Remove(databaseEtaHistory);
+                    //    }
+
+                    //    inputETAHistory.Created = now;
+                    //    inputETAHistory.CreatedBy = user;
+                    //    inputETAHistory.LastModified = now;
+                    //    inputETAHistory.LastModifiedBy = user;
+
+                    //    //databasePurchasingDocumentItem.ActiveStage = "2a";
+                    //    databasePurchasingDocumentItem.LastModified = now;
+                    //    databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                    //    if (!databasePurchasingDocumentItem.HasETAHistory)
+                    //    {
+                    //        db.ETAHistories.Add(inputETAHistory);
+                    //    }
+
+                    //    count++;
+                    //}
                 }
 
                 db.SaveChanges();
-                return Json(new { responseText = $"{count} item affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{count} item affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -888,6 +942,25 @@ namespace POTrackingV2.Controllers
                         db.Notifications.Add(notification);
 
                         count++;
+
+                        // Set OpenQuantity
+                        if (databasePurchasingDocumentItem.ParentID == null || databasePurchasingDocumentItem.ID == databasePurchasingDocumentItem.ParentID)
+                        {
+                            int quantity = databasePurchasingDocumentItem.Quantity;
+                            quantity = quantity - databasePurchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault();
+
+                            // look for child
+                            List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == databasePurchasingDocumentItem.ID && x.ID != x.ParentID).ToList();
+
+                            if (childDatabasePurchasingDocumentItems.Count > 0)
+                            {
+                                foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
+                                {
+                                    quantity = quantity - childDatabasePurchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault();
+                                }
+                            }
+
+                        }
                     }
                 }
 
@@ -944,18 +1017,18 @@ namespace POTrackingV2.Controllers
                             previousNotification.isActive = false;
                         }
 
-                        Notification notification = new Notification();
-                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 2;
-                        notification.Stage = "2";
-                        notification.Role = "vendor";
-                        notification.isActive = true;
-                        notification.Created = now;
-                        notification.CreatedBy = User.Identity.Name;
-                        notification.Modified = now;
-                        notification.ModifiedBy = User.Identity.Name;
+                        Notification notificationVendor = new Notification();
+                        notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationVendor.StatusID = 2;
+                        notificationVendor.Stage = "2";
+                        notificationVendor.Role = "vendor";
+                        notificationVendor.isActive = true;
+                        notificationVendor.Created = now;
+                        notificationVendor.CreatedBy = User.Identity.Name;
+                        notificationVendor.Modified = now;
+                        notificationVendor.ModifiedBy = User.Identity.Name;
 
-                        db.Notifications.Add(notification);
+                        db.Notifications.Add(notificationVendor);
 
                         Notification notificationProc = new Notification();
                         notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -995,17 +1068,15 @@ namespace POTrackingV2.Controllers
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
 
-            PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
-            //string errorMessage = string.Empty;
-                  
+            PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
             try
             {
-                if (fileProformaInvoice.ContentLength > 0 || purchasingDocumentItem.ActiveStage == "2a")
+                if (fileProformaInvoice.ContentLength > 0 && databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                 {
                     string user = User.Identity.Name;
 
                     string fileName = $"{inputPurchasingDocumentItemID.ToString()}_{Path.GetFileName(fileProformaInvoice.FileName)}";
-                    //pathLOcal
                     string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), fileName);
 
                     using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
@@ -1013,203 +1084,8 @@ namespace POTrackingV2.Controllers
                         fileProformaInvoice.InputStream.CopyTo(fileStream);
                     }
 
-                    purchasingDocumentItem.ProformaInvoiceDocument = fileName;
-                    purchasingDocumentItem.LastModified = now;
-                    purchasingDocumentItem.ActiveStage = "3";
-                    purchasingDocumentItem.LastModifiedBy = user;
-                    purchasingDocumentItem.ApproveProformaInvoiceDocument = null;
-                    //purchasingDocumentItem.ActiveStage = "4";
-
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
-                    foreach (var previousNotification in previousNotifications)
-                    {
-                        previousNotification.isActive = false;
-                    }
-
-                    Notification notification = new Notification();
-                    notification.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                    notification.StatusID = 1;
-                    notification.Stage = "2a";
-                    notification.Role = "procurement";
-                    notification.isActive = true;
-                    notification.Created = now;
-                    notification.CreatedBy = User.Identity.Name;
-                    notification.Modified = now;
-                    notification.ModifiedBy = User.Identity.Name;
-
-                    db.Notifications.Add(notification);
-
-                    db.SaveChanges();
-
-                    //string downloadUrl = Path.Combine("..\\Files\\Local\\ProformaInvoice", fileName);
-                    string downloadUrl = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", fileName);
-
-                    return Json(new { responseText = $"File successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
-                    
-                }
-                else
-                {
-                    return Json(new { responseText = $"File not uploaded" }, JsonRequestBehavior.AllowGet);
-                     
-                }
-
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = ex.Message + " --- " + ex.StackTrace;
-
-                return View(errorMessage);
-                    
-            }
-            
-            //return RedirectToAction("Index");
-        }
-
-        //[HttpPost]
-        //public ActionResult ProcurementApprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
-        //{
-        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-        //    if (myUser.Roles != "procurement")
-        //    {
-        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-        //    }
-
-        //    try
-        //    {
-        //        PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
-
-        //        if (databasePurchasingDocumentItem.ActiveStage == "2a")
-        //        {
-        //            string user = User.Identity.Name;
-
-        //            databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = true;
-        //            databasePurchasingDocumentItem.ActiveStage = "3";
-        //            databasePurchasingDocumentItem.LastModified = now;
-        //            databasePurchasingDocumentItem.LastModifiedBy = user;
-
-        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-        //            foreach (var previousNotification in previousNotifications)
-        //            {
-        //                previousNotification.isActive = false;
-        //            }
-
-        //            Notification notification = new Notification();
-        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-        //            notification.StatusID = 3;
-        //            notification.Stage = "2a";
-        //            notification.Role = "vendor";
-        //            notification.isActive = true;
-        //            notification.Created = now;
-        //            notification.CreatedBy = User.Identity.Name;
-        //            notification.Modified = now;
-        //            notification.ModifiedBy = User.Identity.Name;
-
-        //            db.Notifications.Add(notification);
-
-        //            db.SaveChanges();
-
-        //            return Json(new { responseText = $"Proforma Invoice successfully accepted" }, JsonRequestBehavior.AllowGet);
-        //        }
-        //        else
-        //        {
-        //            return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = (ex.Message + ex.StackTrace);
-        //        return View(errorMessage);
-        //    }
-        //}
-
-        //// POST: Import/ProcurementDisapprovePI
-        //[HttpPost]
-        //public ActionResult ProcurementDisapprovePI([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
-        //{
-        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-        //    if (myUser.Roles != "procurement")
-        //    {
-        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-        //    }
-
-        //    try
-        //    {
-        //        PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
-
-        //        if (databasePurchasingDocumentItem.ActiveStage == "2a")
-        //        {
-        //            string user = User.Identity.Name;
-
-        //            string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), databasePurchasingDocumentItem.ProformaInvoiceDocument);
-
-        //            System.IO.File.Delete(pathWithfileName);
-
-        //            databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
-        //            databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
-        //            databasePurchasingDocumentItem.ActiveStage = "2a";
-        //            databasePurchasingDocumentItem.LastModified = now;
-        //            databasePurchasingDocumentItem.LastModifiedBy = user;
-
-        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-        //            foreach (var previousNotification in previousNotifications)
-        //            {
-        //                previousNotification.isActive = false;
-        //            }
-
-        //            Notification notification = new Notification();
-        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-        //            notification.StatusID = 2;
-        //            notification.Stage = "2a";
-        //            notification.Role = "vendor";
-        //            notification.isActive = true;
-        //            notification.Created = now;
-        //            notification.CreatedBy = User.Identity.Name;
-        //            notification.Modified = now;
-        //            notification.ModifiedBy = User.Identity.Name;
-
-        //            db.Notifications.Add(notification);
-
-        //            db.SaveChanges();
-
-        //            return Json(new { responseText = $"Proforma Invoice successfully declined" }, JsonRequestBehavior.AllowGet);
-        //        }
-        //        else
-        //        {
-        //            return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
-        //        }
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string errorMessage = (ex.Message + ex.StackTrace);
-        //        return View(errorMessage);
-        //    }
-        //}
-
-        [HttpPost]
-        public ActionResult VendorSkipPI(int inputPurchasingDocumentItemID)
-        {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
-            {
-                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
-            }
-
-            PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
-
-            try
-            {
-                //PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
-
-                if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
-                {
-                    string user = User.Identity.Name;
-
-                    //databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
+                    databasePurchasingDocumentItem.ProformaInvoiceDocument = fileName;
                     databasePurchasingDocumentItem.ActiveStage = "3";
-                    databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
-                    databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = null;
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
 
@@ -1234,31 +1110,297 @@ namespace POTrackingV2.Controllers
 
                     db.SaveChanges();
 
-                    return Json(new { responseText = $"Proforma Invoice successfully skipped" }, JsonRequestBehavior.AllowGet);
+                    string downloadUrl = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", fileName);
+
+                    return Json(new { responseText = $"Proforma Invoice successfully uploaded", proformaInvoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { responseText = $"Proforma Invoice not uploaded" }, JsonRequestBehavior.AllowGet);
                 }
+
             }
             catch (Exception ex)
             {
-                string errorMessage = (ex.Message + ex.StackTrace);
-                return View(errorMessage);
-            }
-        }
-        #endregion
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
 
-        #region stage 3 (vendorconfirmpaymentreceived)
+                return View(errorMessage);
+                    
+            }
+            
+            //return RedirectToAction("Index");
+        }
+
         [HttpPost]
-        public ActionResult VendorConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
+        public ActionResult VendorUploadAllProformaInvoice(List<int> inputPurchasingDocumentItemIDs, HttpPostedFileBase[] fileProformaInvoices)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
-            
+
+            try
+            {
+                int count = 0;
+                List<string> downloadURLs = new List<string>();
+
+                foreach (var inputPurchasingDocumentItemID in inputPurchasingDocumentItemIDs)
+                {
+                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+                    if (fileProformaInvoices[count].ContentLength > 0 && databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                    {
+                        string user = User.Identity.Name;
+
+                        string fileName = $"{inputPurchasingDocumentItemID.ToString()}_{Path.GetFileName(fileProformaInvoices[count].FileName)}";
+                        string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), fileName);
+
+                        using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
+                        {
+                            fileProformaInvoices[count].InputStream.CopyTo(fileStream);
+                        }
+
+                        databasePurchasingDocumentItem.ProformaInvoiceDocument = fileName;
+                        databasePurchasingDocumentItem.ActiveStage = "3";
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 1;
+                        notification.Stage = "2a";
+                        notification.Role = "procurement";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        downloadURLs.Add(Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", fileName));
+                        count++;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new { responseText = $"{count} Proforma Invoice successfully uploaded", proformaInvoiceUrls = downloadURLs }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+                return View(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ProcurementAskProformaInvoice(List<int> inputPurchasingDocumentItemIDs)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
+            {
+                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                int count = 0;
+
+                foreach (var inputPurchasingDocumentItemID in inputPurchasingDocumentItemIDs)
+                {
+                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+                    if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
+                    {
+                        string user = User.Identity.Name;
+
+                        databasePurchasingDocumentItem.ActiveStage = "2a";
+                        databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+                        databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = true;
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 3;
+                        notification.Stage = "2a";
+                        notification.Role = "vendor";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        count++;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new { responseText = $"{count} Stage(s) defined as need for Proforma Invoice" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+                return View(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ProcurementSkipProformaInvoice(List<int> inputPurchasingDocumentItemIDs)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
+            {
+                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+
+            try
+            {
+                int count = 0;
+
+                foreach (var inputPurchasingDocumentItemID in inputPurchasingDocumentItemIDs)
+                {
+                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+                    if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
+                    {
+                        string user = User.Identity.Name;
+
+                        databasePurchasingDocumentItem.ActiveStage = "3";
+                        databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+                        databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 1;
+                        notification.Stage = "2a";
+                        notification.Role = "vendor";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        count++;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new { responseText = $"{count} Stage(s) successfully Skipped" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+                return View(errorMessage);
+            }
+        }
+
+        //[HttpPost]
+        //public ActionResult VendorSkipPI(int inputPurchasingDocumentItemID)
+        //{
+        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+        //    if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+        //    {
+        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+        //    }
+
+        //    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+        //    try
+        //    {
+        //        //PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
+
+        //        if (databasePurchasingDocumentItem.ActiveStage == "2a" || databasePurchasingDocumentItem.ActiveStage == "3")
+        //        {
+        //            string user = User.Identity.Name;
+
+        //            //databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = false;
+        //            databasePurchasingDocumentItem.ActiveStage = "3";
+        //            databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+        //            databasePurchasingDocumentItem.ApproveProformaInvoiceDocument = null;
+        //            databasePurchasingDocumentItem.LastModified = now;
+        //            databasePurchasingDocumentItem.LastModifiedBy = user;
+
+        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+        //            foreach (var previousNotification in previousNotifications)
+        //            {
+        //                previousNotification.isActive = false;
+        //            }
+
+        //            Notification notification = new Notification();
+        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+        //            notification.StatusID = 1;
+        //            notification.Stage = "2a";
+        //            notification.Role = "procurement";
+        //            notification.isActive = true;
+        //            notification.Created = now;
+        //            notification.CreatedBy = User.Identity.Name;
+        //            notification.Modified = now;
+        //            notification.ModifiedBy = User.Identity.Name;
+
+        //            db.Notifications.Add(notification);
+
+        //            db.SaveChanges();
+
+        //            return Json(new { responseText = $"Proforma Invoice successfully skipped" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { responseText = $"Process failed" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = (ex.Message + ex.StackTrace);
+        //        return View(errorMessage);
+        //    }
+        //}
+
+
+        #endregion
+
+        #region stage 3 (procurementconfirmpaymentreceived)
+        [HttpPost]
+        public ActionResult ProcurementConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
+            {
+                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+            }
+
             if (inputPurchasingDocumentItems == null)
             {
                 return Json(new { responseText = $"No data affected" }, JsonRequestBehavior.AllowGet);
@@ -1288,9 +1430,9 @@ namespace POTrackingV2.Controllers
 
                         Notification notification = new Notification();
                         notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 1;
+                        notification.StatusID = 3;
                         notification.Stage = "3";
-                        notification.Role = "procurement";
+                        notification.Role = "vendor";
                         notification.isActive = true;
                         notification.Created = now;
                         notification.CreatedBy = User.Identity.Name;
@@ -1298,13 +1440,13 @@ namespace POTrackingV2.Controllers
                         notification.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notification);
+
                         count++;
                     }
                 }
 
                 db.SaveChanges();
 
-   
                 return Json(new { responseText = $"{count} data affected" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -1315,10 +1457,10 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
+        public ActionResult ProcurementSkipConfirmPayment(int inputPurchasingDocumentItemID)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+            if (myUser.Roles.ToLower() != LoginConstants.RoleProcurement.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -1344,9 +1486,9 @@ namespace POTrackingV2.Controllers
 
                     Notification notification = new Notification();
                     notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 1;
+                    notification.StatusID = 3;
                     notification.Stage = "3";
-                    notification.Role = "procurement";
+                    notification.Role = "vendor";
                     notification.isActive = true;
                     notification.Created = now;
                     notification.CreatedBy = User.Identity.Name;
@@ -1371,6 +1513,63 @@ namespace POTrackingV2.Controllers
                 return View(errorMessage);
             }
         }
+        //[HttpPost]
+        //public ActionResult VendorSkipConfirmPayment(int inputPurchasingDocumentItemID)
+        //{
+        //    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+        //    if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+        //    {
+        //        return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+        //    }
+
+        //    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+        //    try
+        //    {
+        //        if (databasePurchasingDocumentItem.ActiveStage == "3" || databasePurchasingDocumentItem.ActiveStage == "4")
+        //        {
+        //            string user = User.Identity.Name;
+
+        //            databasePurchasingDocumentItem.ConfirmReceivedPaymentDate = null;
+        //            databasePurchasingDocumentItem.ActiveStage = "4";
+        //            databasePurchasingDocumentItem.LastModified = now;
+        //            databasePurchasingDocumentItem.LastModifiedBy = user;
+
+        //            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+        //            foreach (var previousNotification in previousNotifications)
+        //            {
+        //                previousNotification.isActive = false;
+        //            }
+
+        //            Notification notification = new Notification();
+        //            notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+        //            notification.StatusID = 1;
+        //            notification.Stage = "3";
+        //            notification.Role = "procurement";
+        //            notification.isActive = true;
+        //            notification.Created = now;
+        //            notification.CreatedBy = User.Identity.Name;
+        //            notification.Modified = now;
+        //            notification.ModifiedBy = User.Identity.Name;
+
+        //            db.Notifications.Add(notification);
+
+        //            db.SaveChanges();
+
+        //            return Json(new { responseText = $"Stage successfully Skipped" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { responseText = $"Stage failed to skip" }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+        //        return View(errorMessage);
+        //    }
+        //}
         #endregion
 
         #region stage 4 (ETAOntimeDelay)

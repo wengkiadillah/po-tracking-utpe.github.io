@@ -90,9 +90,9 @@
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed !=null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
+    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed != null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
 
-  
+
     //if (roleID == "procurement" || roleID == "administrator")
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
@@ -273,7 +273,7 @@
                         {
                             <div class="po-item-data-content row-@rowInformation">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity</span>
+                                    <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity.ToString()</span>
                                     <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
                                     <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
                                     <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
@@ -364,6 +364,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
+
                             if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
@@ -411,21 +412,36 @@
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
+
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
+
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3))
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
+                                    }
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
                                     }
                                 }
                             }
@@ -555,18 +571,31 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
+
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3))
+                                                        {
+                                                            hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
+                                                        }
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
 
-                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+                                                        if ((childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3)) && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
                                                         }
                                                     }
                                                 }
@@ -767,7 +796,7 @@
                                     isChecked = "checked";
                                     selectedButtonDecline = "selected-negative";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    if (purchasingDocumentItem.ActiveStage == "2")
                                     {
                                         hideButtonEdit = "style=visibility:display";
                                     }
@@ -790,7 +819,7 @@
                                     isChecked = "checked";
                                     selectedButtonConfirm = "selected";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2" || purchasingDocumentItem.ActiveStage == "2a") && purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:display";
                                     }
@@ -874,7 +903,7 @@
                                                     isChecked = "checked";
                                                     selectedButtonDecline = "selected-negative";
 
-                                                    if (childPurchasingDocumentItem.ActiveStage == "2a")
+                                                    if (childPurchasingDocumentItem.ActiveStage == "2")
                                                     {
                                                         hideButtonEdit = "style=visibility:display";
                                                     }
@@ -895,7 +924,7 @@
                                                     isChecked = "checked";
                                                     selectedButtonConfirm = "selected";
 
-                                                    if (childPurchasingDocumentItem.ActiveStage == "2" && childPurchasingDocumentItem.FirstETAHistory.AcceptedByProcurement == null)
+                                                    if ((childPurchasingDocumentItem.ActiveStage == "2" || childPurchasingDocumentItem.ActiveStage == "2a") && childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                                     {
                                                         hideButtonEdit = "style=visibility:display";
                                                     }
@@ -933,8 +962,46 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-3">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 2a</p>
+                    @{
+                        var st2aCheckboxAll = "st2a-checkbox-all";
+                        var st2aConfirmAll = "st2a-ask-first-eta-all";
+                        var st2aSkipAll = "st2a-skip-first-eta-all";
+                        var st2aUploadAll = "";
+                        var disabledst2aConfirmAll = "";
+                        var disabledst2aSkipAll = "";
+                        var disabledst2aUploadAll = "disabled";
+                        var hiddenst2aConfirmAll = "";
+                        var hiddenst2aSkipAll = "";
+                        var hiddenst2aUploadAll = "hidden";
+
+                        if (roleID == "vendor")
+                        {                            
+
+                            //st2aCheckboxAll = "";
+                            st2aConfirmAll = "";
+                            st2aSkipAll = "";
+                            st2aUploadAll = "st2a-upload-first-eta-all";
+                            disabledst2aConfirmAll = "disabled";
+                            disabledst2aSkipAll = "disabled";
+                            disabledst2aUploadAll = "";
+                            hiddenst2aConfirmAll = "hidden";
+                            hiddenst2aSkipAll = "hidden";
+                            hiddenst2aUploadAll = "";
+                        }
+                    }
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom @st2aCheckboxAll" type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div><p class="mb-0">Stage 2a</p></div>
+                        <div>
+                            @*<input class="btn btn-positive @st2aUploadAll" type="submit" value="Upload All" @disabledst2aUploadAll @hiddenst2aUploadAll />*@
+                            <input class="btn btn-positive @st2aConfirmAll" type="submit" value="Need All" @disabledst2aConfirmAll @hiddenst2aConfirmAll />
+                            <input class="btn btn-negative @st2aSkipAll" type="submit" value="Skip All" @disabledst2aSkipAll @hiddenst2aSkipAll />
+                        </div>
                     </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
@@ -948,116 +1015,93 @@
                             var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                             var childRowStage2a = 1;
 
+                            var st2aCheckboxItem = "st2a-checkbox-item";
                             var st2aItemId = "st2a-item-id";
                             var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
                             var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
-                            //var st2aApproveProforma = "st2a-approve-proforma-proc";
-                            //var st2aDisApproveProforma = "st2a-disapprove-proforma-proc";
                             var st2aDownloadProforma = "st2a-download-proforma";
-                            var st2aVendorSkipPI = "st2a-vendor-skip-PI";
+                            var st2aAskProforma = "st2a-ask-proforma";
+                            var st2aSkipProforma = "st2a-skip-proforma";
 
-                            var disabledFileProformaInvoice = "";
-                            var disabledUploadProformaInvoice = "";
-                            //var disabledApproveProforma = "disabled";
-                            //var disabledDisApproveProforma = "disabled";
-                            var disabledVendorSkipPI = "";
-                            //var selectedApproveProforma = "";
-                            //var selectedDisApproveProforma = "";
-                            var selectedVendorSkipPI = "";
-                            //var hiddenApproveProforma = "hidden";
-                            //var hiddenDisApproveProforma = "hidden";
+                            var disabledInputCheckbox = "disabled";
+                            var disabledFileProformaInvoice = "disabled";
+                            var disabledUploadProformaInvoice = "disabled";
+                            var disabledSkipProforma = "disabled";
+                            var disabledAskProforma = "disabled";
+                            var selectedSkipProforma = "";
+                            var selectedAskProforma = "";
                             var hiddenInputDiv = "";
                             var hiddenUploadedDiv = "hidden";
-                            var hiddenVendorSkipPI = "disabled";
+                            var hiddenUploadProforma = "hidden";
+                            var hiddenAskProforma = "hidden";
+                            var hiddenSkipProforma = "hidden";
                             var downloadPath = "";
+                            var isChecked = "";
 
-                            if (purchasingDocumentItem.ProformaInvoiceDocument == null)
+                            if (roleID == "procurement" || roleID == "administrator")
                             {
-                                if (purchasingDocumentItem.ActiveStage == "2a")
-                                {
-                                    if (roleID == "procurement" || roleID == "administrator")
-                                    {
-                                        disabledFileProformaInvoice = "disabled";
-                                        disabledUploadProformaInvoice = "disabled";
-                                        disabledVendorSkipPI = "disabled";
+                                hiddenAskProforma = "";
+                                hiddenSkipProforma = "";
+                                st2aFileProformaInvoice = "";
 
-                                    }
-                                    else
-                                    {
-                                        hiddenVendorSkipPI = "";
-                                        disabledFileProformaInvoice = "";
-                                        disabledUploadProformaInvoice = "";
-                                        disabledVendorSkipPI = "";
-                                    }
+                                if (purchasingDocumentItem.ProformaInvoiceDocument != null)
+                                {
+                                    hiddenAskProforma = "hidden";
+                                    hiddenSkipProforma = "hidden";
+                                    hiddenInputDiv = "hidden";
+                                    hiddenUploadedDiv = "";
+                                    downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
                                 }
-                                else if (Convert.ToInt32(purchasingDocumentItem.ActiveStageView) > 2)
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null && purchasingDocumentItem.ActiveStage == "2a")
                                 {
-                                    disabledFileProformaInvoice = "disabled";
-                                    disabledUploadProformaInvoice = "disabled";
-                                    disabledVendorSkipPI = "disabled";
-                                    //hiddenVendorSkipPI = "hidden";
-                                    selectedVendorSkipPI = "selected-negative";
-
-
-
-
+                                    disabledInputCheckbox = "";
                                 }
-                                else
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                 {
-                                    disabledFileProformaInvoice = "disabled";
-                                    disabledUploadProformaInvoice = "disabled";
-                                    disabledVendorSkipPI = "disabled";
-                                    //hiddenVendorSkipPI = "hidden";
-                                    selectedVendorSkipPI = "";
-
-
+                                    disabledAskProforma = "disabled";
+                                    disabledSkipProforma = "disabled";
+                                    selectedAskProforma = "selected";
+                                    isChecked = "checked";
+                                }
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                {
+                                    disabledAskProforma = "disabled";
+                                    disabledSkipProforma = "disabled";
+                                    selectedSkipProforma = "selected-negative";
+                                    isChecked = "checked";
                                 }
                             }
-
-                            if (purchasingDocumentItem.ProformaInvoiceDocument != null)
+                            else
                             {
-                                hiddenInputDiv = "hidden";
-                                hiddenUploadedDiv = "";
-                                disabledVendorSkipPI = "disabled";
-                                hiddenVendorSkipPI = "";
+                                hiddenAskProforma = "hidden";
+                                hiddenSkipProforma = "hidden";
+                                hiddenUploadProforma = "";
 
-                                //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
-                                downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
-
-                                if (roleID == "procurement" || roleID == "administrator")
+                                if (purchasingDocumentItem.ProformaInvoiceDocument != null)
                                 {
-                                    //disabledApproveProforma = "";
-                                    //disabledDisApproveProforma = "";
-                                    //hiddenApproveProforma = "";
-                                    //hiddenDisApproveProforma = "";
-                                    disabledVendorSkipPI = "disabled";
-
-                                    if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
-                                    {
-                                        //disabledApproveProforma = "disabled";
-                                        //disabledDisApproveProforma = "disabled";
-                                        //selectedApproveProforma = "selected";
-                                    }
-                                    else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
-                                    {
-                                        //disabledApproveProforma = "disabled";
-                                        //disabledDisApproveProforma = "disabled";
-                                        //selectedDisApproveProforma = "selected-negative";
-                                    }
+                                    hiddenInputDiv = "hidden";
+                                    hiddenUploadedDiv = "";
+                                    downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                    isChecked = "checked";
+                                    disabledInputCheckbox = "disabled";
                                 }
-                                else
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                 {
-                                    if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
-                                    {
-                                        //disabledApproveProforma = "disabled";
-                                        //disabledDisApproveProforma = "disabled";
-                                        //selectedApproveProforma = "selected";
-                                    }
-                                    else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
-                                    {
-                                        hiddenInputDiv = "";
-                                        hiddenUploadedDiv = "hidden";
-                                    }
+                                    disabledAskProforma = "disabled";
+                                    disabledSkipProforma = "disabled";
+                                }
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                {
+                                    disabledAskProforma = "disabled";
+                                    disabledSkipProforma = "disabled";
+                                    selectedAskProforma = "selected";
+                                    disabledInputCheckbox = "";
+                                }
+                                else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                {
+                                    disabledAskProforma = "disabled";
+                                    disabledSkipProforma = "disabled";
+                                    selectedSkipProforma = "selected-negative";
                                 }
                             }
 
@@ -1066,26 +1110,25 @@
                                     <form class="po-form-item-st2a">
                                         <div class="po-item-data-header__column">
                                             <div class="form-inline" @hiddenInputDiv>
+                                                <label class="checkbox-custom__label">
+                                                    <input class="checkbox-custom @st2aCheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                    <span class="checkmark"></span>
+                                                </label>
                                                 <div class="form-group mr-2">
                                                     <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
                                                     <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
                                                     <i class="fas fa-paperclip form-type-icon"></i>
                                                 </div>
-                                                <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @disabledUploadProformaInvoice>Save</button>
-                                                <button class="btn btn-negative @st2aVendorSkipPI @selectedVendorSkipPI" @hiddenVendorSkipPI @disabledVendorSkipPI>Skip</button>
+                                                <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
+                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                             </div>
-
                                             <div class="form-inline" @hiddenUploadedDiv>
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
                                                     </p>
                                                 </div>
-                                                @*<div class="form-group mr-2">
-                                                        <input type="hidden" class="@st2aItemId" value="@purchasingDocumentItem.ID">
-                                                        <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
-                                                        <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
-                                                    </div>*@
                                             </div>
                                         </div>
                                     </form>
@@ -1096,105 +1139,86 @@
                                         foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
 
-                                            disabledFileProformaInvoice = "";
-                                            disabledUploadProformaInvoice = "";
-                                            //disabledApproveProforma = "disabled";
-                                            //disabledDisApproveProforma = "disabled";
-                                            disabledVendorSkipPI = "";
-                                            //selectedApproveProforma = "";
-                                            //selectedDisApproveProforma = "";
-                                            selectedVendorSkipPI = "";
-                                            //hiddenApproveProforma = "hidden";
-                                            //hiddenDisApproveProforma = "hidden";
-                                            hiddenVendorSkipPI = "hidden";
+                                            disabledInputCheckbox = "disabled";
+                                            disabledFileProformaInvoice = "disabled";
+                                            disabledUploadProformaInvoice = "disabled";
+                                            disabledSkipProforma = "disabled";
+                                            disabledAskProforma = "disabled";
+                                            selectedSkipProforma = "";
+                                            selectedAskProforma = "";
                                             hiddenInputDiv = "";
                                             hiddenUploadedDiv = "hidden";
+                                            hiddenUploadProforma = "hidden";
+                                            hiddenAskProforma = "hidden";
+                                            hiddenSkipProforma = "hidden";
                                             downloadPath = "";
+                                            isChecked = "";
 
-                                            if (childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+
+
+                                            if (roleID == "procurement" || roleID == "administrator")
                                             {
-                                                if (childPurchasingDocumentItem.ActiveStage == "2a")
-                                                {
-                                                    if (roleID == "procurement" || roleID == "administrator")
-                                                    {
-                                                        disabledFileProformaInvoice = "disabled";
-                                                        disabledUploadProformaInvoice = "disabled";
-                                                        disabledVendorSkipPI = "disabled";
+                                                hiddenAskProforma = "";
+                                                hiddenSkipProforma = "";
 
-                                                    }
-                                                    else
-                                                    {
-                                                        disabledFileProformaInvoice = "";
-                                                        disabledUploadProformaInvoice = "";
-                                                        hiddenVendorSkipPI = "";
-                                                        disabledVendorSkipPI = "";
-                                                    }
+                                                if (childPurchasingDocumentItem.ProformaInvoiceDocument != null)
+                                                {
+                                                    hiddenAskProforma = "hidden";
+                                                    hiddenSkipProforma = "hidden";
+                                                    hiddenInputDiv = "hidden";
+                                                    hiddenUploadedDiv = "";
+                                                    downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
                                                 }
-                                                else if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStageView) > 2)
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null && childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
-                                                    disabledFileProformaInvoice = "disabled";
-                                                    disabledUploadProformaInvoice = "disabled";
-                                                    disabledVendorSkipPI = "disabled";
-                                                    //hiddenVendorSkipPI = "hidden";
-                                                    selectedVendorSkipPI = "selected-negative";
-
+                                                    disabledInputCheckbox = "";
                                                 }
-                                                else
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
                                                 {
-                                                    disabledFileProformaInvoice = "disabled";
-                                                    disabledUploadProformaInvoice = "disabled";
-                                                    disabledVendorSkipPI = "disabled";
-                                                    //hiddenVendorSkipPI = "hidden";
-                                                    //selectedVendorSkipPI = "";
-
-
+                                                    disabledAskProforma = "disabled";
+                                                    disabledSkipProforma = "disabled";
+                                                    selectedAskProforma = "selected";
+                                                    isChecked = "checked";
+                                                }
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                                {
+                                                    disabledAskProforma = "disabled";
+                                                    disabledSkipProforma = "disabled";
+                                                    selectedSkipProforma = "selected-negative";
+                                                    isChecked = "checked";
                                                 }
                                             }
-
-                                            if (childPurchasingDocumentItem.ProformaInvoiceDocument != null)
+                                            else
                                             {
-                                                disabledVendorSkipPI = "disabled";
-                                                hiddenInputDiv = "hidden";
-                                                hiddenUploadedDiv = "";
-                                                hiddenVendorSkipPI = "";
-                                                //downloadPath = Path.Combine("..\\Files\\Local\\ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
-                                                downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                hiddenAskProforma = "hidden";
+                                                hiddenSkipProforma = "hidden";
+                                                hiddenUploadProforma = "";
 
-                                                if (roleID == "procurement" || roleID == "administrator")
+                                                if (childPurchasingDocumentItem.ProformaInvoiceDocument != null)
                                                 {
-                                                    disabledVendorSkipPI = "disabled";
-                                                    //disabledApproveProforma = "";
-                                                    //disabledDisApproveProforma = "";
-                                                    //hiddenApproveProforma = "";
-                                                    //hiddenDisApproveProforma = "";
-
-                                                    if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
-                                                    {
-                                                        //disabledApproveProforma = "disabled";
-                                                        //disabledDisApproveProforma = "disabled";
-                                                        //selectedApproveProforma = "selected";
-                                                    }
-                                                    else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
-                                                    {
-                                                        //disabledApproveProforma = "disabled";
-                                                        //disabledDisApproveProforma = "disabled";
-                                                        //selectedDisApproveProforma = "selected-negative";
-                                                    }
+                                                    hiddenInputDiv = "hidden";
+                                                    hiddenUploadedDiv = "";
+                                                    downloadPath = Path.Combine("/", iisAppName, "Files/Local/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                    isChecked = "checked";
+                                                    disabledInputCheckbox = "disabled";
                                                 }
-                                                else
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null)
                                                 {
-                                                    if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
-                                                    {
-                                                        //disabledApproveProforma = "disabled";
-                                                        //disabledDisApproveProforma = "disabled";
-                                                        //selectedApproveProforma = "selected";
-                                                    }
-                                                    else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
-                                                    {
-                                                        hiddenInputDiv = "";
-                                                        hiddenUploadedDiv = "hidden";
-                                                        //selectedVendorSkipPI = "selected";
-                                                    }
+                                                    disabledAskProforma = "disabled";
+                                                    disabledSkipProforma = "disabled";
+                                                }
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == true)
+                                                {
+                                                    disabledAskProforma = "disabled";
+                                                    disabledSkipProforma = "disabled";
+                                                    selectedAskProforma = "selected";
+                                                    disabledInputCheckbox = "";
+                                                }
+                                                else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == false)
+                                                {
+                                                    disabledAskProforma = "disabled";
+                                                    disabledSkipProforma = "disabled";
+                                                    selectedSkipProforma = "selected-negative";
                                                 }
                                             }
 
@@ -1202,13 +1226,18 @@
                                                 <form class="po-form-item-st2a">
                                                     <div class="po-item-data-header__column">
                                                         <div class="form-inline" @hiddenInputDiv>
+                                                            <label class="checkbox-custom__label">
+                                                                <input class="checkbox-custom @st2aCheckboxItem" type="checkbox" @isChecked @disabledInputCheckbox>
+                                                                <span class="checkmark"></span>
+                                                            </label>
                                                             <div class="form-group mr-2">
                                                                 <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
                                                                 <input type="file" class="form-control with-icon @st2aFileProformaInvoice" @disabledFileProformaInvoice>
                                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                                             </div>
-                                                            <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @disabledUploadProformaInvoice>Save</button>
-                                                            <button class="btn btn-negative @st2aVendorSkipPI @selectedVendorSkipPI" @disabledVendorSkipPI>Skip</button>
+                                                            <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
+                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                            <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                                         </div>
 
                                                         <div class="form-inline" @hiddenUploadedDiv>
@@ -1217,11 +1246,6 @@
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
                                                                 </p>
                                                             </div>
-                                                            @*<div class="form-group mr-2">
-                                                                    <input type="hidden" class="@st2aItemId" value="@childPurchasingDocumentItem.ID">
-                                                                    <button class="btn btn-positive @st2aApproveProforma @selectedApproveProforma" @hiddenApproveProforma @disabledApproveProforma>Yes</button>
-                                                                    <button class="btn btn-negative @st2aDisApproveProforma @selectedDisApproveProforma" @hiddenDisApproveProforma @disabledDisApproveProforma>No</button>
-                                                                </div>*@
                                                         </div>
                                                     </div>
                                                 </form>
@@ -1236,27 +1260,31 @@
                     </div>
                 </div>
                 <div class="po-item-section stage-4">
-                    @if (roleID == "vendor")
-                    {
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 3</p>
-                        </div>
+                    @{
+                        var st3CheckboxAll = "st3-checkbox-all";
+                        var st3ConfirmPaymentAll = "st3-confirm-payment-all";
+                        var disabledst3ConfirmPaymentAll = "";
+
+                        if (roleID == "vendor")
+                        {
+                            st3CheckboxAll = "";
+                            st3ConfirmPaymentAll = "";
+                            disabledst3ConfirmPaymentAll = "disabled";
+                        }
                     }
-                    else
-                    {
-                        <div class="po-item-section-header stage-checkbox-header">
-                            <div>
-                                <label class="checkbox-custom__label mr-0">
-                                    <input class="checkbox-custom st3-checkbox-all" type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                            <div><p class="mb-0">Stage 3</p></div>
-                            <div>
-                                <input class="btn btn-positive st3-confirm-payment-all" type="submit" value="Save All" />
-                            </div>
+
+                    <div class="po-item-section-header stage-checkbox-header">
+                        <div>
+                            <label class="checkbox-custom__label mr-0">
+                                <input class="checkbox-custom @st3CheckboxAll" type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
                         </div>
-                    }
+                        <div><p class="mb-0">Stage 3</p></div>
+                        <div>
+                            <input class="btn btn-positive @st3ConfirmPaymentAll" type="submit" value="Save All" @disabledst3ConfirmPaymentAll />
+                        </div>
+                    </div>
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text">Confirm Payment Received</span>
@@ -1320,7 +1348,7 @@
 
                             if (roleID == "vendor")
                             {
-                                hiddenCheckbox = "style=visibility:hidden";
+                                disabledCheckboxItem = "disabled";
                                 hiddenEditButton = "hidden";
                             }
 
@@ -1394,7 +1422,7 @@
 
                                             if (roleID == "vendor")
                                             {
-                                                hiddenCheckbox = "style=visibility:hidden";
+                                                disabledCheckboxItem = "disabled";
                                                 hiddenEditButton = "hidden";
                                             }
 
@@ -1696,10 +1724,10 @@
                                                 {
                                                     foreach (var progressPhoto in purchasingDocumentItem.ProgressPhotoes)
                                                     {
-                                                <span class="mr-2">
-                                                    @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">*@
-                                                    <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
-                                                </span>
+                                                        <span class="mr-2">
+                                                            @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">*@
+                                                            <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                        </span>
                                                     }
                                                 }
                                             </div>
@@ -1943,10 +1971,10 @@
                                                             {
                                                                 foreach (var progressPhoto in childPurchasingDocumentItem.ProgressPhotoes)
                                                                 {
-                                                            <span class="mr-2">
-                                                                @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">*@
-                                                                <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
-                                                            </span>
+                                                                    <span class="mr-2">
+                                                                        @*<img src="@Path.Combine("..\\Files\\Local\\ProgressProforma", progressPhoto.FileName)" width="50px" height="50px" data-id="@progressPhoto.ID">*@
+                                                                        <img src="@Path.Combine("/", iisAppName, "Files/Local/ProgressProforma", progressPhoto.FileName)" width="125px" height="125px" data-id="@progressPhoto.ID">
+                                                                    </span>
                                                                 }
                                                             }
                                                         </div>
@@ -2217,7 +2245,7 @@
 
                             if (purchasingDocumentItem.InvoiceDocument != null)
                             {
-                                
+
                                 invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Local/Invoice", purchasingDocumentItem.InvoiceDocument);
                                 hiddenFormUploading = "hidden";
                                 hiddenFormUploaded = "";
@@ -2274,7 +2302,7 @@
 
                                             if (childPurchasingDocumentItem.InvoiceDocument != null)
                                             {
-                                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Local/Invoice", childPurchasingDocumentItem.InvoiceDocument);                                              
+                                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Local/Invoice", childPurchasingDocumentItem.InvoiceDocument);
                                                 hiddenFormUploading = "hidden";
                                                 hiddenFormUploaded = "";
 
@@ -2322,78 +2350,94 @@
                         }
                     </div>
                 </div>
-                @if (roleID == "procurement" || roleID == "administrator")
-                { 
-                    <div class="po-item-section stage-8">
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 7</p>
-                        </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text document_number">Parking Date</span>
-                                <span class="po-item-data-header__text delivery">Term Date</span>
-                            </div>
-                            @{
-                                    var rowStage7 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                <div class="po-item-section stage-8">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Parking Date</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
                             {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage7 = 1;
+                                <span class="po-item-data-header__text delivery">Term Date</span>
+                            }
+                        </div>
+                        @{
+                            var rowStage7 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage7 = 1;
 
-                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                                var termDateViews = purchasingDocumentItem.TermDateViews;
-                                var maxCount = 0;
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
 
-                                if (parkingDateViews != null)
-                                {
-                                    maxCount = parkingDateViews.Count;
-                                }
+                            if (parkingDateViews != null)
+                            {
+                                maxCount = parkingDateViews.Count;
+                            }
 
-                                var count = 0;
+                            var count = 0;
 
-                                <div class="po-item-data-content row-@rowStage7">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
+                            <div class="po-item-data-content row-@rowStage7">
+                                <div class="po-item-data-content__outer">
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                             <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">-</span>
                                             <span class="po-item-data-header__column delivery">-</span>
                                         }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                    }
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        count++;
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
-                                                    @if (maxCount >= count + 1)
+                                            <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                                         <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">-</span>
                                                         <span class="po-item-data-header__column delivery">-</span>
                                                     }
-                                                </div>
-                                                childRowStage7++;
-                                                count++;
-                                            }
+                                                }
+                                            </div>
+                                            childRowStage7++;
+                                            count++;
                                         }
-                                    </div>
+                                    }
                                 </div>
-                                rowStage7++;
-                            }
-                        </div>
+                            </div>
+                            rowStage7++;
+                        }
                     </div>
-                 }
+                </div>
             </div>
         </li>
     </ul>
@@ -2407,10 +2451,15 @@
 <input type="text" id="stage2VendorConfirmFirstETA" hidden value="@Url.Action("VendorConfirmFirstETA", "Local")" />
 <input type="text" id="stage2ProcurementAcceptFirstEta" hidden value="@Url.Action("ProcurementAcceptFirstEta", "Local")" />
 <input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Local")" />
-<input type="text" id="stage2aVendorUploadInvoice" hidden value="@Url.Action("VendorUploadInvoice", "Local")" />
-<input type="text" id="stage2aVendorSkipPI" hidden value="@Url.Action("VendorSkipPI", "Local")" />
-<input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Local")" />
-<input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Local")" />
+<input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadInvoice", "Local")" />
+@*<input type="text" id="stage2aVendorSkipPI" hidden value="@Url.Action("VendorSkipPI", "Local")" />
+    <input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Local")" />
+    <input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Local")" />*@
+<input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Local")" />
+<input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Local")" />
+<input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Local")" />
+<input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Local")" />
+<input type="text" id="stage3ProcurementSkipConfirmPayment" hidden value="@Url.Action("ProcurementSkipConfirmPayment", "Local")" />
 <input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Local")" />
 <input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Local")" />
 <input type="text" id="stage6VendorUploadInvoice_2" hidden value="@Url.Action("VendorUploadInvoice_2", "Local")" />
@@ -2429,7 +2478,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
     <script src="~/Scripts/Local/stage2-procurement.js"></script>
     <script src="~/Scripts/Local/Stage2a-procurement.js"></script>
     <script src="~/Scripts/Local/Stage2a-invoice-vendor.js"></script>
-    <script src="~/Scripts/Local/stage3-vendor.js"></script>
+    <script src="~/Scripts/Local/stage3-procurement.js"></script>
     <script src="~/Scripts/Local/stage4-vendor.js"></script>
     <script src="~/Scripts/Local/Stage6-vendor.js"></script>
 
