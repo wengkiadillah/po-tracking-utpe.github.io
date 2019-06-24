@@ -1285,7 +1285,7 @@ namespace POTrackingV2.Controllers
                 notification.ModifiedBy = User.Identity.Name;
                 db.Notifications.Add(notification);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseCode = "200", responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
