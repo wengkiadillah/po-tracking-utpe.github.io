@@ -202,6 +202,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
     var checkboxItem = $(this).closest(".po-item-data-content").find(".st1-checkbox-item-proc").first();
     var buttonCancelItem = $(this);
     var buttonAcceptItem = $(this).closest(".form-inline").find(".st1-accept-item-proc").first();
+    var buttonEditItem = $(this).closest(".po-item-data-content").find(".st1-edit-row-proc").first();
 
     var isChild = $(this).closest(".po-item-data-content").attr("child");
 
@@ -227,6 +228,7 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
             buttonAcceptItem.attr("disabled", "disabled").removeClass("selected");
             buttonCancelItem.attr("disabled", "disabled").addClass("selected-negative");
             checkboxItem.attr("disabled", "disabled");
+            buttonEditItem.attr("style", "visibility:display");
         },
         error: function (xhr, status, error) {
             alert(xhr.status + " : " + error);
