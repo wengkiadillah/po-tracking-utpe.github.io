@@ -2616,6 +2616,26 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 }
             });
 
+            var outHeightArray = [];
+            var tempOuterHeight = 0;
+            $(".po-item-container").each(function () {
+                var ptr = 1;
+
+                while (ptr > 0) {
+                    if ($(this).find(".row-" + ptr).length > 0) {
+                        outHeightArray = [];
+                        $(this).find(".po-item-data-content__outer").each(function () {
+                            outHeightArray.push($(this).height());
+                        });
+                        tempOuterHeight = Math.max(...outHeightArray);
+                        $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
+                        ptr++;
+                    } else {
+                        ptr = -1;
+                    }
+                }
+            })
+
             tempArray = [];
             $(".po-item-section.information").each(function () {
                 tempArray.push($(this).outerWidth(true));
