@@ -186,11 +186,11 @@
 
                         if (ViewBag.CurrentRoleID == ViewBag.RoleSubcont)
                         {
-                            purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null)).ToList();
+                            purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedItem == null && x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null)).ToList();
                         }
                         else
                         {
-                            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedItem == null && x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                         }
                         //if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
                         if (!String.IsNullOrEmpty(ViewBag.CurrentDataMaterial))

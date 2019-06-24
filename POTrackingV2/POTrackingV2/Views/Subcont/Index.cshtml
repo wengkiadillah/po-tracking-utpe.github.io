@@ -718,22 +718,38 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
+                            var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
+                            var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
                             if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 4)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
                             var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                             var isComplete = "No";
-                            if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+
+                            if (purchasingDocumentItem.ConfirmedQuantity > 0)
                             {
-                                isComplete = "Yes";
+                                if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
+                                {
+                                    isComplete = "Yes";
+                                }
+                            }
+                            else
+                            {
+                                grDateNewDateFormat = purchasingDocumentItem.LatestGRDate.HasValue ? purchasingDocumentItem.LatestGRDate.Value.ToString("dd/MM/yyyy") : "";
+                                latestGR = purchasingDocumentItem.TotalGR;
+                                confirmedQty = purchasingDocumentItem.Quantity;
+                                if (latestGR >= confirmedQty)
+                                {
+                                    isComplete = "Yes";
+                                }
                             }
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer" @hideGR>
                                     <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
                                     @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
-                                    <span class="po-item-data-header__column gr-qty">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItem.ConfirmedQuantity</span>
+                                    <span class="po-item-data-header__column gr-qty">@latestGR / @confirmedQty</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     @*<span class="po-item-data-header__column inspection-date"></span>
                                         <span class="po-item-data-header__column inspecton-qty"></span>*@
@@ -1056,40 +1072,90 @@
                         <p class="mb-0">Stage 7</p>
                     </div>
                     <div class="po-item-section-body">
-                        <div class="po-item-data-header">
-                            <span class="po-item-data-header__text parking-date">Parking Date</span>
-                            <span class="po-item-data-header__text term-date">Term Date</span>
-                        </div>
                         @{
                             row = 1;
-                            rowChild = 1;
                             var hidden = "";
+                            var hiddenPayTerms = "";
+
+                            if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                            {
+                                hiddenPayTerms = "hidden";
+                            }
                         }
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text parking-date">Parking Date</span>
+                            <span class="po-item-data-header__text term-date" @hiddenPayTerms>Term Date</span>
+                        </div>
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            if (purchasingDocumentItem.ActiveStageToNumber < 7)
+                            var days = 0;
+                            rowChild = 1;
+                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestInvoiceDate.PayTerms))
+                            {
+                                days = Convert.ToInt32(purchasingDocumentItem.LatestInvoiceDate.PayTerms);
+                            }
+
+                            if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
                             {
                                 hidden = "hidden";
                             }
-                            var dateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var termDateNewDateFormat = "";
+
+                            DateTime? dateNewFormat = purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?) null;
+                            DateTime? termDate = (DateTime?)null;
+                            if (dateNewFormat != (DateTime?)null && days > 0)
+                            {
+                                termDate = dateNewFormat.Value.AddDays(days);
+                                termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
+                            }
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
-                                    <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat</span>
-                                    <span class="po-item-data-header__column term-date" @hidden>@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
+                                    @if(dateNewFormat != null)
+                                    {
+                                        <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
+                                        <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column parking-date" @hidden></span>
+                                        <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
+                                    }
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
+                                        termDateNewDateFormat = "";
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 7)
+                                        if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
                                         {
                                             hidden = "hidden";
                                         }
-                                        dateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        days = 0;
+                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms))
+                                        {
+                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms);
+                                        }
+
+                                        dateNewFormat = purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                                        termDate = (DateTime?)null;
+                                        if (dateNewFormat != (DateTime?)null && days > 0)
+                                        {
+                                            termDate = dateNewFormat.Value.AddDays(days);
+                                            termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
+                                        }
+
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                            <span class="po-item-data-header__column document-number"@hidden>@dateNewFormat</span>
-                                            <span class="po-item-data-header__column gr-date"@hidden>@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
+                                            @if (dateNewFormat != null)
+                                            {
+                                                <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
+                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="po-item-data-header__column parking-date" @hidden>hiddenPayTerms</span>
+                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@hiddenPayTerms</span>
+                                            }
                                         </div>
                                         rowChild++;
                                     }
@@ -2910,7 +2976,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 errorMessage += "- Progress Photos Must Be Filled\n";
                 isValid = false;
             }
-
+           
             if (isValid) {
                 if (!isNaN(Date.parse(ATADate))) { //&& newETADate < newATADate
                     var formData = new FormData();
@@ -3159,7 +3225,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             formUploading.attr("hidden", true);
                             formUploaded.removeAttr("hidden");
                             formUploaded.find(".file-invoice-download").attr("href", response.invoiceUrl);
-                            stage7.find(".po-item-data-header__column").removeAttr("hidden");
+                            stage7.find(".po-item-data-header__column.parking-date").removeAttr("hidden");
                             donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                             donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                         } else {
