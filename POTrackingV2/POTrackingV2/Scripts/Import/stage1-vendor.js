@@ -570,7 +570,9 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-link").removeClass("row-updated-link");
                     }
                     else {
+                        $(".next-row-updated").first().attr("disabled");
                         $(".next-row-updated").first().removeClass("next-row-updated");
+                        $(".next-row-updated-input").first().attr("mindate", "");
                         $(".next-row-updated-input").first().removeClass("next-row-updated-input");
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
