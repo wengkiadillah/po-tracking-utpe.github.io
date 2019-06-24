@@ -463,6 +463,7 @@
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
+                                    hideButtonEdit = "";
 
                                 }
                                 else if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -618,6 +619,7 @@
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
+                                                        hideButtonEdit = "";
 
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -625,7 +627,7 @@
                                                         disabledInputCheckbox = "disabled";
                                                         isChecked = "checked";
                                                         selectedButtonConfirm = "selected";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        hideButtonEdit = "";
                                                     }
 
                                                     if (childPurchasingDocumentItem.ActiveStage != "1")
@@ -1027,6 +1029,7 @@
                             var st2aItemId = "st2a-item-id";
                             var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
                             var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
+                            var st2RemoveFileProformaInvoice = "st2a-remove-proforma-invoice";
                             var st2aDownloadProforma = "st2a-download-proforma";
                             var st2aAskProforma = "st2a-ask-proforma";
                             var st2aSkipProforma = "st2a-skip-proforma";
@@ -1049,6 +1052,9 @@
 
                             if (roleID == "procurement" || roleID == "administrator")
                             {
+                                st2aFileProformaInvoice = "";
+                                st2aUploadProformaInvoice = "";
+
                                 hiddenAskProforma = "";
                                 hiddenSkipProforma = "";
                                 st2aFileProformaInvoice = "";
@@ -1136,6 +1142,10 @@
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                        @if (roleID == "vendor" && purchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                        {
+                                                            <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
+                                                        }
                                                     </p>
                                                 </div>
                                             </div>
@@ -1166,6 +1176,9 @@
 
                                             if (roleID == "procurement" || roleID == "administrator")
                                             {
+                                                st2aFileProformaInvoice = "";
+                                                st2aUploadProformaInvoice = "";
+
                                                 hiddenAskProforma = "";
                                                 hiddenSkipProforma = "";
 
@@ -1252,6 +1265,10 @@
                                                             <div class="form-group mr-2">
                                                                 <p class="mt-2 mb-0">
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                                    @if (roleID == "vendor" && childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                                    {
+                                                                        <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
+                                                                    }
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -2829,7 +2846,7 @@
                             <span class="po-item-data-header__text document_number">Parking Date</span>
                             @if (roleID == "procurement" || roleID == "administrator")
                             {
-                            <span class="po-item-data-header__text delivery">Term Date</span>
+                                <span class="po-item-data-header__text delivery">Term Date</span>
                             }
                         </div>
                         @{
@@ -2992,6 +3009,7 @@
 <input type="text" id="stage2ProcurementDeclineFirstEta" hidden value="@Url.Action("ProcurementDeclineFirstEta", "Import")" />
 <input type="text" id="stage2aVendorUploadProformaInvoice" hidden value="@Url.Action("VendorUploadProformaInvoice", "Import")" />
 <input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Import")" />
+<input type="text" id="stage2aVendorRemoveProformaInvoice" hidden value="@Url.Action("VendorRemoveProformaInvoice", "Import")" />
 <input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Import")" />
 <input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Import")" />
 <input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Import")" />

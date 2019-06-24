@@ -50,7 +50,7 @@ $(".st10-file-invoice-upload").on("click", function (obj) {
     }
 });
 
-//Vendor upload one Proforma Invoice
+//Vendor remove one Proforma Invoice
 $(".st10-file-invoice-remove").on("click", function (obj) {
     obj.preventDefault();
 
