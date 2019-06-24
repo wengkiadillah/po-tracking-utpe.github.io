@@ -39,6 +39,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
 
     //var editRow = $(this).closest(".form-inline").find(".edit-row-st3");
 
+    var etaDateDelayValue = inputUpdateEtaDateDelay.val();
     var itemID = $(this).closest(".form-inline").find(".st4-item-id").val();
     var etaOnTime = reverseDayMonth(inputUpdateEtaDateOntime.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-on-time").attr("mindate"));
@@ -64,31 +65,37 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
 
     if (!isNaN(etaOnTime.getTime())) {
         if (etaOnTime >= minDate) {
-            $.ajax({
-                type: "POST",
-                url: stage4VendorUpdateETA,
-                data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    alert(response.responseText);
+            if (etaDateDelayValue === '') {
+                $.ajax({
+                    type: "POST",
+                    url: stage4VendorUpdateETA,
+                    data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        alert(response.responseText);
 
-                    buttonEtaDateOnTimeConfirm.attr("disabled", "disabled").addClass("selected");
-                    inputUpdateEtaDateOntime.attr("disabled", "disabled");
-                    inputUpdateEtaDateDelay.attr("disabled", "disabled");
-                    inputDelayReason.attr("disabled", "disabled");
-                    buttonEtaDateDelayConfirm.attr("disabled", "disabled");
-                    inputUploadProgressPhotoes.removeAttr("disabled");
-                    buttonUploadProgressPhotoes.removeAttr("disabled");
+                        buttonEtaDateOnTimeConfirm.attr("disabled", "disabled").addClass("selected");
+                        inputUpdateEtaDateOntime.attr("disabled", "disabled");
+                        inputUpdateEtaDateDelay.attr("disabled", "disabled");
+                        inputDelayReason.attr("disabled", "disabled");
+                        buttonEtaDateDelayConfirm.attr("disabled", "disabled");
+                        inputUploadProgressPhotoes.removeAttr("disabled");
+                        buttonUploadProgressPhotoes.removeAttr("disabled");
 
-                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
 
-                    nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
-                },
-                error: function (xhr, status, error) {
-                    alert(xhr.status + " : " + error);
-                }
-            });
+                        nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            }
+            else {
+                alert("The Date delay must be null if On time");
+                inputUpdateEtaDateOntime.focus();
+            }
         }
         else {
             alert("The Date cannot be less than the Date agreed on stage 2");
