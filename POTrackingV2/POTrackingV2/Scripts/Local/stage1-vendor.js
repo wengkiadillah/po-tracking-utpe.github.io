@@ -522,19 +522,20 @@ $(".st1-accept-item").on("click", function (obj) {
                                 editButton.attr("style", "visibility:display");
                             }
                             else {
-                                $(".next-row-updated").first().attr("disabled");
+                                $(".next-row-updated").first().attr("disabled", "disabled");//
                                 $(".next-row-updated").first().removeClass("next-row-updated");
                                 $(".next-row-updated-input").first().attr("mindate", "");
                                 $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                                $(".next-row-updated-input").first().val("");//
 
                                 $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
                                 $(".row-updated-donut-text").first().text("1");
                                 $(".row-updated-donut").first().removeClass("row-updated-donut");
                                 $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
                                 
-                                nextDataContent.find(".st2-checkbox-item").first().attr("disabled", "disabled");
-                                nextDataContent.find(".st2-first-eta-date").first().attr("disabled", "disabled");
-                                nextDataContent.find(".st2-first-eta-date").first().val("");
+                                nextDataContent.find(".st2-confirm-first-eta").first().attr("disabled", "disabled");//
+                                //nextDataContent.find(".st2-first-eta-date").first().attr("disabled", "disabled");
+                                //nextDataContent.find(".st2-first-eta-date").first().val("");
                                 editButton.attr("style", "visibility:display");
                             }
                         }
