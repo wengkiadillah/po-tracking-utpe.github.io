@@ -1036,20 +1036,20 @@
                         }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            var dateNewFormat = purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                            var dateNewFormat = purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
                                     <span class="po-item-data-header__column parking-date">@dateNewFormat</span>
-                                    <span class="po-item-data-header__column term-date">@purchasingDocumentItem.LatestDocumentInvoices.PayTerms</span>
+                                    <span class="po-item-data-header__column term-date">@purchasingDocumentItem.LatestInvoiceDate.PayTerms</span>
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
-                                        dateNewFormat = purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestDocumentInvoices.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
+                                        dateNewFormat = purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
                                             <span class="po-item-data-header__column document-number">@dateNewFormat</span>
-                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestDocumentInvoices.PayTerms</span>
+                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestInvoiceDate.PayTerms</span>
                                         </div>
                                         rowChild++;
                                     }
