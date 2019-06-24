@@ -319,6 +319,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
 
                         $(".row-updated-link").attr("style", "visibility:display");
                         $(".row-updated-link").removeClass("row-updated-link");
+                        //nextDataContent.find(".st2-checkbox-item").first().attr("disabled", "disabled");
+                        //nextDataContent.find(".st2-first-eta-date").first().attr("disabled", "disabled");
                     }
                 }
             }
@@ -500,7 +502,7 @@ $(".st1-accept-item").on("click", function (obj) {
                         if (deliveryMethod === "partial") {
                             childRow.find(".po-item-data-content").each(function (index) {
                                 $(this).find(".st1-partial-confirm-qty").attr("disabled", "disabled");
-                                $(this).find(".st1-partial-date").attr("disabled", "disabled");
+                                $(this).find(".st1-partial-date").attr("disabled", "disabled");                                
                             });
                         }
 
@@ -529,7 +531,10 @@ $(".st1-accept-item").on("click", function (obj) {
                                 $(".row-updated-donut-text").first().text("1");
                                 $(".row-updated-donut").first().removeClass("row-updated-donut");
                                 $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
-
+                                
+                                nextDataContent.find(".st2-checkbox-item").first().attr("disabled", "disabled");
+                                nextDataContent.find(".st2-first-eta-date").first().attr("disabled", "disabled");
+                                nextDataContent.find(".st2-first-eta-date").first().val("");
                                 editButton.attr("style", "visibility:display");
                             }
                         }
