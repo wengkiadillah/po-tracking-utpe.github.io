@@ -75,6 +75,7 @@ namespace POTrackingV2.Controllers
 
                             string enTicket = FormsAuthentication.Encrypt(authTicket);
                             HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
+                            faCookie.Expires = DateTime.Now.AddMinutes(20);
                             Response.Cookies.Add(faCookie);
                         }
                     }
