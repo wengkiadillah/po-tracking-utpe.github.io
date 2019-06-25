@@ -364,6 +364,7 @@
                             var st1DelRow = "st1-del-row";
                             var st1EditRow = "st1-edit-row";
 
+
                             if (roleID == "procurement" || roleID == "administrator")
                             {
                                 st1ItemID = "st1-pd-item-id-proc";
@@ -411,21 +412,36 @@
 
                                 if (purchasingDocumentItem.ConfirmedItem == true)
                                 {
+
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonConfirm = "selected";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
+
+
+                                    if (purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3))
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
+                                    }
                                 }
                                 else if (purchasingDocumentItem.ConfirmedItem == false)
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
                                     isChecked = "checked";
-                                    hideButtonEdit = "";
+                                    //hideButtonEdit = "";
 
-                                    if (purchasingDocumentItem.ActiveStage == "2a" && purchasingDocumentItem.ProformaInvoiceDocument == null)
+                                    if ((purchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(purchasingDocumentItem.ActiveStage) == 3)) && purchasingDocumentItem.ProformaInvoiceDocument == null)
                                     {
                                         hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "";
                                     }
                                 }
                             }
@@ -435,6 +451,7 @@
                                 {
                                     disabledInputCheckbox = "disabled";
                                     selectedButtonCancel = "selected-negative";
+                                    hideButtonEdit = "";
 
                                 }
                                 else if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -555,18 +572,31 @@
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonConfirm = "selected";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
+
+                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3))
+                                                        {
+                                                            hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
+                                                        }
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedItem == false)
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
                                                         isChecked = "checked";
-                                                        hideButtonEdit = "";
+                                                        //hideButtonEdit = "";
 
-                                                        if (childPurchasingDocumentItem.ActiveStage == "2a" && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
+                                                        if ((childPurchasingDocumentItem.ActiveStage == "2a" || (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 3 || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) == 3)) && childPurchasingDocumentItem.ProformaInvoiceDocument == null)
                                                         {
                                                             hideButtonEdit = "style=visibility:hidden";
+                                                        }
+                                                        else
+                                                        {
+                                                            hideButtonEdit = "";
                                                         }
                                                     }
                                                 }
@@ -576,6 +606,7 @@
                                                     {
                                                         disabledInputCheckbox = "disabled";
                                                         selectedButtonCancel = "selected-negative";
+                                                        //hideButtonEdit = "";
 
                                                     }
                                                     else if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -583,7 +614,7 @@
                                                         disabledInputCheckbox = "disabled";
                                                         isChecked = "checked";
                                                         selectedButtonConfirm = "selected";
-                                                        hideButtonEdit = "style=visibility:hidden";
+                                                        //hideButtonEdit = "";
                                                     }
 
                                                     if (childPurchasingDocumentItem.ActiveStage != "1")
@@ -946,8 +977,9 @@
                         var hiddenst2aUploadAll = "hidden";
 
                         if (roleID == "vendor")
-                        {
-                            st2aCheckboxAll = "";
+                        {                            
+
+                            //st2aCheckboxAll = "";
                             st2aConfirmAll = "";
                             st2aSkipAll = "";
                             st2aUploadAll = "st2a-upload-first-eta-all";
@@ -1012,6 +1044,7 @@
                             {
                                 hiddenAskProforma = "";
                                 hiddenSkipProforma = "";
+                                st2aFileProformaInvoice = "";
 
                                 if (purchasingDocumentItem.ProformaInvoiceDocument != null)
                                 {
@@ -1089,7 +1122,7 @@
                                                     <i class="fas fa-paperclip form-type-icon"></i>
                                                 </div>
                                                 <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                 <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                             </div>
                                             <div class="form-inline" @hiddenUploadedDiv>
@@ -1205,7 +1238,7 @@
                                                                 <i class="fas fa-paperclip form-type-icon"></i>
                                                             </div>
                                                             <button class="btn btn-positive @st2aUploadProformaInvoice mr-2" @hiddenUploadProforma @disabledUploadProformaInvoice>Save</button>
-                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma" @hiddenAskProforma @disabledAskProforma>Need</button>
+                                                            <button class="btn btn-positive @st2aAskProforma @selectedAskProforma mr-2" @hiddenAskProforma @disabledAskProforma>Need</button>
                                                             <button class="btn btn-negative @st2aSkipProforma @selectedSkipProforma" @hiddenSkipProforma @disabledSkipProforma>Skip</button>
                                                         </div>
 
@@ -2319,78 +2352,94 @@
                         }
                     </div>
                 </div>
-                @if (roleID == "procurement" || roleID == "administrator")
-                {
-                    <div class="po-item-section stage-8">
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 7</p>
-                        </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text document_number">Parking Date</span>
-                                <span class="po-item-data-header__text delivery">Term Date</span>
-                            </div>
-                            @{
-                                var rowStage7 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                <div class="po-item-section stage-8">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 7</p>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text document_number">Parking Date</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
                             {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage7 = 1;
+                                <span class="po-item-data-header__text delivery">Term Date</span>
+                            }
+                        </div>
+                        @{
+                            var rowStage7 = 1;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRowStage7 = 1;
 
-                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                                var termDateViews = purchasingDocumentItem.TermDateViews;
-                                var maxCount = 0;
+                            List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
+                            var termDateViews = purchasingDocumentItem.TermDateViews;
+                            var maxCount = 0;
 
-                                if (parkingDateViews != null)
-                                {
-                                    maxCount = parkingDateViews.Count;
-                                }
+                            if (parkingDateViews != null)
+                            {
+                                maxCount = parkingDateViews.Count;
+                            }
 
-                                var count = 0;
+                            var count = 0;
 
-                                <div class="po-item-data-content row-@rowStage7">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
+                            <div class="po-item-data-content row-@rowStage7">
+                                <div class="po-item-data-content__outer">
+                                    @if (maxCount >= count + 1)
+                                    {
+                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                             <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                         }
-                                        else
+                                    }
+                                    else
+                                    {
+                                        <span class="po-item-data-header__column document_number">-</span>
+
+                                        if (roleID == "procurement" || roleID == "administrator")
                                         {
-                                            <span class="po-item-data-header__column document_number">-</span>
                                             <span class="po-item-data-header__column delivery">-</span>
                                         }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                    }
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        count++;
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                         {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
-                                                    @if (maxCount >= count + 1)
+                                            <div class="po-item-data-content row-@rowStage7-@childRowStage7 mt-customize" row="@rowStage7" child="@childRowStage7">
+                                                @if (maxCount >= count + 1)
+                                                {
+                                                    <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
                                                         <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column document_number">-</span>
+
+                                                    if (roleID == "procurement" || roleID == "administrator")
                                                     {
-                                                        <span class="po-item-data-header__column document_number">-</span>
                                                         <span class="po-item-data-header__column delivery">-</span>
                                                     }
-                                                </div>
-                                                childRowStage7++;
-                                                count++;
-                                            }
+                                                }
+                                            </div>
+                                            childRowStage7++;
+                                            count++;
                                         }
-                                    </div>
+                                    }
                                 </div>
-                                rowStage7++;
-                            }
-                        </div>
+                            </div>
+                            rowStage7++;
+                        }
                     </div>
-                }
+                </div>
             </div>
         </li>
     </ul>
@@ -2409,10 +2458,10 @@
     <input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Local")" />
     <input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Local")" />*@
 <input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Local")" />
-<input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Import")" />
-<input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Import")" />
-<input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Import")" />
-<input type="text" id="stage3ProcurementSkipConfirmPayment" hidden value="@Url.Action("ProcurementSkipConfirmPayment", "Import")" />
+<input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Local")" />
+<input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Local")" />
+<input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Local")" />
+<input type="text" id="stage3ProcurementSkipConfirmPayment" hidden value="@Url.Action("ProcurementSkipConfirmPayment", "Local")" />
 <input type="text" id="stage4VendorUpdateETA" hidden value="@Url.Action("VendorUpdateETA", "Local")" />
 <input type="text" id="stage4VendorUploadProgressPhotoes" hidden value="@Url.Action("VendorUploadProgressPhotoes", "Local")" />
 <input type="text" id="stage6VendorUploadInvoice_2" hidden value="@Url.Action("VendorUploadInvoice_2", "Local")" />
@@ -2566,6 +2615,26 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     }
                 }
             });
+
+            var outHeightArray = [];
+            var tempOuterHeight = 0;
+            $(".po-item-container").each(function () {
+                var ptr = 1;
+
+                while (ptr > 0) {
+                    if ($(this).find(".row-" + ptr).length > 0) {
+                        outHeightArray = [];
+                        $(this).find(".po-item-data-content__outer").each(function () {
+                            outHeightArray.push($(this).height());
+                        });
+                        tempOuterHeight = Math.max(...outHeightArray);
+                        $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
+                        ptr++;
+                    } else {
+                        ptr = -1;
+                    }
+                }
+            })
 
             tempArray = [];
             $(".po-item-section.information").each(function () {
