@@ -1145,7 +1145,7 @@
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
-                                                        @if (roleID == "vendor" && purchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                        @if (roleID == "vendor" && (purchasingDocumentItem.ConfirmReceivedPaymentDate == null && Convert.ToInt32(purchasingDocumentItem.ActiveStage) < 4))
                                                         {
                                                             <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
                                                         }
@@ -1268,7 +1268,7 @@
                                                             <div class="form-group mr-2">
                                                                 <p class="mt-2 mb-0">
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
-                                                                    @if (roleID == "vendor" && childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                                    @if (roleID == "vendor" && (childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null && Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) < 4))
                                                                     {
                                                                         <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
                                                                     }
