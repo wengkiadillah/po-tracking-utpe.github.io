@@ -114,6 +114,7 @@ namespace POTrackingV2.Controllers
 
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
+                ViewBag.RoleVendor = LoginConstants.RoleVendor.ToLower();
                 ViewBag.CurrentDataPONumber = searchPONumber;
                 ViewBag.CurrentDataVendorName = searchVendorName;
                 ViewBag.CurrentDataMaterial = searchMaterial;
@@ -732,7 +733,14 @@ namespace POTrackingV2.Controllers
                     Existed_PDI.ConfirmedItem = false;
                     notification.StatusID = 2;
                     notification.Stage = "1";
-                    notification.Role = role.ToLower();
+                    if(role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                    {
+                        notification.Role = LoginConstants.RoleSubcontDev.ToLower();
+                    }
+                    else
+                    {
+                        notification.Role = LoginConstants.RoleVendor.ToLower();
+                    }
                 }
                 else
                 {
@@ -1321,7 +1329,7 @@ namespace POTrackingV2.Controllers
                             {
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
-
+                            databasePurchasingDocumentItem.ActiveStage = "7";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
