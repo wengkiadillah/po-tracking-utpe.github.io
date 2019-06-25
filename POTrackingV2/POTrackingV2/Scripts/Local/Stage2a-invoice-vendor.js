@@ -68,6 +68,52 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
     }
 });
 
+//Vendor remove Proforma Invoice
+$(".st2a-remove-proforma-invoice").on("click", function (obj) {
+
+    var stage2aVendorRemoveProformaInvoice = $("#stage2aVendorRemoveProformaInvoice").val();
+    obj.preventDefault();
+
+    var buttonUploadProformaInvoice = $(this).closest(".form-inline").prev().find(".st2a-upload-proforma-invoice");
+    var inputFileProformaInvoice = $(this).closest(".form-inline").prev().find(".st2a-file-proforma-invoice");
+    var formUploading = $(this).closest(".form-inline").prev();
+    var formUploaded = $(this).closest(".form-inline");
+
+    var itemID = $(this).closest(".form-inline").prev().find(".st2a-item-id").val();
+
+    // Donut Progress
+    var donutProgressUnit = 75.39822368615503 / 8;
+    var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
+    var cssRow = $(this).closest(".po-item-data-content").prop("class");
+    cssRow = cssRow.replace(" ", ".");
+    cssRow = "." + cssRow;
+    var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+    $.ajax({
+        type: "POST",
+        url: stage2aVendorRemoveProformaInvoice,
+        data: JSON.stringify({ 'inputPurchasingDocumentItemID': itemID }),
+        contentType: "application/json; charset=utf-8",
+        success: function (response) {
+            alert(response.responseText);
+
+            buttonUploadProformaInvoice.removeAttr("disabled");
+            inputFileProformaInvoice.removeAttr("disabled");
+            formUploading.removeAttr("hidden");
+            formUploaded.attr("hidden", true);
+
+            formUploaded.find(".st2a-download-proforma").attr("href", "");
+
+            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+
+            //nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+        },
+        error: function (xhr, status, error) {
+            alert(xhr.status + " : " + error);
+        }
+    });
+});
 // Vendor Skip Proforma
 /*$(".st2a-vendor-skip-PI").on("click", function (obj) {
     var stage2aVendorSkipPI = $("#stage2aVendorSkipPI").val();

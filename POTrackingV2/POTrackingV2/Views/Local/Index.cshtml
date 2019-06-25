@@ -19,10 +19,13 @@
             <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-ponumber"></datalist>
         </div>
-        <div class="form-group mr-4 ml-0">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
-            <datalist id="data-list-vendorname"></datalist>
-        </div>
+        if (roleID == "procurement" || roleID == "administrator")
+        {
+            <div class="form-group mr-4 ml-0">
+                <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+                <datalist id="data-list-vendorname"></datalist>
+            </div>
+        }
         <div class="form-group mr-4 ml-0">
             <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
@@ -1021,6 +1024,7 @@
                             var st2aItemId = "st2a-item-id";
                             var st2aFileProformaInvoice = "st2a-file-proforma-invoice";
                             var st2aUploadProformaInvoice = "st2a-upload-proforma-invoice";
+                            var st2aRemoveFileProformaInvoice = "st2a-remove-proforma-invoice";
                             var st2aDownloadProforma = "st2a-download-proforma";
                             var st2aAskProforma = "st2a-ask-proforma";
                             var st2aSkipProforma = "st2a-skip-proforma";
@@ -1042,6 +1046,9 @@
 
                             if (roleID == "procurement" || roleID == "administrator")
                             {
+                                st2aFileProformaInvoice = "";
+                                st2aUploadProformaInvoice = "";
+
                                 hiddenAskProforma = "";
                                 hiddenSkipProforma = "";
                                 st2aFileProformaInvoice = "";
@@ -1129,6 +1136,10 @@
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                        @if (roleID == "vendor" && purchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                        {
+                                                            <a href="#" class="danger-link @st2aRemoveFileProformaInvoice">Remove?</a>
+                                                        }
                                                     </p>
                                                 </div>
                                             </div>
@@ -1160,6 +1171,9 @@
 
                                             if (roleID == "procurement" || roleID == "administrator")
                                             {
+                                                st2aFileProformaInvoice = "";
+                                                st2aUploadProformaInvoice = "";
+
                                                 hiddenAskProforma = "";
                                                 hiddenSkipProforma = "";
 
@@ -1246,6 +1260,10 @@
                                                             <div class="form-group mr-2">
                                                                 <p class="mt-2 mb-0">
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
+                                                                    @if (roleID == "vendor" && childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                                                                    {
+                                                                        <a href="#" class="danger-link @st2aRemoveFileProformaInvoice">Remove?</a>
+                                                                    }
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -2458,6 +2476,7 @@
     <input type="text" id="stage3VendorConfirmPaymentReceived" hidden value="@Url.Action("VendorConfirmPaymentReceived", "Local")" />
     <input type="text" id="stage3VendorSkipConfirmPayment" hidden value="@Url.Action("VendorSkipConfirmPayment", "Local")" />*@
 <input type="text" id="stage2aVendorUploadAllProformaInvoice" hidden value="@Url.Action("VendorUploadAllProformaInvoice", "Local")" />
+<input type="text" id="stage2aVendorRemoveProformaInvoice" hidden value="@Url.Action("VendorRemoveProformaInvoice", "Local")" />
 <input type="text" id="stage2aProcurementAskProformaInvoice" hidden value="@Url.Action("ProcurementAskProformaInvoice", "Local")" />
 <input type="text" id="stage2aProcurementSkipProformaInvoice" hidden value="@Url.Action("ProcurementSkipProformaInvoice", "Local")" />
 <input type="text" id="stage3ProcurementConfirmPaymentReceived" hidden value="@Url.Action("ProcurementConfirmPaymentReceived", "Local")" />
