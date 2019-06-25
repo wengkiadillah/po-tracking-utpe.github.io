@@ -51,6 +51,7 @@ $(".st2a-upload-proforma-invoice").on("click", function (obj) {
                 formUploaded.removeAttr("hidden");
 
                 formUploaded.find(".st2a-download-proforma").attr("href", response.proformaInvoiceUrl);
+                formUploaded.find(".st2a-remove-proforma-invoice").attr("href", "");
 
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
