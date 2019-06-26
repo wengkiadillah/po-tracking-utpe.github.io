@@ -633,6 +633,7 @@
     <Content Include="Views\MasterVendor\CreateVendorSubcontDev.cshtml" />
     <Content Include="Views\MasterVendor\EditVendorSubcontDev.cshtml" />
     <Content Include="Views\Subcont\Outstanding.cshtml" />
+    <Content Include="Views\Subcont\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
