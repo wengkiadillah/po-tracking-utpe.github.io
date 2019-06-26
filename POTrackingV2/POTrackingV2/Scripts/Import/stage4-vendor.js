@@ -65,8 +65,8 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
     console.log(inputUpdateEtaDateDelay.val());
     console.log(inputDelayReason.val());
 
-    if (inputUpdateEtaDateDelay.val() === "" && inputUpdateEtaDateDelay.val() === null) {
-        if (inputDelayReason.val() === "0" && inputDelayReason.val() === "" && inputDelayReason.val() === null) {
+    if (inputUpdateEtaDateDelay.val() === "" || inputUpdateEtaDateDelay.val() === null) {
+        if (inputDelayReason.val() === "0" || inputDelayReason.val() === "" || inputDelayReason.val() === null) {
             if (!isNaN(etaOnTime.getTime())) {
                 if (etaOnTime >= minDate) {
                     $.ajax({
@@ -107,12 +107,10 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
         }
         else {
             alert("Please reverse Delay Reason choice to default to continue");
-            inputDelayReason.focus();
         }
     }
     else {
         alert("Please empty delayed Date to continue");
-        inputUpdateEtaDateDelay.focus();
     }
 });
 
