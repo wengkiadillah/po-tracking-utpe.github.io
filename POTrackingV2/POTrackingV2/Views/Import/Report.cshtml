@@ -76,7 +76,7 @@
                         @Html.DisplayFor(modelItem => purchasingDocumentItem.Quantity)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.DeliveryDate)
+                        @Html.DisplayFor(modelItem => purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy"))
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => po.Vendor.Name)
