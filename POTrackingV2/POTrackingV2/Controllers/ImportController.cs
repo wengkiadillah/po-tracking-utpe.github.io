@@ -27,7 +27,7 @@ namespace POTrackingV2.Controllers
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
-        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus,string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -86,12 +86,30 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
+            ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+            ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
+            ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+
+            if (searchPOStatus == "ongoing")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            }
+            else if (searchPOStatus == "newpo")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+            }
+            else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            }
+
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
             ViewBag.CurrentSearchMaterial = searchMaterial;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.CurrentSearchPOStatus = searchPOStatus;
             ViewBag.IISAppName = iisAppName;
 
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
@@ -2045,6 +2063,7 @@ namespace POTrackingV2.Controllers
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
 
+                            databasePurchasingDocumentItem.ActiveStage = "9";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -2121,6 +2140,7 @@ namespace POTrackingV2.Controllers
 
                             System.IO.File.Delete(pathWithfileName);
 
+                            databasePurchasingDocumentItem.ActiveStage = "8";
                             databasePurchasingDocumentItem.InvoiceDocument = null;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;

@@ -7,6 +7,7 @@
     var poSignRow = 1;
     var iisAppName = ViewBag.IISAppName;
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
+    string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
     if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
         currentSearchForMaterial = currentSearchForMaterial.ToLower();
@@ -14,6 +15,15 @@
     else
     {
         currentSearchForMaterial = string.Empty;
+    }
+
+    if (!string.IsNullOrEmpty(currentSearchPOStatus))
+    {
+        currentSearchPOStatus = currentSearchPOStatus.ToLower();
+    }
+    else
+    {
+        currentSearchPOStatus = string.Empty;
     }
 }
 @section styles {
@@ -51,6 +61,7 @@
                    placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
+        <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
         <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
@@ -111,10 +122,14 @@
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial));
     }
 
-    //if (roleID == "procurement" || roleID == "administrator")
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue);
-    //}
+    if (currentSearchPOStatus == "newpo")
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+    }
+    else if (currentSearchPOStatus == "ongoing")
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+    }
 
     if (purchasingDocumentItems.Count() < 1)
     {
@@ -479,7 +494,22 @@
 
                                 if (purchasingDocumentItem.ActiveStage != "1" || childPurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
                                 {
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) >= 2 && purchasingDocumentItem.HasETAHistory)
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else if (purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault())
+                                    {
+                                        hideButtonEdit = "";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
                                 }
                             }
 
@@ -1145,7 +1175,7 @@
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
-                                                        @if (roleID == "vendor" && (purchasingDocumentItem.ConfirmReceivedPaymentDate == null && (purchasingDocumentItem.ActiveStage == "2a" || Convert.ToInt32(purchasingDocumentItem.ActiveStage) < 4)))
+                                                        @if (roleID == "vendor" && purchasingDocumentItem.ConfirmReceivedPaymentDate == null)
                                                         {
                                                             <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
                                                         }
@@ -1268,7 +1298,7 @@
                                                             <div class="form-group mr-2">
                                                                 <p class="mt-2 mb-0">
                                                                     <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
-                                                                    @if (roleID == "vendor" && (childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null && (childPurchasingDocumentItem.ActiveStage == "2a" || Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) < 4)))
+                                                                    @if (roleID == "vendor" && childPurchasingDocumentItem.ConfirmReceivedPaymentDate == null)
                                                                     {
                                                                         <a href="#" class="danger-link @st2RemoveFileProformaInvoice">Remove?</a>
                                                                     }
