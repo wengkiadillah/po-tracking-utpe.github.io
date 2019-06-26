@@ -62,42 +62,55 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
         ETADate: etaOnTime
     };
 
-    if (!isNaN(etaOnTime.getTime())) {
-        if (etaOnTime >= minDate) {
-            $.ajax({
-                type: "POST",
-                url: stage4VendorUpdateETA,
-                data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    alert(response.responseText);
 
-                    buttonEtaDateOnTimeConfirm.attr("disabled", "disabled").addClass("selected");
-                    inputUpdateEtaDateOntime.attr("disabled", "disabled");
-                    inputUpdateEtaDateDelay.attr("disabled", "disabled");
-                    inputDelayReason.attr("disabled", "disabled");
-                    buttonEtaDateDelayConfirm.attr("disabled", "disabled");
-                    inputUploadProgressPhotoes.removeAttr("disabled");
-                    buttonUploadProgressPhotoes.removeAttr("disabled");
+    if (inputUpdateEtaDateDelay.val() !== "" || inputUpdateEtaDateDelay.val() !== null) {
+        if (inputDelayReason.val() !== "0" || inputDelayReason.val() !== "" || inputDelayReason.val() !== null) {
+            if (!isNaN(etaOnTime.getTime())) {
+                if (etaOnTime >= minDate) {
+                    $.ajax({
+                        type: "POST",
+                        url: stage4VendorUpdateETA,
+                        data: JSON.stringify({ 'inputETAHistory': inputETAHistory }),
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            alert(response.responseText);
 
-                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+                            buttonEtaDateOnTimeConfirm.attr("disabled", "disabled").addClass("selected");
+                            inputUpdateEtaDateOntime.attr("disabled", "disabled");
+                            inputUpdateEtaDateDelay.attr("disabled", "disabled");
+                            inputDelayReason.attr("disabled", "disabled");
+                            buttonEtaDateDelayConfirm.attr("disabled", "disabled");
+                            inputUploadProgressPhotoes.removeAttr("disabled");
+                            buttonUploadProgressPhotoes.removeAttr("disabled");
 
-                    nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
-                },
-                error: function (xhr, status, error) {
-                    alert(xhr.status + " : " + error);
+                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("5");
+
+                            nextDataContent.find(".st5-checkbox-item").first().removeAttr("disabled");
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.status + " : " + error);
+                        }
+                    });
                 }
-            });
+                else {
+                    alert("The Date cannot be less than the Date agreed on stage 2");
+                    inputUpdateEtaDateOntime.focus();
+                }
+            }
+            else {
+                alert("Date is not valid");
+                inputUpdateEtaDateOntime.focus();
+            }
         }
         else {
-            alert("The Date cannot be less than the Date agreed on stage 2");
-            inputUpdateEtaDateOntime.focus();
+            alert("Please reverse Delay Reason choice to default to continue");
+            inputDelayReason.focus();
         }
     }
     else {
-        alert("Date is not valid");
-        inputUpdateEtaDateOntime.focus();
+        alert("Please empty delayed Date to continue");
+        inputUpdateEtaDateDelay.focus();
     }
 });
 

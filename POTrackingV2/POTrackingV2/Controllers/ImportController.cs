@@ -86,24 +86,21 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
-            int poCount = pOes.SelectMany(x => x.PurchasingDocumentItems).Count();
-            ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" && y.IsClosed.ToLower() == "l" && y.IsClosed.ToLower() == "lx");
+            ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+            ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
+            ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
 
-            if (searchPOStatus == "newpo")
-            {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
-
-                int poCountFiltered = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
-                ViewBag.ImportPOItemsCountNew = poCountFiltered;
-                ViewBag.ImportPOItemsCountOnGoing = poCount - poCountFiltered;
-            }
-            else
+            if (searchPOStatus == "ongoing")
             {
                 pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
-
-                int poCountFiltered = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage != null && y.ActiveStage != "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
-                ViewBag.ImportPOItemsCountNew = poCount - poCountFiltered;
-                ViewBag.ImportPOItemsCountOnGoing = poCountFiltered;
+            }
+            else if (searchPOStatus == "newpo")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+            }
+            else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;

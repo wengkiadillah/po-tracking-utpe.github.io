@@ -126,15 +126,10 @@
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
     }
-    else
+    else if (currentSearchPOStatus == "ongoing")
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
     }
-
-    //if (roleID == "procurement" || roleID == "administrator")
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue);
-    //}
 
     if (purchasingDocumentItems.Count() < 1)
     {
