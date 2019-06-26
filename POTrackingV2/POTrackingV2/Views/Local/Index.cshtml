@@ -469,7 +469,7 @@
                                 {
                                     hideButtonEdit = "style=visibility:hidden";
                                 }
-                                else if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity)
+                                else if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault())
                                 {
                                     hideButtonEdit = "";
                                 }
