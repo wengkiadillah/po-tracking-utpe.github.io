@@ -469,6 +469,10 @@
                                 {
                                     hideButtonEdit = "style=visibility:hidden";
                                 }
+                                else if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity)
+                                {
+                                    hideButtonEdit = "";
+                                }
                             }
 
                             if (childPurchasingDocumentItems.Count() > 0)
@@ -2576,7 +2580,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     url: "@Url.Action("GetDataForSearch", "Local")",
                     data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
                     beforeSend: function () {
-                        $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                        $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");                         
                     },
                     success: function (response) {
                         if (response.responseCode == "200") {
@@ -2586,7 +2590,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
                             }
                             $("#data-list-material").html(element);
-                            $("#searchMaterial").css("background", "");
+                            $("#searchMaterial").css("background", "");                            
                         } else {
                             console.log(response.responseCode + response.responseText);
                         }
