@@ -467,12 +467,24 @@
 
                                 if (purchasingDocumentItem.ActiveStage != "1" || childPurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
                                 {
-                                    hideButtonEdit = "style=visibility:hidden";
+                                    if (purchasingDocumentItem.ActiveStage == "2a")
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) >= 2 && purchasingDocumentItem.HasETAHistory)
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
+                                    else if (purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault())
+                                    {
+                                        hideButtonEdit = "";
+                                    }
+                                    else
+                                    {
+                                        hideButtonEdit = "style=visibility:hidden";
+                                    }
                                 }
-                                else if (purchasingDocumentItem.ActiveStage == "2" && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity.GetValueOrDefault())
-                                {
-                                    hideButtonEdit = "";
-                                }
+
                             }
 
                             if (childPurchasingDocumentItems.Count() > 0)
