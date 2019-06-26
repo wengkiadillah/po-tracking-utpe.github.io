@@ -63,8 +63,8 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
     };
 
 
-    if (inputUpdateEtaDateDelay.val() !== "" || inputUpdateEtaDateDelay.val() !== null) {
-        if (inputDelayReason.val() !== "0" || inputDelayReason.val() !== "" || inputDelayReason.val() !== null) {
+    if (inputUpdateEtaDateDelay.val() !== "" && inputUpdateEtaDateDelay.val() !== null) {
+        if (inputDelayReason.val() !== "0" && inputDelayReason.val() !== "" && inputDelayReason.val() !== null) {
             if (!isNaN(etaOnTime.getTime())) {
                 if (etaOnTime >= minDate) {
                     $.ajax({
