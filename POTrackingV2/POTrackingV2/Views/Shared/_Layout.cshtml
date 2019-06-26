@@ -100,6 +100,15 @@
                             </li>
                         </ul>
                     </li>
+
+                    if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                    {
+                        <li class="main-menu-item">
+                            <a href="~/Import/report" class="main-menu__link">
+                                <i class="fas fa-plane"></i> <span>Report PO Import</span>
+                            </a>
+                        </li>
+                    }
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local"))
                 {
@@ -117,7 +126,7 @@
                                 <a href="#" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                         <small class="label pull-right bg-green mr-1" title="Confirmation">16</small>
+                                        <small class="label pull-right bg-green mr-1" title="Confirmation">16</small>
                                     </span>
                                 </a>
                             </li>

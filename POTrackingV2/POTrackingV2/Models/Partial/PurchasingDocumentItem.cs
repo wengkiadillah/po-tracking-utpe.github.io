@@ -665,6 +665,25 @@ namespace POTrackingV2.Models
             }
         }
 
+        public bool HasShipment
+        {
+            get
+            {
+                bool HasShipment;
+
+                if (this.Shipments.Count < 1)
+                {
+                    HasShipment = false;
+                }
+                else
+                {
+                    HasShipment = true;
+                }
+
+                return HasShipment;
+            }
+        }
+
         public bool HasETAHistory
         {
             get
