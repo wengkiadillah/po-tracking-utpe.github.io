@@ -1271,12 +1271,20 @@ namespace POTrackingV2.Controllers
                 List<PurchasingDocumentItem> Existed_PDIChilds = db.PurchasingDocumentItems.Where(x => x.ParentID == pdItemID).ToList();
 
                 Existed_PDI.InvoiceMethod = invoiceMethod;
+                if (Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= Existed_PDI.ConfirmedQuantity && Existed_PDI.ConfirmedItem == true)
+                {
+                    Existed_PDI.ActiveStage = "6";
+                }
                 Existed_PDI.LastModified = now;
                 Existed_PDI.LastModifiedBy = User.Identity.Name;
 
                 foreach (var existed_PDIChild in Existed_PDIChilds)
                 {
                     existed_PDIChild.InvoiceMethod = invoiceMethod;
+                    if (existed_PDIChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= existed_PDIChild.ConfirmedQuantity && Existed_PDI.ConfirmedItem == true)
+                    {
+                        existed_PDIChild.ActiveStage = "6";
+                    }
                     existed_PDIChild.LastModified = now;
                     existed_PDIChild.LastModifiedBy = User.Identity.Name;
                 }
@@ -1325,6 +1333,7 @@ namespace POTrackingV2.Controllers
                             string fileName = $"{inputPurchasingDocumentItemID.ToString()}_{Path.GetFileName(fileInvoice.FileName)}";
                             string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/Invoice"), fileName);
 
+
                             using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
                             {
                                 fileInvoice.InputStream.CopyTo(fileStream);
@@ -1355,7 +1364,8 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            string downloadUrl = Path.Combine("..\\Files\\Subcont\\Invoice", fileName);
+                            //string downloadUrl = Path.Combine("..\\Files\\Subcont\\Invoice", fileName);
+                            string downloadUrl = Path.Combine("/", iisAppName, "Files/Subcont/Invoice", fileName);
 
                             return Json(new { responseCode = "200", responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                         }
