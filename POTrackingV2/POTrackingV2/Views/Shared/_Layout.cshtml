@@ -147,7 +147,7 @@
                             <i class="fas fa-cogs"></i> <span>Subcontract</span>
                             <span class="pull-right-container">
                                 <small class="label pull-right bg-yellow" title="ON Going" style="margin-right: 0px;">5</small>
-                                <small class="label pull-right bg-green mr-1" title="Confirmation">16</small>
+                                <small class="label pull-right bg-green mr-1" title="New PO">16</small>
                                 <small class="label pull-right bg-red" title="Done">12</small>
                             </span>
                         </a>
@@ -156,17 +156,27 @@
                                 <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="Confirmation">16</small>
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">16</small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
-                                <a href="~/SubCont/outstanding" class="main-menu-submenu__link" data-menu="Outstanding">
-                                    <span>Outstanding</span><span class="pull-right-container">
-                                        <small id="subcont-outgoing__count" class="label pull-right bg-yellow mr-1" title="Confirmation">16</small>
+                                <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
+                                    <span>New PO</span><span class="pull-right-container">
+                                        <small id="subcont-new-po__count" class="label pull-right bg-yellow mr-1" title="New PO">16</small>
                                     </span>
                                 </a>
                             </li>
+                            @if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                            {
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/SubCont/Report" class="main-menu-submenu__link" data-menu="Report">
+                                        <span>Report</span><span class="pull-right-container">
+                                            @*<small id="subcont-report__count" class="label pull-right bg-yellow mr-1" title="Report">16</small>*@
+                                        </span>
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </li>
                 }

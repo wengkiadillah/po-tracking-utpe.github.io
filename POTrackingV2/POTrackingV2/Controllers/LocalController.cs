@@ -1849,6 +1849,7 @@ namespace POTrackingV2.Controllers
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
 
+                            databasePurchasingDocumentItem.ActiveStage = "7";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -1861,7 +1862,7 @@ namespace POTrackingV2.Controllers
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 3;
+                            notification.StatusID = 1;
                             notification.Stage = "6";
                             notification.Role = "procurement";
                             notification.isActive = true;
@@ -1925,6 +1926,7 @@ namespace POTrackingV2.Controllers
 
                             System.IO.File.Delete(pathWithfileName);
 
+                            databasePurchasingDocumentItem.ActiveStage = "6";
                             databasePurchasingDocumentItem.InvoiceDocument = null;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -1937,7 +1939,7 @@ namespace POTrackingV2.Controllers
 
                             Notification notification = new Notification();
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                            notification.StatusID = 2;
+                            notification.StatusID = 3;
                             notification.Stage = "6";
                             notification.Role = "procurement";
                             notification.isActive = true;
