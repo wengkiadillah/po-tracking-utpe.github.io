@@ -1325,6 +1325,7 @@ namespace POTrackingV2.Controllers
                             string fileName = $"{inputPurchasingDocumentItemID.ToString()}_{Path.GetFileName(fileInvoice.FileName)}";
                             string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/Invoice"), fileName);
 
+
                             using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
                             {
                                 fileInvoice.InputStream.CopyTo(fileStream);
@@ -1355,7 +1356,8 @@ namespace POTrackingV2.Controllers
 
                             db.SaveChanges();
 
-                            string downloadUrl = Path.Combine("..\\Files\\Subcont\\Invoice", fileName);
+                            //string downloadUrl = Path.Combine("..\\Files\\Subcont\\Invoice", fileName);
+                            string downloadUrl = Path.Combine("/", iisAppName, "Files/Subcont/Invoice", fileName);
 
                             return Json(new { responseCode = "200", responseText = $"File successfully uploaded", invoiceUrl = downloadUrl }, JsonRequestBehavior.AllowGet);
                         }
