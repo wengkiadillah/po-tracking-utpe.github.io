@@ -529,7 +529,7 @@ $(".st1-accept-item").on("click", function (obj) {
                                 editButton.attr("style", "visibility:display");
                             }
                             else {
-                                $(".next-row-updated").first().attr("disabled");
+                                $(".next-row-updated").first().attr("disabled", "disabled");
                                 $(".next-row-updated").first().removeClass("next-row-updated");
                                 $(".next-row-updated-input").first().attr("mindate", "");
                                 $(".next-row-updated-input").first().val("");
@@ -541,7 +541,7 @@ $(".st1-accept-item").on("click", function (obj) {
                                 $(".row-updated-donut").first().removeClass("row-updated-donut");
                                 $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
 
-                                nextDataContent.find(".st2-confirm-first-eta").first().attr("disabled", "disabled");///////
+                                //nextDataContent.find(".st2-confirm-first-eta").first().attr("disabled", "disabled");///////
 
                                 editButton.attr("style", "visibility:display");
                             }
