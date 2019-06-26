@@ -183,7 +183,7 @@ namespace POTrackingV2.Controllers
                 else if (searchFilterBy == "material")
                 {
                     //IEnumerable<PurchasingDocumentItem> purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.PO.Type.ToLower() == "zo05" || x.PO.Type.ToLower() == "zo09" || x.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PO.VendorCode));
-                    data = purchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
+                    data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value) || x.Description.ToLower().Contains(value)).Select(x =>
                     new
                     {
                         Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
@@ -1193,6 +1193,75 @@ namespace POTrackingV2.Controllers
                 db.SaveChanges();
 
                 return Json(new { responseText = $"{count} Proforma Invoice successfully uploaded", proformaInvoiceUrls = downloadURLs }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message + " --- " + ex.StackTrace;
+
+                return View(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult VendorRemoveProformaInvoice(int inputPurchasingDocumentItemID)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+            {
+                return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+            PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
+
+            try
+            {
+                if (databasePurchasingDocumentItem.ActiveStage == "3" & databasePurchasingDocumentItem.ConfirmReceivedPaymentDate == null)
+                {
+                    if (databasePurchasingDocumentItem.ProformaInvoiceDocument != null)
+                    {
+                        string user = User.Identity.Name;
+
+                        string pathWithfileName = Path.Combine(Server.MapPath("~/Files/Local/ProformaInvoice"), databasePurchasingDocumentItem.ProformaInvoiceDocument);
+
+                        System.IO.File.Delete(pathWithfileName);
+
+                        databasePurchasingDocumentItem.ProformaInvoiceDocument = null;
+                        databasePurchasingDocumentItem.ActiveStage = "2a";
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 1;
+                        notification.Stage = "2a";
+                        notification.Role = "procurement";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        db.SaveChanges();
+
+                        return Json(new { responseText = $"File successfully removed" }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json(new { responseText = $"File not removed" }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
