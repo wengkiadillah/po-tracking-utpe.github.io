@@ -77,9 +77,9 @@
                         <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
                             <i class="fas fa-plane"></i> <span>PO Import</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="ON Going" style="margin-right: 0px;">@ViewBag.ImportPOItemsCountOnGoing</small>
-                                <small class="label pull-right bg-green mr-1" title="Confirmation">@ViewBag.ImportPOItemsCountNew</small>
-                                <small class="label pull-right bg-red" title="Done">@ViewBag.ImportPOItemsDone</small>
+                                <small class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">@ViewBag.ImportPOItemsCountNew</small>
+                                <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.ImportPOItemsCountOnGoing</small>
+                                <small class="label pull-right bg-red" title="Closed">@ViewBag.ImportPOItemsDone</small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -87,14 +87,14 @@
                                 <a href="~/Import/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small class="label pull-right bg-green mr-1" title="Confirmation">@ViewBag.ImportPOItemsCountOnGoing</small>
+                                        <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.ImportPOItemsCountOnGoing</small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/Import/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="Outstanding">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small class="label pull-right bg-yellow mr-1" title="Confirmation">@ViewBag.ImportPOItemsCountNew</small>
+                                        <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.ImportPOItemsCountNew</small>
                                     </span>
                                 </a>
                             </li>
