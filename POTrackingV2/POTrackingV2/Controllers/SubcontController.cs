@@ -1271,12 +1271,20 @@ namespace POTrackingV2.Controllers
                 List<PurchasingDocumentItem> Existed_PDIChilds = db.PurchasingDocumentItems.Where(x => x.ParentID == pdItemID).ToList();
 
                 Existed_PDI.InvoiceMethod = invoiceMethod;
+                if (Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= Existed_PDI.ConfirmedQuantity && Existed_PDI.ConfirmedItem == true)
+                {
+                    Existed_PDI.ActiveStage = "6";
+                }
                 Existed_PDI.LastModified = now;
                 Existed_PDI.LastModifiedBy = User.Identity.Name;
 
                 foreach (var existed_PDIChild in Existed_PDIChilds)
                 {
                     existed_PDIChild.InvoiceMethod = invoiceMethod;
+                    if (existed_PDIChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= existed_PDIChild.ConfirmedQuantity && Existed_PDI.ConfirmedItem == true)
+                    {
+                        existed_PDIChild.ActiveStage = "6";
+                    }
                     existed_PDIChild.LastModified = now;
                     existed_PDIChild.LastModifiedBy = User.Identity.Name;
                 }
