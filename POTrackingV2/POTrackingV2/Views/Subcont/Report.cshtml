@@ -44,7 +44,7 @@
                 <i class="far fa-calendar-alt form-type-icon"></i>
             </div>
             <button type="submit" class="btn btn-info mr-3">Find</button>
-            @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
+            @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
         }
     </div>
 
@@ -148,35 +148,8 @@
 
     </table>
 
-    @* Modal *@
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
-                    <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Are You Sure To Delete This Item?
-                </div>
-                <div class="modal-footer">
-                    <input type="hidden" id="item-masterVendor">
-                    <button id="" type="button" class="btn btn-positive w-100" style="visibility:hidden;">Edit</button>
-                    <button id="btnDeleteMasterVendor" type="button" class="btn btn-positive w-100">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @* Modal *@
-
-    @*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount*@
-    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),*@
-    @*new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })*@
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Report",
-    //new { page, role = ViewBag.CurrentRoleID, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
     new { page, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 
 

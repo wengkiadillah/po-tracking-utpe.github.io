@@ -150,7 +150,7 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        public ActionResult Report()
+        public ActionResult Report(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -201,7 +201,28 @@ namespace POTrackingV2.Controllers
 
             pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
-            return View(pOes);
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower())));
+            }
+            #endregion
+
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
@@ -339,53 +360,6 @@ namespace POTrackingV2.Controllers
             return userNRPs;
         }
 
-        public JsonResult GetPOItemCountImport()
-        {
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            string role = myUser.Roles.ToLower();
-            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
-
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                            .AsQueryable();
-
-            if (role == LoginConstants.RoleProcurement.ToLower())
-            {
-                List<string> myUserNRPs = new List<string>();
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
-
-                if (myUserNRPs.Count > 0)
-                {
-                    foreach (var myUserNRP in myUserNRPs)
-                    {
-                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                    }
-                }
-
-                pOes = pOes.Except(noShowPOes);
-            }
-            else if (role == LoginConstants.RoleAdministrator.ToLower())
-            {
-                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                //                .AsQueryable();
-            }
-            else
-            {
-                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
-            }
-
-            string ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
-            string ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
-            string ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
-
-            return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone }, JsonRequestBehavior.AllowGet);
-        }
 
         #region STAGE 1
 
@@ -528,7 +502,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
