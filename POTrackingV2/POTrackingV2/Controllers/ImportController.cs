@@ -86,9 +86,9 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
-            ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
-            ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
-            ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+            //ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+            //ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
+            //ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
 
             if (searchPOStatus == "ongoing")
             {
@@ -204,7 +204,6 @@ namespace POTrackingV2.Controllers
             return View(pOes);
         }
 
-        [HttpGet]
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
         {
             try
@@ -339,6 +338,7 @@ namespace POTrackingV2.Controllers
 
             return userNRPs;
         }
+
 
         #region STAGE 1
 

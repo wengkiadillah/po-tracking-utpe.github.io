@@ -362,5 +362,52 @@ namespace POTrackingV2.Controllers
 
             return userNRPs;
         }
+
+        public JsonResult GetPOItemCount()
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            var pOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                            .AsQueryable();
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+                List<string> myUserNRPs = new List<string>();
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
+
+                pOes = pOes.Except(noShowPOes);
+            }
+            else if (role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                //                .AsQueryable();
+            }
+            else
+            {
+                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+            }
+
+            string ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+            string ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+            string ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+            return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

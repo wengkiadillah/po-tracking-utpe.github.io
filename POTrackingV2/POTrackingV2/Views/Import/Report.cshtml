@@ -5,124 +5,147 @@
     int number = 1;
 }
 
+<link rel="stylesheet" href="~/Content/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/Content/bootstrap.min.css">
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" />
+@Scripts.Render("~/bundles/jquery")
 
 <h2>Report</h2>
 
-<table id="tableReport" class="table">
-    <tr>
-        <th>
-            Number
-        </th>
-        <th>
-            PO Number
-        </th>
-        <th>
-            Item Number
-        </th>
-        <th>
-            Material
-        </th>
-        <th>
-            Description
-        </th>
-        <th>
-            Quantity
-        </th>
-        <th>
-            Delivery Date
-        </th>
-        <th>
-            Vendor
-        </th>
-        <th>
-            Estimated Time Arrival
-        </th>
-    </tr>
+<table id="tableReport" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Number
+            </th>
+            <th>
+                PO Number
+            </th>
+            <th>
+                Item Number
+            </th>
+            <th>
+                Material
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Delivery Date
+            </th>
+            <th>
+                Vendor
+            </th>
+            <th>
+                Estimated Time Arrival
+            </th>
+        </tr>
+    </thead>
 
-    @if (Model.Count() > 0)
-    {
-        foreach (var po in Model)
+    <tbody>
+        @if (Model.Count() > 0)
         {
-            var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
-                                                                    .OrderBy(x => x.ItemNumber);
-
-            if (purchasingDocumentItems.Count() < 1)
+            foreach (var po in Model)
             {
-                continue;
-            }
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
+                                                                        .OrderBy(x => x.ItemNumber);
 
-            foreach (var purchasingDocumentItem in purchasingDocumentItems)
-            {
-                <tr>
-                    <td>
-                        @number
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => po.Number)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.ItemNumber)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Material)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Quantity)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy"))
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => po.Vendor.Name)
-                    </td>
-                    <td>
-                        @{
-                            string estimatedTimeArrival = "-";
+                if (purchasingDocumentItems.Count() < 1)
+                {
+                    continue;
+                }
+                foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                {
+                    <tr>
+                        <td>
+                            @number
+                        </td>
+                        <td>
+                            @po.Number
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.ItemNumber
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Material
+                        </td>
+                        <td>
+                            @{
+                                string description = "-";
 
-                            if (purchasingDocumentItem.HasShipment)
-                            {
-                                if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                if (purchasingDocumentItem.Description != null)
                                 {
-                                    estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                    description = purchasingDocumentItem.Description;
                                 }
                             }
-                        }
 
-                        @estimatedTimeArrival
-                    </td>
-                </tr>
+                            @description
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Quantity
+                        </td>
+                        <td>
+                            @{
+                                string deliveryDate = "-";
 
-                number++;
+                                if (purchasingDocumentItem.DeliveryDate != null)
+                                {
+                                    deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
+                            }
+
+                            @deliveryDate
+                        </td>
+                        <td>
+                            @po.Vendor.Name
+                        </td>
+                        <td>
+                            @{
+                                string estimatedTimeArrival = "-";
+
+                                if (purchasingDocumentItem.HasShipment)
+                                {
+                                    if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                    {
+                                        estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                    }
+                                }
+                            }
+
+                            @estimatedTimeArrival
+                        </td>
+                    </tr>
+
+                    number++;
+                }
+
             }
         }
-    }
-    else
-    {
-        <tr>
-            <td>
-                No Data
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    }
-
+        else
+        {
+            <tr>
+                <td>
+                    No Data
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#tableReport').DataTable();
+        $('#tableReport').dataTable();
+        $("#tableReport").DataTable();
     });
 </script>
