@@ -3291,7 +3291,7 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+        new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, searchPOStatus = ViewBag.CurrentSearchPOStatus }))
     @section scripts {
         <script src="~/Scripts/datepicker.min.js"></script>
         <script src="~/Scripts/donutty-jquery.min.js"></script>
