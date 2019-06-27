@@ -61,25 +61,43 @@
                         @number
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => po.Number)
+                        @po.Number
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.ItemNumber)
+                        @purchasingDocumentItem.ItemNumber
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Material)
+                        @purchasingDocumentItem.Material
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Description)
+                        @{ 
+                            string description = "-";
+
+                            if (purchasingDocumentItem.Description != null)
+                            {
+                                description = purchasingDocumentItem.Description;
+                            }
+                        }
+
+                        @description
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.Quantity)
+                        @purchasingDocumentItem.Quantity;
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy"))
+                        @{ 
+                            string deliveryDate = "-";
+
+                            if (purchasingDocumentItem.DeliveryDate != null)
+                            {
+                                deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                            }
+                        }
+
+                        @deliveryDate
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => po.Vendor.Name)
+                        @po.Vendor.Name
                     </td>
                     <td>
                         @{
