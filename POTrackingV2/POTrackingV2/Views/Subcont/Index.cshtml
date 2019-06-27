@@ -190,6 +190,9 @@
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                            } else if (ViewBag.SearchPOStatus == "ongoing")
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                             }
                             else
                             {
