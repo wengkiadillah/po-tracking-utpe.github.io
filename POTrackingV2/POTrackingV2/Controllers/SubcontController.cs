@@ -32,11 +32,6 @@ namespace POTrackingV2.Controllers
             {
                 object data = null;
                 value = value.ToLower();
-                //var data = db.POes.Distinct().Select(x =>
-                //    new
-                //    {
-                //        Data = x.Number
-                //    }).OrderByDescending(x => x.Data);
 
                 if (filterBy == "poNumber")
                 {
@@ -103,22 +98,35 @@ namespace POTrackingV2.Controllers
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
-                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    if(searchPOStatus == "newpo")
+                    {
+                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
+                    else
+                    {
+                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
                 }
                 else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
                     string vendorCode = db.UserVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).FirstOrDefault();
                     //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                    pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    if (searchPOStatus == "newpo")
+                    {
+                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
+                    else
+                    {
+                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
                 }
 
                 ViewBag.CurrentRoleID = role.ToLower();
-                ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
+                ViewBag.RoleSubcontDev = LoginConstants.RoleSubcontDev.ToLower();
                 ViewBag.RoleVendor = LoginConstants.RoleVendor.ToLower();
                 ViewBag.CurrentDataPONumber = searchPONumber;
                 ViewBag.CurrentDataVendorName = searchVendorName;
                 ViewBag.CurrentDataMaterial = searchMaterial;
-                //ViewBag.CurrentFilter = filterBy;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
@@ -1171,6 +1179,7 @@ namespace POTrackingV2.Controllers
         public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices)
         {
             POTrackingEntities db = new POTrackingEntities();
+            //AlertToolsEntities alertDB = new AlertToolsEntities();
             //HttpPostedFileBase file = Request.Files["FileUpload"];
             try
             {
@@ -1268,6 +1277,38 @@ namespace POTrackingV2.Controllers
                     notification.ModifiedBy = User.Identity.Name;
                     db.Notifications.Add(notification);
                     Existed_PDI.ActiveStage = "4";
+
+                    ////insert data QC to alert
+                    //int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc field")).Select(x => x.ID).FirstOrDefault();
+                    //if(masterIssueID != null)
+                    //{
+                    //    IssueHeader issueHeader = new IssueHeader();
+                    //    issueHeader.MasterIssueID = masterIssueID;
+                    //    issueHeader.RaisedBy = User.Identity.Name;
+                    //    issueHeader.DateOfIssue = now;
+                    //    issueHeader.IssueDescription = "QC Field";
+                    //    issueHeader.Created = now;
+                    //    issueHeader.CreatedBy = User.Identity.Name;
+                    //    issueHeader.LastModified = now;
+                    //    issueHeader.LastModifiedBy = User.Identity.Name;
+                    //    alertDB.IssueHeaders.Add(issueHeader);
+                    //    alertDB.SaveChanges();
+
+                    //    QualityControlPOTracking QCPotracking = new QualityControlPOTracking();
+                    //    QCPotracking.IssueHeaderID = issueHeader.ID;
+                    //    QCPotracking.PONumber = Existed_PDI.PO.Number;
+                    //    QCPotracking.QADate = primerActualDate.Value;
+                    //    QCPotracking.MaterialNumber = Existed_PDI.Material;
+                    //    QCPotracking.MaterialName = Existed_PDI.Description;
+                    //    QCPotracking.Quantity = Existed_PDI.ConfirmedQuantity.Value;
+                    //    QCPotracking.Created = now;
+                    //    QCPotracking.CreatedBy = User.Identity.Name;
+                    //    QCPotracking.LastModified = now;
+                    //    QCPotracking.LastModifiedBy = User.Identity.Name;
+                    //    alertDB.IssueHeaders.Add(issueHeader);
+                    //    alertDB.SaveChanges();
+                    //}
+                    
                 }
                 else
                 {
