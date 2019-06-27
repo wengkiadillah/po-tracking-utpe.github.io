@@ -100,6 +100,15 @@
                             </li>
                         </ul>
                     </li>
+
+                    if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                    {
+                        <li class="main-menu-item">
+                            <a href="~/Import/report" class="main-menu__link">
+                                <i class="fas fa-plane"></i> <span>Report PO Import</span>
+                            </a>
+                        </li>
+                    }
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local"))
                 {
@@ -107,24 +116,24 @@
                         <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
                             <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="ON Going" style="margin-right: 0px;">5</small>
-                                <small class="label pull-right bg-green mr-1" title="Confirmation">16</small>
-                                <small class="label pull-right bg-red" title="Done">12</small>
+                                <small class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">@ViewBag.LocalPOItemsCountNew</small>
+                                <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
+                                <small class="label pull-right bg-red" title="Closed">@ViewBag.LocalPOItemsDone</small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
                             <li class="main-menu-submenu-item">
-                                <a href="#" class="main-menu-submenu__link" data-menu="On Going">
+                                <a href="~/Local/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                         <small class="label pull-right bg-green mr-1" title="Confirmation">16</small>
+                                        <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
-                                <a href="#" class="main-menu-submenu__link" data-menu="Outstanding">
-                                    <span>Outstanding</span><span class="pull-right-container">
-                                        <small class="label pull-right bg-yellow mr-1" title="Confirmation">16</small>
+                                <a href="~/Local/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="Outstanding">
+                                    <span>New PO</span><span class="pull-right-container">
+                                        <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.LocalPOItemsCountNew</small>
                                     </span>
                                 </a>
                             </li>

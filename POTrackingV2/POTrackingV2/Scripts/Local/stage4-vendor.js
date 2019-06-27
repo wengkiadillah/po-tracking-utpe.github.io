@@ -94,7 +94,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
                 });
             }
             else {
-                alert("Date delay and delay reason must be null if On time");
+                alert("Please empty delayed Date and choose default delay reason if On time");
                 inputUpdateEtaDateOntime.focus();
             }
         }

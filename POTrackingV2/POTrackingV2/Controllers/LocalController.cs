@@ -27,7 +27,7 @@ namespace POTrackingV2.Controllers
 
         #region PAGELIST
         // GET: Local
-        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus,string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -95,12 +95,33 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
+            ViewBag.LocalPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+            ViewBag.LocalPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
+            ViewBag.LocalPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+
+            if (searchPOStatus == "ongoing")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            }
+            else if (searchPOStatus == "newpo")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+                
+            }
+            else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+
+                
+            }
+
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
             ViewBag.CurrentSearchMaterial = searchMaterial;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.CurrentSearchPOStatus = searchPOStatus;
             ViewBag.POCount = pOes.Count(); // DEBUG 
             ViewBag.IISAppName = iisAppName;
 
@@ -731,7 +752,7 @@ namespace POTrackingV2.Controllers
         #endregion
 
         #region stage 2 VendorConfirmETA
-         // POST: Import/VendorConfirmAllFirstETA
+         // POST: Local/VendorConfirmAllFirstETA
         [HttpPost]
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
@@ -885,7 +906,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementAcceptFirstEta
+        // POST: Local/ProcurementAcceptFirstEta
         [HttpPost]
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -974,7 +995,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementDeclineFirstEta
+        // POST: Local/ProcurementDeclineFirstEta
         [HttpPost]
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
