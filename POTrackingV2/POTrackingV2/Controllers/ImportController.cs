@@ -150,7 +150,7 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        public ActionResult Report()
+        public ActionResult Report(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -201,7 +201,28 @@ namespace POTrackingV2.Controllers
 
             pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
-            return View(pOes);
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower()) || y.Description.ToLower().Contains(searchMaterial.ToLower())));
+            }
+            #endregion
+
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
