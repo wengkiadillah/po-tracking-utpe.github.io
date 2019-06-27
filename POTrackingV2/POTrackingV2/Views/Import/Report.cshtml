@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="~/Content/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="~/Content/bootstrap.min.css">
 
+@Scripts.Render("~/bundles/jquery")
+
 <h2>Report</h2>
 
 <table id="tableReport" class="table table-striped table-bordered" style="width:100%">
@@ -83,7 +85,7 @@
                             @description
                         </td>
                         <td>
-                            @purchasingDocumentItem.Quantity;
+                            @purchasingDocumentItem.Quantity
                         </td>
                         <td>
                             @{
@@ -141,11 +143,9 @@
     </tbody>
 </table>
 
-<script src="~/Scripts/jquery-3.3.1.js"></script>
-<script src="~/Scripts/jquery.dataTables.min.js"></script>
-<script src="~/Scripts/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#tableReport').DataTable();
+        $('#tableReport').dataTable();
+        $("#tableReport").DataTable();
     });
 </script>
