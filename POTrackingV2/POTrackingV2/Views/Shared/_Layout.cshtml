@@ -146,24 +146,36 @@
                         <a href="~/SubCont/index" class="main-menu__link" data-menu="Subcontract">
                             <i class="fas fa-cogs"></i> <span>Subcontract</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="ON Going" style="margin-right: 0px;">5</small>
-                                <small class="label pull-right bg-green mr-1" title="New PO">16</small>
-                                <small class="label pull-right bg-red" title="Done">12</small>
+                                <small id="subcont-new-po__count2" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">0</small>
+                                <small id="subcont-ongoing__count2" class="label pull-right bg-green mr-1" title="On Going">0</small>
+                                <small id="subcont-done__count" class="label pull-right bg-red" title="Done">0</small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
                             <li class="main-menu-submenu-item">
+                             @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+                             {
+                                <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
+                                    <span>On Going</span>
+                                    <span class="pull-right-container">
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">0</small>
+                                    </span>
+                                </a>
+                             }
+                             else
+                             {
                                 <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">16</small>
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">0</small>
                                     </span>
                                 </a>
+                             }
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small id="subcont-new-po__count" class="label pull-right bg-yellow mr-1" title="New PO">16</small>
+                                        <small id="subcont-new-po__count" class="label pull-right bg-yellow mr-1" title="New PO">0</small>
                                     </span>
                                 </a>
                             </li>
@@ -312,11 +324,18 @@
             type: "GET",
             url: "@Url.Action("GetPOItemCount", "Home")",
             success: function (response) {
+                console.log(response);
                 $('#importCountNew').text(response.ImportPOItemsCountNew);
                 $('#importCountOnGoing').text(response.ImportPOItemsCountOnGoing);
                 $('#importCountNew2').text(response.ImportPOItemsCountNew);
                 $('#importCountOnGoing2').text(response.ImportPOItemsCountOnGoing);
                 $('#importCountDone').text(response.ImportPOItemsDone);
+
+                $('#subcont-new-po__count2').text(response.subcontNewPO);
+                $('#subcont-ongoing__count2').text(response.subcontOngoing);
+                $('#subcont-new-po__count').text(response.subcontNewPO);
+                $('#subcont-ongoing__count').text(response.subcontOngoing);
+                $('#subcont-done__count').text(response.subcontDone);
             }
         });
 
