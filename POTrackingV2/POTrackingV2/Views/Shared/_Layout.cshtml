@@ -92,23 +92,22 @@
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
-                                <a href="~/Import/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="Outstanding">
+                                <a href="~/Import/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
                                         <small id="importCountNew2" class="label pull-right bg-yellow mr-1" title="New PO"></small>
                                     </span>
                                 </a>
                             </li>
+                            @if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                            {
+                            <li class="main-menu-submenu-item">
+                                <a href="~/Import/report" class="main-menu-submenu__link" data-menu="Report Import">
+                                    <span>Report PO Import</span>
+                                </a>
+                            </li>
+                            }
                         </ul>
                     </li>
-
-                    if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
-                    {
-                        <li class="main-menu-item">
-                            <a href="~/Import/report" class="main-menu__link" data-menu="Report Import">
-                                <i class="fas fa-plane"></i> <span>Report PO Import</span>
-                            </a>
-                        </li>
-                    }
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local"))
                 {

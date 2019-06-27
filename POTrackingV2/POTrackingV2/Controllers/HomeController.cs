@@ -369,12 +369,13 @@ namespace POTrackingV2.Controllers
             {
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 string role = myUser.Roles.ToLower();
-
                 var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
+                #region Import
                 var pOesImport = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                                .AsQueryable();
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                        .AsQueryable();
+
                 if (role == LoginConstants.RoleProcurement.ToLower())
                 {
                     List<string> myUserNRPs = new List<string>();
@@ -392,7 +393,7 @@ namespace POTrackingV2.Controllers
                         }
                     }
 
-                    pOesImport = db.POes.Except(noShowPOes);
+                    pOesImport = pOesImport.Except(noShowPOes);
                 }
                 else if (role == LoginConstants.RoleAdministrator.ToLower())
                 {
@@ -402,11 +403,17 @@ namespace POTrackingV2.Controllers
                 }
                 else
                 {
-                    pOesImport = db.POes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                    pOesImport = pOesImport.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                 }
                 string ImportPOItemsCountNew = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
                 string ImportPOItemsCountOnGoing = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
                 string ImportPOItemsDone = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                string ImportPOItemsCountNew = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+                string ImportPOItemsCountOnGoing = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+                string ImportPOItemsDone = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                #endregion
 
                 //Start Subcont
                 int subcontNewPO = 0;

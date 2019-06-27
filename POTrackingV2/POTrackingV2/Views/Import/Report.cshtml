@@ -24,7 +24,7 @@
             <datalist id="data-list-po"></datalist>
         </div>
         <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
             <datalist id="data-list-vendor"></datalist>
         </div>
         <div class="form-group mr-4 ml-0 frmSearch">
@@ -32,7 +32,7 @@
             <datalist id="data-list-material"></datalist>
         </div>
         <button type="submit" class="btn btn-info mr-3">Find</button>
-        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
+        @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
     }
 </div>
 
