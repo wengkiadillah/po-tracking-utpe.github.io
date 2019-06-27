@@ -168,6 +168,70 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
+        public ActionResult Report(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            string userName = User.Identity.Name;
+
+            try
+            {
+                var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+
+                var pOes = db.POes.AsQueryable();
+
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+
+                if (role == LoginConstants.RoleProcurement.ToLower())
+                {
+                    List<string> myUserNRPs = new List<string>();
+                    myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                    myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
+                                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+
+                    if (myUserNRPs.Count > 0)
+                    {
+                        foreach (var myUserNRP in myUserNRPs)
+                        {
+                            noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                        }
+                    }
+
+                    pOes = pOes.Except(noShowPOes);
+                }
+
+                ViewBag.CurrentSearchPONumber = searchPONumber;
+                ViewBag.CurrentSearchVendorName = searchVendorName;
+                ViewBag.CurrentSearchMaterial = searchMaterial;                                
+                ViewBag.CurrentRoleID = role.ToLower();                            
+                ViewBag.IISAppName = iisAppName;
+
+                if (!String.IsNullOrEmpty(searchPONumber))
+                {
+                    pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
+                }
+
+                if (!String.IsNullOrEmpty(searchVendorName))
+                {
+                    pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+                }
+
+                if (!String.IsNullOrEmpty(searchMaterial))
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower()) || y.Description.ToLower().Contains(searchMaterial.ToLower())));
+                }
+
+                return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message + "-----" + ex.StackTrace);
+            }
+        }
+
         [HttpGet]
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
         {
