@@ -83,7 +83,7 @@ namespace POTrackingV2.Controllers
 
         // GET: POSubcont
         //public ActionResult Index(string searchDataPONumber, string searchDataVendorName, string searchDataMaterial, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
-        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             POTrackingEntities db = new POTrackingEntities();
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
@@ -159,6 +159,84 @@ namespace POTrackingV2.Controllers
                 return View(ex.Message + "-----" + ex.StackTrace);
             }
         }
+
+        #region Report
+        public ActionResult Report(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartInspectionDate, string searchEndInspectionDate, int? page)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles;
+            string userName = User.Identity.Name;
+            try
+            {
+                //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
+                var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+
+                var pOes = db.POes.AsQueryable();
+
+                //if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                //{
+                    //var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
+                    //if (listVendorSubconDev != null)
+                    //{
+                    //    pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
+                    //}
+                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PBActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                //}
+                //else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                //{
+                //    string vendorCode = db.UserVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).FirstOrDefault();
+                //    //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                //    pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                //}
+
+                ViewBag.CurrentRoleID = role.ToLower();
+                ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
+                ViewBag.CurrentDataPONumber = searchPONumber;
+                ViewBag.CurrentDataVendorName = searchVendorName;
+                ViewBag.CurrentDataMaterial = searchMaterial;
+                //ViewBag.CurrentFilter = filterBy;
+                ViewBag.CurrentStartInspectionDate = searchStartInspectionDate;
+                ViewBag.CurrentEndInspectionDate = searchEndInspectionDate;
+                ViewBag.IISAppName = iisAppName;
+
+                #region Filter
+                if (!String.IsNullOrEmpty(searchPONumber))
+                {
+                    pOes = pOes.Where(po => po.Number.Contains(searchPONumber));
+                }
+                if (!String.IsNullOrEmpty(searchVendorName))
+                {
+                    pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+                }
+                if (!String.IsNullOrEmpty(searchMaterial))
+                {
+                    pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
+                }
+
+                if (!String.IsNullOrEmpty(searchStartInspectionDate))
+                {
+                    DateTime startDate = DateTime.ParseExact(searchStartInspectionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(pdi => pdi.PrimerActualDate >= startDate));
+                }
+
+                if (!String.IsNullOrEmpty(searchEndInspectionDate))
+                {
+                    DateTime endDate = DateTime.ParseExact(searchEndInspectionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(pdi => pdi.PrimerActualDate <= endDate));
+                }
+                #endregion
+                //return (RedirectToAction("Index", "Error", new { ErrorList = "hi there!" }));
+                return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message + "-----" + ex.StackTrace);
+            }
+        }
+        #endregion Report
 
         #region OutStanding PO
         public ActionResult Outstanding(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
@@ -284,240 +362,240 @@ namespace POTrackingV2.Controllers
                 string role = myUser.Roles;
                 //using (TransactionScope transaction = new TransactionScope())
                 //{
-                    if (purchasingDocumentItems != null)
+                if (purchasingDocumentItems != null)
+                {
+                    foreach (PurchasingDocumentItem item in purchasingDocumentItems)
                     {
-                        foreach (PurchasingDocumentItem item in purchasingDocumentItems)
-                        {
-                            PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
+                        PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
 
-                            Notification notification = new Notification();
-                            notification.PurchasingDocumentItemID = Existed_PDI.ID;
-                            notification.StatusID = 3;
-                            //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                            if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != item.ConfirmedQuantity || Existed_PDI.DeliveryDate != item.ConfirmedDate))
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = Existed_PDI.ID;
+                        notification.StatusID = 3;
+                        //if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower() && (Existed_PDI.Quantity != item.ConfirmedQuantity || Existed_PDI.DeliveryDate != item.ConfirmedDate))
+                        {
+                            Existed_PDI.ConfirmedItem = null;
+                            Existed_PDI.ActiveStage = "1";
+                            Existed_PDI.ConfirmedDate = item.ConfirmedDate;
+                            Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
+
+                            notification.Stage = "1";
+                            notification.Role = "subcontdev";
+                        }
+                        else
+                        {
+                            string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
+                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
+                            int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
+
+                            if (Existed_PDI.Quantity == item.ConfirmedQuantity && Existed_PDI.DeliveryDate == item.ConfirmedDate)
                             {
-                                Existed_PDI.ConfirmedItem = null;
-                                Existed_PDI.ActiveStage = "1";
+                                Notification notificationInfo = new Notification();
+                                notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
+                                notificationInfo.StatusID = 1;
+                                notificationInfo.Stage = "1";
+                                notificationInfo.Role = "subcontdev";
+                                notificationInfo.isActive = true;
+                                notificationInfo.Created = now;
+                                notificationInfo.CreatedBy = User.Identity.Name;
+                                notificationInfo.Modified = now;
+                                notificationInfo.ModifiedBy = User.Identity.Name;
+                                db.Notifications.Add(notificationInfo);
+
                                 Existed_PDI.ConfirmedDate = item.ConfirmedDate;
                                 Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
-
-                                notification.Stage = "1";
-                                notification.Role = "subcontdev";
                             }
-                            else
+
+                            Existed_PDI.ConfirmedItem = true;
+                            if (scc != null)
                             {
-                                string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
-                                SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
-                                int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
-
-                                if (Existed_PDI.Quantity == item.ConfirmedQuantity && Existed_PDI.DeliveryDate == item.ConfirmedDate)
-                                {
-                                    Notification notificationInfo = new Notification();
-                                    notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
-                                    notificationInfo.StatusID = 1;
-                                    notificationInfo.Stage = "1";
-                                    notificationInfo.Role = "subcontdev";
-                                    notificationInfo.isActive = true;
-                                    notificationInfo.Created = now;
-                                    notificationInfo.CreatedBy = User.Identity.Name;
-                                    notificationInfo.Modified = now;
-                                    notificationInfo.ModifiedBy = User.Identity.Name;
-                                    db.Notifications.Add(notificationInfo);
-
-                                    Existed_PDI.ConfirmedDate = item.ConfirmedDate;
-                                    Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
-                                }
-
-                                Existed_PDI.ConfirmedItem = true;
-                                if (scc != null)
-                                {
-                                    if (scc.isNeedSequence == true)
-                                    {
-                                        Existed_PDI.ActiveStage = "2";
-                                        notification.Stage = "2";
-                                        notification.Role = "vendor";
-                                    }
-                                    else
-                                    {
-                                        if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
-                                        {
-                                            Existed_PDI.ActiveStage = "5";
-                                            notification.Stage = "5";
-                                            notification.Role = "vendor";
-                                        }
-                                        else
-                                        {
-                                            Existed_PDI.ActiveStage = "4";
-                                            notification.Stage = "4";
-                                            notification.Role = "subcontdev";
-                                        }
-                                    }
-                                }
-                                else
+                                if (scc.isNeedSequence == true)
                                 {
                                     Existed_PDI.ActiveStage = "2";
                                     notification.Stage = "2";
                                     notification.Role = "vendor";
                                 }
-
-                                //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
-                                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
-                                if (Existed_notification != null)
+                                else
                                 {
-                                    Existed_notification.isActive = false;
-                                    Existed_notification.Modified = now;
-                                    Existed_notification.ModifiedBy = User.Identity.Name;
-                                }
-                            }
-
-                            Existed_PDI.LastModified = now;
-                            Existed_PDI.LastModifiedBy = User.Identity.Name;
-
-                            notification.isActive = true;
-                            notification.Created = now;
-                            notification.CreatedBy = User.Identity.Name;
-                            notification.Modified = now;
-                            notification.ModifiedBy = User.Identity.Name;
-
-                            if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                            {
-                                // Child clean-up
-                                List<Notification> notifications = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
-                                foreach (var notificationDatabasePurchasingDocumentItem in notifications)
-                                {
-                                    db.Notifications.Remove(notificationDatabasePurchasingDocumentItem);
-                                }
-                                List<ProgressPhoto> progressPhotos = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
-                                foreach (var progressDatabasePurchasingDocumentItem in progressPhotos)
-                                {
-                                    db.ProgressPhotoes.Remove(progressDatabasePurchasingDocumentItem);
-                                }
-                                List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
-                                foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
-                                {
-                                    if (childDatabasePurchasingDocumentItem.ID != item.ID)
+                                    if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
                                     {
-                                        db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
+                                        Existed_PDI.ActiveStage = "5";
+                                        notification.Stage = "5";
+                                        notification.Role = "vendor";
+                                    }
+                                    else
+                                    {
+                                        Existed_PDI.ActiveStage = "4";
+                                        notification.Stage = "4";
+                                        notification.Role = "subcontdev";
                                     }
                                 }
-                                // finish
-                            }
-
-                            db.Notifications.Add(notification);
-                        }
-                    }
-
-                    //List<PurchasingDocumentItem> arrayDataChild = new List<PurchasingDocumentItem>();
-                    if (purchasingDocumentItemChilds != null)
-                    {
-                        foreach (PurchasingDocumentItem item in purchasingDocumentItemChilds)
-                        {
-                            PurchasingDocumentItem parent = db.PurchasingDocumentItems.Where(x => x.ID == item.ParentID).FirstOrDefault();
-
-                            Notification notificationChild = new Notification();
-                            notificationChild.StatusID = 3;
-
-                            if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                            {
-                                PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
-                                purchasingDocumentItem.POID = parent.POID;
-                                purchasingDocumentItem.ItemNumber = parent.ItemNumber;
-                                purchasingDocumentItem.Currency = parent.Currency;
-                                purchasingDocumentItem.Quantity = parent.Quantity;
-                                purchasingDocumentItem.NetPrice = parent.NetPrice;
-                                purchasingDocumentItem.NetValue = parent.NetValue;
-                                purchasingDocumentItem.Material = parent.Material;
-                                purchasingDocumentItem.Description = parent.Description;
-                                purchasingDocumentItem.ActiveStage = "1";
-                                purchasingDocumentItem.ParentID = item.ParentID;
-                                purchasingDocumentItem.ConfirmedQuantity = item.ConfirmedQuantity;
-                                purchasingDocumentItem.ConfirmedDate = item.ConfirmedDate;
-                                purchasingDocumentItem.WorkTime = item.WorkTime;
-                                purchasingDocumentItem.LeadTimeItem = item.LeadTimeItem;
-                                purchasingDocumentItem.Created = now;
-                                purchasingDocumentItem.CreatedBy = User.Identity.Name;
-                                purchasingDocumentItem.LastModified = now;
-                                purchasingDocumentItem.LastModifiedBy = User.Identity.Name;
-                                db.PurchasingDocumentItems.Add(purchasingDocumentItem);
-                                //arrayDataChild.Add(purchasingDocumentItem);
-                                db.SaveChanges();
-
-                                notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
-                                notificationChild.Stage = "1";
-                                notificationChild.Role = "subcontdev";
                             }
                             else
                             {
-                                Notification Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 3).FirstOrDefault();
-                                if (Existed_notificationChild != null)
+                                Existed_PDI.ActiveStage = "2";
+                                notification.Stage = "2";
+                                notification.Role = "vendor";
+                            }
+
+                            //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
+                            if (Existed_notification != null)
+                            {
+                                Existed_notification.isActive = false;
+                                Existed_notification.Modified = now;
+                                Existed_notification.ModifiedBy = User.Identity.Name;
+                            }
+                        }
+
+                        Existed_PDI.LastModified = now;
+                        Existed_PDI.LastModifiedBy = User.Identity.Name;
+
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                        {
+                            // Child clean-up
+                            List<Notification> notifications = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
+                            foreach (var notificationDatabasePurchasingDocumentItem in notifications)
+                            {
+                                db.Notifications.Remove(notificationDatabasePurchasingDocumentItem);
+                            }
+                            List<ProgressPhoto> progressPhotos = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItem.ParentID == item.ID || x.PurchasingDocumentItemID == item.ID).ToList();
+                            foreach (var progressDatabasePurchasingDocumentItem in progressPhotos)
+                            {
+                                db.ProgressPhotoes.Remove(progressDatabasePurchasingDocumentItem);
+                            }
+                            List<PurchasingDocumentItem> childDatabasePurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == item.ID).ToList();
+                            foreach (var childDatabasePurchasingDocumentItem in childDatabasePurchasingDocumentItems)
+                            {
+                                if (childDatabasePurchasingDocumentItem.ID != item.ID)
                                 {
-                                    Existed_notificationChild.isActive = false;
-                                    Existed_notificationChild.Modified = now;
-                                    Existed_notificationChild.ModifiedBy = User.Identity.Name;
+                                    db.PurchasingDocumentItems.Remove(childDatabasePurchasingDocumentItem);
                                 }
-                                PurchasingDocumentItem Existed_child = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
+                            }
+                            // finish
+                        }
 
-                                string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
-                                SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
-                                int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
+                        db.Notifications.Add(notification);
+                    }
+                }
 
-                                if (Existed_child != null)
+                //List<PurchasingDocumentItem> arrayDataChild = new List<PurchasingDocumentItem>();
+                if (purchasingDocumentItemChilds != null)
+                {
+                    foreach (PurchasingDocumentItem item in purchasingDocumentItemChilds)
+                    {
+                        PurchasingDocumentItem parent = db.PurchasingDocumentItems.Where(x => x.ID == item.ParentID).FirstOrDefault();
+
+                        Notification notificationChild = new Notification();
+                        notificationChild.StatusID = 3;
+
+                        if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                        {
+                            PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
+                            purchasingDocumentItem.POID = parent.POID;
+                            purchasingDocumentItem.ItemNumber = parent.ItemNumber;
+                            purchasingDocumentItem.Currency = parent.Currency;
+                            purchasingDocumentItem.Quantity = parent.Quantity;
+                            purchasingDocumentItem.NetPrice = parent.NetPrice;
+                            purchasingDocumentItem.NetValue = parent.NetValue;
+                            purchasingDocumentItem.Material = parent.Material;
+                            purchasingDocumentItem.Description = parent.Description;
+                            purchasingDocumentItem.ActiveStage = "1";
+                            purchasingDocumentItem.ParentID = item.ParentID;
+                            purchasingDocumentItem.ConfirmedQuantity = item.ConfirmedQuantity;
+                            purchasingDocumentItem.ConfirmedDate = item.ConfirmedDate;
+                            purchasingDocumentItem.WorkTime = item.WorkTime;
+                            purchasingDocumentItem.LeadTimeItem = item.LeadTimeItem;
+                            purchasingDocumentItem.Created = now;
+                            purchasingDocumentItem.CreatedBy = User.Identity.Name;
+                            purchasingDocumentItem.LastModified = now;
+                            purchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+                            db.PurchasingDocumentItems.Add(purchasingDocumentItem);
+                            //arrayDataChild.Add(purchasingDocumentItem);
+                            db.SaveChanges();
+
+                            notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
+                            notificationChild.Stage = "1";
+                            notificationChild.Role = "subcontdev";
+                        }
+                        else
+                        {
+                            Notification Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 3).FirstOrDefault();
+                            if (Existed_notificationChild != null)
+                            {
+                                Existed_notificationChild.isActive = false;
+                                Existed_notificationChild.Modified = now;
+                                Existed_notificationChild.ModifiedBy = User.Identity.Name;
+                            }
+                            PurchasingDocumentItem Existed_child = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
+
+                            string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
+                            SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
+                            int totalItemGR = Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_child.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
+
+                            if (Existed_child != null)
+                            {
+                                Existed_child.ConfirmedItem = true;
+                                notificationChild.PurchasingDocumentItemID = Existed_child.ID;
+
+                                if (scc != null)
                                 {
-                                    Existed_child.ConfirmedItem = true;
-                                    notificationChild.PurchasingDocumentItemID = Existed_child.ID;
-
-                                    if (scc != null)
-                                    {
-                                        if (scc.isNeedSequence == true)
-                                        {
-                                            Existed_child.ActiveStage = "2";
-                                            notificationChild.Stage = "2";
-                                            notificationChild.Role = "vendor";
-                                        }
-                                        else
-                                        {
-                                            if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
-                                            {
-                                                Existed_child.ActiveStage = "6";
-                                                notificationChild.Stage = "6";
-                                                notificationChild.Role = "vendor";
-                                            }
-                                            else
-                                            {
-                                                Existed_child.ActiveStage = "4";
-                                                notificationChild.Stage = "4";
-                                                notificationChild.Role = "subcontdev";
-                                            }
-                                        }
-                                    }
-                                    else
+                                    if (scc.isNeedSequence == true)
                                     {
                                         Existed_child.ActiveStage = "2";
                                         notificationChild.Stage = "2";
                                         notificationChild.Role = "vendor";
                                     }
+                                    else
+                                    {
+                                        if (item.ConfirmedQuantity > 0 && item.ConfirmedQuantity <= totalItemGR)
+                                        {
+                                            Existed_child.ActiveStage = "6";
+                                            notificationChild.Stage = "6";
+                                            notificationChild.Role = "vendor";
+                                        }
+                                        else
+                                        {
+                                            Existed_child.ActiveStage = "4";
+                                            notificationChild.Stage = "4";
+                                            notificationChild.Role = "subcontdev";
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Existed_child.ActiveStage = "2";
+                                    notificationChild.Stage = "2";
+                                    notificationChild.Role = "vendor";
                                 }
                             }
-
-                            notificationChild.isActive = true;
-                            notificationChild.Created = now;
-                            notificationChild.CreatedBy = User.Identity.Name;
-                            notificationChild.Modified = now;
-                            notificationChild.ModifiedBy = User.Identity.Name;
-
-                            db.Notifications.Add(notificationChild);
                         }
+
+                        notificationChild.isActive = true;
+                        notificationChild.Created = now;
+                        notificationChild.CreatedBy = User.Identity.Name;
+                        notificationChild.Modified = now;
+                        notificationChild.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationChild);
                     }
-                    try
-                    {
-                        db.SaveChanges();
-                        //transaction.Complete();
-                        return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
-                    }
+                }
+                try
+                {
+                    db.SaveChanges();
+                    //transaction.Complete();
+                    return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+                }
                 //}
             }
             catch (Exception ex)
@@ -733,7 +811,7 @@ namespace POTrackingV2.Controllers
                     Existed_PDI.ConfirmedItem = false;
                     notification.StatusID = 2;
                     notification.Stage = "1";
-                    if(role.ToLower() == LoginConstants.RoleVendor.ToLower())
+                    if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                     {
                         notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                     }
