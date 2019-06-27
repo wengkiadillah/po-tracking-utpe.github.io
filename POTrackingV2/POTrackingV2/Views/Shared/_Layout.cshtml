@@ -77,9 +77,9 @@
                         <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
                             <i class="fas fa-plane"></i> <span>PO Import</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">@ViewBag.ImportPOItemsCountNew</small>
-                                <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.ImportPOItemsCountOnGoing</small>
-                                <small class="label pull-right bg-red" title="Closed">@ViewBag.ImportPOItemsDone</small>
+                                <small id="importCountNew" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;"></small>
+                                <small id="importCountOnGoing" class="label pull-right bg-green mr-1" title="On Going"></small>
+                                <small id="importCountDone" class="label pull-right bg-red" title="Closed"></small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -87,14 +87,14 @@
                                 <a href="~/Import/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.ImportPOItemsCountOnGoing</small>
+                                        <small id="importCountOnGoing2" class="label pull-right bg-green mr-1" title="On Going"></small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/Import/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="Outstanding">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.ImportPOItemsCountNew</small>
+                                        <small id="importCountNew2" class="label pull-right bg-yellow mr-1" title="New PO"></small>
                                     </span>
                                 </a>
                             </li>
@@ -303,6 +303,26 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+        //Get Import
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetPOItemCountImport", "Import")",
+            success: function (response) {
+                $('#importCountNew').text(response.ImportPOItemsCountNew);
+                $('#importCountOnGoing').text(response.ImportPOItemsCountOnGoing);
+                $('#importCountNew2').text(response.ImportPOItemsCountNew);
+                $('#importCountOnGoing2').text(response.ImportPOItemsCountOnGoing);
+                $('#importCountDone').text(response.ImportPOItemsDone);
+            }
+        });
+
+        });
+    </script>
+
     @RenderSection("scripts", required: false)
     @RenderSection("notification", required: false)
     @Html.Partial("_NotificationList", myRole.Roles)
