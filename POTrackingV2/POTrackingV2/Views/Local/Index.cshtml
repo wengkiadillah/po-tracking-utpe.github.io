@@ -6,6 +6,16 @@
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
     var iisAppName = ViewBag.IISAppName;
+    string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
+
+    if (!string.IsNullOrEmpty(currentSearchPOStatus))
+    {
+        currentSearchPOStatus = currentSearchPOStatus.ToLower();
+    }
+    else
+    {
+        currentSearchPOStatus = string.Empty;
+    }
 }
 
 @section styles {
@@ -42,6 +52,7 @@
                    placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
+        <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
         <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
@@ -100,6 +111,15 @@
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     //}
+
+    if (currentSearchPOStatus == "newpo")
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+    }
+    else if (currentSearchPOStatus == "ongoing")
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+    }
 
     if (purchasingDocumentItems.Count() < 1)
     {
