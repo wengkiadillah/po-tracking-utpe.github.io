@@ -138,6 +138,15 @@
                             </li>
                         </ul>
                     </li>
+
+                    if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                    {
+                        <li class="main-menu-item">
+                            <a href="~/Local/Report" class="main-menu__link" data-menu="Report Local">
+                                <i class="fas fa-plane"></i> <span>Report PO Local</span>
+                            </a>
+                        </li>
+                    }
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont"))
                 {
