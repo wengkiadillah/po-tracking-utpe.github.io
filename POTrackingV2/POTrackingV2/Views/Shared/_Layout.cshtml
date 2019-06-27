@@ -310,7 +310,7 @@
         //Get Import
         $.ajax({
             type: "GET",
-            url: "@Url.Action("GetPOItemCountImport", "Import")",
+            url: "@Url.Action("GetPOItemCount", "Home")",
             success: function (response) {
                 $('#importCountNew').text(response.ImportPOItemsCountNew);
                 $('#importCountOnGoing').text(response.ImportPOItemsCountOnGoing);
