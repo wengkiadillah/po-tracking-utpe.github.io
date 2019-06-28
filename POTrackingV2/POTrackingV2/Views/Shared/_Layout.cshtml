@@ -130,23 +130,22 @@
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
-                                <a href="~/Local/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="Outstanding">
+                                <a href="~/Local/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
                                         <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.LocalPOItemsCountNew</small>
                                     </span>
                                 </a>
                             </li>
+                            @if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
+                            {
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/Local/Report" class="main-menu-submenu__link" data-menu="Report Local">
+                                        <span>Report PO Local</span>
+                                    </a>
+                                </li>
+                            }
                         </ul>
-                    </li>
-
-                    if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
-                    {
-                        <li class="main-menu-item">
-                            <a href="~/Local/Report" class="main-menu__link" data-menu="Report Local">
-                                <i class="fas fa-plane"></i> <span>Report PO Local</span>
-                            </a>
-                        </li>
-                    }
+                    </li>                    
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont"))
                 {
