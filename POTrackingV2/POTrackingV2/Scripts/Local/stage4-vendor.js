@@ -41,6 +41,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
 
     var etaDateDelayValue = inputUpdateEtaDateDelay.val();
     var itemID = $(this).closest(".form-inline").find(".st4-item-id").val();
+    var delayReasonID = inputDelayReason.val();
     var etaOnTime = reverseDayMonth(inputUpdateEtaDateOntime.val());
     var minDate = reverseDayMonth($(this).closest(".form-inline").find(".st4-update-eta-date-on-time").attr("mindate"));
 
@@ -65,7 +66,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
 
     if (!isNaN(etaOnTime.getTime())) {
         if (etaOnTime >= minDate) {
-            if (etaDateDelayValue === '') {
+            if (etaDateDelayValue === '' && (delayReasonID === '' || delayReasonID === '0' )) {
                 $.ajax({
                     type: "POST",
                     url: stage4VendorUpdateETA,
@@ -93,7 +94,7 @@ $(".st4-update-eta-date-on-time-confirm").on("click", function (obj) {
                 });
             }
             else {
-                alert("The Date delay must be null if On time");
+                alert("Please empty delayed Date and choose default delay reason if On time");
                 inputUpdateEtaDateOntime.focus();
             }
         }

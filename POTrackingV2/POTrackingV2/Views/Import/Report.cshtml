@@ -1,0 +1,179 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<POTrackingV2.Models.PO>
+
+@{
+    ViewBag.Title = "Report PO Import";
+    int number = 1;
+}
+
+@*<link rel="stylesheet" href="~/Content/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/Content/bootstrap.min.css">*@
+
+@Scripts.Render("~/bundles/jquery")
+
+<h2>Report</h2>
+
+
+<div class="filter-row">
+    @using (Html.BeginForm("Report", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    {
+        <div class="form-group mr-4 ml-0 frmSearch">
+            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <datalist id="data-list-po"></datalist>
+        </div>
+        <div class="form-group mr-4 ml-0 frmSearch">
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <datalist id="data-list-vendor"></datalist>
+        </div>
+        <div class="form-group mr-4 ml-0 frmSearch">
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <datalist id="data-list-material"></datalist>
+        </div>
+        <button type="submit" class="btn btn-info mr-3">Find</button>
+        @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
+    }
+</div>
+
+<table id="tableReport" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Number
+            </th>
+            <th>
+                PO Number
+            </th>
+            <th>
+                Item Number
+            </th>
+            <th>
+                Material
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Delivery Date
+            </th>
+            <th>
+                Vendor
+            </th>
+            <th>
+                Estimated Time Arrival
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var po in Model)
+            {
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
+                                                                        .OrderBy(x => x.ItemNumber);
+
+                if (purchasingDocumentItems.Count() < 1)
+                {
+                    continue;
+                }
+                foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                {
+                    <tr>
+                        <td>
+                            @number
+                        </td>
+                        <td>
+                            @po.Number
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.ItemNumber
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Material
+                        </td>
+                        <td>
+                            @{
+                                string description = "-";
+
+                                if (purchasingDocumentItem.Description != null)
+                                {
+                                    description = purchasingDocumentItem.Description;
+                                }
+                            }
+
+                            @description
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Quantity
+                        </td>
+                        <td>
+                            @{
+                                string deliveryDate = "-";
+
+                                if (purchasingDocumentItem.DeliveryDate != null)
+                                {
+                                    deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
+                            }
+
+                            @deliveryDate
+                        </td>
+                        <td>
+                            @po.Vendor.Name
+                        </td>
+                        <td>
+                            @{
+                                string estimatedTimeArrival = "-";
+
+                                if (purchasingDocumentItem.HasShipment)
+                                {
+                                    if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                    {
+                                        estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                    }
+                                }
+                            }
+
+                            @estimatedTimeArrival
+                        </td>
+                    </tr>
+
+                    number++;
+                }
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td>
+                    No Data
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+   Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Report",
+new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial}))
+
+
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    $("#tableReport").DataTable();
+    //});
+</script>

@@ -38,9 +38,7 @@ namespace POTrackingV2.Controllers
                 {
                     return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
                 }
-
             }
-
         }
 
         //public string index(IPagedList<POTracking.Models.SubcontComponentCapability> subcontComponents)

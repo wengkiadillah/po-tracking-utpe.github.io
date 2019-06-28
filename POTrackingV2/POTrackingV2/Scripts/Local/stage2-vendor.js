@@ -61,18 +61,18 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     });
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
     cssRow = "." + cssRow;
     var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-    // Next stage Controller
+    // Prev stage Controller
     cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
     cssRow = "." + cssRow;
-    var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+    var prevDataContent = $(this).closest(".po-item-section").prev().find(cssRow);
 
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
         if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
@@ -93,12 +93,16 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
 
                             donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                             donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+
+                            prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
                         }
                         else {
                             buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
                             checkboxItem.attr("disabled", "disabled");
                             inputFirstEtaDate.attr("disabled", "disabled");
                             buttonEdit.attr("style", "visibility:display");
+
+                            prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
                         }
                     }
 
@@ -154,11 +158,11 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
         cssRow = "." + cssRow;
         var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
 
-        ////next stage Controller
-        //cssRow = $(this).closest(".po-item-data-content").prop("class");
-        //cssRow = cssRow.replace(" ", ".");
-        //cssRow = "." + cssRow;
-        //var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+        // Previous stage 
+        cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var prevDataContent = $(this).closest(".po-item-section").prev().find(cssRow);
 
         if (inputFirstEtaDate.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
             if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
@@ -178,6 +182,8 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
 
                     donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
                     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+
+                    prevDataContent.find(".st1-edit-row").addClass("row-updated-prev-stage");
                 }
                 else {
                     alert("The Date cannot be less than the Date agreed on stage 1");
@@ -216,6 +222,9 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                         $(".row-updated-donut-text").text("2a");
                         $(".row-updated-donut").removeClass("row-updated-donut");
                         $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+
+                        $(".row-updated-prev-stage").attr("style", "visibility:hidden");
+                        $(".row-updated-prev-stage").removeClass("row-updated-prev-stage");
                     }
                     else {
                         $(".row-updated").attr("disabled", "disabled");
@@ -232,6 +241,9 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
                         //$(".row-updated-donut-text").text("2a");
                         $(".row-updated-donut").removeClass("row-updated-donut");
                         $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+
+                        $(".row-updated-prev-stage").attr("style", "visibility:hidden");
+                        $(".row-updated-prev-stage").removeClass("row-updated-prev-stage");
                     }
                 }
 

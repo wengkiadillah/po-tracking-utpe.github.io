@@ -27,7 +27,7 @@ namespace POTrackingV2.Controllers
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
-        public ActionResult Index(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -86,12 +86,30 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
+            //ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+            //ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
+            //ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+
+            if (searchPOStatus == "ongoing")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            }
+            else if (searchPOStatus == "newpo")
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+            }
+            else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            }
+
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
             ViewBag.CurrentSearchMaterial = searchMaterial;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
             ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.CurrentSearchPOStatus = searchPOStatus;
             ViewBag.IISAppName = iisAppName;
 
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
@@ -132,7 +150,81 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        [HttpGet]
+        public ActionResult Report(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            {
+                return RedirectToAction("Index", "Local");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import")
+            {
+                return RedirectToAction("Index", "Import");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+
+            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
+                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                            .AsQueryable();
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+                List<string> myUserNRPs = new List<string>();
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
+
+                pOes = pOes.Except(noShowPOes);
+            }
+
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower())));
+            }
+            #endregion
+
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+        }
+
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
         {
             try
@@ -244,29 +336,33 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        foreach (var item in db.UserProcurementSuperiors)
-                        {
-                            if (item.ParentID == childUser.ID)
-                            {
-                                userNRPs.Add(item.NRP);
-                            }
-                        }
+                        //foreach (var item in db.UserProcurementSuperiors)
+                        //{
+                        //    if (item.ParentID == childUser.ID)
+                        //    {
+                        //        userNRPs.Add(item.NRP);
+                        //    }
+                        //}
 
-                        userNRPs.Add(childUser.NRP);
+                        if (!string.IsNullOrEmpty(childUser.NRP))
+                        {
+                            userNRPs.Add(childUser.NRP);
+                        }
                     }
                 }
             }
 
             return userNRPs;
         }
+
 
         #region STAGE 1
 
@@ -409,7 +505,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
@@ -2045,6 +2141,7 @@ namespace POTrackingV2.Controllers
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
 
+                            databasePurchasingDocumentItem.ActiveStage = "9";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
@@ -2121,6 +2218,7 @@ namespace POTrackingV2.Controllers
 
                             System.IO.File.Delete(pathWithfileName);
 
+                            databasePurchasingDocumentItem.ActiveStage = "8";
                             databasePurchasingDocumentItem.InvoiceDocument = null;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
