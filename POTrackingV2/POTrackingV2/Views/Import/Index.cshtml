@@ -3119,9 +3119,9 @@
                         {
                             var days = 0;
                             var rowChild = 1;
-                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestInvoiceDate.PayTerms))
+                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
                             {
-                                days = Convert.ToInt32(purchasingDocumentItem.LatestInvoiceDate.PayTerms);
+                                days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
                             }
 
                             if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
@@ -3130,7 +3130,7 @@
                             }
                             var termDateNewDateFormat = "";
 
-                            DateTime? dateNewFormat = purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                            DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
                             DateTime? termDate = (DateTime?)null;
                             if (dateNewFormat != (DateTime?)null && days > 0)
                             {
@@ -3161,12 +3161,12 @@
                                             hidden = "hidden";
                                         }
                                         days = 0;
-                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms))
+                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
                                         {
-                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms);
+                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
                                         }
 
-                                        dateNewFormat = purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                                        dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
                                         termDate = (DateTime?)null;
                                         if (dateNewFormat != (DateTime?)null && days > 0)
                                         {
@@ -3182,8 +3182,8 @@
                                             }
                                             else
                                             {
-                                                <span class="po-item-data-header__column parking-date" @hidden>hiddenPayTerms</span>
-                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@hiddenPayTerms</span>
+                                                <span class="po-item-data-header__column parking-date" @hidden></span>
+                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
                                             }
                                         </div>
                                         rowChild++;

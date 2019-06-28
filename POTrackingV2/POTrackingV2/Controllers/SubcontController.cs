@@ -102,6 +102,10 @@ namespace POTrackingV2.Controllers
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                     }
+                    else if (searchPOStatus == "done")
+                    {
+                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX") && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
                     else
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
@@ -117,6 +121,10 @@ namespace POTrackingV2.Controllers
                     }else if (searchPOStatus == "ongoing")
                     {
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                    }
+                    else if (searchPOStatus == "done")
+                    {
+                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX")) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                     }
                     else
                     {
@@ -829,6 +837,19 @@ namespace POTrackingV2.Controllers
                     else
                     {
                         notification.Role = LoginConstants.RoleVendor.ToLower();
+
+                        //Notification notificationForDeleteItemSAP = new Notification();
+                        //notificationForDeleteItemSAP.PurchasingDocumentItemID = Existed_PDI.ID;
+                        //notificationForDeleteItemSAP.StatusID = 2;
+                        //notificationForDeleteItemSAP.Stage = "1";
+                        //notificationForDeleteItemSAP.Role = "subcontdev";
+                        //notificationForDeleteItemSAP.isActive = true;
+                        //notificationForDeleteItemSAP.Created = now;
+                        //notificationForDeleteItemSAP.CreatedBy = User.Identity.Name;
+                        //notificationForDeleteItemSAP.Modified = now;
+                        //notificationForDeleteItemSAP.ModifiedBy = User.Identity.Name;
+                        //db.Notifications.Add(notificationForDeleteItemSAP);
+
                     }
                 }
                 else

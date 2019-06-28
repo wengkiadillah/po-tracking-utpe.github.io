@@ -158,27 +158,13 @@
                             var invoiceDocument = jsonObj[k]['InvoiceDocument'];
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
+                            
 
-                            if (POTypeCategory == "Import") {
-                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&activeStage=" + stage;
-                                message = "";
+                            var url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage;
+                            if (statusID == 1) {
+                                url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
                             }
-                            else if (POTypeCategory == "Local") {
-                                var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&activeStage=" + stage;
-                                message = "";
-                            }
-
-                            else {
-                                //var url = siteUrl + "/" + POTypeCategory + "/Index" + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                                //onclick ='javascript:myFunc(" + ID + ")'
-                                //var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                                var url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
-                                if (statusID == 1) {
-                                    url = siteUrl + "/" + POTypeCategory + "?searchPONumber=" + PONumber + "&role=" + targetRole.toLowerCase() + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
-                                }
-                                //'url' onclick ='javascript:myFunc(" + ID + ")'
-                                message = "";
-                            }
+                            message = "";
 
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
                             if (POTypeCategory == "Import") {
