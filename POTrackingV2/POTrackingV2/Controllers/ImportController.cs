@@ -27,7 +27,7 @@ namespace POTrackingV2.Controllers
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
-        public ActionResult Index(string searchPOStatus,string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -336,23 +336,26 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        foreach (var item in db.UserProcurementSuperiors)
-                        {
-                            if (item.ParentID == childUser.ID)
-                            {
-                                userNRPs.Add(item.NRP);
-                            }
-                        }
+                        //foreach (var item in db.UserProcurementSuperiors)
+                        //{
+                        //    if (item.ParentID == childUser.ID)
+                        //    {
+                        //        userNRPs.Add(item.NRP);
+                        //    }
+                        //}
 
-                        userNRPs.Add(childUser.NRP);
+                        if (!string.IsNullOrEmpty(childUser.NRP))
+                        {
+                            userNRPs.Add(childUser.NRP);
+                        }
                     }
                 }
             }

@@ -280,29 +280,33 @@ namespace POTrackingV2.Controllers
         public List<string> GetChildNRPsByUsername(string username)
         {
             List<string> userNRPs = new List<string>();
+
             if (!string.IsNullOrEmpty(username))
             {
-                
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        foreach (var item in db.UserProcurementSuperiors)
-                        {
-                            if (item.ParentID == childUser.ID)
-                            {
-                                userNRPs.Add(item.NRP);
-                            }
-                        }
+                        //foreach (var item in db.UserProcurementSuperiors)
+                        //{
+                        //    if (item.ParentID == childUser.ID)
+                        //    {
+                        //        userNRPs.Add(item.NRP);
+                        //    }
+                        //}
 
-                        userNRPs.Add(childUser.NRP);
+                        if (!string.IsNullOrEmpty(childUser.NRP))
+                        {
+                            userNRPs.Add(childUser.NRP);
+                        }
                     }
                 }
             }
+
             return userNRPs;
         }
 

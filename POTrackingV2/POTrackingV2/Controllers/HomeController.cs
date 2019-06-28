@@ -339,23 +339,26 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        foreach (var item in db.UserProcurementSuperiors)
-                        {
-                            if (item.ParentID == childUser.ID)
-                            {
-                                userNRPs.Add(item.NRP);
-                            }
-                        }
+                        //foreach (var item in db.UserProcurementSuperiors)
+                        //{
+                        //    if (item.ParentID == childUser.ID)
+                        //    {
+                        //        userNRPs.Add(item.NRP);
+                        //    }
+                        //}
 
-                        userNRPs.Add(childUser.NRP);
+                        if (!string.IsNullOrEmpty(childUser.NRP))
+                        {
+                            userNRPs.Add(childUser.NRP);
+                        }
                     }
                 }
             }
@@ -433,7 +436,7 @@ namespace POTrackingV2.Controllers
                 {
                     string vendorCode = db.UserVendors.Where(x => x.Username == myUser.Name).Select(x => x.VendorCode).FirstOrDefault();
                     //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                    subcontNewPO = pOesSubcont.Where(po=> vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null);
+                    subcontNewPO = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontOngoing = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null);
                 }
@@ -445,7 +448,7 @@ namespace POTrackingV2.Controllers
                 }
                 //End Subcont
 
-                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone}, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
