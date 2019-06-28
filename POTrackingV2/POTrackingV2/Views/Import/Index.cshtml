@@ -3317,7 +3317,8 @@
 
             $(document).ready(function () {
                     $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-                    $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+                    //$('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+                    $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
                     $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
 
