@@ -328,7 +328,7 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
-    height: 8px;
+    height: 10px;
     background-color: #F5F5F5;
 }
 
