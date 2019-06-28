@@ -16,6 +16,8 @@ namespace POTrackingV2.Controllers
     public class AccountController : Controller
     {
         POTrackingEntities db = new POTrackingEntities();
+        string cookieName = WebConfigurationManager.AppSettings["CookieName"];
+        int expired = Convert.ToInt32(WebConfigurationManager.AppSettings["SessionExpired"]);
 
         // GET: Account
         //[Authorize]
@@ -74,8 +76,8 @@ namespace POTrackingV2.Controllers
                                 );
 
                             string enTicket = FormsAuthentication.Encrypt(authTicket);
-                            HttpCookie faCookie = new HttpCookie("Cookie1", enTicket);
-                            faCookie.Expires = DateTime.Now.AddMinutes(20);
+                            HttpCookie faCookie = new HttpCookie(cookieName, enTicket);
+                            faCookie.Expires = DateTime.Now.AddMinutes(expired);
                             Response.Cookies.Add(faCookie);
                         }
                     }
@@ -157,7 +159,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult LogOut()
         {
-            HttpCookie cookie = new HttpCookie("Cookie1", "");
+            HttpCookie cookie = new HttpCookie(cookieName, "");
             cookie.Expires = DateTime.Now.AddYears(-1);
             Response.Cookies.Add(cookie);
 
