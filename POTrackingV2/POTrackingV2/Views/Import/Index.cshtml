@@ -30,7 +30,6 @@
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 
-<h1>@roleID</h1>
 <input hidden value="@ViewBag.myUserNRPs" />
 <h1 class="page-title">PO Tracking System <span class="page-subtitle">History</span></h1>
 <div class="filter-row mb-2">
@@ -121,7 +120,7 @@
 
     if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial));
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
     }
 
     if (currentSearchPOStatus == "newpo")
@@ -142,13 +141,13 @@
 
     var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
 
-    var poItemStickyProcurementWidth = "po-item-sticky-procurement";
-    var poItemScrollableProcurementWidth = "po-item-scrollable-procurement";
-    
-    if (roleID == "vendor")
+    var poItemStickyProcurementWidth = "";
+    var poItemScrollableProcurementWidth = "";
+
+    if (roleID == "procurement" || roleID == "administrator")
     {
-        poItemStickyProcurementWidth = "";
-        poItemScrollableProcurementWidth = "";
+        poItemStickyProcurementWidth = "po-item-sticky-procurement";
+        poItemScrollableProcurementWidth = "po-item-scrollable-procurement";
     }
 
     <ul class="list-unstyled po-list">
@@ -297,16 +296,16 @@
                                         maximumStage = 10;
                                         donutProgress = childPurchasingDocumentItem.DonutProgress;
 
-                                        materialUTPE = purchasingDocumentItem.Material;
+                                        materialUTPE = childPurchasingDocumentItem.Material;
                                         materialVendor = "-";
 
-                                        if (!string.IsNullOrEmpty(purchasingDocumentItem.MaterialVendor))
+                                        if (!string.IsNullOrEmpty(childPurchasingDocumentItem.MaterialVendor))
                                         {
-                                            materialVendor = purchasingDocumentItem.MaterialVendor;
+                                            materialVendor = childPurchasingDocumentItem.MaterialVendor;
 
                                             if (roleID == "vendor")
                                             {
-                                                materialUTPE = purchasingDocumentItem.MaterialVendor;
+                                                materialUTPE = childPurchasingDocumentItem.MaterialVendor;
                                             }
                                         }
 
@@ -317,13 +316,13 @@
                                         }
 
                                         <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
-                                            <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
+                                            <span class="po-item-data-header__column item-id" style="visibility:hidden">@childPurchasingDocumentItem.ItemNumber</span>
                                             <span class="po-item-data-header__column material" style="visibility:hidden">@materialUTPE</span>
                                             @if (roleID == "procurement" || roleID == "administrator")
                                             {
                                                 <span class="po-item-data-header__column material" style="visibility:hidden">@materialVendor</span>
                                             }
-                                            <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
+                                            <span class="po-item-data-header__column description" style="visibility:hidden">@childPurchasingDocumentItem.Description</span>
                                             @if (childPurchasingDocumentItem.ConfirmedItem != false)
                                             {
                                                 <div class="po-item-data-header__column po-progress">
@@ -926,6 +925,11 @@
                                 }
                             }
 
+                            if (!pO.IsTwentyFivePercent)
+                            {
+                                disabledInputCheckbox = "disabled";
+                            }
+
                             <div class="po-item-data-content row-@rowStage2" row="@rowStage2" style="display:block;">
                                 <div class="po-item-data-content__outer">
                                     <form class="d-flex po-form-item-st2">
@@ -1029,6 +1033,11 @@
                                                         hideButtonEdit = "style=visibility:display";
                                                     }
                                                 }
+                                            }
+
+                                            if (!pO.IsTwentyFivePercent)
+                                            {
+                                                disabledInputCheckbox = "disabled";
                                             }
 
                                             <div class="po-item-data-content row-@rowStage2-@childRowStage2" row="@rowStage2" child="@childRowStage2">
@@ -1787,6 +1796,17 @@
                                 }
                             }
 
+                            if (!pO.IsSeventyFivePercent)
+                            {
+                                disabledInputUpdateEtaDateOnTime = "disabled";
+                                disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                disabledInputUpdateEtaDateDelay = "disabled";
+                                disabledDelayReason = "disabled";
+                                disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                disabledInputUploadProgressPhotoes = "disabled";
+                                disabledInputUploadProgressPhotoesConfirm = "disabled";
+                            }
+
                             <div class="po-item-data-content row-@rowStage4">
                                 <div class="po-item-data-content__outer">
                                     <div class="po-item-data-header__column">
@@ -2024,6 +2044,17 @@
                                                         selectedInputUpdateEtaDateOnTime = "selected";
                                                     }
                                                 }
+                                            }
+
+                                            if (!pO.IsSeventyFivePercent)
+                                            {
+                                                disabledInputUpdateEtaDateOnTime = "disabled";
+                                                disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                disabledInputUpdateEtaDateDelay = "disabled";
+                                                disabledDelayReason = "disabled";
+                                                disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                disabledInputUploadProgressPhotoes = "disabled";
+                                                disabledInputUploadProgressPhotoesConfirm = "disabled";
                                             }
 
                                             <div class="po-item-data-content row-@rowStage4-@childRowStage4" row="@rowStage4" child="@childRowStage4">
