@@ -142,7 +142,7 @@
 
     <ul class="list-unstyled po-list">
         <li class="po-item-container">
-            <div class="po-item-section po-item-sticky">
+            <div class="po-item-section po-item-sticky po-item-sticky-procurement">
                 <div class="po-item-section-header">
                     <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
                     <div class="po-item-section-header-text">
@@ -214,6 +214,9 @@
                     <div class="po-item-data-header">
                         <span class="po-item-data-header__text item-id">Item ID</span>
                         <span class="po-item-data-header__text material">Material</span>
+                        @* if vendor Display none *@
+                        <span class="po-item-data-header__text material">Material Vendor</span>
+                        @* if vendor Display none *@
                         <span class="po-item-data-header__text description">Item Description</span>
                         <span class="po-item-data-header__text po-progress">Progress</span>
                     </div>
@@ -237,6 +240,9 @@
                             <div class="po-item-data-content__outer">
                                 <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
                                 <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                @*  IF Vendor display none *@
+                                <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                @*  IF Vendor display none *@
                                 <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
                                 @if (purchasingDocumentItem.ConfirmedItem != false)
                                 {
@@ -271,29 +277,32 @@
                                             donutProgress = childPurchasingDocumentItem.DonutProgressVendor;
                                         }
 
-                                        <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
-                                            <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
-                                            <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
-                                            <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
-                                            @if (childPurchasingDocumentItem.ConfirmedItem != false)
-                                            {
-                                                <div class="po-item-data-header__column po-progress">
-                                                    <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div><span class="mark-donut" id="activeStagePo-@poSignRow">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                donutProgress = 100;
-
-                                                <div class="po-item-data-header__column po-progress">
-                                                    <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                         data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                    <div>Cancel</div>
-                                                </div>
-                                            }
+                                <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
+                                    <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
+                                    <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
+                                    @*  IF Vendor display none *@
+                                    <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
+                                    @*  IF Vendor display none *@
+                                    <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
+                                    @if (childPurchasingDocumentItem.ConfirmedItem != false)
+                                    {
+                                        <div class="po-item-data-header__column po-progress">
+                                            <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                 data-value="@donutProgress" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                            <div><span class="mark-donut" id="activeStagePo-@poSignRow">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/@maximumStage</span></div>
                                         </div>
+                                    }
+                                    else
+                                    {
+                                        donutProgress = 100;
+
+                                        <div class="po-item-data-header__column po-progress">
+                                            <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                 data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                            <div>Cancel</div>
+                                        </div>
+                                    }
+                                </div>
                                         childRow++;
                                     }
                                 }
@@ -303,7 +312,7 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow po-item-scrollable-procurement">
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>

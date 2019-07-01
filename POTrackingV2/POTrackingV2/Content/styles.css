@@ -1050,9 +1050,17 @@ a[data-toggle="collapse"] {
     left: 500px;
 }
 
+    .po-item-scrollable-procurement{
+        left: 605px;
+    }
+
 .po-item-sticky {
     width: 500px;
 }
+
+    .po-item-sticky-procurement {
+        width: 605px;
+    }
 
 .po-item-data-header__text.item-id, .po-item-data-header__column.item-id {
     width: 48px;
