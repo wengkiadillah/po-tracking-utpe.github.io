@@ -33,6 +33,7 @@ namespace POTrackingV2.Models
         public Nullable<int> ParentID { get; set; }
         public int ItemNumber { get; set; }
         public string Material { get; set; }
+        public string MaterialVendor { get; set; }
         public string Description { get; set; }
         public int NetPrice { get; set; }
         public string Currency { get; set; }

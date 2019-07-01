@@ -102,6 +102,7 @@
           <Property Name="Type" Type="varchar" MaxLength="25" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="ReleaseDate" Type="datetime" />
+          <Property Name="ProgressDay" Type="int" />
           <Property Name="VendorCode" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="KompoCategoryID" Type="int" />
           <Property Name="EstimateDeliveryFromSubcont1Date" Type="datetime" />
@@ -169,6 +170,7 @@
           <Property Name="ParentID" Type="int" />
           <Property Name="ItemNumber" Type="int" Nullable="false" />
           <Property Name="Material" Type="varchar" MaxLength="30" />
+          <Property Name="MaterialVendor" Type="varchar" MaxLength="30" />
           <Property Name="Description" Type="varchar" MaxLength="250" />
           <Property Name="NetPrice" Type="int" Nullable="false" />
           <Property Name="Currency" Type="varchar" MaxLength="15" Nullable="false" />
@@ -1032,6 +1034,7 @@
           <Property Name="Type" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ReleaseDate" Type="DateTime" Precision="3" />
+          <Property Name="ProgressDay" Type="Int32" />
           <Property Name="VendorCode" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="KompoCategoryID" Type="Int32" />
           <Property Name="EstimateDeliveryFromSubcont1Date" Type="DateTime" Precision="3" />
@@ -1104,6 +1107,7 @@
           <Property Name="ParentID" Type="Int32" />
           <Property Name="ItemNumber" Type="Int32" Nullable="false" />
           <Property Name="Material" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="MaterialVendor" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="NetPrice" Type="Int32" Nullable="false" />
           <Property Name="Currency" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
@@ -2007,6 +2011,7 @@
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="ReleaseDate" ColumnName="ReleaseDate" />
+                <ScalarProperty Name="ProgressDay" ColumnName="ProgressDay" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
                 <ScalarProperty Name="KompoCategoryID" ColumnName="KompoCategoryID" />
                 <ScalarProperty Name="EstimateDeliveryFromSubcont1Date" ColumnName="EstimateDeliveryFromSubcont1Date" />
@@ -2077,6 +2082,7 @@
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
                 <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
                 <ScalarProperty Name="Material" ColumnName="Material" />
+                <ScalarProperty Name="MaterialVendor" ColumnName="MaterialVendor" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="NetPrice" ColumnName="NetPrice" />
                 <ScalarProperty Name="Currency" ColumnName="Currency" />
