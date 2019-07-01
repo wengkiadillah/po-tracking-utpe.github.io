@@ -48,11 +48,11 @@ namespace POTrackingV2.Models
             {
                 if (this.ParentID == null)
                 {
-                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.PurchasingDocumentItemID == this.ID).Select(x=>x.GoodsReceiptDate).FirstOrDefault();
+                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t" && pdih.PurchasingDocumentItemID == this.ID).Select(x=>x.GoodsReceiptDate).FirstOrDefault();
                 }
                 else
                 {
-                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.PurchasingDocumentItemID == this.ParentID).Select(x => x.GoodsReceiptDate).FirstOrDefault();
+                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t" && pdih.PurchasingDocumentItemID == this.ParentID).Select(x => x.GoodsReceiptDate).FirstOrDefault();
                 }
             }
         }
@@ -89,13 +89,36 @@ namespace POTrackingV2.Models
             }
         }
 
-        public PurchasingDocumentItemHistory LatestInvoiceDate
+        public PurchasingDocumentItemHistory LatestParkingDate
         {
             get
             {
                 PurchasingDocumentItemHistory latestPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
 
-                List<PurchasingDocumentItemHistory> latestPurchasingDocumentItemsHistoryList = this.PurchasingDocumentItemHistoriesInvoiceDetail;
+                List<PurchasingDocumentItemHistory> latestPurchasingDocumentItemsHistoryList = this.PurchasingDocumentItemHistoriesParkingDetail;
+                int totalQty = 0;
+                foreach (PurchasingDocumentItemHistory purchasingDocumentItemHistories in latestPurchasingDocumentItemsHistoryList)
+                {
+                    latestPurchasingDocumentItemHistory.GoodsReceiptDate = purchasingDocumentItemHistories.GoodsReceiptDate;
+                    latestPurchasingDocumentItemHistory.GoodsReceiptQuantity = purchasingDocumentItemHistories.GoodsReceiptQuantity;
+                    latestPurchasingDocumentItemHistory.MovementType = purchasingDocumentItemHistories.MovementType;
+                    if (!string.IsNullOrEmpty(purchasingDocumentItemHistories.PayTerms))
+                    {
+                        latestPurchasingDocumentItemHistory.PayTerms = Regex.Replace(purchasingDocumentItemHistories.PayTerms, @"[.\D+]", "");
+                    }
+                    latestPurchasingDocumentItemHistory.DocumentNumber = purchasingDocumentItemHistories.DocumentNumber;
+                }
+                return latestPurchasingDocumentItemHistory;
+            }
+        }
+
+        public PurchasingDocumentItemHistory LatestPostingDate
+        {
+            get
+            {
+                PurchasingDocumentItemHistory latestPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+
+                List<PurchasingDocumentItemHistory> latestPurchasingDocumentItemsHistoryList = this.PurchasingDocumentItemHistoriesPostingDetail;
                 int totalQty = 0;
                 foreach (PurchasingDocumentItemHistory purchasingDocumentItemHistories in latestPurchasingDocumentItemsHistoryList)
                 {
@@ -130,14 +153,14 @@ namespace POTrackingV2.Models
                 {
                     purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
                     //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ID).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q") && pdih.PurchasingDocumentItemID == this.ID).OrderBy(x=>x.GoodsReceiptDate).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ID).OrderBy(x=>x.GoodsReceiptDate).ToList();
                 }
                 else
                 {
                     purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
                     //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
                     //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q") && pdih.PurchasingDocumentItemID == this.ParentID).OrderBy(x => x.GoodsReceiptDate).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ParentID).OrderBy(x => x.GoodsReceiptDate).ToList();
                     
                 }
 
@@ -361,7 +384,252 @@ namespace POTrackingV2.Models
             }
         }
 
-        public List<PurchasingDocumentItemHistory> PurchasingDocumentItemHistoriesInvoiceDetail
+        public List<PurchasingDocumentItemHistory> PurchasingDocumentItemHistoriesParkingDetail
+        {
+            get
+            {
+                var confirmQty = this.ConfirmedQuantity;
+                if (this.ConfirmedItem == null)
+                {
+                    confirmQty = this.Quantity;
+                }
+                List<PurchasingDocumentItem> purchasingDocumentItems = new List<PurchasingDocumentItem>();
+                //List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = this.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => pdih.MovementType == 101 || pdih.MovementType == 105)).ToList();
+                List<PurchasingDocumentItemHistory> purchasingDocumentItemHistories = new List<PurchasingDocumentItemHistory>();
+                List<PurchasingDocumentItemHistory> listPurchasingDocumentItemHistory = new List<PurchasingDocumentItemHistory>();
+
+                if (this.ParentID == null)
+                {
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() == "t") && pdih.PurchasingDocumentItemID == this.ID).OrderBy(x => x.GoodsReceiptDate).ToList();
+                }
+                else
+                {
+                    purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
+                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() == "t") && pdih.PurchasingDocumentItemID == this.ParentID).OrderBy(x => x.GoodsReceiptDate).ToList();
+
+                }
+
+                //if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
+                if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0)
+                {
+                    int otherConfirmedQty = 0;
+                    bool isMatch = false;
+                    var totalGR = this.TotalGR;
+                    var totalCurrentGR = 0;
+                    var currentGR = 0;
+                    //int index = 0;
+                    //double totalGR = this.TotalGR;
+                    //double availableGR = purchasingDocumentItemHistories[index].GoodsReceiptQuantity.HasValue? purchasingDocumentItemHistories[index].GoodsReceiptQuantity.Value : 0;
+                    foreach (PurchasingDocumentItem purchasingDocumentItem in purchasingDocumentItems)
+                    {
+                        //if (this.ID == purchasingDocumentItemHistories[index].PurchasingDocumentItemID || this.ParentID == purchasingDocumentItemHistories[index].PurchasingDocumentItemID)
+                        if (this.ID == purchasingDocumentItem.ID && isMatch == false)
+                        {
+                            if (otherConfirmedQty > 0)
+                            {
+                                foreach (var pdih in purchasingDocumentItemHistories)
+                                {
+                                    currentGR = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    if (otherConfirmedQty > 0)
+                                    {
+                                        //otherConfirmedQty -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            otherConfirmedQty -= currentGR;
+                                        }
+                                        else
+                                        {
+                                            otherConfirmedQty += currentGR;
+                                        }
+
+                                        if (otherConfirmedQty < 0)
+                                        {
+                                            if (Math.Abs(otherConfirmedQty) < confirmQty)
+                                            {
+                                                //totalCurrentGR += Math.Abs(otherConfirmedQty);
+                                                if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                                {
+                                                    totalCurrentGR += Math.Abs(otherConfirmedQty);
+                                                }
+                                                else
+                                                {
+                                                    totalCurrentGR -= Math.Abs(otherConfirmedQty);
+                                                }
+
+                                                PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                                newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                                newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                                newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
+                                                listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                            }
+                                            else
+                                            {
+                                                if (totalGR - confirmQty == 0)
+                                                {
+                                                    PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                    newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                                    newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                                    newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                                    newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
+                                                    listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                                }
+                                                else
+                                                {
+                                                    PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                    newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                                    newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                                    newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                                    newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                                    listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                                }
+
+                                            }
+                                            otherConfirmedQty = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //totalCurrentGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            totalCurrentGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+                                        else
+                                        {
+                                            totalCurrentGR -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                            //otherConfirmedQty += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                        }
+
+                                        if (totalCurrentGR > confirmQty)
+                                        {
+                                            PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                            newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                            //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
+                                            listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                        }
+                                        else
+                                        {
+                                            PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                            newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                            listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                        }
+                                        //if (totalCurrentGR >= confirmQty)
+                                        if (totalCurrentGR >= confirmQty && totalCurrentGR >= totalGR)
+                                        {
+                                            ////isMatch = true;
+                                            //break;
+                                            PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                            newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " break atas : " + totalCurrentGR + "-" + confirmQty;
+                                            newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                            newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                            listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                            //break;
+                                        }
+
+                                    }
+                                }
+                                //isMatch = true;
+                                break;
+                            }
+                            else
+                            {
+                                totalCurrentGR = 0;
+                                currentGR = 0;
+
+                                foreach (var pdih in purchasingDocumentItemHistories)
+                                {
+                                    //totalCurrentGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                    {
+                                        totalCurrentGR += pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    }
+                                    else
+                                    {
+                                        totalCurrentGR -= pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    }
+                                    currentGR = pdih.GoodsReceiptQuantity.HasValue ? pdih.GoodsReceiptQuantity.Value : 0;
+                                    if (totalCurrentGR > confirmQty)
+                                    {
+                                        PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                        newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                        //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
+                                        if (pdih.MovementType == 101 || pdih.MovementType == 105)
+                                        {
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
+                                        }
+                                        else
+                                        {
+                                            newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR + currentGR);
+                                        }
+
+                                        listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                    }
+                                    else
+                                    {
+                                        PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                        newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
+                                        newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
+                                        newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
+                                        newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
+                                        listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
+                                    }
+                                    //if (totalCurrentGR >= confirmQty && totalCurrentGR <= TotalGR)
+                                    if (totalCurrentGR >= confirmQty && totalCurrentGR >= totalGR)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else //if(isMatch==false)
+                        {
+                            otherConfirmedQty += purchasingDocumentItem.ConfirmedQuantity.HasValue ? purchasingDocumentItem.ConfirmedQuantity.Value : 0;
+                            totalGR -= purchasingDocumentItem.ConfirmedQuantity.HasValue ? purchasingDocumentItem.ConfirmedQuantity.Value : 0;
+                        }
+                    }
+                    return listPurchasingDocumentItemHistory;
+                }
+                else
+                {
+                    return listPurchasingDocumentItemHistory;
+                }
+            }
+        }
+
+        public List<PurchasingDocumentItemHistory> PurchasingDocumentItemHistoriesPostingDetail
         {
             get
             {

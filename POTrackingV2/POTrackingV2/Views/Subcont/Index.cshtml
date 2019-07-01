@@ -21,8 +21,8 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-@*<h1 class="page-title"><a href="~/SubCont/index?role=vendor" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span><span><a href="~/SubCont/index?role=procurement" class="page-subtitle">Procurement</a></span></h1>*@
-<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
+<h1 class="page-title"><a href="~/SubCont/index" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle"><a href="~/SubCont/index?searchPOStatus=done" class="page-subtitle">History</a></span></h1>
+@*<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>*@
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
@@ -194,6 +194,10 @@
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                             }
+                            else if (ViewBag.SearchPOStatus == "done")
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
+                            }
                             else
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material != "" && x.Material != null && x.ParentID == null).ToList();
@@ -204,6 +208,9 @@
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                            }else if (ViewBag.SearchPOStatus == "done")
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
                             }
                             else
                             {
@@ -1125,9 +1132,9 @@
                         {
                             var days = 0;
                             rowChild = 1;
-                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestInvoiceDate.PayTerms))
+                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
                             {
-                                days = Convert.ToInt32(purchasingDocumentItem.LatestInvoiceDate.PayTerms);
+                                days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
                             }
 
                             if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
@@ -1136,7 +1143,7 @@
                             }
                             var termDateNewDateFormat = "";
 
-                            DateTime? dateNewFormat = purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?) null;
+                            DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?) null;
                             DateTime? termDate = (DateTime?)null;
                             if (dateNewFormat != (DateTime?)null && days > 0)
                             {
@@ -1167,12 +1174,12 @@
                                             hidden = "hidden";
                                         }
                                         days = 0;
-                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms))
+                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
                                         {
-                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestInvoiceDate.PayTerms);
+                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
                                         }
 
-                                        dateNewFormat = purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestInvoiceDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                                        dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
                                         termDate = (DateTime?)null;
                                         if (dateNewFormat != (DateTime?)null && days > 0)
                                         {
@@ -1188,8 +1195,8 @@
                                             }
                                             else
                                             {
-                                                <span class="po-item-data-header__column parking-date" @hidden>hiddenPayTerms</span>
-                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@hiddenPayTerms</span>
+                                                <span class="po-item-data-header__column parking-date" @hidden></span>
+                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
                                             }
                                         </div>
                                         rowChild++;
