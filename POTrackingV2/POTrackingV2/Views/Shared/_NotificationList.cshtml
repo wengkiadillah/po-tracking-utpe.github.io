@@ -94,7 +94,7 @@
                 contentType: "application/x-www-form-urlencoded; charset=utf-8",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        //console.log(response.notifications);
+                        console.log(response.notifications);
                         var jsonObj = $.parseJSON(response.notifications);
                         var message = "";
                         countNotification = Object.keys(jsonObj).length;
@@ -131,8 +131,9 @@
                             var POQty = jsonObj[k]['POQty'];
                             var material = jsonObj[k]['material'];
                             var targetRole = jsonObj[k]['role'].toLowerCase();
+                            var assignFromUserInternal = jsonObj[k]['assignedFromInternal'];
                             var assignedFrom = "Vendor";
-                            if (targetRole == "vendor") {
+                            if (assignFromUserInternal == true) {
                                 if (POTypeCategory == "Subcont") {
                                     assignedFrom = "SubcontDev";
                                 } else {
@@ -165,7 +166,6 @@
                                 url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
                             }
                             message = "";
-
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
                             if (POTypeCategory == "Import") {
                                 if (GRDate != null) {
@@ -333,7 +333,12 @@
                                     //    message += " asked to update ETA for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     //} else
                                     if (confirmedItem == false) {
-                                        message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                        if (assignFromUserInternal == true) {
+                                            assignedFrom = "You"
+                                            message += " have canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                        } else {
+                                            message += " has canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                        }
                                     } else if (POQty != null) {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
                                     } else {

@@ -828,27 +828,29 @@ namespace POTrackingV2.Controllers
                 if (isCanceledPOItem)
                 {
                     Existed_PDI.ConfirmedItem = false;
-                    notification.StatusID = 2;
+                    //notification.StatusID = 2;
                     notification.Stage = "1";
                     if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                     {
+                        notification.StatusID = 2;
                         notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                     }
                     else
                     {
+                        notification.StatusID = 1;
                         notification.Role = LoginConstants.RoleVendor.ToLower();
 
-                        //Notification notificationForDeleteItemSAP = new Notification();
-                        //notificationForDeleteItemSAP.PurchasingDocumentItemID = Existed_PDI.ID;
-                        //notificationForDeleteItemSAP.StatusID = 2;
-                        //notificationForDeleteItemSAP.Stage = "1";
-                        //notificationForDeleteItemSAP.Role = "subcontdev";
-                        //notificationForDeleteItemSAP.isActive = true;
-                        //notificationForDeleteItemSAP.Created = now;
-                        //notificationForDeleteItemSAP.CreatedBy = User.Identity.Name;
-                        //notificationForDeleteItemSAP.Modified = now;
-                        //notificationForDeleteItemSAP.ModifiedBy = User.Identity.Name;
-                        //db.Notifications.Add(notificationForDeleteItemSAP);
+                        Notification notificationForDeleteItemSAP = new Notification();
+                        notificationForDeleteItemSAP.PurchasingDocumentItemID = Existed_PDI.ID;
+                        notificationForDeleteItemSAP.StatusID = 2;
+                        notificationForDeleteItemSAP.Stage = "1";
+                        notificationForDeleteItemSAP.Role = LoginConstants.RoleSubcontDev.ToLower();
+                        notificationForDeleteItemSAP.isActive = true;
+                        notificationForDeleteItemSAP.Created = now;
+                        notificationForDeleteItemSAP.CreatedBy = User.Identity.Name;
+                        notificationForDeleteItemSAP.Modified = now;
+                        notificationForDeleteItemSAP.ModifiedBy = User.Identity.Name;
+                        db.Notifications.Add(notificationForDeleteItemSAP);
 
                     }
                 }

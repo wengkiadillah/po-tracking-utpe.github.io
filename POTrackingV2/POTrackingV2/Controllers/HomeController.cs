@@ -164,6 +164,7 @@ namespace POTrackingV2.Controllers
                 string userName = User.Identity.Name;
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
+                List<string> userInternalList = DBUser.Users.Select(x=>x.Username).ToList();
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
@@ -272,6 +273,7 @@ namespace POTrackingV2.Controllers
                       stage = x.Stage,
                       statusID = x.StatusID,
                       role = x.Role,
+                      assignedFromInternal = userInternalList.Contains(x.CreatedBy),
                       url = "#",
                       created = x.Created,
                       POConfirmedItem = x.PurchasingDocumentItem.ConfirmedItem,
