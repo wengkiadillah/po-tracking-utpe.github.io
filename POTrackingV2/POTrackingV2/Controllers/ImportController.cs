@@ -429,7 +429,7 @@ namespace POTrackingV2.Controllers
                             databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             counter++;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
@@ -497,15 +497,17 @@ namespace POTrackingV2.Controllers
                         if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                         {
                             inputPurchasingDocumentItem.POID = databasePurchasingDocumentItem.POID;
+                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
                             inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
                             inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
+                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            inputPurchasingDocumentItem.LeadTimeItem= databasePurchasingDocumentItem.LeadTimeItem;
+                            //inputPurchasingDocumentItem.MaterialVendor = databasePurchasingDocumentItem.MaterialVendor;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
@@ -693,7 +695,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                         counter++;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -751,7 +753,7 @@ namespace POTrackingV2.Controllers
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                     foreach (var previousNotification in previousNotifications)
                     {
                         previousNotification.isActive = false;
@@ -759,7 +761,6 @@ namespace POTrackingV2.Controllers
 
                     if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
                     {
-
                         Notification notificationProc = new Notification();
                         notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                         notificationProc.StatusID = 2;
@@ -787,6 +788,20 @@ namespace POTrackingV2.Controllers
                         notificationVend.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notificationVend);
+
+
+                        Notification notificationProc = new Notification();
+                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationProc.StatusID = 2;
+                        notificationProc.Stage = "1";
+                        notificationProc.Role = "procurement";
+                        notificationProc.isActive = true;
+                        notificationProc.Created = now;
+                        notificationProc.CreatedBy = User.Identity.Name;
+                        notificationProc.Modified = now;
+                        notificationProc.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationProc);
                     }
                 }
 
@@ -859,7 +874,7 @@ namespace POTrackingV2.Controllers
 
                                 db.ETAHistories.Add(inputETAHistory);
 
-                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                                 foreach (var previousNotification in previousNotifications)
                                 {
                                     previousNotification.isActive = false;
@@ -895,9 +910,10 @@ namespace POTrackingV2.Controllers
                             }
                             else
                             {
+                                databasePurchasingDocumentItem.ActiveStage = "2";
                                 db.ETAHistories.Add(inputETAHistory);
 
-                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                                List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                                 foreach (var previousNotification in previousNotifications)
                                 {
                                     previousNotification.isActive = false;
@@ -995,7 +1011,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1084,7 +1100,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1165,7 +1181,7 @@ namespace POTrackingV2.Controllers
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                     foreach (var previousNotification in previousNotifications)
                     {
                         previousNotification.isActive = false;
@@ -1239,7 +1255,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1303,7 +1319,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1372,7 +1388,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1436,7 +1452,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1506,7 +1522,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1563,7 +1579,7 @@ namespace POTrackingV2.Controllers
                     databasePurchasingDocumentItem.LastModified = now;
                     databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                     foreach (var previousNotification in previousNotifications)
                     {
                         previousNotification.isActive = false;
@@ -1644,7 +1660,7 @@ namespace POTrackingV2.Controllers
                     {
                         db.ETAHistories.Add(inputETAHistory);
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1717,7 +1733,7 @@ namespace POTrackingV2.Controllers
 
                     db.ProgressPhotoes.Add(progressPhoto);
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                     foreach (var previousNotification in previousNotifications)
                     {
                         previousNotification.isActive = false;
@@ -1796,7 +1812,7 @@ namespace POTrackingV2.Controllers
 
                         db.Shipments.Add(inputShipment);
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1870,7 +1886,7 @@ namespace POTrackingV2.Controllers
                         purchasingDocumentItem.LastModified = now;
                         purchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -1971,7 +1987,7 @@ namespace POTrackingV2.Controllers
                     purchasingDocumentItem.LastModified = now;
                     purchasingDocumentItem.LastModifiedBy = user;
 
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
+                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID && x.StatusID == 3).ToList();
                     foreach (var previousNotification in previousNotifications)
                     {
                         previousNotification.isActive = false;
@@ -2074,7 +2090,7 @@ namespace POTrackingV2.Controllers
                         purchasingDocumentItem.LastModified = now;
                         purchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == purchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
@@ -2146,7 +2162,7 @@ namespace POTrackingV2.Controllers
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
@@ -2223,7 +2239,7 @@ namespace POTrackingV2.Controllers
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
