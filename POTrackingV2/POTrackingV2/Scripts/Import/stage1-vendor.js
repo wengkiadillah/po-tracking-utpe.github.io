@@ -214,67 +214,77 @@ $(".st1-accept-item").on("click", function (obj) {
         if (validateMinQuantity === true) {
             if (validateDate === true) {
                 //if (isEdit === "false") {
-                    $.ajax({
-                        type: "POST",
-                        url: stage1VendorConfirmItem,
-                        data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (response) {
-                            alert(response.responseText);
+                $.ajax({
+                    type: "POST",
+                    url: stage1VendorConfirmItem,
+                    data: JSON.stringify({ 'inputPurchasingDocumentItems': inputPurchasingDocumentItems }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        alert(response.responseText);
 
-                            checkboxItem.attr("disabled", "disabled");
-                            inputConfirmedDate.attr("disabled", "disabled");
-                            inputDeliveryMethod.attr("disabled", "disabled");
-                            inputPartialQuantity.attr("disabled", "disabled");
-                            inputPartialDate.attr("disabled", "disabled");
-                            buttonAddRow.attr("style", "visibility:hidden");
-                            buttonDelRow.attr("style", "visibility:hidden");
-                            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
-                            buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
+                        checkboxItem.attr("disabled", "disabled");
+                        inputConfirmedDate.attr("disabled", "disabled");
+                        inputDeliveryMethod.attr("disabled", "disabled");
+                        inputPartialQuantity.attr("disabled", "disabled");
+                        inputPartialDate.attr("disabled", "disabled");
+                        buttonAddRow.attr("style", "visibility:hidden");
+                        buttonDelRow.attr("style", "visibility:hidden");
+                        buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
+                        buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
 
-                            if (deliveryMethod === "partial") {
-                                childRow.find(".po-item-data-content").each(function (index) {
-                                    $(this).find(".st1-partial-confirm-qty").attr("disabled", "disabled");
-                                    $(this).find(".st1-partial-date").attr("disabled", "disabled");
-                                });
-                            }
+                        if (deliveryMethod === "partial") {
+                            childRow.find(".po-item-data-content").each(function (index) {
+                                $(this).find(".st1-partial-confirm-qty").attr("disabled", "disabled");
+                                $(this).find(".st1-partial-date").attr("disabled", "disabled");
+                            });
+                        }
 
-                            for (var i = 0; i < response.isSameAsProcs.length; i++) {
-                                if (response.isSameAsProcs[i] === true) {
+                        for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                            if (response.isSameAsProcs[i] === true) {
+
+                                if (response.isTwentyFivePercents[i] === true) {
                                     $(".next-row-updated").first().removeAttr("disabled");
                                     $(".next-row-updated").first().removeClass("next-row-updated");
                                     $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
                                     $(".next-row-updated-input").first().val(inputConfirmedDate.val());
                                     $(".next-row-updated-input").first().removeClass("next-row-updated-input");
-
-                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
-                                    $(".row-updated-donut-text").first().text("2");
-                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
-                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
-
-                                    editButton.attr("style", "visibility:display");
                                 }
                                 else {
-                                    $(".next-row-updated").first().attr("disabled","disabled");
+                                    $(".next-row-updated").first().attr("disabled", "disabled");
                                     $(".next-row-updated").first().removeClass("next-row-updated");
                                     $(".next-row-updated-input").first().attr("mindate", "");
                                     $(".next-row-updated-input").first().val("");
                                     $(".next-row-updated-input").first().removeClass("next-row-updated-input");
-
-                                    $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
-                                    $(".row-updated-donut-text").first().text("1");
-                                    $(".row-updated-donut").first().removeClass("row-updated-donut");
-                                    $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
-
-                                    editButton.attr("style", "visibility:display");
                                 }
+
+                                $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
+                                $(".row-updated-donut-text").first().text("2");
+                                $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                editButton.attr("style", "visibility:display");
                             }
-                        },
-                        error: function (xhr, status, error) {
-                            alert(xhr.status + " : " + error);
+                            else {
+                                $(".next-row-updated").first().attr("disabled", "disabled");
+                                $(".next-row-updated").first().removeClass("next-row-updated");
+                                $(".next-row-updated-input").first().attr("mindate", "");
+                                $(".next-row-updated-input").first().val("");
+                                $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                                $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgress);
+                                $(".row-updated-donut-text").first().text("1");
+                                $(".row-updated-donut").first().removeClass("row-updated-donut");
+                                $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
+
+                                editButton.attr("style", "visibility:display");
+                            }
                         }
-                    });
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
                 //}
                 //else {
                 //    $.ajax({
@@ -560,11 +570,21 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
                     console.log(response.isSameAsProcs[i]);
                     if (response.isSameAsProcs[i] === true) {
-                        $(".next-row-updated").first().removeAttr("disabled");
-                        $(".next-row-updated").first().removeClass("next-row-updated");
-                        $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
-                        $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
-                        $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+
+                        if (response.isTwentyFivePercents[i] === true) {
+                            $(".next-row-updated").first().removeAttr("disabled");
+                            $(".next-row-updated").first().removeClass("next-row-updated");
+                            $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
+                            $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
+                            $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                        }
+                        else {
+                            $(".next-row-updated").first().attr("disabled", "disabled");
+                            $(".next-row-updated").first().removeClass("next-row-updated");
+                            $(".next-row-updated-input").first().attr("mindate", "");
+                            $(".next-row-updated-input").first().val("");
+                            $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                        }
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
                         $(".row-updated-donut-text").first().text("2");
