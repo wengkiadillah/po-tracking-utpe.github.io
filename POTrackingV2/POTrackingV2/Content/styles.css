@@ -667,7 +667,8 @@ body {
 .po-item-data-header__text.date,
 .po-item-data-header__column.date,
 .po-item-data-header__text.gr-date,
-.po-item-data-header__column.gr-date {
+.po-item-data-header__column.gr-date
+{
     width: 90px;
 }
 
@@ -1079,7 +1080,14 @@ a[data-toggle="collapse"] {
     width: 68px;
 }
 
-.po-item-data-header__text.confirm-delivery-date, .po-item-data-header__column.confirm-delivery-date {
+.po-item-data-header__text.confirm-delivery-date,
+.po-item-data-header__column.confirm-delivery-date,
+.po-item-data-header__text.parking-date,
+.po-item-data-header__column.parking-date,
+.po-item-data-header__text.term-date,
+.po-item-data-header__column.term-date,
+.po-item-data-header__text.posting-date,
+.po-item-data-header__column.posting-date {
     width: 170px;
 }
 
