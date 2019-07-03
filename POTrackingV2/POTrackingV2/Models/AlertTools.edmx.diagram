@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b629b0f8f59b47b9b3a151f526588fe2" Name="Diagram1">
+      <Diagram DiagramId="607fbe9e86f942fd8a9bd22cc3e456ca" Name="Diagram1">
         <EntityTypeShape EntityType="AlertToolsModel.CustomerComponentsDetail" Width="1.5" PointX="5.25" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="AlertToolsModel.DeliveryLateness" Width="1.5" PointX="5.25" PointY="7.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AlertToolsModel.DrawingLateness" Width="1.5" PointX="5.25" PointY="11.375" IsExpanded="true" />

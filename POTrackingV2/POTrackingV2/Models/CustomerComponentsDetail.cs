@@ -19,14 +19,14 @@ namespace POTrackingV2.Models
         public string SalesOrderNumber { get; set; }
         public string SerialNumber { get; set; }
         public Nullable<System.DateTime> ComponentArrivalDate { get; set; }
-        public System.DateTime Created { get; set; }
-        public string CreatedBy { get; set; }
-        public Nullable<System.DateTime> LastModified { get; set; }
-        public string LastModifiedBy { get; set; }
         public Nullable<System.DateTime> ConfirmationDate { get; set; }
         public string ProductName { get; set; }
         public string PRONumber { get; set; }
         public Nullable<System.DateTime> AssemblyDate { get; set; }
+        public System.DateTime Created { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> LastModified { get; set; }
+        public string LastModifiedBy { get; set; }
     
         public virtual IssueHeader IssueHeader { get; set; }
     }

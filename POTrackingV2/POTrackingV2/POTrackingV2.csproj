@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -349,7 +348,7 @@
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
+      <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -523,19 +522,19 @@
     <Content Include="Models\UserManagement.edmx.diagram">
       <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\AlertTools.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\AlertTools.edmx.diagram">
-      <DependentUpon>AlertTools.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\POTracking.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\POTracking.edmx.diagram">
       <DependentUpon>POTracking.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\AlertTools.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\AlertTools.edmx.diagram">
+      <DependentUpon>AlertTools.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />

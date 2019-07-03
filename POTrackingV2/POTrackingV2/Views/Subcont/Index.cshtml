@@ -789,8 +789,8 @@
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer" @hideGR>
-                                    @*<span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>*@
-                                    <span class="po-item-data-header__column gr-date">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.DocumentNumber</span>
+                                    <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                    @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItem.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                     <span class="po-item-data-header__column gr-qty">@latestGR / @confirmedQty</span>
                                     <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                     @*<span class="po-item-data-header__column inspection-date"></span>
@@ -812,8 +812,8 @@
                                                         grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                                                         <tr>
-                                                            <td class="secondary-text">@*@grDateNewDateFormat*@</td>
-                                                            <td class="secondary-text">@pdih.DocumentNumber</td>
+                                                            <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
                                                             <td>&nbsp;</td>
                                                             <td class="secondary-text">@pdih.MovementType</td>
                                                             <td>&nbsp;</td>
@@ -845,8 +845,8 @@
                                         }
 
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
-                                            <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
-                                            @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
+                                            @*<span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>*@
+                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
@@ -867,8 +867,8 @@
                                                             {
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
-                                                                    @*<td class="secondary-text">@grDateNewDateFormat</td>*@
-                                                                    <td class="secondary-text">@pdih.DocumentNumber</td>
+                                                                    <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
                                                                     <td>&nbsp;</td>
                                                                     <td class="secondary-text">@pdih.MovementType</td>
                                                                     <td>&nbsp;</td>
