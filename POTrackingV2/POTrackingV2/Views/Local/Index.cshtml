@@ -6,7 +6,17 @@
     var roleID = ViewBag.CurrentRoleID;
     var poSignRow = 1;
     var iisAppName = ViewBag.IISAppName;
+    string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
+
+    if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    {
+        currentSearchForMaterial = currentSearchForMaterial.ToLower();
+    }
+    else
+    {
+        currentSearchForMaterial = string.Empty;
+    }
 
     if (!string.IsNullOrEmpty(currentSearchPOStatus))
     {
@@ -111,6 +121,10 @@
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     //}
+    if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial));
+    }
 
     if (currentSearchPOStatus == "newpo")
     {
