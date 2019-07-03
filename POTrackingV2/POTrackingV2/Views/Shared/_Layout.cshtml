@@ -115,9 +115,9 @@
                         <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
                             <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">@ViewBag.LocalPOItemsCountNew</small>
-                                <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
-                                <small class="label pull-right bg-red" title="Closed">@ViewBag.LocalPOItemsDone</small>
+                                <small id="localCountNew" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;"></small>
+                                <small id="localCountOnGoing" class="label pull-right bg-green mr-1" title="On Going"></small>
+                                <small id="localCountDone" class="label pull-right bg-red" title="Closed"></small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -125,14 +125,14 @@
                                 <a href="~/Local/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
+                                        <small id="localCountOnGoing2" class="label pull-right bg-green mr-1" title="On Going"></small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/Local/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.LocalPOItemsCountNew</small>
+                                        <small id="localCountNew2" class="label pull-right bg-yellow mr-1" title="New PO"></small>
                                     </span>
                                 </a>
                             </li>
@@ -343,6 +343,12 @@
                 $('#subcont-new-po__count').text(response.subcontNewPO);
                 $('#subcont-ongoing__count').text(response.subcontOngoing);
                 $('#subcont-done__count').text(response.subcontDone);
+
+                $('#localCountNew').text(response.LocalPOItemsCountNew);
+                $('#localCountOnGoing').text(response.LocalPOItemsCountOnGoing);
+                $('#localCountNew2').text(response.LocalPOItemsCountNew);
+                $('#localCountOnGoing2').text(response.LocalPOItemsCountOnGoing);
+                $('#localCountDone').text(response.LocalPOItemsDone);
             }
         });
 

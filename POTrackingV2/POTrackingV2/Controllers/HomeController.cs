@@ -449,7 +449,48 @@ namespace POTrackingV2.Controllers
                 }
                 #endregion
 
-                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone}, JsonRequestBehavior.AllowGet);
+                #region Local
+                //var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+                var pOesLocal = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
+                                     .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                     .AsQueryable();
+
+                if (role == LoginConstants.RoleProcurement.ToLower())
+                {
+                    List<string> myUserNRPs = new List<string>();
+                    myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                    myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && ! vendorSubcont.Contains(x.VendorCode))
+                                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+
+                    if (myUserNRPs.Count > 0)
+                    {
+                        foreach (var myUserNRP in myUserNRPs)
+                        {
+                            noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                        }                   
+                    }
+                    pOesLocal = pOesLocal.Except(noShowPOes);
+                }
+
+                else if (role == LoginConstants.RoleAdministrator.ToLower())
+                {
+                    //pOesLocal = pOes.Include(x => x.PurchasingDocumentItems)
+                    //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                    //                .AsQueryable();
+                }
+                else
+                {
+                    pOesLocal = pOesLocal.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                }
+                string LocalPOItemsCountNew = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+                string LocalPOItemsCountOnGoing = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+                string LocalPOItemsDone = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                #endregion
+
+                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone, LocalPOItemsCountNew, LocalPOItemsCountOnGoing, LocalPOItemsDone}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
