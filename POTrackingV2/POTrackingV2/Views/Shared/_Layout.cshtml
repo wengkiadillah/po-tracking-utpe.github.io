@@ -77,9 +77,9 @@
                         <a href="~/Import/index" class="main-menu__link" data-menu="PO Import">
                             <i class="fas fa-plane"></i> <span>PO Import</span>
                             <span class="pull-right-container">
-                                <small id="importCountNew" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;"></small>
-                                <small id="importCountOnGoing" class="label pull-right bg-green mr-1" title="On Going"></small>
-                                <small id="importCountDone" class="label pull-right bg-red" title="Closed"></small>
+                                <small id="importCountNew" class="label pull-right bg-red" title="New PO" style="margin-right: 0px;"></small>
+                                <small id="importCountOnGoing" class="label pull-right bg-yellow mr-1" title="On Going"></small>
+                                <small id="importCountDone" class="label pull-right bg-green" title="Closed"></small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -87,14 +87,14 @@
                                 <a href="~/Import/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small id="importCountOnGoing2" class="label pull-right bg-green mr-1" title="On Going"></small>
+                                        <small id="importCountOnGoing2" class="label pull-right bg-yellow mr-1" title="On Going"></small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/Import/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small id="importCountNew2" class="label pull-right bg-yellow mr-1" title="New PO"></small>
+                                        <small id="importCountNew2" class="label pull-right bg-red mr-1" title="New PO"></small>
                                     </span>
                                 </a>
                             </li>
@@ -115,9 +115,9 @@
                         <a href="~/Local/index" class="main-menu__link" data-menu="PO Lokal">
                             <i class="fas fa-truck" style="transform: scaleX(-1);"></i> <span>PO Local</span>
                             <span class="pull-right-container">
-                                <small class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">@ViewBag.LocalPOItemsCountNew</small>
-                                <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
-                                <small class="label pull-right bg-red" title="Closed">@ViewBag.LocalPOItemsDone</small>
+                                <small id="localCountNew" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;"></small>
+                                <small id="localCountOnGoing" class="label pull-right bg-green mr-1" title="On Going"></small>
+                                <small id="localCountDone" class="label pull-right bg-red" title="Closed"></small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -125,14 +125,14 @@
                                 <a href="~/Local/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small class="label pull-right bg-green mr-1" title="On Going">@ViewBag.LocalPOItemsCountOnGoing</small>
+                                        <small id="localCountOnGoing2" class="label pull-right bg-green mr-1" title="On Going"></small>
                                     </span>
                                 </a>
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/Local/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small class="label pull-right bg-yellow mr-1" title="New PO">@ViewBag.LocalPOItemsCountNew</small>
+                                        <small id="localCountNew2" class="label pull-right bg-yellow mr-1" title="New PO"></small>
                                     </span>
                                 </a>
                             </li>
@@ -153,9 +153,9 @@
                         <a href="~/SubCont/index" class="main-menu__link" data-menu="Subcontract">
                             <i class="fas fa-cogs"></i> <span>Subcontract</span>
                             <span class="pull-right-container">
-                                <small id="subcont-new-po__count2" class="label pull-right bg-yellow" title="New PO" style="margin-right: 0px;">0</small>
-                                <small id="subcont-ongoing__count2" class="label pull-right bg-green mr-1" title="On Going">0</small>
-                                <small id="subcont-done__count" class="label pull-right bg-red" title="Done">0</small>
+                                <small id="subcont-new-po__count2" class="label pull-right bg-red" title="New PO" style="margin-right: 0px;">0</small>
+                                <small id="subcont-ongoing__count2" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                <small id="subcont-done__count" class="label pull-right bg-green" title="Done">0</small>
                             </span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
@@ -165,7 +165,7 @@
                                 <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">0</small>
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
                                     </span>
                                 </a>
                              }
@@ -174,7 +174,7 @@
                                 <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
                                     <span>On Going</span>
                                     <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-green mr-1" title="On Going">0</small>
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
                                     </span>
                                 </a>
                              }
@@ -182,7 +182,7 @@
                             <li class="main-menu-submenu-item">
                                 <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
                                     <span>New PO</span><span class="pull-right-container">
-                                        <small id="subcont-new-po__count" class="label pull-right bg-yellow mr-1" title="New PO">0</small>
+                                        <small id="subcont-new-po__count" class="label pull-right bg-red mr-1" title="New PO">0</small>
                                     </span>
                                 </a>
                             </li>
@@ -343,6 +343,12 @@
                 $('#subcont-new-po__count').text(response.subcontNewPO);
                 $('#subcont-ongoing__count').text(response.subcontOngoing);
                 $('#subcont-done__count').text(response.subcontDone);
+
+                $('#localCountNew').text(response.LocalPOItemsCountNew);
+                $('#localCountOnGoing').text(response.LocalPOItemsCountOnGoing);
+                $('#localCountNew2').text(response.LocalPOItemsCountNew);
+                $('#localCountOnGoing2').text(response.LocalPOItemsCountOnGoing);
+                $('#localCountDone').text(response.LocalPOItemsDone);
             }
         });
 
