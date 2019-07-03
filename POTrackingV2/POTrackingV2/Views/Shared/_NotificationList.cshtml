@@ -94,7 +94,7 @@
                 contentType: "application/x-www-form-urlencoded; charset=utf-8",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        console.log(response.notifications);
+                        //console.log(response.notifications);
                         var jsonObj = $.parseJSON(response.notifications);
                         var message = "";
                         countNotification = Object.keys(jsonObj).length;
@@ -333,7 +333,7 @@
                                     //    message += " asked to update ETA for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a >";
                                     //} else
                                     if (confirmedItem == false) {
-                                        if (assignFromUserInternal == true) {
+                                        if (assignFromUserInternal == true && role == "subcontdev") {
                                             assignedFrom = "You"
                                             message += " have canceled item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
                                         } else {

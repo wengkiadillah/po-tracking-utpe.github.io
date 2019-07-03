@@ -2397,6 +2397,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 //}
                                 if (isCanceledPOItem == true) {
                                     btnCancelPO.addClass("selected-negative");
+                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
+                                    donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
+                                    donutRow.find(".donut-chart").first().next().text("Cancel");
                                 } else {
                                     if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
                                         stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
@@ -2554,6 +2557,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             btnEditItem.attr("style", "visibility:display");
                             if (isCanceledPOItem == true) {
                                 btnCancelPO.addClass("selected-negative");
+                                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
+                                donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
+                                donutRow.find(".donut-chart").first().next().text("Cancel");
                             } else {
                                 if (role == "subcontdev") {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
