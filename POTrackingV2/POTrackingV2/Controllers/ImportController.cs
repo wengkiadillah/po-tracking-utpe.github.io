@@ -1719,7 +1719,7 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (/*purchasingDocumentItem.ActiveStage == "4" &&*/ purchasingDocumentItem.PO.IsSeventyFivePercent)
+                if (purchasingDocumentItem.ActiveStage == "4" && purchasingDocumentItem.PO.IsSeventyFivePercent)
                 {
                     string user = User.Identity.Name;
 
