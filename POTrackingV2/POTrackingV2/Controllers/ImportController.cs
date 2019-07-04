@@ -23,6 +23,7 @@ namespace POTrackingV2.Controllers
     {
 
         private POTrackingEntities db = new POTrackingEntities();
+        private AlertToolsEntities alertDB = new AlertToolsEntities();
         private DateTime now = DateTime.Now;
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
@@ -1718,7 +1719,7 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (purchasingDocumentItem.ActiveStage == "4" && purchasingDocumentItem.PO.IsSeventyFivePercent)
+                if (/*purchasingDocumentItem.ActiveStage == "4" &&*/ purchasingDocumentItem.PO.IsSeventyFivePercent)
                 {
                     string user = User.Identity.Name;
 
@@ -1760,7 +1761,45 @@ namespace POTrackingV2.Controllers
                         db.Notifications.Add(notification);
 
                         db.SaveChanges();
+
+                        #region insert data 25% to 75% procurement to Alert Tools
+                        if (inputETAHistory.ETADate > purchasingDocumentItem.FirstETAHistory.ETADate.Value)
+                        {
+                            int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("material procurement")).Select(x => x.ID).FirstOrDefault();
+
+                            if (masterIssueID > 0)
+                            {
+                                IssueHeader issueHeader = new IssueHeader();
+                                issueHeader.MasterIssueID = masterIssueID;
+                                issueHeader.RaisedBy = User.Identity.Name;
+                                issueHeader.DateOfIssue = now;
+                                issueHeader.IssueDescription = "Material Procurement";
+                                issueHeader.Created = now;
+                                issueHeader.CreatedBy = User.Identity.Name;
+                                issueHeader.LastModified = now;
+                                issueHeader.LastModifiedBy = User.Identity.Name;
+                                alertDB.IssueHeaders.Add(issueHeader);
+                                alertDB.SaveChanges();
+
+                                MaterialProcurementPOTracking materialProcurementPOTracking = new MaterialProcurementPOTracking();
+                                materialProcurementPOTracking.IssueHeaderID = issueHeader.ID;
+                                materialProcurementPOTracking.PONumber = purchasingDocumentItem.PO.Number;
+                                materialProcurementPOTracking.ETADate = purchasingDocumentItem.FirstETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.ConfirmedETADate = inputETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.MaterialNumber = purchasingDocumentItem.Material;
+                                materialProcurementPOTracking.MaterialName = purchasingDocumentItem.Description;
+                                materialProcurementPOTracking.Quantity = purchasingDocumentItem.ConfirmedQuantity.Value;
+                                materialProcurementPOTracking.Created = now;
+                                materialProcurementPOTracking.CreatedBy = User.Identity.Name;
+                                materialProcurementPOTracking.LastModified = now;
+                                materialProcurementPOTracking.LastModifiedBy = User.Identity.Name;
+                                alertDB.MaterialProcurementPOTrackings.Add(materialProcurementPOTracking);
+                                alertDB.SaveChanges();
+                            }
+                        } 
+                        #endregion
                     }
+
 
                     return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }
