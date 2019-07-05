@@ -130,7 +130,9 @@
 
     <ul class="list-unstyled po-list">
         <li class="po-item-container">
-            <div class="po-item-section po-item-sticky">
+            @* Kalo dia bukan Procurement class po-item-sticky-procurement dihapus *@
+            <div class="po-item-section po-item-sticky po-item-sticky-procurement">
+                @* Kalo dia bukan Procurement class po-item-sticky-procurement dihapus *@
                 <div class="po-item-section-header">
                     <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
                     <div class="po-item-section-header-text">
@@ -202,6 +204,9 @@
                     <div class="po-item-data-header">
                         <span class="po-item-data-header__text item-id">Item ID</span>
                         <span class="po-item-data-header__text material">Material</span>
+                        @* if procurement show *@
+                        <span class="po-item-data-header__text material">Material Vendor</span>
+                        @* if procurement show *@
                         <span class="po-item-data-header__text description">Item Description</span>
                         <span class="po-item-data-header__text po-progress">Progress</span>
                     </div>
@@ -217,6 +222,9 @@
                             <div class="po-item-data-content__outer">
                                 <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
                                 <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                @*  IF Procurement Show *@
+                                <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
+                                @*  IF Procurement Show *@
                                 <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
                                 @if (purchasingDocumentItem.ConfirmedItem != false)
                                 {
@@ -246,6 +254,9 @@
                                         <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
                                             <span class="po-item-data-header__column item-id" style="visibility:hidden">@purchasingDocumentItem.ItemNumber</span>
                                             <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
+                                            @*  IF Procurement Show *@
+                                            <span class="po-item-data-header__column material" style="visibility:hidden">@purchasingDocumentItem.Material</span>
+                                            @*  IF Procurement Show *@
                                             <span class="po-item-data-header__column description" style="visibility:hidden">@purchasingDocumentItem.Description</span>
                                             @if (childPurchasingDocumentItem.ConfirmedItem != false)
                                             {
@@ -276,7 +287,9 @@
                     }
                 </div>
             </div>
-            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow">
+            @* Remove po-item-scrollable-procurement if not procurement *@
+            <div class="custom-scrollbar po-item-scrollable po-sign-row-@poSignRow po-item-scrollable-procurement">
+            @* Remove po-item-scrollable-procurement if not procurement *@
                 <div class="po-item-section information">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Information</p>
@@ -309,9 +322,9 @@
                     </div>
                 </div>
                 <!--
-                    start stage 1
+        start stage 1
 
-                -->
+    -->
                 <div class="po-item-section stage-1">
                     <div class="po-item-section-header stage-checkbox-header">
                         @{
@@ -723,8 +736,8 @@
                     </div>
                 </div>
                 <!--
-                        END STAGE 1
-                -->
+            END STAGE 1
+    -->
                 <div class="po-item-section stage-2">
                     @if (roleID == "procurement" || roleID == "administrator")
                     {
@@ -1016,7 +1029,7 @@
                         var hiddenst2aUploadAll = "hidden";
 
                         if (roleID == "vendor")
-                        {                            
+                        {
 
                             //st2aCheckboxAll = "";
                             st2aConfirmAll = "";
@@ -1172,7 +1185,7 @@
                                                 <div class="form-group mr-2">
                                                     <p class="mt-2 mb-0">
                                                         <a class="@st2aDownloadProforma" href="@downloadPath">Proforma Invoice</a> uploaded<i class="fas fa-check-circle primary ml-2"></i>
-                                                        @if (roleID == "vendor" && (purchasingDocumentItem.ConfirmReceivedPaymentDate == null && (purchasingDocumentItem.ActiveStage == "2a"||Convert.ToInt32(purchasingDocumentItem.ActiveStage) < 4)))
+                                                        @if (roleID == "vendor" && (purchasingDocumentItem.ConfirmReceivedPaymentDate == null && (purchasingDocumentItem.ActiveStage == "2a" || Convert.ToInt32(purchasingDocumentItem.ActiveStage) < 4)))
                                                         {
                                                             <a href="#" class="danger-link @st2aRemoveFileProformaInvoice">Remove?</a>
                                                         }
@@ -2194,80 +2207,80 @@
                     </div>
                 </div>
                 @*<div class="po-item-section stage-7">
-                        <div class="po-item-section-header stage-checkbox-header">
-                            <div>
-                                <label class="checkbox-custom__label mr-0">
-                                    <input class="checkbox-custom st2-checkbox-all" type="checkbox">
+            <div class="po-item-section-header stage-checkbox-header">
+                <div>
+                    <label class="checkbox-custom__label mr-0">
+                        <input class="checkbox-custom st2-checkbox-all" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div><p class="mb-0">Stage 6</p></div>
+                <div>
+                </div>
+            </div>
+            <div class="po-item-section-body">
+                <div class="po-item-data-header">
+                    <span class="po-item-data-header__text invoice-method">Invoice Method</span>
+                </div>
+                @{
+                var rowStage6 = 1;
+                }
+                @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                {
+                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                var childRowStage6 = 1;
+
+                <div class="po-item-data-content row-@rowStage6">
+                    <div class="po-item-data-content__outer">
+                        <div class="po-item-data-header__column invoice-method">
+                            <div class="form-inline">
+                                <label class="checkbox-custom__label">
+                                    <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
                                     <span class="checkmark"></span>
                                 </label>
-                            </div>
-                            <div><p class="mb-0">Stage 6</p></div>
-                            <div>
+                                <div class="form-group mr-2">
+                                    <select class="form-control">
+                                        <option>Choose One</option>
+                                        <option>Full</option>
+                                        <option>Partial by GR</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-positive">Save</button>
                             </div>
                         </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text invoice-method">Invoice Method</span>
-                            </div>
-                            @{
-                            var rowStage6 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                            {
-                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                            var childRowStage6 = 1;
-
-                            <div class="po-item-data-content row-@rowStage6">
-                                <div class="po-item-data-content__outer">
-                                    <div class="po-item-data-header__column invoice-method">
-                                        <div class="form-inline">
-                                            <label class="checkbox-custom__label">
-                                                <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
-                                                <span class="checkmark"></span>
-                                            </label>
-                                            <div class="form-group mr-2">
-                                                <select class="form-control">
-                                                    <option>Choose One</option>
-                                                    <option>Full</option>
-                                                    <option>Partial by GR</option>
-                                                </select>
-                                            </div>
-                                            <button class="btn btn-positive">Save</button>
-                                        </div>
+                    </div>
+                    <div class="po-item-data-content__child">
+                        @if (childPurchasingDocumentItems.Count() > 0)
+                        {
+                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                        {
+                        <div class="po-item-data-content row-@rowStage6-@childRowStage6" row="@rowStage6" child="@childRowStage6">
+                            <div class="po-item-data-header__column invoice-method">
+                                <div class="form-inline">
+                                    <label class="checkbox-custom__label">
+                                        <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <div class="form-group mr-2">
+                                        <select class="form-control">
+                                            <option>Choose One</option>
+                                            <option>Full</option>
+                                            <option>Partial by GR</option>
+                                        </select>
                                     </div>
-                                </div>
-                                <div class="po-item-data-content__child">
-                                    @if (childPurchasingDocumentItems.Count() > 0)
-                                    {
-                                    foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                    {
-                                    <div class="po-item-data-content row-@rowStage6-@childRowStage6" row="@rowStage6" child="@childRowStage6">
-                                        <div class="po-item-data-header__column invoice-method">
-                                            <div class="form-inline">
-                                                <label class="checkbox-custom__label">
-                                                    <input class="checkbox-custom st2-checkbox-item" type="checkbox" disabled>
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                                <div class="form-group mr-2">
-                                                    <select class="form-control">
-                                                        <option>Choose One</option>
-                                                        <option>Full</option>
-                                                        <option>Partial by GR</option>
-                                                    </select>
-                                                </div>
-                                                <button class="btn btn-positive">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    childRowStage6++;
-                                    }
-                                    }
+                                    <button class="btn btn-positive">Save</button>
                                 </div>
                             </div>
-                            rowStage6++;
-                            }
                         </div>
-                    </div>*@
+                        childRowStage6++;
+                        }
+                        }
+                    </div>
+                </div>
+                rowStage6++;
+                }
+            </div>
+        </div>*@
                 <div class="po-item-section stage-7">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 6</p>
