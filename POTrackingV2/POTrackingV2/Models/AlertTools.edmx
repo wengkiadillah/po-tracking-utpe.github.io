@@ -33,14 +33,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="SalesOrderNumber" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="SerialNumber" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ComponentArrivalDate" Type="date" />
-          <Property Name="Created" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastModified" Type="datetime" />
-          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="ConfirmationDate" Type="date" />
           <Property Name="ProductName" Type="varchar" MaxLength="100" />
           <Property Name="PRONumber" Type="varchar" MaxLength="50" />
           <Property Name="AssemblyDate" Type="date" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastModified" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="DeliveryLatenesses">
           <Key>
@@ -63,8 +63,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IssueHeaderID" Type="int" Nullable="false" />
-          <Property Name="EndDateEstimation" Type="date" Nullable="false" />
-          <Property Name="PartNumberProduct" Type="varchar" MaxLength="50" />
+          <Property Name="EndDateEstimation" Type="date" />
+          <Property Name="PartNumberProduct" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastModified" Type="datetime" />
@@ -166,14 +166,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="PartNumberComponent" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="EndDateEstimation" Type="date" />
           <Property Name="ArrivalDate" Type="date" />
-          <Property Name="Created" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastModified" Type="datetime" Nullable="false" />
-          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="PRONumber" Type="varchar" MaxLength="50" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="PRNumber" Type="varchar" MaxLength="50" />
           <Property Name="PONumber" Type="varchar" MaxLength="50" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastModified" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="MaterialIssueLogs">
           <Key>
@@ -224,7 +224,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IssueHeaderID" Type="int" Nullable="false" />
-          <Property Name="PONumber" Type="varchar" MaxLength="50" />
+          <Property Name="PONumber" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="PRNumber" Type="varchar" MaxLength="10" />
           <Property Name="PartNumber" Type="varchar" MaxLength="30" />
           <Property Name="MaterialName" Type="varchar" MaxLength="50" />
@@ -232,8 +232,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="Quantity" Type="int" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="LastModified" Type="datetime" Nullable="false" />
-          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastModified" Type="datetime" />
+          <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ReceiverPrivileges">
           <Key>
@@ -580,14 +580,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="SalesOrderNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="ComponentArrivalDate" Type="DateTime" Precision="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModified" Type="DateTime" Precision="3" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ConfirmationDate" Type="DateTime" Precision="0" />
           <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="PRONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="AssemblyDate" Type="DateTime" Precision="0" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="IssueHeader" Relationship="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" FromRole="CustomerComponentsDetails" ToRole="IssueHeaders" />
         </EntityType>
         <EntityType Name="DeliveryLateness">
@@ -612,8 +612,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IssueHeaderID" Type="Int32" Nullable="false" />
-          <Property Name="EndDateEstimation" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="PartNumberProduct" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EndDateEstimation" Type="DateTime" Precision="0" />
+          <Property Name="PartNumberProduct" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Precision="3" />
@@ -736,14 +736,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="PartNumberComponent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="EndDateEstimation" Type="DateTime" Precision="0" />
           <Property Name="ArrivalDate" Type="DateTime" Precision="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PRONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="PRNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="IssueHeader" Relationship="Self.FK_MaterialIssueDetails_IssueHeaders_IssueHeaderID" FromRole="MaterialIssueDetails" ToRole="IssueHeaders" />
           <NavigationProperty Name="MaterialIssueLogs" Relationship="Self.FK_MaterialIssueLogs_MaterialIssueDetails" FromRole="MaterialIssueDetails" ToRole="MaterialIssueLogs" />
         </EntityType>
@@ -799,7 +799,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IssueHeaderID" Type="Int32" Nullable="false" />
-          <Property Name="PONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PONumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="PRNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="PartNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="MaterialName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -807,8 +807,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="Quantity" Type="Int32" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="LastModified" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Precision="3" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="IssueHeader" Relationship="Self.FK_QualityReceivePOTracking_IssueHeaders" FromRole="QualityReceivePOTracking" ToRole="IssueHeaders" />
         </EntityType>
         <EntityType Name="ReceiverPrivilege">
@@ -1066,7 +1066,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="AlertToolsEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="CustomerComponentsDetails" EntityType="Self.CustomerComponentsDetail" />
           <EntitySet Name="DeliveryLatenesses" EntityType="Self.DeliveryLateness" />
           <EntitySet Name="DrawingLatenesses" EntityType="Self.DrawingLateness" />
@@ -1156,7 +1156,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AlertToolsModelStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="AlertToolsModelStoreContainer" CdmEntityContainer="AlertToolsEntities">
           <EntitySetMapping Name="CustomerComponentsDetails">
             <EntityTypeMapping TypeName="AlertToolsModel.CustomerComponentsDetail">
               <MappingFragment StoreEntitySet="CustomerComponentsDetails">
@@ -1165,14 +1165,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
                 <ScalarProperty Name="SalesOrderNumber" ColumnName="SalesOrderNumber" />
                 <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
                 <ScalarProperty Name="ComponentArrivalDate" ColumnName="ComponentArrivalDate" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
                 <ScalarProperty Name="ConfirmationDate" ColumnName="ConfirmationDate" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="PRONumber" ColumnName="PRONumber" />
                 <ScalarProperty Name="AssemblyDate" ColumnName="AssemblyDate" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1308,14 +1308,14 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
                 <ScalarProperty Name="PartNumberComponent" ColumnName="PartNumberComponent" />
                 <ScalarProperty Name="EndDateEstimation" ColumnName="EndDateEstimation" />
                 <ScalarProperty Name="ArrivalDate" ColumnName="ArrivalDate" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
                 <ScalarProperty Name="PRONumber" ColumnName="PRONumber" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="PRNumber" ColumnName="PRNumber" />
                 <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

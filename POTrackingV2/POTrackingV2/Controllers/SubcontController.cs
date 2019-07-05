@@ -98,7 +98,7 @@ namespace POTrackingV2.Controllers
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
-                    if(searchPOStatus == "newpo")
+                    if (searchPOStatus == "newpo")
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                     }
@@ -118,7 +118,8 @@ namespace POTrackingV2.Controllers
                     if (searchPOStatus == "newpo")
                     {
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                    }else if (searchPOStatus == "ongoing")
+                    }
+                    else if (searchPOStatus == "ongoing")
                     {
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                     }
@@ -195,12 +196,12 @@ namespace POTrackingV2.Controllers
 
                 //if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 //{
-                    //var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    //if (listVendorSubconDev != null)
-                    //{
-                    //    pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
-                    //}
-                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PBActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
+                //var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
+                //if (listVendorSubconDev != null)
+                //{
+                //    pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
+                //}
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PBActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                 //}
                 //else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                 //{
@@ -938,7 +939,7 @@ namespace POTrackingV2.Controllers
 
                 db.Notifications.Add(notification);
 
-                //db.SaveChanges();
+                db.SaveChanges();
                 return Json(new { success = true, responseText = "data updated" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -1205,7 +1206,7 @@ namespace POTrackingV2.Controllers
         public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices)
         {
             POTrackingEntities db = new POTrackingEntities();
-            //AlertToolsEntities alertDB = new AlertToolsEntities();
+            AlertToolsEntities alertDB = new AlertToolsEntities();
             //HttpPostedFileBase file = Request.Files["FileUpload"];
             try
             {
@@ -1288,6 +1289,45 @@ namespace POTrackingV2.Controllers
                     notification.ModifiedBy = User.Identity.Name;
                     db.Notifications.Add(notification);
                     Existed_PDI.ActiveStage = "6";
+
+                    //insert data QC to alert
+                    int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc field")).Select(x => x.ID).FirstOrDefault();
+                    //try
+                    //{
+                    if (masterIssueID > 0)
+                    {
+                        IssueHeader issueHeader = new IssueHeader();
+                        issueHeader.MasterIssueID = masterIssueID;
+                        issueHeader.RaisedBy = User.Identity.Name;
+                        issueHeader.DateOfIssue = now;
+                        issueHeader.IssueDescription = "QC Field";
+                        issueHeader.Created = now;
+                        issueHeader.CreatedBy = User.Identity.Name;
+                        issueHeader.LastModified = now;
+                        issueHeader.LastModifiedBy = User.Identity.Name;
+                        alertDB.IssueHeaders.Add(issueHeader);
+                        alertDB.SaveChanges();
+
+                        QualityControlPOTracking QCPotracking = new QualityControlPOTracking();
+                        QCPotracking.IssueHeaderID = issueHeader.ID;
+                        QCPotracking.PONumber = Existed_PDI.PO.Number;
+                        QCPotracking.QADate = primerActualDate.Value;
+                        QCPotracking.MaterialNumber = Existed_PDI.Material;
+                        QCPotracking.MaterialName = Existed_PDI.Description;
+                        QCPotracking.Quantity = Existed_PDI.ConfirmedQuantity.Value;
+                        QCPotracking.Created = now;
+                        QCPotracking.CreatedBy = User.Identity.Name;
+                        QCPotracking.LastModified = now;
+                        QCPotracking.LastModifiedBy = User.Identity.Name;
+                        alertDB.QualityControlPOTrackings.Add(QCPotracking);
+                        alertDB.SaveChanges();
+                    }
+                    //}
+                    //catch (Exception)
+                    //{
+                    //throw;
+                    //}
+
                 }
                 else if (Existed_PDI.PBActualDate != null && Existed_PDI.SettingActualDate != null && Existed_PDI.FullweldActualDate != null && Existed_PDI.PrimerActualDate != null)
                 {
@@ -1304,37 +1344,44 @@ namespace POTrackingV2.Controllers
                     db.Notifications.Add(notification);
                     Existed_PDI.ActiveStage = "4";
 
-                    ////insert data QC to alert
-                    //int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc field")).Select(x => x.ID).FirstOrDefault();
-                    //if(masterIssueID != null)
+                    //insert data QC to alert
+                    int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc field")).Select(x => x.ID).FirstOrDefault();
+                    //try
                     //{
-                    //    IssueHeader issueHeader = new IssueHeader();
-                    //    issueHeader.MasterIssueID = masterIssueID;
-                    //    issueHeader.RaisedBy = User.Identity.Name;
-                    //    issueHeader.DateOfIssue = now;
-                    //    issueHeader.IssueDescription = "QC Field";
-                    //    issueHeader.Created = now;
-                    //    issueHeader.CreatedBy = User.Identity.Name;
-                    //    issueHeader.LastModified = now;
-                    //    issueHeader.LastModifiedBy = User.Identity.Name;
-                    //    alertDB.IssueHeaders.Add(issueHeader);
-                    //    alertDB.SaveChanges();
+                    if (masterIssueID > 0)
+                    {
+                        IssueHeader issueHeader = new IssueHeader();
+                        issueHeader.MasterIssueID = masterIssueID;
+                        issueHeader.RaisedBy = User.Identity.Name;
+                        issueHeader.DateOfIssue = now;
+                        issueHeader.IssueDescription = "QC Field";
+                        issueHeader.Created = now;
+                        issueHeader.CreatedBy = User.Identity.Name;
+                        issueHeader.LastModified = now;
+                        issueHeader.LastModifiedBy = User.Identity.Name;
+                        alertDB.IssueHeaders.Add(issueHeader);
+                        alertDB.SaveChanges();
 
-                    //    QualityControlPOTracking QCPotracking = new QualityControlPOTracking();
-                    //    QCPotracking.IssueHeaderID = issueHeader.ID;
-                    //    QCPotracking.PONumber = Existed_PDI.PO.Number;
-                    //    QCPotracking.QADate = primerActualDate.Value;
-                    //    QCPotracking.MaterialNumber = Existed_PDI.Material;
-                    //    QCPotracking.MaterialName = Existed_PDI.Description;
-                    //    QCPotracking.Quantity = Existed_PDI.ConfirmedQuantity.Value;
-                    //    QCPotracking.Created = now;
-                    //    QCPotracking.CreatedBy = User.Identity.Name;
-                    //    QCPotracking.LastModified = now;
-                    //    QCPotracking.LastModifiedBy = User.Identity.Name;
-                    //    alertDB.IssueHeaders.Add(issueHeader);
-                    //    alertDB.SaveChanges();
+                        QualityControlPOTracking QCPotracking = new QualityControlPOTracking();
+                        QCPotracking.IssueHeaderID = issueHeader.ID;
+                        QCPotracking.PONumber = Existed_PDI.PO.Number;
+                        QCPotracking.QADate = primerActualDate.Value;
+                        QCPotracking.MaterialNumber = Existed_PDI.Material;
+                        QCPotracking.MaterialName = Existed_PDI.Description;
+                        QCPotracking.Quantity = Existed_PDI.ConfirmedQuantity.Value;
+                        QCPotracking.Created = now;
+                        QCPotracking.CreatedBy = User.Identity.Name;
+                        QCPotracking.LastModified = now;
+                        QCPotracking.LastModifiedBy = User.Identity.Name;
+                        alertDB.QualityControlPOTrackings.Add(QCPotracking);
+                        alertDB.SaveChanges();
+                    }
                     //}
-                    
+                    //catch (Exception)
+                    //{
+                    //throw;
+                    //}
+
                 }
                 else
                 {
@@ -1362,6 +1409,8 @@ namespace POTrackingV2.Controllers
                     notification.ModifiedBy = User.Identity.Name;
                     db.Notifications.Add(notification);
                 }
+
+
                 //}
 
                 db.SaveChanges();

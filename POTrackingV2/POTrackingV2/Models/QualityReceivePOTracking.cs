@@ -24,7 +24,7 @@ namespace POTrackingV2.Models
         public Nullable<int> Quantity { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }
-        public System.DateTime LastModified { get; set; }
+        public Nullable<System.DateTime> LastModified { get; set; }
         public string LastModifiedBy { get; set; }
     
         public virtual IssueHeader IssueHeader { get; set; }

@@ -22,7 +22,7 @@ namespace POTrackingV2.Models
     
         public int ID { get; set; }
         public int IssueHeaderID { get; set; }
-        public System.DateTime EndDateEstimation { get; set; }
+        public Nullable<System.DateTime> EndDateEstimation { get; set; }
         public string PartNumberProduct { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }

@@ -23,6 +23,7 @@ namespace POTrackingV2.Controllers
     {
 
         private POTrackingEntities db = new POTrackingEntities();
+        private AlertToolsEntities alertDB = new AlertToolsEntities();
         private DateTime now = DateTime.Now;
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
@@ -224,6 +225,105 @@ namespace POTrackingV2.Controllers
 
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
+
+        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            {
+                return RedirectToAction("Index", "Local");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            {
+                return RedirectToAction("Index", "SubCont");
+            }
+
+            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
+                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"))
+                            .AsQueryable();
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+                List<string> myUserNRPs = new List<string>();
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"));
+
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
+
+                pOes = pOes.Except(noShowPOes);
+            }
+            else if (role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                // View All
+            }
+            else
+            {
+                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+            }
+
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+            ViewBag.CurrentStartPODate = searchStartPODate;
+            ViewBag.CurrentEndPODate = searchEndPODate;
+            ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.IISAppName = iisAppName;
+
+            List<DelayReason> delayReasons = db.DelayReasons.ToList();
+
+            ViewBag.DelayReasons = delayReasons;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower()) || y.Description.ToLower().Contains(searchMaterial.ToLower()) || y.MaterialVendor.ToLower().Contains(searchMaterial.ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(searchStartPODate))
+            {
+                DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date >= startDate);
+            }
+
+            if (!String.IsNullOrEmpty(searchEndPODate))
+            {
+                DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date <= endDate);
+            }
+            #endregion
+
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+        }
+
 
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
         {
@@ -1661,7 +1761,45 @@ namespace POTrackingV2.Controllers
                         db.Notifications.Add(notification);
 
                         db.SaveChanges();
+
+                        #region insert data 25% to 75% procurement to Alert Tools
+                        if (inputETAHistory.ETADate > purchasingDocumentItem.FirstETAHistory.ETADate.Value)
+                        {
+                            int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("material procurement")).Select(x => x.ID).FirstOrDefault();
+
+                            if (masterIssueID > 0)
+                            {
+                                IssueHeader issueHeader = new IssueHeader();
+                                issueHeader.MasterIssueID = masterIssueID;
+                                issueHeader.RaisedBy = User.Identity.Name;
+                                issueHeader.DateOfIssue = now;
+                                issueHeader.IssueDescription = "Material Procurement";
+                                issueHeader.Created = now;
+                                issueHeader.CreatedBy = User.Identity.Name;
+                                issueHeader.LastModified = now;
+                                issueHeader.LastModifiedBy = User.Identity.Name;
+                                alertDB.IssueHeaders.Add(issueHeader);
+                                alertDB.SaveChanges();
+
+                                MaterialProcurementPOTracking materialProcurementPOTracking = new MaterialProcurementPOTracking();
+                                materialProcurementPOTracking.IssueHeaderID = issueHeader.ID;
+                                materialProcurementPOTracking.PONumber = purchasingDocumentItem.PO.Number;
+                                materialProcurementPOTracking.ETADate = purchasingDocumentItem.FirstETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.ConfirmedETADate = inputETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.MaterialNumber = purchasingDocumentItem.Material;
+                                materialProcurementPOTracking.MaterialName = purchasingDocumentItem.Description;
+                                materialProcurementPOTracking.Quantity = purchasingDocumentItem.ConfirmedQuantity.Value;
+                                materialProcurementPOTracking.Created = now;
+                                materialProcurementPOTracking.CreatedBy = User.Identity.Name;
+                                materialProcurementPOTracking.LastModified = now;
+                                materialProcurementPOTracking.LastModifiedBy = User.Identity.Name;
+                                alertDB.MaterialProcurementPOTrackings.Add(materialProcurementPOTracking);
+                                alertDB.SaveChanges();
+                            }
+                        } 
+                        #endregion
                     }
+
 
                     return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }
