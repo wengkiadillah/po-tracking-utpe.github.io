@@ -101,7 +101,14 @@ namespace POTrackingV2.Controllers
             }
             else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                if (searchPOStatus == "negotiated")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                }
+                else
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                }
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
