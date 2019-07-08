@@ -23,6 +23,7 @@ namespace POTrackingV2.Controllers
     {
 
         private POTrackingEntities db = new POTrackingEntities();
+        private AlertToolsEntities alertDB = new AlertToolsEntities();
         private DateTime now = DateTime.Now;
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
@@ -100,7 +101,14 @@ namespace POTrackingV2.Controllers
             }
             else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                if (searchPOStatus == "negotiated")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                }
+                else
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                }
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -608,7 +616,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.LeadTimeItem= databasePurchasingDocumentItem.LeadTimeItem;
+                            inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
                             //inputPurchasingDocumentItem.MaterialVendor = databasePurchasingDocumentItem.MaterialVendor;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -643,7 +651,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs , isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs, isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -818,6 +826,21 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notification);
 
+                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
+                        {
+                            Notification notificationSAP = new Notification();
+                            notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                            notificationSAP.StatusID = 4;
+                            notificationSAP.Stage = "1";
+                            notificationSAP.Role = "procurement";
+                            notificationSAP.isActive = true;
+                            notificationSAP.Created = now;
+                            notificationSAP.CreatedBy = User.Identity.Name;
+                            notificationSAP.Modified = now;
+                            notificationSAP.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notificationSAP); 
+                        }
                     }
                 }
 
@@ -1760,7 +1783,45 @@ namespace POTrackingV2.Controllers
                         db.Notifications.Add(notification);
 
                         db.SaveChanges();
+
+                        #region insert data 25% to 75% procurement to Alert Tools
+                        if (inputETAHistory.ETADate > purchasingDocumentItem.FirstETAHistory.ETADate.Value)
+                        {
+                            int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("material procurement")).Select(x => x.ID).FirstOrDefault();
+
+                            if (masterIssueID > 0)
+                            {
+                                IssueHeader issueHeader = new IssueHeader();
+                                issueHeader.MasterIssueID = masterIssueID;
+                                issueHeader.RaisedBy = User.Identity.Name;
+                                issueHeader.DateOfIssue = now;
+                                issueHeader.IssueDescription = "Material Procurement";
+                                issueHeader.Created = now;
+                                issueHeader.CreatedBy = User.Identity.Name;
+                                issueHeader.LastModified = now;
+                                issueHeader.LastModifiedBy = User.Identity.Name;
+                                alertDB.IssueHeaders.Add(issueHeader);
+                                alertDB.SaveChanges();
+
+                                MaterialProcurementPOTracking materialProcurementPOTracking = new MaterialProcurementPOTracking();
+                                materialProcurementPOTracking.IssueHeaderID = issueHeader.ID;
+                                materialProcurementPOTracking.PONumber = purchasingDocumentItem.PO.Number;
+                                materialProcurementPOTracking.ETADate = purchasingDocumentItem.FirstETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.ConfirmedETADate = inputETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.MaterialNumber = purchasingDocumentItem.Material;
+                                materialProcurementPOTracking.MaterialName = purchasingDocumentItem.Description;
+                                materialProcurementPOTracking.Quantity = purchasingDocumentItem.ConfirmedQuantity.Value;
+                                materialProcurementPOTracking.Created = now;
+                                materialProcurementPOTracking.CreatedBy = User.Identity.Name;
+                                materialProcurementPOTracking.LastModified = now;
+                                materialProcurementPOTracking.LastModifiedBy = User.Identity.Name;
+                                alertDB.MaterialProcurementPOTrackings.Add(materialProcurementPOTracking);
+                                alertDB.SaveChanges();
+                            }
+                        }
+                        #endregion
                     }
+
 
                     return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
                 }

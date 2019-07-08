@@ -296,11 +296,20 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
                     console.log(response.isSameAsProcs[i]);
                     if (response.isSameAsProcs[i] === true) {
-                        $(".next-row-updated").first().removeAttr("disabled");
-                        $(".next-row-updated").first().removeClass("next-row-updated");
-                        $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
-                        $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
-                        $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                        if (response.isTwentyFivePercents[i] === true) {
+                            $(".next-row-updated").first().removeAttr("disabled");
+                            $(".next-row-updated").first().removeClass("next-row-updated");
+                            $(".next-row-updated-input").first().attr("mindate", inputConfirmedDateForNextStage[i]);
+                            $(".next-row-updated-input").first().val(inputConfirmedDateForNextStage[i]);
+                            $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                        }
+                        else {
+                            $(".next-row-updated").first().attr("disabled", "disabled");
+                            $(".next-row-updated").first().removeClass("next-row-updated");
+                            $(".next-row-updated-input").first().attr("mindate", "");
+                            $(".next-row-updated-input").first().val("");
+                            $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                        }
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
                         $(".row-updated-donut-text").first().text("2");
@@ -515,11 +524,20 @@ $(".st1-accept-item").on("click", function (obj) {
 
                         for (var i = 0; i < response.isSameAsProcs.length; i++) {
                             if (response.isSameAsProcs[i] === true) {
-                                $(".next-row-updated").first().removeAttr("disabled");
-                                $(".next-row-updated").first().removeClass("next-row-updated");
-                                $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
-                                $(".next-row-updated-input").first().val(inputConfirmedDate.val());
-                                $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                                if (response.isTwentyFivePercents[i] === true) {
+                                    $(".next-row-updated").first().removeAttr("disabled");
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().attr("mindate", inputConfirmedDate.val());
+                                    $(".next-row-updated-input").first().val(inputConfirmedDate.val());
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                                }
+                                else {
+                                    $(".next-row-updated").first().attr("disabled", "disabled");
+                                    $(".next-row-updated").first().removeClass("next-row-updated");
+                                    $(".next-row-updated-input").first().attr("mindate", "");
+                                    $(".next-row-updated-input").first().val("");
+                                    $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                                }
 
                                 $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
                                 $(".row-updated-donut-text").first().text("2");
