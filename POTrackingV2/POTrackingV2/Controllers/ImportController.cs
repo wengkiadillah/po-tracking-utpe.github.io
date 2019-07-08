@@ -616,7 +616,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
-                            inputPurchasingDocumentItem.LeadTimeItem= databasePurchasingDocumentItem.LeadTimeItem;
+                            inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
                             //inputPurchasingDocumentItem.MaterialVendor = databasePurchasingDocumentItem.MaterialVendor;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -651,7 +651,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs , isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs, isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -826,6 +826,21 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notification);
 
+                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
+                        {
+                            Notification notificationSAP = new Notification();
+                            notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                            notificationSAP.StatusID = 4;
+                            notificationSAP.Stage = "1";
+                            notificationSAP.Role = "procurement";
+                            notificationSAP.isActive = true;
+                            notificationSAP.Created = now;
+                            notificationSAP.CreatedBy = User.Identity.Name;
+                            notificationSAP.Modified = now;
+                            notificationSAP.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notificationSAP); 
+                        }
                     }
                 }
 
@@ -1803,7 +1818,7 @@ namespace POTrackingV2.Controllers
                                 alertDB.MaterialProcurementPOTrackings.Add(materialProcurementPOTracking);
                                 alertDB.SaveChanges();
                             }
-                        } 
+                        }
                         #endregion
                     }
 

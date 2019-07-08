@@ -1499,7 +1499,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#data-list-" + list).html(element);
                             searchData.css("background", "");
                         } else {
-                            conole.log(response.responseCode + response.responseText);
+                            console.log(response.responseCode + response.responseText);
                         }
                     },
                     error: function (xhr, status, error) {
