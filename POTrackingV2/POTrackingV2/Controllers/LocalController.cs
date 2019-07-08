@@ -23,6 +23,7 @@ namespace POTrackingV2.Controllers
     {
         public DateTime now = DateTime.Now;
         private POTrackingEntities db = new POTrackingEntities();
+        private AlertToolsEntities alertDB = new AlertToolsEntities();
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         #region PAGELIST
@@ -142,7 +143,7 @@ namespace POTrackingV2.Controllers
 
             if (!String.IsNullOrEmpty(searchMaterial))
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial)));
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial) || y.MaterialVendor.Contains(searchMaterial) ));
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))
@@ -269,7 +270,7 @@ namespace POTrackingV2.Controllers
                 else if (searchFilterBy == "material")
                 {
                     //IEnumerable<PurchasingDocumentItem> purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.PO.Type.ToLower() == "zo05" || x.PO.Type.ToLower() == "zo09" || x.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PO.VendorCode));
-                    data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value) || x.Description.ToLower().Contains(value)).Select(x =>
+                    data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value) || x.Description.ToLower().Contains(value) || x.MaterialVendor.ToLower().Contains(value)).Select(x =>
                     new
                     {
                         Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
@@ -397,6 +398,7 @@ namespace POTrackingV2.Controllers
             DateTime now = DateTime.Now;
             int counter = 0;
             List<bool> isSameAsProcs = new List<bool>();
+            List<bool> isTwentyFivePercents = new List<bool>();
 
             try
             {
@@ -455,6 +457,7 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = true;
                                 databasePurchasingDocumentItem.ActiveStage = "2";
                                 isSameAsProcs.Add(true);
+                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
 
                                 Notification notificationVendor = new Notification();
                                 notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -487,6 +490,7 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = null;
                                 databasePurchasingDocumentItem.ActiveStage = "1";
                                 isSameAsProcs.Add(false);
+                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
 
                                 Notification notification = new Notification();
                                 notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -527,6 +531,8 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.CreatedBy = User.Identity.Name;
                             inputPurchasingDocumentItem.LastModified = now;
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
+                            isSameAsProcs.Add(false);
+                            isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
 
                             int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
 
@@ -551,7 +557,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs, isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -846,7 +852,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputETAHistory.PurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == null))
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
                     {
                         List<ETAHistory> databaseEtaHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == inputETAHistory.PurchasingDocumentItemID).ToList();
 
@@ -911,6 +917,9 @@ namespace POTrackingV2.Controllers
                             }
                             else
                             {
+                                inputETAHistory.AcceptedByProcurement = null;
+                                databasePurchasingDocumentItem.ActiveStage = "2";
+
                                 db.ETAHistories.Add(inputETAHistory);
 
                                 List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
@@ -999,7 +1008,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -1088,7 +1097,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if (databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null))
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -1750,7 +1759,7 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (purchasingDocumentItem.ActiveStage == "4")
+                if (purchasingDocumentItem.ActiveStage == "4" && purchasingDocumentItem.PO.IsSeventyFivePercent)
                 {
                     string user = User.Identity.Name;
 
@@ -1792,6 +1801,44 @@ namespace POTrackingV2.Controllers
                         db.Notifications.Add(notification);
 
                         db.SaveChanges();
+
+                        #region insert data 25% to 75% procurement to Alert Tools
+                        if (inputETAHistory.ETADate > purchasingDocumentItem.FirstETAHistory.ETADate.Value)
+                        {
+                            int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("material procurement")).Select(x => x.ID).FirstOrDefault();
+
+                            if (masterIssueID > 0)
+                            {
+                                IssueHeader issueHeader = new IssueHeader();
+                                issueHeader.MasterIssueID = masterIssueID;
+                                issueHeader.RaisedBy = User.Identity.Name;
+                                issueHeader.DateOfIssue = now;
+                                issueHeader.IssueDescription = "Material Procurement Local";
+                                issueHeader.Created = now;
+                                issueHeader.CreatedBy = User.Identity.Name;
+                                issueHeader.LastModified = now;
+                                issueHeader.LastModifiedBy = User.Identity.Name;
+                                alertDB.IssueHeaders.Add(issueHeader);
+                                alertDB.SaveChanges();
+
+                                MaterialProcurementPOTracking materialProcurementPOTracking = new MaterialProcurementPOTracking();
+                                materialProcurementPOTracking.IssueHeaderID = issueHeader.ID;
+                                materialProcurementPOTracking.PONumber = purchasingDocumentItem.PO.Number;
+                                materialProcurementPOTracking.ETADate = purchasingDocumentItem.FirstETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.ConfirmedETADate = inputETAHistory.ETADate.Value;
+                                materialProcurementPOTracking.MaterialNumber = purchasingDocumentItem.Material;
+                                materialProcurementPOTracking.MaterialName = purchasingDocumentItem.Description;
+                                materialProcurementPOTracking.Quantity = purchasingDocumentItem.ConfirmedQuantity.Value;
+                                materialProcurementPOTracking.Created = now;
+                                materialProcurementPOTracking.CreatedBy = User.Identity.Name;
+                                materialProcurementPOTracking.LastModified = now;
+                                materialProcurementPOTracking.LastModifiedBy = User.Identity.Name;
+                                alertDB.MaterialProcurementPOTrackings.Add(materialProcurementPOTracking);
+                                alertDB.SaveChanges();
+                            }
+                        }
+                        #endregion
+
                     }
 
                     return Json(new { responseText = $"1 data affected" }, JsonRequestBehavior.AllowGet);
@@ -1822,7 +1869,7 @@ namespace POTrackingV2.Controllers
 
             PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-            if (databasePurchasingDocumentItem.ProgressPhotoes.Count < 1)
+            if (databasePurchasingDocumentItem.ProgressPhotoes.Count < 1 && databasePurchasingDocumentItem.PO.IsSeventyFivePercent)
             {
 
                 foreach (var fileProgressPhoto in fileProgressPhotoes)
