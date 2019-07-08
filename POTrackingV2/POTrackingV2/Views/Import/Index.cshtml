@@ -72,14 +72,14 @@
 
     @if (roleID == "procurement" || roleID == "administrator")
     {
-        if (ViewBag.CurrentSearchPOStatus == "negotiate")
+        if (ViewBag.CurrentSearchPOStatus == "negotiated")
         {
             @Html.ActionLink("On Going", "Index", "Import", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
 
         }
-        else if (ViewBag.CurrentSearchPOStatus == "ongoing")
+        else if (ViewBag.CurrentSearchPOStatus == "ongoing" || ViewBag.CurrentSearchPOStatus == "")
         {
-            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiate", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
         }
     }
 
@@ -121,14 +121,6 @@
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
-
-    if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
-    }
-
     //if (currentSearchPOStatus == "newpo")
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
@@ -138,23 +130,37 @@
     //    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
     //}
 
-    if (currentSearchPOStatus == "ongoing")
+    if (purchasingDocumentItems.Count() > 0)
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
-    }
-    else if (currentSearchPOStatus == "newpo")
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
-    }
-    else if (roleID == "procurement" || roleID == "administrator")
-    {
-        if (currentSearchPOStatus == "negotiated")
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+
+        if (purchasingDocumentItems.Count() > 0)
         {
-            purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
+            if (currentSearchPOStatus == "ongoing")
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+            }
+            else if (currentSearchPOStatus == "newpo")
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+            }
+            else if (roleID == "procurement" || roleID == "administrator")
+            {
+                if (currentSearchPOStatus == "negotiated")
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
+                }
+                else
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+                }
+            }
         }
-        else
+
+        if (!string.IsNullOrEmpty(currentSearchForMaterial) && purchasingDocumentItems.Count() > 0)
         {
-            purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
         }
     }
 
@@ -3122,90 +3128,6 @@
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 10</p>
                     </div>
-                    @*<div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text document_number">Parking Date</span>
-                                @if (roleID == "procurement" || roleID == "administrator")
-                                {
-                                    <span class="po-item-data-header__text delivery">Term Date</span>
-                                }
-                            </div>
-                            @{
-                                var rowStage11 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                            {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage11 = 1;
-
-                                List<string> parkingDateViews = purchasingDocumentItem.ImportParkingDateViews;
-                                var termDateViews = purchasingDocumentItem.TermDateViews;
-                                var maxCount = 0;
-
-                                if (parkingDateViews != null)
-                                {
-                                    maxCount = parkingDateViews.Count;
-                                }
-
-                                var count = 0;
-
-                                <div class="po-item-data-content row-@rowStage11">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
-                                        {
-                                            <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
-
-                                            if (roleID == "procurement" || roleID == "administrator")
-                                            {
-                                                <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <span class="po-item-data-header__column document_number">-</span>
-
-                                            if (roleID == "procurement" || roleID == "administrator")
-                                            {
-                                                <span class="po-item-data-header__column delivery">-</span>
-                                            }
-                                        }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
-                                        {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage11-@childRowStage11 mt-customize" row="@rowStage11" child="@childRowStage11">
-                                                    @if (maxCount >= count + 1)
-                                                    {
-                                                        <span class="po-item-data-header__column document_number">@parkingDateViews[count]</span>
-
-                                                        if (roleID == "procurement" || roleID == "administrator")
-                                                        {
-                                                            <span class="po-item-data-header__column delivery">@termDateViews[count]</span>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="po-item-data-header__column document_number">-</span>
-
-                                                        if (roleID == "procurement" || roleID == "administrator")
-                                                        {
-                                                            <span class="po-item-data-header__column delivery">-</span>
-                                                        }
-                                                    }
-                                                </div>
-                                                childRowStage11++;
-                                                count++;
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                                rowStage11++;
-                            }
-                        </div>*@
-
                     <div class="po-item-section-body">
                         @{
                             row = 1;
