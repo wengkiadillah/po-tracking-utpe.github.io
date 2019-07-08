@@ -14,29 +14,14 @@
         <hr class="mb-4">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="row">
-            @*<div class="col-lg-6 col-12 custom-form-field mb-3">
-                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "form-custom-label" })
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "field-validation-valid text-danger" })
-            </div>*@
 
             <div class="col-lg-6 col-12 custom-form-field mb-3">
                 @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "form-custom-label" })
-                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control full-width text-box single-line", required = "required" } })
+                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { id="searchUsername", @class = "form-control full-width text-box text-box-username single-line", required = "required", list = "data-list-username", autocomplete = "off" } })
+                <datalist id="data-list-username"></datalist>
                 @Html.ValidationMessageFor(model => model.Username, "", new { @class = "field-validation-valid text-danger" })
                 <span class="text-danger">@ViewBag.ErrorMessage</span>
             </div>
-
-            @*<div class="col-lg-6 col-12 custom-form-field mb-3">
-                @Html.LabelFor(model => model.RoleID, "Role", htmlAttributes: new { @class = "form-custom-label" })
-                <input type="text" value="Vendor" class="form-control full-width text-box single-line" disabled />
-            </div>*@
-
-            @*<div class="col-lg-6 col-12 custom-form-field mb-3">
-                @Html.LabelFor(model => model.RolesTypeID, "Roles Type", htmlAttributes: new { @class = "form-custom-label" })
-                @Html.DropDownList("RolesTypeID", null, "Select Role", htmlAttributes: new { @class = "form-control full-width" })
-                @Html.ValidationMessageFor(model => model.RolesTypeID, "", new { @class = "field-validation-valid text-danger" })
-            </div>*@
 
             <div class="col-lg-6 col-12 custom-form-field mb-3">
                 @Html.LabelFor(model => model.VendorCode, "Vendor", htmlAttributes: new { @class = "form-custom-label" })
@@ -47,41 +32,7 @@
                 @*@Html.ListBoxFor(m => m.ID, new MultiSelectList(Model, "VendorCode", null, "Select Vendor"), new { Multiple = "multiple" })*@
                 @Html.ValidationMessageFor(model => model.VendorCode, "", new { @class = "field-validation-valid text-danger" })
             </div>
-
-            @*<div class="col-lg-6 col-12 custom-form-field mb-6">
-                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-custom-label" })
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "field-validation-valid text-danger" })
-            </div>
-
-            <div class="col-lg-6 col-12 custom-form-field mb-3">
-                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "form-custom-label" })
-                @Html.EditorFor(model => model.IsActive)
-                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "field-validation-valid text-danger" })
-            </div>*@
         </div>
-        @*<div class="row">
-            <div class="col-xs-5">
-                <select name="from[]" id="search" class="form-control" size="8" multiple="multiple">
-                    <option value="1">Item 1</option>
-                    <option value="2">Item 5</option>
-                    <option value="2">Item 2</option>
-                    <option value="2">Item 4</option>
-                    <option value="3">Item 3</option>
-                </select>
-            </div>
-
-            <div class="col-xs-2">
-                <button type="button" id="search_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
-                <button type="button" id="search_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                <button type="button" id="search_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                <button type="button" id="search_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
-            </div>
-
-            <div class="col-xs-5">
-                <select name="to[]" id="search_to" class="form-control" size="8" multiple="multiple"></select>
-            </div>
-        </div>*@
         <div class="row justify-content-between mt-5">
             <div class="col-auto">
                 <a href="@Url.Action("ViewVendorSubcontDev", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
@@ -145,13 +96,45 @@
                         e.preventDefault();
                     }
                 }
-            });           
+            });
         });
 
         $(document).ready(function () {
             $('.chosen').chosen({
                 search_contains: true
             });
+
+            $(".text-box-username").on("keyup focus", function () {
+                var searchData = "";
+                searchData = $("#searchUsername");
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetUserFromValue", "MasterVendor")",
+                    data: {'value': searchData.val() },
+                    beforeSend: function () {
+                        searchData.css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            //console.log(response.data);
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                            }
+                            $("#data-list-username").html(element);
+                            searchData.css("background", "");
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.status + " : " + error);
+                    }
+                });
+            });
+
         });
     </script>
 }

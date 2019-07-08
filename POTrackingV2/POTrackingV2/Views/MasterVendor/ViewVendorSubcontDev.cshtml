@@ -1,6 +1,6 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-
+@using POTrackingV2.Models;
 @model IPagedList<POTrackingV2.Models.SubcontDevVendor>
 
 @{
@@ -50,22 +50,23 @@
         }
         else
         {
-            foreach (var item in Model)
+            //var subcontDevList = Model.GroupBy(x => x.Username).Select(x => x.FirstOrDefault());
+            POTrackingEntities db = new POTrackingEntities();
+            var subcontDevList = Model;
+            foreach (var subcontDev in subcontDevList)
             {
+                string[] subcontList = db.SubcontDevVendors.Where(x => x.Username == subcontDev.Username).Select(x => x.VendorCode).ToArray();
                 <tr style="background-color:white;">
-                    @*<td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>*@
                     <td>
-                        @Html.DisplayFor(modelItem => item.Username)
+                        @Html.DisplayFor(modelItem => subcontDev.Username)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.VendorCode)
+                        @string.Join(", ", @subcontList)
                     </td>
                     <td>
-                        <input type="text" value="@item.ID" class="hide subcontdev-id" />
+                        <input type="text" value="@subcontDev.ID" class="hide subcontdev-id" />
                         <span>
-                            <a class="col-xs-2" href='@Url.Action("EditVendorSubcontDev", "MasterVendor", new { ID = item.ID })' alt="Edit" style="color:green;">
+                            <a class="col-xs-2" href='@Url.Action("EditVendorSubcontDev", "MasterVendor", new { ID = subcontDev.ID })' alt="Edit" style="color:green;">
                                 <i class="fa fa-edit fa-lg"></i>
                             </a>
                         </span>
@@ -78,8 +79,8 @@
                 </tr>
             }
         }
-
     </table>
+    @*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount*@
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("ViewVendorSubcontDev", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
     new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
