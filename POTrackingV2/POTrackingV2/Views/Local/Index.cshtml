@@ -2165,7 +2165,7 @@
                             var hideGR = "";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
-                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 5)
+                            if (roleID == "vendor" && purchasingDocumentItem.ActiveStageToNumber < 5)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
@@ -2238,7 +2238,7 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 5)
+                                        if (roleID == "vendor" && purchasingDocumentItemChild.ActiveStageToNumber < 5)
                                         {
                                             hideGR = "style=visibility:hidden";
                                         }
