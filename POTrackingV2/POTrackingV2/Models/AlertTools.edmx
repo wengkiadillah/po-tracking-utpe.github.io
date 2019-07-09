@@ -5,17 +5,11 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="AlertToolsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AlertNotification">
           <Key>
             <PropertyRef Name="ID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="IssueHeaderID" />
-            <PropertyRef Name="Created" />
-            <PropertyRef Name="CreatedBy" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IssueHeaderID" Type="int" Nullable="false" />
           <Property Name="IsRead" Type="bit" />
@@ -278,6 +272,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="Modified" Type="datetime" />
         </EntityType>
+        <Association Name="FK_AlertNotification_IssueHeaders">
+          <End Role="IssueHeaders" Type="Self.IssueHeaders" Multiplicity="1" />
+          <End Role="AlertNotification" Type="Self.AlertNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IssueHeaders">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AlertNotification">
+              <PropertyRef Name="IssueHeaderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
           <End Role="IssueHeaders" Type="Self.IssueHeaders" Multiplicity="1" />
           <End Role="CustomerComponentsDetails" Type="Self.CustomerComponentsDetails" Multiplicity="*" />
@@ -470,7 +476,39 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="AlertToolsModelStoreContainer">
+          <EntitySet Name="AlertNotification" EntityType="Self.AlertNotification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerComponentsDetails" EntityType="Self.CustomerComponentsDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeliveryLatenesses" EntityType="Self.DeliveryLatenesses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DrawingLatenesses" EntityType="Self.DrawingLatenesses" Schema="dbo" store:Type="Tables" />
@@ -489,18 +527,10 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <EntitySet Name="ReceiverPrivileges" EntityType="Self.ReceiverPrivileges" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserGroup" EntityType="Self.UserGroup" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AlertNotification" EntityType="Self.AlertNotification" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [AlertNotification].[ID] AS [ID], 
-    [AlertNotification].[Username] AS [Username], 
-    [AlertNotification].[IssueHeaderID] AS [IssueHeaderID], 
-    [AlertNotification].[IsRead] AS [IsRead], 
-    [AlertNotification].[Created] AS [Created], 
-    [AlertNotification].[CreatedBy] AS [CreatedBy], 
-    [AlertNotification].[Modified] AS [Modified], 
-    [AlertNotification].[ModifiedBy] AS [ModifiedBy]
-    FROM [dbo].[AlertNotification] AS [AlertNotification]</DefiningQuery>
-          </EntitySet>
+          <AssociationSet Name="FK_AlertNotification_IssueHeaders" Association="Self.FK_AlertNotification_IssueHeaders">
+            <End Role="IssueHeaders" EntitySet="IssueHeaders" />
+            <End Role="AlertNotification" EntitySet="AlertNotification" />
+          </AssociationSet>
           <AssociationSet Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" Association="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
             <End Role="CustomerComponentsDetails" EntitySet="CustomerComponentsDetails" />
@@ -571,6 +601,20 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AlertToolsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AlertNotification">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IssueHeaderID" Type="Int32" Nullable="false" />
+          <Property Name="IsRead" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Modified" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="IssueHeader" Relationship="Self.FK_AlertNotification_IssueHeaders" FromRole="AlertNotification" ToRole="IssueHeaders" />
+        </EntityType>
         <EntityType Name="CustomerComponentsDetail">
           <Key>
             <PropertyRef Name="ID" />
@@ -660,6 +704,7 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastModified" Type="DateTime" Precision="3" />
           <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AlertNotifications" Relationship="Self.FK_AlertNotification_IssueHeaders" FromRole="IssueHeaders" ToRole="AlertNotification" />
           <NavigationProperty Name="CustomerComponentsDetails" Relationship="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" FromRole="IssueHeaders" ToRole="CustomerComponentsDetails" />
           <NavigationProperty Name="DeliveryLatenesses" Relationship="Self.FK_DeliveryLatenesses_IssueHeaders" FromRole="IssueHeaders" ToRole="DeliveryLatenesses" />
           <NavigationProperty Name="DrawingLatenesses" Relationship="Self.FK_DrawingLatenesses_IssueHeaders_IssueHeaderID" FromRole="IssueHeaders" ToRole="DrawingLatenesses" />
@@ -857,23 +902,18 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <NavigationProperty Name="MasterIssue" Relationship="Self.FK_UserGroup_MasterIssues" FromRole="UserGroup" ToRole="MasterIssues" />
           <NavigationProperty Name="ReceiverPrivileges" Relationship="Self.FK_UserGroup_Receiverprivilege" FromRole="UserGroup" ToRole="ReceiverPrivileges" />
         </EntityType>
-        <EntityType Name="AlertNotification">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="Username" />
-            <PropertyRef Name="IssueHeaderID" />
-            <PropertyRef Name="Created" />
-            <PropertyRef Name="CreatedBy" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="IssueHeaderID" Type="Int32" Nullable="false" />
-          <Property Name="IsRead" Type="Boolean" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Modified" Type="DateTime" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
+        <Association Name="FK_AlertNotification_IssueHeaders">
+          <End Role="IssueHeaders" Type="Self.IssueHeader" Multiplicity="1" />
+          <End Role="AlertNotification" Type="Self.AlertNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IssueHeaders">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AlertNotification">
+              <PropertyRef Name="IssueHeaderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
           <End Role="IssueHeaders" Type="Self.IssueHeader" Multiplicity="1" />
           <End Role="CustomerComponentsDetails" Type="Self.CustomerComponentsDetail" Multiplicity="*" />
@@ -1066,7 +1106,8 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AlertToolsEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AlertNotifications" EntityType="Self.AlertNotification" />
           <EntitySet Name="CustomerComponentsDetails" EntityType="Self.CustomerComponentsDetail" />
           <EntitySet Name="DeliveryLatenesses" EntityType="Self.DeliveryLateness" />
           <EntitySet Name="DrawingLatenesses" EntityType="Self.DrawingLateness" />
@@ -1085,7 +1126,10 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
           <EntitySet Name="ReceiverPrivileges" EntityType="Self.ReceiverPrivilege" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="UserGroups" EntityType="Self.UserGroup" />
-          <EntitySet Name="AlertNotifications" EntityType="Self.AlertNotification" />
+          <AssociationSet Name="FK_AlertNotification_IssueHeaders" Association="Self.FK_AlertNotification_IssueHeaders">
+            <End Role="IssueHeaders" EntitySet="IssueHeaders" />
+            <End Role="AlertNotification" EntitySet="AlertNotifications" />
+          </AssociationSet>
           <AssociationSet Name="FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID" Association="Self.FK_CustomerComponentsDetails_IssueHeaders_IssueHeaderID">
             <End Role="IssueHeaders" EntitySet="IssueHeaders" />
             <End Role="CustomerComponentsDetails" EntitySet="CustomerComponentsDetails" />
@@ -1150,13 +1194,68 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
             <End Role="UserGroup" EntitySet="UserGroups" />
             <End Role="ReceiverPrivileges" EntitySet="ReceiverPrivileges" />
           </AssociationSet>
+          <FunctionImport Name="sp_alterdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_creatediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_dropdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(AlertToolsModel.sp_helpdiagramdefinition_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(AlertToolsModel.sp_helpdiagrams_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_renamediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="new_diagramname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
+        <ComplexType Name="sp_helpdiagramdefinition_Result">
+          <Property Type="Int32" Name="version" Nullable="true" />
+          <Property Type="Binary" Name="definition" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagrams_Result">
+          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AlertToolsModelStoreContainer" CdmEntityContainer="AlertToolsEntities">
+        <EntityContainerMapping StorageEntityContainer="AlertToolsModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="AlertNotifications">
+            <EntityTypeMapping TypeName="AlertToolsModel.AlertNotification">
+              <MappingFragment StoreEntitySet="AlertNotification">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="CustomerComponentsDetails">
             <EntityTypeMapping TypeName="AlertToolsModel.CustomerComponentsDetail">
               <MappingFragment StoreEntitySet="CustomerComponentsDetails">
@@ -1429,20 +1528,30 @@ warning 6002: The table/view 'patria-db-alert-tools.dbo.AlertNotification' does 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="AlertNotifications">
-            <EntityTypeMapping TypeName="AlertToolsModel.AlertNotification">
-              <MappingFragment StoreEntitySet="AlertNotification">
+          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="AlertToolsModel.Store.sp_alterdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="AlertToolsModel.Store.sp_creatediagram" />
+          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="AlertToolsModel.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="AlertToolsModel.Store.sp_helpdiagramdefinition">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AlertToolsModel.sp_helpdiagramdefinition_Result">
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="AlertToolsModel.Store.sp_helpdiagrams">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AlertToolsModel.sp_helpdiagrams_Result">
+                <ScalarProperty Name="Database" ColumnName="Database" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="IssueHeaderID" ColumnName="IssueHeaderID" />
-                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Modified" ColumnName="Modified" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="AlertToolsModel.Store.sp_renamediagram" />
+          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="AlertToolsModel.Store.sp_upgraddiagrams" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -17,6 +17,7 @@ namespace POTrackingV2.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public IssueHeader()
         {
+            this.AlertNotifications = new HashSet<AlertNotification>();
             this.CustomerComponentsDetails = new HashSet<CustomerComponentsDetail>();
             this.DeliveryLatenesses = new HashSet<DeliveryLateness>();
             this.DrawingLatenesses = new HashSet<DrawingLateness>();
@@ -42,6 +43,8 @@ namespace POTrackingV2.Models
         public Nullable<System.DateTime> LastModified { get; set; }
         public string LastModifiedBy { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AlertNotification> AlertNotifications { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CustomerComponentsDetail> CustomerComponentsDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
