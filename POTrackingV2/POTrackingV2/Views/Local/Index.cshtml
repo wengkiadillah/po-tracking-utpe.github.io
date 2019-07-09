@@ -2163,6 +2163,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
+                            var hideMT = "mt-customize";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
                             if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 5)
@@ -2243,7 +2244,16 @@
                                             hideGR = "style=visibility:hidden";
                                         }
 
-                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
+                                        if (rowChild == 1)
+                                        {
+                                            hideMT = "";
+                                        }
+                                        else
+                                        {
+                                            hideMT = "mt-customize";
+                                        }
+
+                                        <div class="po-item-data-content row-@row-@rowChild @hideMT" row="@row" child="@rowChild" @hideGR>
                                             <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
