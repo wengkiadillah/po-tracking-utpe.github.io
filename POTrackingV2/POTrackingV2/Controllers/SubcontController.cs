@@ -91,13 +91,14 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    if (listVendorSubconDev != null)
+                    if (listVendorSubconDev != null && role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
+
                     if (searchPOStatus == "newpo")
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
@@ -135,6 +136,7 @@ namespace POTrackingV2.Controllers
 
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.RoleSubcontDev = LoginConstants.RoleSubcontDev.ToLower();
+                ViewBag.RoleAdministrator = LoginConstants.RoleAdministrator.ToLower();
                 ViewBag.RoleVendor = LoginConstants.RoleVendor.ToLower();
                 ViewBag.CurrentDataPONumber = searchPONumber;
                 ViewBag.CurrentDataVendorName = searchVendorName;
@@ -272,7 +274,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
                     if (listVendorSubconDev != null)
@@ -400,7 +402,7 @@ namespace POTrackingV2.Controllers
                             Existed_PDI.ConfirmedQuantity = item.ConfirmedQuantity;
 
                             notification.Stage = "1";
-                            notification.Role = "subcontdev";
+                            notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                         }
                         else
                         {
@@ -414,7 +416,7 @@ namespace POTrackingV2.Controllers
                                 notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
                                 notificationInfo.StatusID = 1;
                                 notificationInfo.Stage = "1";
-                                notificationInfo.Role = "subcontdev";
+                                notificationInfo.Role = LoginConstants.RoleSubcontDev.ToLower();
                                 notificationInfo.isActive = true;
                                 notificationInfo.Created = now;
                                 notificationInfo.CreatedBy = User.Identity.Name;
@@ -447,7 +449,7 @@ namespace POTrackingV2.Controllers
                                     {
                                         Existed_PDI.ActiveStage = "4";
                                         notification.Stage = "4";
-                                        notification.Role = "subcontdev";
+                                        notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                                     }
                                 }
                             }
@@ -455,7 +457,7 @@ namespace POTrackingV2.Controllers
                             {
                                 Existed_PDI.ActiveStage = "2";
                                 notification.Stage = "2";
-                                notification.Role = "vendor";
+                                notification.Role = LoginConstants.RoleVendor.ToLower();
                             }
 
                             //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
@@ -542,7 +544,7 @@ namespace POTrackingV2.Controllers
 
                             notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
                             notificationChild.Stage = "1";
-                            notificationChild.Role = "subcontdev";
+                            notificationChild.Role = LoginConstants.RoleSubcontDev.ToLower();
                         }
                         else
                         {
@@ -570,7 +572,7 @@ namespace POTrackingV2.Controllers
                                     {
                                         Existed_child.ActiveStage = "2";
                                         notificationChild.Stage = "2";
-                                        notificationChild.Role = "vendor";
+                                        notificationChild.Role = LoginConstants.RoleVendor.ToLower();
                                     }
                                     else
                                     {
@@ -578,13 +580,13 @@ namespace POTrackingV2.Controllers
                                         {
                                             Existed_child.ActiveStage = "6";
                                             notificationChild.Stage = "6";
-                                            notificationChild.Role = "vendor";
+                                            notificationChild.Role = LoginConstants.RoleVendor.ToLower();
                                         }
                                         else
                                         {
                                             Existed_child.ActiveStage = "4";
                                             notificationChild.Stage = "4";
-                                            notificationChild.Role = "subcontdev";
+                                            notificationChild.Role = LoginConstants.RoleSubcontDev.ToLower();
                                         }
                                     }
                                 }
@@ -592,7 +594,7 @@ namespace POTrackingV2.Controllers
                                 {
                                     Existed_child.ActiveStage = "2";
                                     notificationChild.Stage = "2";
-                                    notificationChild.Role = "vendor";
+                                    notificationChild.Role = LoginConstants.RoleVendor.ToLower();
                                 }
                             }
                         }
@@ -653,7 +655,7 @@ namespace POTrackingV2.Controllers
                                 Existed_PDI.ConfirmedDate = item.ConfirmedDate;
 
                                 notification.Stage = "1";
-                                notification.Role = "subcontdev";
+                                notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                             }
                             else
                             {
@@ -677,7 +679,7 @@ namespace POTrackingV2.Controllers
                                     {
                                         Existed_PDI.ActiveStage = "2";
                                         notification.Stage = "2";
-                                        notification.Role = "vendor";
+                                        notification.Role = LoginConstants.RoleVendor.ToLower();
                                     }
                                     else
                                     {
@@ -685,13 +687,13 @@ namespace POTrackingV2.Controllers
                                         {
                                             Existed_PDI.ActiveStage = "6";
                                             notification.Stage = "6";
-                                            notification.Role = "vendor";
+                                            notification.Role = LoginConstants.RoleVendor.ToLower();
                                         }
                                         else
                                         {
                                             Existed_PDI.ActiveStage = "4";
                                             notification.Stage = "4";
-                                            notification.Role = "subcontdev";
+                                            notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                                         }
                                     }
                                 }
@@ -699,7 +701,7 @@ namespace POTrackingV2.Controllers
                                 {
                                     Existed_PDI.ActiveStage = "2";
                                     notification.Stage = "2";
-                                    notification.Role = "subcontdev";
+                                    notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                                 }
                             }
                             Existed_PDI.LastModified = now;
@@ -772,7 +774,7 @@ namespace POTrackingV2.Controllers
                                 notificationChild.PurchasingDocumentItemID = purchasingDocumentItem.ID;
                                 notificationChild.StatusID = 3;
                                 notificationChild.Stage = "1";
-                                notificationChild.Role = "subcontdev";
+                                notificationChild.Role = LoginConstants.RoleSubcontDev.ToLower();
                                 notificationChild.isActive = true;
                                 notificationChild.Created = now;
                                 notificationChild.CreatedBy = User.Identity.Name;
@@ -867,7 +869,7 @@ namespace POTrackingV2.Controllers
                         Existed_PDI.ConfirmedQuantity = confirmedItemQty;
 
                         notification.Stage = "1";
-                        notification.Role = "subcontdev";
+                        notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                     }
                     else
                     {
@@ -884,7 +886,7 @@ namespace POTrackingV2.Controllers
                             notificationInfo.PurchasingDocumentItemID = Existed_PDI.ID;
                             notificationInfo.StatusID = 1;
                             notificationInfo.Stage = "1";
-                            notificationInfo.Role = "subcontdev";
+                            notificationInfo.Role = LoginConstants.RoleSubcontDev.ToLower();
                             notificationInfo.isActive = true;
                             notificationInfo.Created = now;
                             notificationInfo.CreatedBy = User.Identity.Name;
@@ -902,7 +904,7 @@ namespace POTrackingV2.Controllers
                             {
                                 Existed_PDI.ActiveStage = "2";
                                 notification.Stage = "2";
-                                notification.Role = "vendor";
+                                notification.Role = LoginConstants.RoleVendor.ToLower();
                             }
                             else
                             {
@@ -910,13 +912,13 @@ namespace POTrackingV2.Controllers
                                 {
                                     Existed_PDI.ActiveStage = "5";
                                     notification.Stage = "5";
-                                    notification.Role = "vendor";
+                                    notification.Role = LoginConstants.RoleVendor.ToLower();
                                 }
                                 else
                                 {
                                     Existed_PDI.ActiveStage = "4";
                                     notification.Stage = "4";
-                                    notification.Role = "subcontdev";
+                                    notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                                 }
                             }
                         }
@@ -924,7 +926,7 @@ namespace POTrackingV2.Controllers
                         {
                             Existed_PDI.ActiveStage = "2";
                             notification.Stage = "2";
-                            notification.Role = "subcontdev";
+                            notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                         }
                     }
                 }
@@ -1071,7 +1073,7 @@ namespace POTrackingV2.Controllers
                 notificationTaskSubcontDev.PurchasingDocumentItemID = Existed_PDI.ID;
                 notificationTaskSubcontDev.StatusID = 1;
                 notificationTaskSubcontDev.Stage = "3";
-                notificationTaskSubcontDev.Role = "Vendor";
+                notificationTaskSubcontDev.Role = LoginConstants.RoleVendor.ToLower();
                 notificationTaskSubcontDev.isActive = true;
                 notificationTaskSubcontDev.Created = now;
                 notificationTaskSubcontDev.CreatedBy = User.Identity.Name;
@@ -1083,7 +1085,7 @@ namespace POTrackingV2.Controllers
                 notificationInfoProcurement.PurchasingDocumentItemID = Existed_PDI.ID;
                 notificationInfoProcurement.StatusID = 1;
                 notificationInfoProcurement.Stage = "2";
-                notificationInfoProcurement.Role = "subcontdev";
+                notificationInfoProcurement.Role = LoginConstants.RoleSubcontDev.ToLower();
                 notificationInfoProcurement.isActive = true;
                 notificationInfoProcurement.Created = now;
                 notificationInfoProcurement.CreatedBy = User.Identity.Name;
@@ -1281,7 +1283,7 @@ namespace POTrackingV2.Controllers
                     notification.PurchasingDocumentItemID = Existed_PDI.ID;
                     notification.StatusID = 3;
                     notification.Stage = "6";
-                    notification.Role = "vendor";
+                    notification.Role = LoginConstants.RoleVendor.ToLower();
                     notification.isActive = true;
                     notification.Created = now;
                     notification.CreatedBy = User.Identity.Name;
@@ -1335,7 +1337,7 @@ namespace POTrackingV2.Controllers
                     notification.PurchasingDocumentItemID = Existed_PDI.ID;
                     notification.StatusID = 3;
                     notification.Stage = "4";
-                    notification.Role = "subcontdev";
+                    notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                     notification.isActive = true;
                     notification.Created = now;
                     notification.CreatedBy = User.Identity.Name;
@@ -1389,7 +1391,7 @@ namespace POTrackingV2.Controllers
                     notificationInfoProcurement.PurchasingDocumentItemID = Existed_PDI.ID;
                     notificationInfoProcurement.StatusID = 1;
                     notificationInfoProcurement.Stage = "3";
-                    notificationInfoProcurement.Role = "subcontdev";
+                    notificationInfoProcurement.Role = LoginConstants.RoleSubcontDev.ToLower();
                     notificationInfoProcurement.isActive = true;
                     notificationInfoProcurement.Created = now;
                     notificationInfoProcurement.CreatedBy = User.Identity.Name;
@@ -1401,7 +1403,7 @@ namespace POTrackingV2.Controllers
                     notification.PurchasingDocumentItemID = Existed_PDI.ID;
                     notification.StatusID = 3;
                     notification.Stage = "3";
-                    notification.Role = "Vendor";
+                    notification.Role = LoginConstants.RoleVendor.ToLower();
                     notification.isActive = true;
                     notification.Created = now;
                     notification.CreatedBy = User.Identity.Name;
@@ -1487,7 +1489,7 @@ namespace POTrackingV2.Controllers
                 notification.PurchasingDocumentItemID = Existed_PDI.ID;
                 notification.StatusID = 1;
                 notification.Stage = "5";
-                notification.Role = "subcontdev";
+                notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                 notification.isActive = true;
                 notification.Created = now;
                 notification.CreatedBy = User.Identity.Name;
@@ -1547,7 +1549,7 @@ namespace POTrackingV2.Controllers
                             notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                             notification.StatusID = 3;
                             notification.Stage = "6";
-                            notification.Role = "subcontdev";
+                            notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                             notification.isActive = true;
                             notification.Created = now;
                             notification.CreatedBy = User.Identity.Name;
@@ -1617,7 +1619,7 @@ namespace POTrackingV2.Controllers
                         notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
                         notification.StatusID = 2;
                         notification.Stage = "6";
-                        notification.Role = "subcontdev";
+                        notification.Role = LoginConstants.RoleSubcontDev.ToLower();
                         notification.isActive = true;
                         notification.Created = now;
                         notification.CreatedBy = User.Identity.Name;
