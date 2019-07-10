@@ -1986,12 +1986,12 @@ namespace POTrackingV2.Controllers
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
 
-                            databasePurchasingDocumentItem.ActiveStage = "7";
+                            databasePurchasingDocumentItem.ActiveStage = "6";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
@@ -2063,12 +2063,12 @@ namespace POTrackingV2.Controllers
 
                             System.IO.File.Delete(pathWithfileName);
 
-                            databasePurchasingDocumentItem.ActiveStage = "6";
+                            databasePurchasingDocumentItem.ActiveStage = "5";
                             databasePurchasingDocumentItem.InvoiceDocument = null;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;

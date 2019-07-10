@@ -2163,6 +2163,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
+                            var hideMT = "mt-customize";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
                             if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 5)
@@ -2243,7 +2244,16 @@
                                             hideGR = "style=visibility:hidden";
                                         }
 
-                                        <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
+                                        if (rowChild == 1)
+                                        {
+                                            hideMT = "";
+                                        }
+                                        else
+                                        {
+                                            hideMT = "mt-customize";
+                                        }
+
+                                        <div class="po-item-data-content row-@row-@rowChild @hideMT" row="@row" child="@rowChild" @hideGR>
                                             <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
@@ -2461,9 +2471,9 @@
                                             {
                                                 if (roleID == "vendor")
                                                 {
-                                                    if (purchasingDocumentItem.ActiveStage != "2a")
+                                                    if (childPurchasingDocumentItem.ActiveStage != "2a")
                                                     {
-                                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
+                                                        if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 4)
                                                         {
                                                             disabledFileInvoice = "";
                                                             disabledFileInvoiceUpload = "";
@@ -2504,10 +2514,9 @@
                         @{
                             row = 1;
                             var hidden = "";
-                            
                             var hiddenPayTerms = "";
 
-                            if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                            if (roleID == "vendor")
                             {
                                 hiddenPayTerms = "hidden";
                             }
@@ -2515,77 +2524,34 @@
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text parking-date">Parking Date</span>
                             <span class="po-item-data-header__text term-date" @hiddenPayTerms>Term Date</span>
+                            <span class="po-item-data-header__text posting-date">Posting Date</span>
                         </div>
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            var days = 0;
                             var rowChild = 1;
-                            if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
-                            {
-                                days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
-                            }
-
-                            if (purchasingDocumentItem.ActiveStageToNumber < 5 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                            if (purchasingDocumentItem.ActiveStageToNumber < 5 && roleID == "vendor")
                             {
                                 hidden = "hidden";
-                            }
-                            var termDateNewDateFormat = "";
-
-                            DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                            DateTime? termDate = (DateTime?)null;
-                            if (dateNewFormat != (DateTime?)null && days > 0)
-                            {
-                                termDate = dateNewFormat.Value.AddDays(days);
-                                termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
                             }
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
-                                    @if (dateNewFormat != null)
-                                    {
-                                        <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                                        <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="po-item-data-header__column parking-date" @hidden></span>
-                                        <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
-                                    }
+                                    <span class="po-item-data-header__column parking-date" @hidden>@purchasingDocumentItem.LatestParkingDateNewFormat</span>
+                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@purchasingDocumentItem.LatestTermDateNewFormat</span>
+                                    <span class="po-item-data-header__column posting-date" @hidden>@purchasingDocumentItem.LatestPostingDateNewFormat</span>
                                 </div>
                                 <div class="po-item-data-content__child">
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
-                                        termDateNewDateFormat = "";
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 5 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                        if (purchasingDocumentItem.ActiveStageToNumber < 5 && roleID == "vendor")
                                         {
                                             hidden = "hidden";
                                         }
-                                        days = 0;
-                                        if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
-                                        {
-                                            days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
-                                        }
-
-                                        dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                                        termDate = (DateTime?)null;
-                                        if (dateNewFormat != (DateTime?)null && days > 0)
-                                        {
-                                            termDate = dateNewFormat.Value.AddDays(days);
-                                            termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
-                                        }
-
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                            @if (dateNewFormat != null)
-                                            {
-                                                <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="po-item-data-header__column parking-date" @hidden></span>
-                                                <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
-                                            }
+                                            <span class="po-item-data-header__column parking-date" @hidden>@purchasingDocumentItemChild.LatestParkingDateNewFormat</span>
+                                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@purchasingDocumentItemChild.LatestTermDateNewFormat</span>
+                                            <span class="po-item-data-header__column posting-date" @hidden>@purchasingDocumentItemChild.LatestPostingDateNewFormat</span>
                                         </div>
                                         rowChild++;
                                     }

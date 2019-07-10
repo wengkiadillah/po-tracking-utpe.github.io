@@ -299,29 +299,26 @@
                                     } else if (secondETAHistory != null) {
                                         message += " has updated the ETA for item and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
                                     }
-                                } else if (stage == "5") {
-                                    if (statusID == 3) {
-                                        if (POQty != null) {
-                                            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
-                                        } else {
-                                            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
-                                        }
-                                    } else if (POQty != null) {
-                                        message += " has updated invoice method item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
-                                    } else {
-                                        message += " has updated invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                }
+                                //else if (stage == "5") {
+                                //    if (statusID == 3) {
+                                //        if (POQty != null) {
+                                //            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
+                                //        } else {
+                                //            message += " asked to update invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                //        }
+                                //    } else if (POQty != null) {
+                                //        message += " has updated invoice method item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
+                                //    } else {
+                                //        message += " has updated invoice method for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                //    }
+                                //}
+                                else if (stage == "6") {
+                                    if (invoiceDocument != null) {
+                                        message += " has uploaded Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
                                     }
-                                } else if (stage == "6") {
-                                    if (statusID == 3) {
-                                        if (POQty != null) {
-                                            message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
-                                        } else {
-                                            message += " asked to upload invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
-                                        }
-                                    } else if (POQty != null) {
-                                        message += " has uploaded invoice item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
-                                    } else {
-                                        message += " has uploaded invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
+                                    else {
+                                        message += " has removed Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
                                     }
                                 } else {
                                     message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POQty + " at stage " + stage;
