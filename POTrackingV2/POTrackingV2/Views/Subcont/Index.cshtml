@@ -560,14 +560,8 @@
                                             selectedCheckboxChild = "checked";
                                             disabledChild = "disabled";
                                         }
-
-                                        //if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.Role != "vendor" || purchasingDocumentItem.ConfirmedQuantity != 0)
-                                        ////if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
-                                        //{
-                                        //    hideEditButton = "style=visibility:hidden";
-                                        //}
-                                        //else
-                                        if (ViewBag.CurrentRoleID == "vendor" || purchasingDocumentItemChild.ActiveStageToNumber != 2)
+                                        
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2)
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }
@@ -845,8 +839,8 @@
                                         }
 
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
-                                            @*<span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>*@
-                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>
+                                            <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            <span class="po-item-data-header__column gr-date">@*@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber*@</span>
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
@@ -2342,28 +2336,32 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             contentType: "application/x-www-form-urlencoded; charset=utf-8",
                             //dataType: "json",
                             success: function (response) {
-                                alert(response.responseText);
-                                confirmedDate.attr("disabled", "disabled");
-                                deliveryMethod.attr("disabled", "disabled");
-                                checkedItem.attr("disabled", "disabled");
-                                btnConfirmPO.attr("disabled", "disabled");
-                                btnCancelPO.attr("disabled", "disabled");
-                                inputQty.attr("disabled", "disabled");
-                                //if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
+                                if (response.responseCode == "200") {
+                                    alert(response.responseText);
+                                    confirmedDate.attr("disabled", "disabled");
+                                    deliveryMethod.attr("disabled", "disabled");
+                                    checkedItem.attr("disabled", "disabled");
+                                    btnConfirmPO.attr("disabled", "disabled");
+                                    btnCancelPO.attr("disabled", "disabled");
+                                    inputQty.attr("disabled", "disabled");
+                                    //if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
                                     btnEditItem.attr("style", "visibility:display");
-                                //}
-                                if (isCanceledPOItem == true) {
-                                    btnCancelPO.addClass("selected-negative");
-                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
-                                    donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
-                                    donutRow.find(".donut-chart").first().next().text("Cancel");
-                                } else {
-                                    if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
-                                        stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
-                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+                                    //}
+                                    if (isCanceledPOItem == true) {
+                                        btnCancelPO.addClass("selected-negative");
+                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
+                                        donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
+                                        donutRow.find(".donut-chart").first().next().text("Cancel");
+                                    } else {
+                                        if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
+                                            stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
+                                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+                                        }
+                                        btnConfirmPO.addClass("selected");
                                     }
-                                    btnConfirmPO.addClass("selected");
+                                } else {
+                                    alert(response.responseCode + " - " + response.responseText);
                                 }
                             },
                             error: function (xhr, status, error) {
