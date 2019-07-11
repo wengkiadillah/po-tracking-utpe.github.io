@@ -138,6 +138,7 @@
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
     //}
+
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
