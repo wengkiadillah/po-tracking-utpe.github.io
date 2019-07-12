@@ -69,30 +69,30 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
+
+    @if (roleID == "procurement" || roleID == "administrator")
+    {
+        if (ViewBag.CurrentSearchPOStatus == "negotiated")
+        {
+            @Html.ActionLink("On Going", "Index", "Local", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
+
+        }
+        else if (ViewBag.CurrentSearchPOStatus == "ongoing" || ViewBag.CurrentSearchPOStatus == "")
+        {
+            @Html.ActionLink("Negotiated Items", "Index", "Local", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
+        }
+    }
     <form action="/potracking/Local" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
         <div class="form-group mr-4 frmSearch">
             <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
             <datalist id="data-list"></datalist>
-        </div>
-        <select id="filterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>
+        </div>        
         <div class="form-group mr-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
-        <div class="form-group">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate" placeholder="dd/mm/yyyy" autocomplete="off">
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        <a class="btn btn-info mr-3" href="/Import">Clear</a>
-        <input name="roleID" type="hidden" value="vendor">
-
+        
     </form>
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
@@ -113,26 +113,52 @@
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed != null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
+    // purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+    //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed != null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
 
 
     //if (roleID == "procurement" || roleID == "administrator")
     //{
     //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
     //}
-    if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
-    }
+    //if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    //{
+    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+    //}
 
-    if (currentSearchPOStatus == "newpo")
+    if (purchasingDocumentItems.Count() > 0)
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
-    }
-    else if (currentSearchPOStatus == "ongoing")
-    {
-        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+        
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "x" || x.IsClosed == "l" || x.IsClosed == "lx"));
+
+        if (purchasingDocumentItems.Count() > 0)
+        {
+
+            if (currentSearchPOStatus == "ongoing")
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+            }
+            else if (currentSearchPOStatus == "newpo")
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+            }
+            else if (roleID == "procurement" || roleID == "administrator")
+            {
+                if (currentSearchPOStatus == "negotiated")
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
+                }
+                else
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(currentSearchForMaterial) && purchasingDocumentItems.Count() > 0)
+        {
+            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+        }
     }
 
     if (purchasingDocumentItems.Count() < 1)
@@ -2166,7 +2192,7 @@
                             var hideMT = "mt-customize";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
-                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 5)
+                            if (roleID == "vendor" && purchasingDocumentItem.ActiveStageToNumber < 5)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
@@ -2239,7 +2265,7 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 5)
+                                        if (roleID == "vendor" && purchasingDocumentItemChild.ActiveStageToNumber < 5)
                                         {
                                             hideGR = "style=visibility:hidden";
                                         }
