@@ -446,10 +446,13 @@
                             var childRowStage1 = 1;
                             var latestConfirmedDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                             var latestConfirmedQuantity = purchasingDocumentItem.Quantity;
+                            var confirmedDate = "";
 
                             if (purchasingDocumentItem.ConfirmedDate.HasValue)
                             {
-                                latestConfirmedDate = purchasingDocumentItem.ConfirmedDateView;
+                                latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
+
+                                confirmedDate = purchasingDocumentItem.ConfirmedDateView;
                             }
 
                             if (purchasingDocumentItem.ConfirmedQuantity.HasValue)
@@ -667,10 +670,13 @@
                                             {
                                                 latestConfirmedDate = childPurchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                                 latestConfirmedQuantity = childPurchasingDocumentItem.Quantity;
+                                                confirmedDate = "";
 
                                                 if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
                                                 {
-                                                    latestConfirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
+                                                    latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
+
+                                                    confirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
                                                 }
 
                                                 if (childPurchasingDocumentItem.ConfirmedQuantity.HasValue)
