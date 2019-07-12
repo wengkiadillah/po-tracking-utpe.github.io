@@ -1299,7 +1299,7 @@ namespace POTrackingV2.Controllers
                     Existed_PDI.ActiveStage = "6";
 
                     //insert data QC to alert
-                    int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc field")).Select(x => x.ID).FirstOrDefault();
+                    int masterIssueID = alertDB.MasterIssues.Where(x => x.Name.ToLower().Contains("qc oh")).Select(x => x.ID).FirstOrDefault();
                     //try
                     //{
                     if (masterIssueID > 0)
@@ -1308,7 +1308,7 @@ namespace POTrackingV2.Controllers
                         issueHeader.MasterIssueID = masterIssueID;
                         issueHeader.RaisedBy = User.Identity.Name;
                         issueHeader.DateOfIssue = now;
-                        issueHeader.IssueDescription = "QC Field";
+                        issueHeader.IssueDescription = "QC OH";
                         issueHeader.Created = now;
                         issueHeader.CreatedBy = User.Identity.Name;
                         issueHeader.LastModified = now;
