@@ -341,7 +341,7 @@
                     <div class="po-item-section-header stage-checkbox-header">
                         @{
                             var disabledCheckbox = "";
-                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev && ViewBag.SearchPOStatus == "newpo")
+                            if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
                             {
                                 disabledCheckbox = "disabled";
                             }
@@ -423,10 +423,10 @@
                                     checkItem = "checked";
                                 }
                             }
-                            else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev)
+                            else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev && ViewBag.SearchPOStatus == "newpo")
+                                if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
@@ -473,7 +473,7 @@
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev && purchasingDocumentItem.ActiveStageToNumber != 2)
+                            else if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2)
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -541,7 +541,7 @@
                                         var disabledBtnConfirmCancelChild = "disabled";
                                         var hideEditBtnChild = "";
 
-                                        if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev && ViewBag.SearchPOStatus == "newpo")
+                                        if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
                                         {
                                             disabledChild = "disabled";
                                         }
@@ -560,14 +560,8 @@
                                             selectedCheckboxChild = "checked";
                                             disabledChild = "disabled";
                                         }
-
-                                        //if (purchasingDocumentItem.ConfirmedItem == true || ViewBag.Role != "vendor" || purchasingDocumentItem.ConfirmedQuantity != 0)
-                                        ////if (ViewBag.Role == "vendor" && (((purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ConfirmedQuantity == null) || purchasingDocumentItem.ConfirmedItem == true) || ((purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any( x => x.ConfirmedItem == null && x.ConfirmedQuantity == null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem == true)))))
-                                        //{
-                                        //    hideEditButton = "style=visibility:hidden";
-                                        //}
-                                        //else
-                                        if (ViewBag.CurrentRoleID == "vendor" || purchasingDocumentItemChild.ActiveStageToNumber != 2)
+                                        
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2)
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }
@@ -762,7 +756,7 @@
                             var hideGR = "";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
-                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcontDev && purchasingDocumentItem.ActiveStageToNumber < 4)
+                            if ((ViewBag.CurrentRoleID != ViewBag.RoleSubcontDev && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber < 4)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
@@ -839,14 +833,14 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcontDev && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        if ((ViewBag.CurrentRoleID != ViewBag.RoleSubcontDev && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) && purchasingDocumentItemChild.ActiveStageToNumber < 4)
                                         {
                                             hideGR = "style=visibility:hidden";
                                         }
 
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild" @hideGR>
-                                            @*<span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>*@
-                                            <span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>
+                                            <span class="po-item-data-header__column gr-date">@grDateNewDateFormat</span>
+                                            @*<span class="po-item-data-header__column gr-date">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.DocumentNumber</span>*@
                                             <span class="po-item-data-header__column gr-qty">@purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity / @purchasingDocumentItemChild.ConfirmedQuantity</span>
                                             <span class="po-item-data-header__column gr-complete">@isComplete</span>
                                             @*<span class="po-item-data-header__column inspection-date"></span>
@@ -912,7 +906,7 @@
                                 checkStageProgressItem = true;
                             }
 
-                            if (checkStageProgressItem == false || ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev)
+                            if (checkStageProgressItem == false || (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator))
                             {
                                 isDisabled = "disabled";
                             }
@@ -996,7 +990,7 @@
                             var invoiceDownloadPath = "";
                             var grFullFill = "";
 
-                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev)
+                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 hiddenRemoveFile = "hidden";
                             }
@@ -1016,7 +1010,7 @@
                             }
                             else
                             {
-                                if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
+                                if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) || purchasingDocumentItem.ActiveStageToNumber < 3 || (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || purchasingDocumentItem.ActiveStageToNumber < 4 || purchasingDocumentItem.InvoiceMethod == null)
                                 {
                                     disabledFileInvoice = "disabled";
                                     disabledFileInvoiceUpload = "disabled";
@@ -1051,7 +1045,7 @@
                                         invoiceDownloadPath = "";
                                         grFullFill = "";
 
-                                        if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev)
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                                         {
                                             hiddenRemoveFile = "hidden";
                                         }
@@ -1071,7 +1065,7 @@
                                         }
                                         else
                                         {
-                                            if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
                                             {
                                                 disabledFileInvoice = "disabled";
                                                 disabledFileInvoiceUpload = "disabled";
@@ -1499,7 +1493,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#data-list-" + list).html(element);
                             searchData.css("background", "");
                         } else {
-                            conole.log(response.responseCode + response.responseText);
+                            console.log(response.responseCode + response.responseText);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -2342,28 +2336,32 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             contentType: "application/x-www-form-urlencoded; charset=utf-8",
                             //dataType: "json",
                             success: function (response) {
-                                alert(response.responseText);
-                                confirmedDate.attr("disabled", "disabled");
-                                deliveryMethod.attr("disabled", "disabled");
-                                checkedItem.attr("disabled", "disabled");
-                                btnConfirmPO.attr("disabled", "disabled");
-                                btnCancelPO.attr("disabled", "disabled");
-                                inputQty.attr("disabled", "disabled");
-                                //if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
+                                if (response.responseCode == "200") {
+                                    alert(response.responseText);
+                                    confirmedDate.attr("disabled", "disabled");
+                                    deliveryMethod.attr("disabled", "disabled");
+                                    checkedItem.attr("disabled", "disabled");
+                                    btnConfirmPO.attr("disabled", "disabled");
+                                    btnCancelPO.attr("disabled", "disabled");
+                                    inputQty.attr("disabled", "disabled");
+                                    //if (role == "subcontdev" || maxQuantity != confirmedItemQty.val() || deliveryDate != confirmedDate.val()) {
                                     btnEditItem.attr("style", "visibility:display");
-                                //}
-                                if (isCanceledPOItem == true) {
-                                    btnCancelPO.addClass("selected-negative");
-                                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
-                                    donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
-                                    donutRow.find(".donut-chart").first().next().text("Cancel");
-                                } else {
-                                    if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
-                                        stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
-                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+                                    //}
+                                    if (isCanceledPOItem == true) {
+                                        btnCancelPO.addClass("selected-negative");
+                                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", 75.39822368615503);
+                                        donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
+                                        donutRow.find(".donut-chart").first().next().text("Cancel");
+                                    } else {
+                                        if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
+                                            stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
+                                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
+                                        }
+                                        btnConfirmPO.addClass("selected");
                                     }
-                                    btnConfirmPO.addClass("selected");
+                                } else {
+                                    alert(response.responseCode + " - " + response.responseText);
                                 }
                             },
                             error: function (xhr, status, error) {

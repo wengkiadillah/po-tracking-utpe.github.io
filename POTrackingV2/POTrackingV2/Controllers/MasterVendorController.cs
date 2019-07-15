@@ -247,12 +247,12 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listRoleType = db.RolesTypes.ToList();
-                listVendor = db.Vendors.Where(x =>x.Code.Length == 5).ToList();
+                listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                 ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
 
                 return View();
-            }      
+            }
         }
 
         [HttpPost]
@@ -440,7 +440,7 @@ namespace POTrackingV2.Controllers
             {
                 try
                 {
-                    var subcontDevVendor = db.SubcontDevVendors.Where(x => x.Username == username).Select(x=>x.VendorCode).ToList();
+                    var subcontDevVendor = db.SubcontDevVendors.Where(x => x.Username == username).Select(x => x.VendorCode).ToList();
 
                     return Json(new { success = true, responseText = "OK", arrayDataVendors = subcontDevVendor }, JsonRequestBehavior.AllowGet);
                 }
@@ -507,13 +507,42 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchString = search;
             using (POTrackingEntities db = new POTrackingEntities())
             {
-
-                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 5));
+                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).GroupBy(x => x.Username).Select(x => x.FirstOrDefault()).ToList().ToPagedList(page ?? 1, 5));
             }
         }
 
         [HttpGet]
+        public JsonResult GetUserFromValue(string value)
+        {
+            UserManagementEntities dbUserManagement = new UserManagementEntities();
+            try
+            {
+                object data = null;
+                value = value.ToLower();
 
+                data = dbUserManagement.Users.Where(x => x.Username.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.Username,
+                        MatchEvaluation = x.Username.ToLower().IndexOf(value)
+                    }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
+
+                if (data != null)
+                {
+                    return Json(new { success = true, responseCode = "200", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public ActionResult EditUserVendor(Guid ID)
         {
             using (POTrackingEntities db = new POTrackingEntities())
@@ -527,12 +556,11 @@ namespace POTrackingV2.Controllers
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
                 return View(selectedUserVendor);
             }
-        }       
+        }
 
         [HttpPost]
         public ActionResult EditUserVendor(Guid ID, UserVendor objEditUser)
         {
-
             try
             {
                 using (POTrackingEntities db = new POTrackingEntities())
@@ -540,7 +568,7 @@ namespace POTrackingV2.Controllers
                     listRoleType = db.RolesTypes.ToList();
                     listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                     var selectedUserVendor = db.UserVendors.Find(ID);
-                    var selectedUserRole = db.UserRoleTypes.Where(x=>x.Username== selectedUserVendor.Username).FirstOrDefault();
+                    var selectedUserRole = db.UserRoleTypes.Where(x => x.Username == selectedUserVendor.Username).FirstOrDefault();
 
                     ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name", selectedUserRole.RolesTypeID);
                     ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName", selectedUserVendor.VendorCode);
@@ -565,13 +593,13 @@ namespace POTrackingV2.Controllers
 
                         db.SaveChanges();
                         ModelState.Clear();
-                        return RedirectToAction("ViewUserVendor","MasterVendor");
+                        return RedirectToAction("ViewUserVendor", "MasterVendor");
                     }
                     ViewBag.ErrorMessage = "User Already Exist!";
                     return View();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
                 return View();
@@ -625,16 +653,12 @@ namespace POTrackingV2.Controllers
                 ModelState.Clear();
                 return RedirectToAction("ViewUserVendor");
             }
-
         }
 
 
         [HttpPost]
         public ActionResult ResetPasswordUserVendor(PasswordView objPassword)
         {
-
-
-
             return View();
 
         }

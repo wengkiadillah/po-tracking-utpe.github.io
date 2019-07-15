@@ -111,11 +111,17 @@ namespace POTrackingV2.Controllers
             }
             else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                if (searchPOStatus == "negotiated")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                }
+                else
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                }
 
-                
             }
-
+            
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
             ViewBag.CurrentSearchMaterial = searchMaterial;
@@ -522,8 +528,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
                             inputPurchasingDocumentItem.Quantity = databasePurchasingDocumentItem.Quantity;
-                            //inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
-                            //inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
+                            inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
+                            inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
                             //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -732,6 +739,22 @@ namespace POTrackingV2.Controllers
                         notification.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notification);
+
+                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
+                        {
+                            Notification notificationSAP = new Notification();
+                            notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                            notificationSAP.StatusID = 4;
+                            notificationSAP.Stage = "1";
+                            notificationSAP.Role = "procurement";
+                            notificationSAP.isActive = true;
+                            notificationSAP.Created = now;
+                            notificationSAP.CreatedBy = User.Identity.Name;
+                            notificationSAP.Modified = now;
+                            notificationSAP.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notificationSAP);
+                        }
                     }
                 }
 
@@ -1986,12 +2009,12 @@ namespace POTrackingV2.Controllers
                                 fileInvoice.InputStream.CopyTo(fileStream);
                             }
 
-                            databasePurchasingDocumentItem.ActiveStage = "7";
+                            databasePurchasingDocumentItem.ActiveStage = "6";
                             databasePurchasingDocumentItem.InvoiceDocument = fileName;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
@@ -2063,12 +2086,12 @@ namespace POTrackingV2.Controllers
 
                             System.IO.File.Delete(pathWithfileName);
 
-                            databasePurchasingDocumentItem.ActiveStage = "6";
+                            databasePurchasingDocumentItem.ActiveStage = "5";
                             databasePurchasingDocumentItem.InvoiceDocument = null;
                             databasePurchasingDocumentItem.LastModified = now;
                             databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                            List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                             foreach (var previousNotification in previousNotifications)
                             {
                                 previousNotification.isActive = false;
