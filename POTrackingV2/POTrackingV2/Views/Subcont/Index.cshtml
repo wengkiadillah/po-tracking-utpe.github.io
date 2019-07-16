@@ -2091,7 +2091,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             //if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
                                 btnEditItem.addClass("editable");
                             //}
-                            if (role == "subcontdev" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
+                            if (role == "subcontdev"  || role == "administrator" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                                 donutRow.addClass("progressChanged");
                             }
@@ -2156,7 +2156,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         //Material:
                                         //Description:
                                     });
-                                    if (role == "subcontdev") {
+                                    if (role == "subcontdev" || role == "administrator") {
                                         $(this).find(".checkbox-item").addClass("isUpdated");
                                         $(this).find(".btn-positive").addClass("buttonClicked");
                                         $(this).find(".btn").addClass("isUpdated");
@@ -2353,7 +2353,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                         donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
                                         donutRow.find(".donut-chart").first().next().text("Cancel");
                                     } else {
-                                        if (role == "subcontdev" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
+                                        if (role == "subcontdev" || role == "administrator" || (maxQuantity == confirmedItemQty.val() && deliveryDate == confirmedDate.val())) {
                                             stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").removeAttr("disabled");
                                             donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                                             donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
@@ -2490,7 +2490,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                         });
                     }
-                } else if (role == "subcontdev") {
+                } else if (role == "subcontdev" || role == "administrator") {
                     obj.preventDefault();
                     var pdItemID = $(this).closest(".po-item-data-content").find("input.pd-item-id").val();
                     var confirmedItemQty = $(this).closest(".po-item-data-content").find(".pd-item-confirm-qty");
@@ -2516,7 +2516,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 donutRow.find(".donut-chart").first().find("circle").first().attr("stroke", "#8b0000");
                                 donutRow.find(".donut-chart").first().next().text("Cancel");
                             } else {
-                                if (role == "subcontdev") {
+                                if (role == "subcontdev" || role == "administrator") {
                                     stage2.find(".po-item-data-content.row-" + row.closest(".po-item-data-content").attr("row") + "-" + row.closest(".po-item-data-content").attr("child") + " .sequences-modal").removeAttr("disabled");
                                     donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                                     donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
@@ -2566,7 +2566,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .pd-item-confirm-qty").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".po-item-data-content__child .partial-date").removeAttr("disabled");
                 }
-            } else if (role == "subcontdev") {
+            } else if (role == "subcontdev" || role == "administrator") {
                 if ($(this).closest(".po-item-data-content").attr("child") > 0) {
                     $(this).closest(".po-item-data-content").find(".checkbox-item").removeAttr("disabled");
                     $(this).closest(".po-item-data-content").find(".btn").removeAttr("disabled");
@@ -2788,7 +2788,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
-            if (role == "subcontdev") {
+            if (role == "subcontdev" || role == "administrator") {
                 $("#SaveSequencesProgress").hide();
             }
 
