@@ -461,7 +461,7 @@ namespace POTrackingV2.Controllers
                     myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && ! vendorSubcont.Contains(x.VendorCode))
+                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
                                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                     if (myUserNRPs.Count > 0)

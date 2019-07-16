@@ -251,7 +251,10 @@
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10) at stage " + stage;
                                 } else if (stage == "1") {
-                                    if (confirmedItem == true) {
+                                    if (statusID == "4") {
+                                        message += " Please update Data " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at SAP";
+                                        assignedFrom = "";
+                                    } else if (confirmedItem == true) {
                                         if (targetRole = "vendor") {
                                             message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to update ETA";
                                         }

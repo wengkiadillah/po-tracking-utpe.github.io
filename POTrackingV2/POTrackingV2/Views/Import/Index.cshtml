@@ -3257,7 +3257,7 @@
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                        if (purchasingDocumentItem.ActiveStageToNumber < 10 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
                                         {
                                             hidden = "hidden";
                                         }
