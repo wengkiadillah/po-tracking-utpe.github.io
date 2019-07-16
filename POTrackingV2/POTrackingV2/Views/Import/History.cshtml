@@ -8,25 +8,6 @@
     var iisAppName = ViewBag.IISAppName;
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
-
-    //if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    //{
-    //    currentSearchForMaterial = currentSearchForMaterial.ToLower();
-    //}
-    //else
-    //{
-    //    currentSearchForMaterial = string.Empty;
-    //}
-
-    //if (!string.IsNullOrEmpty(currentSearchPOStatus))
-    //{
-    //    currentSearchPOStatus = currentSearchPOStatus.ToLower();
-    //}
-    //else
-    //{
-    //    currentSearchPOStatus = string.Empty;
-    //}
-
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -121,7 +102,7 @@
 
     if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
     }
 
     if (purchasingDocumentItems.Count() < 1)
