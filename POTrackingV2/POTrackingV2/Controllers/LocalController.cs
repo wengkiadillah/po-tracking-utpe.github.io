@@ -28,7 +28,7 @@ namespace POTrackingV2.Controllers
 
         #region PAGELIST
         // GET: Local
-        public ActionResult Index(string searchPOStatus,string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -73,14 +73,14 @@ namespace POTrackingV2.Controllers
 
                 var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
                                         .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
-                                        //.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
+                //.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
 
                 if (myUserNRPs.Count > 0)
                 {
-                   foreach (var myUserNRP in myUserNRPs)
+                    foreach (var myUserNRP in myUserNRPs)
                     {
-                       noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                   }
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
                 }
 
                 pOes = pOes.Except(noShowPOes);
@@ -107,7 +107,7 @@ namespace POTrackingV2.Controllers
             else if (searchPOStatus == "newpo")
             {
                 pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
-                
+
             }
             else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
             {
@@ -121,7 +121,7 @@ namespace POTrackingV2.Controllers
                 }
 
             }
-            
+
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
             ViewBag.CurrentSearchMaterial = searchMaterial;
@@ -149,7 +149,7 @@ namespace POTrackingV2.Controllers
 
             if (!String.IsNullOrEmpty(searchMaterial))
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial) || y.MaterialVendor.Contains(searchMaterial) ));
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial) || y.MaterialVendor.Contains(searchMaterial)));
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))
@@ -238,6 +238,124 @@ namespace POTrackingV2.Controllers
             {
                 return View(ex.Message + "-----" + ex.StackTrace);
             }
+        }
+
+        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            //ViewBag.MyUser = myUser;
+            //ViewBag.Role = role;
+            //ViewBag.RoleType = roleType.RolesType.Name.ToLower();
+
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            //{
+            //    return RedirectToAction("Index", "Local");
+            //}
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            //{
+            //    return RedirectToAction("Index", "SubCont");
+            //}
+            //if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            //{
+            //    return RedirectToAction("Index", "SubCont");
+            //}
+
+            var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
+                                //.Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                .Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                .Include(x => x.Vendor)
+                                .AsQueryable();
+
+
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+
+
+                List<string> myUserNRPs = new List<string>();
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+                //.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
+
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
+
+                pOes = pOes.Except(noShowPOes);
+            }
+            else if (role == LoginConstants.RoleAdministrator.ToLower())
+            {
+                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
+                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
+                //               .AsQueryable();
+            }
+            else
+            {
+                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+            }
+
+
+
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+            ViewBag.CurrentStartPODate = searchStartPODate;
+            ViewBag.CurrentEndPODate = searchEndPODate;
+            ViewBag.CurrentRoleID = role.ToLower();
+            //ViewBag.CurrentSearchPOStatus = searchPOStatus;
+            ViewBag.POCount = pOes.Count(); // DEBUG 
+            ViewBag.IISAppName = iisAppName;
+
+            List<DelayReason> delayReasons = db.DelayReasons.ToList();
+
+            ViewBag.DelayReasons = delayReasons;
+
+
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.Contains(searchPONumber));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.Contains(searchVendorName));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial) || y.MaterialVendor.Contains(searchMaterial)));
+            }
+
+            if (!String.IsNullOrEmpty(searchStartPODate))
+            {
+                DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date >= startDate);
+            }
+
+            if (!String.IsNullOrEmpty(searchEndPODate))
+            {
+
+                DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                pOes = pOes.Where(x => x.Date <= endDate);
+            }
+
+
+
+            //return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         [HttpGet]
