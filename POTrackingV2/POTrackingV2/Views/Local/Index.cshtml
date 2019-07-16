@@ -31,7 +31,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-<h1 class="page-title"><a href="#" class="page-subtitle">PO Tracking Local System</a><span class="page-subtitle">History</span></h1>
+<h1 class="page-title"><a href="#" class="page-subtitle">PO Tracking Local System</a><span class="page-subtitle"><a href="@Url.Action("History", "Local")">History</a></span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {

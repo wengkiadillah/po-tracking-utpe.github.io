@@ -648,6 +648,7 @@
     <Content Include="Views\Subcont\Report.cshtml" />
     <Content Include="Views\Local\Report.cshtml" />
     <Content Include="Views\Import\History.cshtml" />
+    <Content Include="Views\Local\History.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
