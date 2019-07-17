@@ -8,23 +8,7 @@
     var iisAppName = ViewBag.IISAppName;
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
-    if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    {
-        currentSearchForMaterial = currentSearchForMaterial.ToLower();
-    }
-    else
-    {
-        currentSearchForMaterial = string.Empty;
-    }
 
-    if (!string.IsNullOrEmpty(currentSearchPOStatus))
-    {
-        currentSearchPOStatus = currentSearchPOStatus.ToLower();
-    }
-    else
-    {
-        currentSearchPOStatus = string.Empty;
-    }
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -74,12 +58,12 @@
     {
         if (ViewBag.CurrentSearchPOStatus == "negotiated")
         {
-            @Html.ActionLink("On Going", "Index", "Import", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("On Going", "Index", "Import", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
 
         }
         else if (ViewBag.CurrentSearchPOStatus == "ongoing" || ViewBag.CurrentSearchPOStatus == "")
         {
-            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, page = 1 }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
         }
     }
 
@@ -106,13 +90,9 @@
             <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
             <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
             <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
-            @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
-            <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
-            @if (roleID == "procurement" || roleID == "administrator")
-            {
-                <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
-            }
+            @*<li class="pagination-list__item" onclick="paginationShow(10)">9</li>*@
+            <li class="pagination-list__item" onclick="paginationShow(11)">9</li>
         </ul>
     </div>
 </div>
@@ -120,15 +100,6 @@
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
-
-    //if (currentSearchPOStatus == "newpo")
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
-    //}
-    //else if (currentSearchPOStatus == "ongoing")
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
-    //}
 
     if (purchasingDocumentItems.Count() > 0)
     {
@@ -158,9 +129,12 @@
             }
         }
 
-        if (!string.IsNullOrEmpty(currentSearchForMaterial) && purchasingDocumentItems.Count() > 0)
+        if (purchasingDocumentItems.Count() > 0)
         {
-            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+            if (!string.IsNullOrEmpty(currentSearchForMaterial))
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
+            }
         }
     }
 
@@ -2993,234 +2967,234 @@
                             }
                         </div>*@
                 </div>
-                <div class="po-item-section stage-10">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 9</p>
-                    </div>
-                    <div class="po-item-section-body">
-                        <div class="po-item-data-header">
-                            <span class="po-item-data-header__text">Upload Invoice</span>
+                @*<div class="po-item-section stage-10">
+                        <div class="po-item-section-header justify-content-center">
+                            <p class="mb-0">Stage 9</p>
                         </div>
-                        @{
-                            var rowStage10 = 1;
-                        }
-                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                        {
-                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                            var childRowStage10 = 1;
-
-                            var st10ItemID = "st10-item-id";
-                            var st10FormUpload = "st10-form-upload";
-                            var st10FormUploaded = "st10-form-uploaded";
-                            var st10FileInvoice = "st10-file-invoice";
-                            var st10FileInvoiceUpload = "st10-file-invoice-upload";
-                            var st10FileInvoiceRemove = "st10-file-invoice-remove";
-                            var st10FileInvoiceDownload = "st10-file-invoice-download";
-
-                            var disabledFileInvoice = "disabled";
-                            var disabledFileInvoiceUpload = "disabled";
-                            var hiddenFormUploading = "";
-                            var hiddenFormUploaded = "hidden";
-                            var invoiceDownloadPath = "";
-
-                            if (purchasingDocumentItem.InvoiceDocument != null)
-                            {
-                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", purchasingDocumentItem.InvoiceDocument);
-                                hiddenFormUploading = "hidden";
-                                hiddenFormUploaded = "";
-                            }
-                            else
-                            {
-                                if (roleID == "vendor")
-                                {
-                                    if (purchasingDocumentItem.ActiveStage != "2a")
-                                    {
-                                        if (purchasingDocumentItem.ActiveStageToNumber > 7)
-                                        {
-                                            disabledFileInvoice = "";
-                                            disabledFileInvoiceUpload = "";
-                                        }
-                                    }
-                                }
-                            }
-
-                            <div class="po-item-data-content row-@rowStage10">
-                                <div class="po-item-data-content__outer">
-                                    <div class="po-item-data-header__column">
-                                        <input hidden class="@st10ItemID" value="@purchasingDocumentItem.ID" />
-                                        <div class="form-inline @st10FormUpload" @hiddenFormUploading>
-                                            <div class="form-group mr-2">
-                                                <input type="file" class="form-control with-icon @st10FileInvoice" @disabledFileInvoice>
-                                                <i class="fas fa-paperclip form-type-icon"></i>
-                                            </div>
-                                            <button class="btn btn-positive @st10FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
-                                        </div>
-                                        <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
-                                            <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                            @if (roleID == "vendor")
-                                            {
-                                                <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="po-item-data-content__child">
-                                    @if (childPurchasingDocumentItems.Count() > 0)
-                                    {
-                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                        {
-                                            disabledFileInvoice = "disabled";
-                                            disabledFileInvoiceUpload = "disabled";
-                                            hiddenFormUploading = "";
-                                            hiddenFormUploaded = "hidden";
-                                            invoiceDownloadPath = "";
-
-                                            if (childPurchasingDocumentItem.InvoiceDocument != null)
-                                            {
-                                                invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", childPurchasingDocumentItem.InvoiceDocument);
-                                                hiddenFormUploading = "hidden";
-                                                hiddenFormUploaded = "";
-                                            }
-                                            else
-                                            {
-                                                if (roleID == "vendor")
-                                                {
-                                                    if (childPurchasingDocumentItem.ActiveStage != "2a")
-                                                    {
-                                                        if (childPurchasingDocumentItem.ActiveStageToNumber > 7)
-                                                        {
-                                                            disabledFileInvoice = "";
-                                                            disabledFileInvoiceUpload = "";
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            <div class="po-item-data-content row-@rowStage10-@childRowStage10" row="@rowStage10" child="@childRowStage10">
-                                                <div class="po-item-data-header__column">
-                                                    <input hidden class="@st10ItemID" value="@childPurchasingDocumentItem.ID" />
-                                                    <div class="form-inline @st10FormUpload" @hiddenFormUploading>
-                                                        <div class="form-group mr-2">
-                                                            <input type="file" class="form-control with-icon @st10FileInvoice" @disabledFileInvoice>
-                                                            <i class="fas fa-paperclip form-type-icon"></i>
-                                                        </div>
-                                                        <button class="btn btn-positive @st10FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
-                                                    </div>
-                                                    <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
-                                                        <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
-                                                        @if (roleID == "vendor")
-                                                        {
-                                                            <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            childRowStage10++;
-                                        }
-                                    }
-                                </div>
+                        <div class="po-item-section-body">
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text">Upload Invoice</span>
                             </div>
-                            rowStage10++;
-                        }
-                    </div>
-                </div>
-                <div class="po-item-section stage-11">
-                    <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 10</p>
-                    </div>
-                    @*<div class="po-item-section-body">
-            @{
-                row = 1;
-                var hidden = "";
-                var hiddenPayTerms = "";
-
-                if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                {
-                    hiddenPayTerms = "hidden";
-                }
-            }
-            <div class="po-item-data-header">
-                <span class="po-item-data-header__text parking-date">Parking Date</span>
-                <span class="po-item-data-header__text term-date" @hiddenPayTerms>Term Date</span>
-            </div>
-            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-            {
-                var days = 0;
-                var rowChild = 1;
-                if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
-                {
-                    days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
-                }
-
-                if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                {
-                    hidden = "hidden";
-                }
-                var termDateNewDateFormat = "";
-
-                DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                DateTime? termDate = (DateTime?)null;
-                if (dateNewFormat != (DateTime?)null && days > 0)
-                {
-                    termDate = dateNewFormat.Value.AddDays(days);
-                    termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
-                }
-
-                <div class="po-item-data-content row-@row" row="@row">
-                    <div class="po-item-data-content__outer">
-                        @if (dateNewFormat != null)
-                        {
-                            <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
-                        }
-                        else
-                        {
-                            <span class="po-item-data-header__column parking-date" @hidden></span>
-                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
-                        }
-                    </div>
-                    <div class="po-item-data-content__child">
-                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
-                        {
-                            termDateNewDateFormat = "";
-                            hidden = "";
-                            if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                            {
-                                hidden = "hidden";
+                            @{
+                                var rowStage10 = 1;
                             }
-                            days = 0;
-                            if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                             {
-                                days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
-                            }
+                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                                var childRowStage10 = 1;
 
-                            dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                            termDate = (DateTime?)null;
-                            if (dateNewFormat != (DateTime?)null && days > 0)
-                            {
-                                termDate = dateNewFormat.Value.AddDays(days);
-                                termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
-                            }
+                                var st10ItemID = "st10-item-id";
+                                var st10FormUpload = "st10-form-upload";
+                                var st10FormUploaded = "st10-form-uploaded";
+                                var st10FileInvoice = "st10-file-invoice";
+                                var st10FileInvoiceUpload = "st10-file-invoice-upload";
+                                var st10FileInvoiceRemove = "st10-file-invoice-remove";
+                                var st10FileInvoiceDownload = "st10-file-invoice-download";
 
-                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                @if (dateNewFormat != null)
+                                var disabledFileInvoice = "disabled";
+                                var disabledFileInvoiceUpload = "disabled";
+                                var hiddenFormUploading = "";
+                                var hiddenFormUploaded = "hidden";
+                                var invoiceDownloadPath = "";
+
+                                if (purchasingDocumentItem.InvoiceDocument != null)
                                 {
-                                    <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
+                                    invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", purchasingDocumentItem.InvoiceDocument);
+                                    hiddenFormUploading = "hidden";
+                                    hiddenFormUploaded = "";
                                 }
                                 else
                                 {
-                                    <span class="po-item-data-header__column parking-date" @hidden></span>
-                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
+                                    if (roleID == "vendor")
+                                    {
+                                        if (purchasingDocumentItem.ActiveStage != "2a")
+                                        {
+                                            if (purchasingDocumentItem.ActiveStageToNumber > 7)
+                                            {
+                                                disabledFileInvoice = "";
+                                                disabledFileInvoiceUpload = "";
+                                            }
+                                        }
+                                    }
                                 }
-                            </div>
-                            rowChild++;
-                        }
+
+                                <div class="po-item-data-content row-@rowStage10">
+                                    <div class="po-item-data-content__outer">
+                                        <div class="po-item-data-header__column">
+                                            <input hidden class="@st10ItemID" value="@purchasingDocumentItem.ID" />
+                                            <div class="form-inline @st10FormUpload" @hiddenFormUploading>
+                                                <div class="form-group mr-2">
+                                                    <input type="file" class="form-control with-icon @st10FileInvoice" @disabledFileInvoice>
+                                                    <i class="fas fa-paperclip form-type-icon"></i>
+                                                </div>
+                                                <button class="btn btn-positive @st10FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
+                                            </div>
+                                            <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
+                                                <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                @if (roleID == "vendor")
+                                                {
+                                                    <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @if (childPurchasingDocumentItems.Count() > 0)
+                                        {
+                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                            {
+                                                disabledFileInvoice = "disabled";
+                                                disabledFileInvoiceUpload = "disabled";
+                                                hiddenFormUploading = "";
+                                                hiddenFormUploaded = "hidden";
+                                                invoiceDownloadPath = "";
+
+                                                if (childPurchasingDocumentItem.InvoiceDocument != null)
+                                                {
+                                                    invoiceDownloadPath = Path.Combine("/", iisAppName, "Files/Import/Invoice", childPurchasingDocumentItem.InvoiceDocument);
+                                                    hiddenFormUploading = "hidden";
+                                                    hiddenFormUploaded = "";
+                                                }
+                                                else
+                                                {
+                                                    if (roleID == "vendor")
+                                                    {
+                                                        if (childPurchasingDocumentItem.ActiveStage != "2a")
+                                                        {
+                                                            if (childPurchasingDocumentItem.ActiveStageToNumber > 7)
+                                                            {
+                                                                disabledFileInvoice = "";
+                                                                disabledFileInvoiceUpload = "";
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                <div class="po-item-data-content row-@rowStage10-@childRowStage10" row="@rowStage10" child="@childRowStage10">
+                                                    <div class="po-item-data-header__column">
+                                                        <input hidden class="@st10ItemID" value="@childPurchasingDocumentItem.ID" />
+                                                        <div class="form-inline @st10FormUpload" @hiddenFormUploading>
+                                                            <div class="form-group mr-2">
+                                                                <input type="file" class="form-control with-icon @st10FileInvoice" @disabledFileInvoice>
+                                                                <i class="fas fa-paperclip form-type-icon"></i>
+                                                            </div>
+                                                            <button class="btn btn-positive @st10FileInvoiceUpload" @disabledFileInvoiceUpload>Upload</button>
+                                                        </div>
+                                                        <div class="file-uploaded @st10FormUploaded" @hiddenFormUploaded>
+                                                            <p class="mb-0"> <a class="@st10FileInvoiceDownload" href="@invoiceDownloadPath">Invoice uploaded </a> <i class="fas fa-check-circle success-icon"></i></p>
+                                                            @if (roleID == "vendor")
+                                                            {
+                                                                <a href="#" class="danger-link @st10FileInvoiceRemove">Remove?</a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                childRowStage10++;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                rowStage10++;
+                            }
+                        </div>
+                    </div>*@
+                <div class="po-item-section stage-11">
+                    <div class="po-item-section-header justify-content-center">
+                        <p class="mb-0">Stage 9</p>
                     </div>
-                </div>
-                row++;
-            }
-        </div>*@
+                    @*<div class="po-item-section-body">
+                            @{
+                                row = 1;
+                                var hidden = "";
+                                var hiddenPayTerms = "";
+
+                                if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                {
+                                    hiddenPayTerms = "hidden";
+                                }
+                            }
+                            <div class="po-item-data-header">
+                                <span class="po-item-data-header__text parking-date">Parking Date</span>
+                                <span class="po-item-data-header__text term-date" @hiddenPayTerms>Term Date</span>
+                            </div>
+                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                            {
+                                var days = 0;
+                                var rowChild = 1;
+                                if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
+                                {
+                                    days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
+                                }
+
+                                if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                {
+                                    hidden = "hidden";
+                                }
+                                var termDateNewDateFormat = "";
+
+                                DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                                DateTime? termDate = (DateTime?)null;
+                                if (dateNewFormat != (DateTime?)null && days > 0)
+                                {
+                                    termDate = dateNewFormat.Value.AddDays(days);
+                                    termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
+                                }
+
+                                <div class="po-item-data-content row-@row" row="@row">
+                                    <div class="po-item-data-content__outer">
+                                        @if (dateNewFormat != null)
+                                        {
+                                            <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
+                                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="po-item-data-header__column parking-date" @hidden></span>
+                                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
+                                        }
+                                    </div>
+                                    <div class="po-item-data-content__child">
+                                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
+                                        {
+                                            termDateNewDateFormat = "";
+                                            hidden = "";
+                                            if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                            {
+                                                hidden = "hidden";
+                                            }
+                                            days = 0;
+                                            if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
+                                            {
+                                                days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
+                                            }
+
+                                            dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
+                                            termDate = (DateTime?)null;
+                                            if (dateNewFormat != (DateTime?)null && days > 0)
+                                            {
+                                                termDate = dateNewFormat.Value.AddDays(days);
+                                                termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
+                                            }
+
+                                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
+                                                @if (dateNewFormat != null)
+                                                {
+                                                    <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
+                                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="po-item-data-header__column parking-date" @hidden></span>
+                                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
+                                                }
+                                            </div>
+                                            rowChild++;
+                                        }
+                                    </div>
+                                </div>
+                                row++;
+                            }
+                        </div>*@
 
 
                     <div class="po-item-section-body">

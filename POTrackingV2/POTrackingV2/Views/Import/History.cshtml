@@ -8,23 +8,6 @@
     var iisAppName = ViewBag.IISAppName;
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
-    if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    {
-        currentSearchForMaterial = currentSearchForMaterial.ToLower();
-    }
-    else
-    {
-        currentSearchForMaterial = string.Empty;
-    }
-
-    if (!string.IsNullOrEmpty(currentSearchPOStatus))
-    {
-        currentSearchPOStatus = currentSearchPOStatus.ToLower();
-    }
-    else
-    {
-        currentSearchPOStatus = string.Empty;
-    }
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -100,13 +83,9 @@
             <li class="pagination-list__item" onclick="paginationShow(6)">5</li>
             <li class="pagination-list__item" onclick="paginationShow(7)">6</li>
             <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
-            @*<li class="pagination-list__item" onclick="paginationShow(9)">8</li>*@
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
-            <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
-            @if (roleID == "procurement" || roleID == "administrator")
-            {
-                <li class="pagination-list__item" onclick="paginationShow(11)">10</li>
-            }
+            @*<li class="pagination-list__item" onclick="paginationShow(10)">9</li>*@
+            <li class="pagination-list__item" onclick="paginationShow(11)">9</li>
         </ul>
     </div>
 </div>
@@ -123,7 +102,7 @@
 
     if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
-        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
     }
 
     if (purchasingDocumentItems.Count() < 1)
@@ -2214,7 +2193,7 @@
                         }
                     </div>
                 </div>
-                <div class="po-item-section stage-10">
+                @*<div class="po-item-section stage-10">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 9</p>
                     </div>
@@ -2316,10 +2295,10 @@
                             rowStage10++;
                         }
                     </div>
-                </div>
+                </div>*@
                 <div class="po-item-section stage-11">
                     <div class="po-item-section-header justify-content-center">
-                        <p class="mb-0">Stage 10</p>
+                        <p class="mb-0">Stage 9</p>
                     </div>
 
                     <div class="po-item-section-body">
