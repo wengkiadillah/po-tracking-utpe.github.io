@@ -113,7 +113,7 @@ namespace POTrackingV2.Controllers
             {
                 if (searchPOStatus == "negotiated")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.ConfirmedItem != false));
                 }
                 else
                 {
@@ -1216,7 +1216,7 @@ namespace POTrackingV2.Controllers
 
         // POST: Local/ProcurementDeclineFirstEta
         [HttpPost]
-        public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
+        public ActionResult ProcurementDeclinezFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (!(myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower()))
