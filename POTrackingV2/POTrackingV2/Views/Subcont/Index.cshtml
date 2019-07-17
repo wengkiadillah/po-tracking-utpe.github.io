@@ -1535,8 +1535,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             });
 
 
-            $('#startPODate').datepicker({ autoHide: true });
-            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            $('#startPODate').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+            $('#endPODate').datepicker({ format: 'dd/mm/YYYY', autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
             $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
 
             var tempArray = [];
