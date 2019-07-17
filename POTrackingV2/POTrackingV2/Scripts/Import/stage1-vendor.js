@@ -11,7 +11,7 @@ $(".form-date.st1-partial-date").on('input focus', function (e) {
     this.reportValidity();
 });
 
-//Check / Unchecked All PO Items
+//Check / Unchecked All PO Itemsf
 $("input.st1-checkbox-all").on("change", function (obj) {
     var checkboxAll = $(this);
     $(this).closest(".po-item-section").find("input.st1-checkbox-item").each(function (index) {
@@ -377,7 +377,6 @@ $(".st1-accept-all-po").on("click", function (obj) {
         var validateMinQuantity = true;
         var validateDate = true;
         var dateValidationArray = [];
-        var dateParts = [];
         var partialDateObject;
         var itemPartialPurchasingDocumentItems = [];
 
@@ -569,8 +568,9 @@ $(".st1-accept-all-po").on("click", function (obj) {
 
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
                     console.log(response.isSameAsProcs[i]);
-                    if (response.isSameAsProcs[i] === true) {
+                    console.log(response.isTwentyFivePercents[i]);
 
+                    if (response.isSameAsProcs[i] === true) {
                         if (response.isTwentyFivePercents[i] === true) {
                             $(".next-row-updated").first().removeAttr("disabled");
                             $(".next-row-updated").first().removeClass("next-row-updated");
