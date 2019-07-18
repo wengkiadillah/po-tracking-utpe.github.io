@@ -231,7 +231,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         editButton.addClass("row-updated-link");
 
                         nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
-                        nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
+                        //nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
                         nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
 
                         donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
@@ -253,7 +253,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                                 nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
                                 nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
-                                nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
+                                //nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
                                 nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
 
                                 donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
@@ -294,7 +294,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                 $(".row-updated-link-negative").removeClass("row-updated-link-negative");
 
                 for (var i = 0; i < response.isSameAsProcs.length; i++) {
-                    console.log(response.isSameAsProcs[i]);
+                    //console.log(response.isSameAsProcs[i]);
+                    //console.log(response.isTwentyFivePercents[i]);
                     if (response.isSameAsProcs[i] === true) {
                         if (response.isTwentyFivePercents[i] === true) {
                             $(".next-row-updated").first().removeAttr("disabled");
@@ -424,7 +425,7 @@ $(".st1-accept-item").on("click", function (obj) {
     var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
     nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
-    nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
+    //nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
     nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
     donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
     donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
@@ -477,7 +478,7 @@ $(".st1-accept-item").on("click", function (obj) {
             nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
 
             nextDataContent.find(".st2-checkbox-item").first().addClass("next-row-updated");
-            nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
+            //nextDataContent.find(".st2-confirm-first-eta").first().addClass("next-row-updated");
             nextDataContent.find(".st2-first-eta-date").first().addClass("next-row-updated-input");
             donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
             donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");

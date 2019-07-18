@@ -610,6 +610,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
                             inputPurchasingDocumentItem.ItemNumber = databasePurchasingDocumentItem.ItemNumber;
                             inputPurchasingDocumentItem.Material = databasePurchasingDocumentItem.Material;
+                            inputPurchasingDocumentItem.MaterialVendor = databasePurchasingDocumentItem.MaterialVendor;
                             inputPurchasingDocumentItem.Description = databasePurchasingDocumentItem.Description;
                             inputPurchasingDocumentItem.NetPrice = databasePurchasingDocumentItem.NetPrice;
                             inputPurchasingDocumentItem.Currency = databasePurchasingDocumentItem.Currency;
@@ -617,7 +618,6 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
                             inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
-                            //inputPurchasingDocumentItem.MaterialVendor = databasePurchasingDocumentItem.MaterialVendor;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
