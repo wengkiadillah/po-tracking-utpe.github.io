@@ -9,14 +9,15 @@
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
 
-    if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    @*if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
         currentSearchForMaterial = currentSearchForMaterial.ToLower();
     }
     else
     {
         currentSearchForMaterial = string.Empty;
-    }
+    }*@
+
 
     if (!string.IsNullOrEmpty(currentSearchPOStatus))
     {
@@ -129,7 +130,7 @@
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-        
+
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "x" || x.IsClosed == "l" || x.IsClosed == "lx"));
 
         if (purchasingDocumentItems.Count() > 0)
@@ -155,9 +156,12 @@
                 }
             }
         }
-        if (!string.IsNullOrEmpty(currentSearchForMaterial) && purchasingDocumentItems.Count() > 0)
+        if (purchasingDocumentItems.Count() > 0)
         {
-            purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
+            if (!string.IsNullOrEmpty(currentSearchForMaterial))
+            {
+                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
+            }
         }
     }
 
