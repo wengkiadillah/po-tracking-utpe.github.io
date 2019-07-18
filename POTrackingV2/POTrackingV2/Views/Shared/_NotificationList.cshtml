@@ -269,38 +269,38 @@
                                 } else if (stage == "2") {
                                     if (confirmFirstETA == true) {
                                         if (targetRole = "vendor") {
-                                            message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
+                                            message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
                                         }
                                         else {
-                                            message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage + " without delay, please proceed to define Proforma Invoice";
+                                            message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + " without delay, please proceed to define Proforma Invoice";
                                         }
                                     } else if (confirmFirstETA == false) {
-                                        message += " has declined ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
+                                        message += " has declined ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
                                     } else if (countEtaHistory > 0) {
-                                        message += " has updated ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage + ", please proceed to Confirm ETA";
+                                        message += " has updated ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to Confirm ETA";
                                     }
                                 } else if (stage == "2a") {
                                     if (proformaInvoice != null) {
-                                        message += " has uploaded proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage + ", please proceed to confirm receive payment";
+                                        message += " has uploaded proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to confirm receive payment";
                                     } else if (proformaInvoice == null) {
                                         if (askProformaInvoice == true) {
-                                            message += " has asked proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a >at stage " + stage + ", please proceed to Upload";
+                                            message += " has asked proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to Upload";
                                         }
                                         else if (askProformaInvoice == false) {
-                                            message += " has skipped proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
+                                            message += " has skipped proforma Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
                                         }
                                     }
                                 } else if (stage == "3") {
                                     if (confirmedPaymentReceive != null) {
-                                        message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage + ", please proceed to ETA Confirmation";
+                                        message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to ETA Confirmation";
                                     } else if (confirmedPaymentReceive == null) {
-                                        message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage + ", please proceed to ETA Confirmation";
+                                        message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage + ", please proceed to ETA Confirmation";
                                     }
                                 } else if (stage == "4") {
                                     if (countProgressPhotos > 0) {
-                                        message += " has uploaded Progress photos and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
+                                        message += " has uploaded Progress photos and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
                                     } else if (secondETAHistory != null) {
-                                        message += " has updated the ETA for item and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > at stage " + stage;
+                                        message += " has updated the ETA for item and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
                                     }
                                 }
                                 //else if (stage == "5") {
