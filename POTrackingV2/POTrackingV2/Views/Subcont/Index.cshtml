@@ -373,8 +373,9 @@
                         }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
-                            var confirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
-                            var latestConfirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : purchasingDocumentItem.LatestDeliveryDate.ToString("dd/MM/yyyy");
+                            var deliveryDate = purchasingDocumentItem.DeliveryDate.HasValue ? purchasingDocumentItem.DeliveryDate.Value.ToString("dd/MM/yyyy") : "";
+                            var confirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : deliveryDate;
+                            var latestConfirmedDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : deliveryDate;
                             var checkChild = purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault();
                             if (checkChild != null)
                             {
