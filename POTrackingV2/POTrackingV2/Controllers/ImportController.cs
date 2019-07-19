@@ -238,6 +238,7 @@ namespace POTrackingV2.Controllers
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+            var today = DateTime.Now;
 
             if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
             {
@@ -253,7 +254,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
                             .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"))
                             .AsQueryable();
 
@@ -263,7 +264,7 @@ namespace POTrackingV2.Controllers
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
                                         .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"));
 
                 if (myUserNRPs.Count > 0)
