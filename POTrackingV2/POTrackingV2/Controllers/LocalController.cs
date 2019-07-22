@@ -397,8 +397,8 @@ namespace POTrackingV2.Controllers
                     data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value) || x.Description.ToLower().Contains(value) || x.MaterialVendor.ToLower().Contains(value)).Select(x =>
                     new
                     {
-                        Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
-                        MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
+                        Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.MaterialVendor.ToLower().StartsWith(value) ? x.MaterialVendor : x.Material.ToLower().Contains(value) ? x.Material : x.MaterialVendor.ToLower().Contains(value) ? x.MaterialVendor : x.Description,
+                        MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.MaterialVendor.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
                 }
 
