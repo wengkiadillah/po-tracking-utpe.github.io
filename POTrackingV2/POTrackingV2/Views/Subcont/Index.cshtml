@@ -61,6 +61,20 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
+
+    @if (roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator)
+    {
+        if (ViewBag.CurrentSearchPOStatus == "negotiated")
+        {
+            @Html.ActionLink("On Going", "Index", "Import", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+
+        }
+        else if (ViewBag.CurrentSearchPOStatus == "ongoing" || ViewBag.CurrentSearchPOStatus == "")
+        {
+            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+        }
+    }
+
     <form action="/" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
         <div class="form-group mr-4">
             <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
