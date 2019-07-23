@@ -2454,7 +2454,7 @@
                                 {
                                     if (purchasingDocumentItem.ActiveStage != "2a")
                                     {
-                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4)
+                                        if (Convert.ToInt32(purchasingDocumentItem.ActiveStage) > 4 && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
                                         {
                                             disabledFileInvoice = "";
                                             disabledFileInvoiceUpload = "";
@@ -2509,7 +2509,7 @@
                                                 {
                                                     if (childPurchasingDocumentItem.ActiveStage != "2a")
                                                     {
-                                                        if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 4)
+                                                        if (Convert.ToInt32(childPurchasingDocumentItem.ActiveStage) > 4 && childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= childPurchasingDocumentItem.ConfirmedQuantity)
                                                         {
                                                             disabledFileInvoice = "";
                                                             disabledFileInvoiceUpload = "";
@@ -2580,7 +2580,7 @@
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 5 && roleID == "vendor")
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 5 && roleID == "vendor")
                                         {
                                             hidden = "hidden";
                                         }
