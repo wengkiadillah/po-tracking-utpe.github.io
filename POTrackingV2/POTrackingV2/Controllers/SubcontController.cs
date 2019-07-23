@@ -77,13 +77,13 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: POSubcont
-        //public ActionResult Index(string searchDataPONumber, string searchDataVendorName, string searchDataMaterial, string filterBy, string searchStartPODate, string searchEndPODate, int? page)
         public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
         {
             POTrackingEntities db = new POTrackingEntities();
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles;
             string userName = User.Identity.Name;
+            DateTime today = DateTime.Now;
             try
             {
                 //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
@@ -126,7 +126,7 @@ namespace POTrackingV2.Controllers
                     }
                     else if (searchPOStatus == "done")
                     {
-                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX")));
+                        pOes = pOes.Where(po => (po.Date.Year == today.Year || po.Date.Year == today.Year-1) && po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX")));
                     }
                     else
                     {
@@ -135,6 +135,7 @@ namespace POTrackingV2.Controllers
                 }
 
                 ViewBag.CurrentRoleID = role.ToLower();
+                ViewBag.CurrentSearchPOStatus = searchPOStatus;
                 ViewBag.RoleSubcontDev = LoginConstants.RoleSubcontDev.ToLower();
                 ViewBag.RoleAdministrator = LoginConstants.RoleAdministrator.ToLower();
                 ViewBag.RoleVendor = LoginConstants.RoleVendor.ToLower();
