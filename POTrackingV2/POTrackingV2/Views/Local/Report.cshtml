@@ -5,7 +5,7 @@
 @model IPagedList<POTrackingV2.Models.PO>
 
 @{
-    ViewBag.Title = "Report PO Local";
+    ViewBag.Title = "PO Local Report";
 
 }
 
@@ -183,7 +183,7 @@
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("GetDataForSearch", "Local")",
-                    data: { 'filterBy': filterBy, 'value': searchData.val() },
+                    data: { 'searchFilterBy': filterBy, 'value': searchData.val() },
                     beforeSend: function () {
                         searchData.css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
                     },
