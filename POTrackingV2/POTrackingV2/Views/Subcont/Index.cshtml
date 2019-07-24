@@ -61,30 +61,24 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-
-    @if (roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator)
+    @if (roleID == ViewBag.RoleVendor || roleID == ViewBag.RoleAdministrator)
     {
         if (ViewBag.CurrentSearchPOStatus == "negotiated")
         {
-            @Html.ActionLink("On Going", "Index", "Import", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("On Going", "Index", "Subcont", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
 
         }
-        else if (ViewBag.CurrentSearchPOStatus == "ongoing" || ViewBag.CurrentSearchPOStatus == "")
+        else if (ViewBag.CurrentSearchPOStatus == "ongoing" || String.IsNullOrEmpty(ViewBag.CurrentSearchPOStatus))
         {
-            @Html.ActionLink("Negotiated Items", "Index", "Import", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("Negotiated Items", "Index", "Subcont", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
         }
     }
 
-    <form action="/" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
+    @*<form action="/" class="filter-form-container form-inline" method="get" style="visibility:hidden;">
         <div class="form-group mr-4">
             <input id="searchData" name="searchData" list="data-list" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" autocomplete="off">
             <datalist id="data-list"></datalist>
         </div>
-        @*<select id="filterBy" name="filterBy" class="form-control form-control-lg">
-            <option value="poNumber">PO Number</option>
-            <option value="vendor">Vendor Name</option>
-            <option value="material">Material</option>
-        </select>*@
         <div class="form-group mr-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate" placeholder="dd/mm/yyyy" autocomplete="off">
@@ -98,8 +92,7 @@
         <button type="submit" class="btn btn-info mr-3">Find</button>
         <a class="btn btn-info mr-3" href="/Import">Clear</a>
         <input name="roleID" type="hidden" value="vendor">
-
-    </form>
+    </form>*@
     <div class="stage-pagination-container">
         <p class="stage-pagination-label mb-0 mr-3">Jump to Stage:</p>
         <ul class="list-unstyled pagination-list mb-0">
@@ -1156,7 +1149,7 @@
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
                                         {
                                             hidden = "hidden";
                                         }

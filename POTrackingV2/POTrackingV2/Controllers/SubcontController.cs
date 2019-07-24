@@ -107,6 +107,10 @@ namespace POTrackingV2.Controllers
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX") && vendorSubcont.Contains(po.VendorCode));
                     }
+                    else if (searchPOStatus == "negotiated")
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.ConfirmedItem != false));
+                    }
                     else
                     {
                         pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
@@ -252,7 +256,7 @@ namespace POTrackingV2.Controllers
                 }
                 #endregion
                 //return (RedirectToAction("Index", "Error", new { ErrorList = "hi there!" }));
-                return View(pOes.ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+                return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
             }
             catch (Exception ex)
             {
