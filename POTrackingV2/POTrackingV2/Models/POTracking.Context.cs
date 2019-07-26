@@ -13,10 +13,10 @@ namespace POTrackingV2.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class POTrackingEntities : DbContext
+    public partial class Entities : DbContext
     {
-        public POTrackingEntities()
-            : base("name=POTrackingEntities")
+        public Entities()
+            : base("name=Entities")
         {
         }
     

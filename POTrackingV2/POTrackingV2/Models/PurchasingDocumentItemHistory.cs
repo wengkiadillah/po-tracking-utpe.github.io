@@ -23,6 +23,7 @@ namespace POTrackingV2.Models
         public Nullable<int> MovementType { get; set; }
         public string POHistoryCategory { get; set; }
         public string DocumentNumber { get; set; }
+        public string DeliveryOrder { get; set; }
         public string Shipment_InboundNumber { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }
