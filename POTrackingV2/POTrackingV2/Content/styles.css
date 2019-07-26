@@ -1138,7 +1138,7 @@ a[data-toggle="collapse"] {
         position: fixed;
         background-color: #ffff;
         min-width: 300px;
-        max-width: 500px;
+        max-width: 550px;
         box-shadow: 0 0 8px 1px rgba(0,0,0,0.1);
         padding: 10px;
         border-radius: 5px;

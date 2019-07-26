@@ -2241,6 +2241,7 @@
                                                         <td class="pr-3">GR / Inspection Date</td>
                                                         <td class="pr-3">Document Number</td>
                                                         <td class="pr-3">Movement Type</td>
+                                                        <td class="pr-3">Surat Jalan</td>
                                                         <td>Qty</td>
                                                     </tr>
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
@@ -2250,6 +2251,7 @@
                                                     <tr>
                                                         <td class="secondary-text pr-3">@grDateNewDateFormat</td>
                                                         <td class="secondary-text pr-3">@pdih.DocumentNumber</td>
+                                                        <td class="secondary-text pr-3">@pdih.MovementType</td>
                                                         <td class="secondary-text pr-3">@pdih.MovementType</td>
                                                         <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                     </tr>
@@ -2300,6 +2302,7 @@
                                                                 <td class="pr-3">GR / Inspection Date</td>
                                                                 <td class="pr-3">Document Number</td>
                                                                 <td class="pr-3">Movement Type</td>
+                                                                <td class="pr-3">Surat Jalan</td>
                                                                 <td>Qty</td>
                                                             </tr>
                                                             @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
@@ -2308,6 +2311,7 @@
                                                                 <tr>
                                                                     <td class="secondary-text pr-3">@grDateNewDateFormat</td>
                                                                     <td class="secondary-text pr-3">@pdih.DocumentNumber</td>
+                                                                    <td class="secondary-text pr-3">@pdih.MovementType</td>
                                                                     <td class="secondary-text pr-3">@pdih.MovementType</td>
                                                                     <td class="secondary-text pr-3">@pdih.GoodsReceiptQuantity</td>
                                                                 </tr>
