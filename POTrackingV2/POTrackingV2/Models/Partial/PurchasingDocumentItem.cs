@@ -158,8 +158,6 @@ namespace POTrackingV2.Models
                 else
                 {
                     purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
-                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(po => po.PurchasingDocumentItem.PurchasingDocumentItemHistories.Any(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID)).ToList();
-                    //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                     purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ParentID).OrderBy(x => x.GoodsReceiptDate).ToList();
                     
                 }
@@ -172,9 +170,6 @@ namespace POTrackingV2.Models
                     var totalGR = this.TotalGR;
                     var totalCurrentGR = 0;
                     var currentGR = 0;
-                    //int index = 0;
-                    //double totalGR = this.TotalGR;
-                    //double availableGR = purchasingDocumentItemHistories[index].GoodsReceiptQuantity.HasValue? purchasingDocumentItemHistories[index].GoodsReceiptQuantity.Value : 0;
                     foreach (PurchasingDocumentItem purchasingDocumentItem in purchasingDocumentItems)
                     {
                         //if (this.ID == purchasingDocumentItemHistories[index].PurchasingDocumentItemID || this.ParentID == purchasingDocumentItemHistories[index].PurchasingDocumentItemID)
@@ -214,8 +209,8 @@ namespace POTrackingV2.Models
                                                     }
 
                                                     PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                    newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                     newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
@@ -227,8 +222,8 @@ namespace POTrackingV2.Models
                                                     {
                                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
                                                         newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                        newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                        //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = Math.Abs(otherConfirmedQty);
@@ -237,9 +232,8 @@ namespace POTrackingV2.Models
                                                     else
                                                     {
                                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                        //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                         newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                        newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
@@ -265,9 +259,8 @@ namespace POTrackingV2.Models
                                             if (totalCurrentGR > confirmQty && totalGR - confirmQty > 0)
                                             {
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
                                                 newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
-                                                //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
@@ -277,9 +270,8 @@ namespace POTrackingV2.Models
                                             else
                                             {
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                 newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
@@ -329,8 +321,8 @@ namespace POTrackingV2.Models
                                     if (totalCurrentGR > confirmQty && totalGR - confirmQty > 0)
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         //newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
@@ -348,8 +340,8 @@ namespace POTrackingV2.Models
                                     else
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = currentGR;
@@ -439,8 +431,8 @@ namespace POTrackingV2.Models
                                                 totalCurrentGR += Math.Abs(otherConfirmedQty);
 
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                                newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -452,9 +444,8 @@ namespace POTrackingV2.Models
                                                 if (totalGR - confirmQty == 0)
                                                 {
                                                     PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                     newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                     newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                     newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -464,9 +455,8 @@ namespace POTrackingV2.Models
                                                 else
                                                 {
                                                     PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                     newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                     newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                     newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -485,9 +475,8 @@ namespace POTrackingV2.Models
                                         if (totalCurrentGR > confirmQty)
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
                                             newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                            newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
-                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -498,9 +487,8 @@ namespace POTrackingV2.Models
                                         else
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                             newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                            newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -540,8 +528,8 @@ namespace POTrackingV2.Models
                                     if (totalCurrentGR > confirmQty)
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
@@ -551,8 +539,8 @@ namespace POTrackingV2.Models
                                     else
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -635,8 +623,8 @@ namespace POTrackingV2.Models
                                                 totalCurrentGR += Math.Abs(otherConfirmedQty);
 
                                                 PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                                newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                                //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 700 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
+                                                newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                 newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                 newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                 newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -648,9 +636,8 @@ namespace POTrackingV2.Models
                                                 if (totalGR - confirmQty == 0)
                                                 {
                                                     PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                     newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                     newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                     newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -660,9 +647,8 @@ namespace POTrackingV2.Models
                                                 else
                                                 {
                                                     PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                                    //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                                     newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                                    newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 600 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                                    //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                                     newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                                     newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                                     newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -681,9 +667,8 @@ namespace POTrackingV2.Models
                                         if (totalCurrentGR > confirmQty)
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
                                             newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                            newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 500 : " + totalCurrentGR + "-" + confirmQty;
-                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -694,9 +679,8 @@ namespace POTrackingV2.Models
                                         else
                                         {
                                             PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
+                                            //newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
                                             newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
-                                            newPurchasingDocumentItemHistory.DocumentNumber = otherConfirmedQty + "-" + totalGR + " 400 : " + totalCurrentGR + "-" + confirmQty + "-" + currentGR;
-                                            //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                             newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                             newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                             newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
@@ -736,8 +720,8 @@ namespace POTrackingV2.Models
                                     if (totalCurrentGR > confirmQty)
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = totalGR + " 200 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;
                                         newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR - currentGR);
@@ -747,8 +731,8 @@ namespace POTrackingV2.Models
                                     else
                                     {
                                         PurchasingDocumentItemHistory newPurchasingDocumentItemHistory = new PurchasingDocumentItemHistory();
-                                        newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
-                                        //newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
+                                        //newPurchasingDocumentItemHistory.DocumentNumber = "100 : " + totalCurrentGR + "-" + confirmQty;
+                                        newPurchasingDocumentItemHistory.DocumentNumber = pdih.DocumentNumber;
                                         newPurchasingDocumentItemHistory.MovementType = pdih.MovementType;
                                         newPurchasingDocumentItemHistory.PayTerms = pdih.PayTerms;
                                         newPurchasingDocumentItemHistory.GoodsReceiptDate = pdih.GoodsReceiptDate;

@@ -805,6 +805,8 @@
                                                     <tr>
                                                         <td>GR / Inspection Date</td>
                                                         <td>&nbsp;</td>
+                                                        <td>Document Material</td>
+                                                        <td>&nbsp;</td>
                                                         <td>Movement Type</td>
                                                         <td>&nbsp;</td>
                                                         <td>Qty</td>
@@ -815,7 +817,8 @@
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
-                                                            @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.DocumentNumber</td>
                                                             <td>&nbsp;</td>
                                                             <td class="secondary-text">@pdih.MovementType</td>
                                                             <td>&nbsp;</td>
@@ -861,6 +864,8 @@
                                                             <tr>
                                                                 <td>GR / Inspection Date</td>
                                                                 <td>&nbsp;</td>
+                                                                <td>Document Material</td>
+                                                                <td>&nbsp;</td>
                                                                 <td>Movement Type</td>
                                                                 <td>&nbsp;</td>
                                                                 <td>Qty</td>
@@ -870,7 +875,8 @@
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
                                                                     <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                    @*<td class="secondary-text">@pdih.DocumentNumber</td>*@
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.DocumentNumber</td>
                                                                     <td>&nbsp;</td>
                                                                     <td class="secondary-text">@pdih.MovementType</td>
                                                                     <td>&nbsp;</td>

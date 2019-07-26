@@ -150,7 +150,8 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetNotificationByRole(string role)
+        //public JsonResult GetNotificationByRole(string role)
+        public JsonResult GetNotificationByRole()
         {
             try
             {
@@ -158,7 +159,8 @@ namespace POTrackingV2.Controllers
                 //int roleSearchDB = Convert.ToInt32(role);
                 //var roleDB = db.Roles.Where(y => y.ID == roleSearchDB).SingleOrDefault().Name.ToLower();
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-                var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+                //var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+                var role = myUser.Roles.ToLower();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
                 string userName = User.Identity.Name;
@@ -166,7 +168,7 @@ namespace POTrackingV2.Controllers
                 List<string> myUserNRPs = new List<string>();
                 List<string> userInternalList = DBUser.Users.Select(x=>x.Username).ToList();
 
-                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
@@ -193,7 +195,7 @@ namespace POTrackingV2.Controllers
                         notifications = notifications.Except(noShowNotifications);
                     }
                 }
-                else
+                else if(role == LoginConstants.RoleVendor.ToLower())
                 {
                     var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
 
@@ -203,58 +205,6 @@ namespace POTrackingV2.Controllers
                     //    vendorCode.Add(userEksternal.VendorCode);
                     //}
                 }
-
-                //if (roleType.RolesTypeID == 1) // Notif buat orang Subcont
-                //{
-                //    List<string> vendorCode = new List<string>();
-
-                //    var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                //    if (userInternal != null)
-                //    {
-                //        vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
-                //    }
-                //    else
-                //    {
-                //        var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
-                //        if (userEksternal != null)
-                //        {
-                //            vendorCode.Add(userEksternal.VendorCode);
-                //        }
-                //    }
-
-                //    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                //}
-                //else if (roleType.RolesTypeID == 2) // Notif buat orang Local
-                //{
-                //    notifications = notifications.Where(x => (x.PurchasingDocumentItem.PO.Type.ToLower() == "zo05" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo09" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                //}
-                //else if (roleType.RolesTypeID == 3) // Notif buat orang Import
-                //{
-                //    notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
-
-                //    if (role == LoginConstants.RoleProcurement.ToLower())
-                //    {
-                //        List<string> myUserNRPs = new List<string>();
-                //        myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                //        myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                //        var noShowNotifications = db.Notifications.Where(x => x.PurchasingDocumentItem.PO.Type.ToLower() == "zo04" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo07" || x.PurchasingDocumentItem.PO.Type.ToLower() == "zo08");
-
-                //        if (myUserNRPs.Count > 0)
-                //        {
-                //            foreach (var myUserNRP in myUserNRPs)
-                //            {
-                //                noShowNotifications = noShowNotifications.Where(x => x.PurchasingDocumentItem.PO.CreatedBy != myUserNRP);
-                //            }
-                //        }
-
-                //        notifications = notifications.Except(noShowNotifications);
-                //    }
-                //    else if ( role == LoginConstants.RoleVendor.ToLower())
-                //    {
-                //        notifications = notifications.Where(x => x.PurchasingDocumentItem.PO.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
-                //    }
-                //}
 
                 var notificationsDTO = notifications.Select(x =>
                   new
@@ -375,7 +325,7 @@ namespace POTrackingV2.Controllers
             {
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 string role = myUser.Roles.ToLower();
-                var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+                //var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
                 #region Import
                 var pOesImport = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
