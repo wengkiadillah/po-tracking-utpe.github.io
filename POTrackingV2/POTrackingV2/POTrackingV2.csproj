@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -188,6 +187,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImportController.cs" />
     <Compile Include="Controllers\LocalController.cs" />
+    <Compile Include="Controllers\SubcontDevUserRoleController.cs" />
     <Compile Include="Controllers\MasterVendorController.cs" />
     <Compile Include="Controllers\ReasonSubContController.cs" />
     <Compile Include="Controllers\SubcontController.cs" />
@@ -235,6 +235,9 @@
     </Compile>
     <Compile Include="Models\DeliveryLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DimDate.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DrawingLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
@@ -286,6 +289,7 @@
     <Compile Include="Models\Partial\PO.cs" />
     <Compile Include="Models\Partial\UserRoleType.cs" />
     <Compile Include="Models\Partial\SubcontDevVendor.cs" />
+    <Compile Include="Models\Partial\SubcontDevUserRole.cs" />
     <Compile Include="Models\PasswordView.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItem.cs" />
     <Compile Include="Models\Partial\PurchasingDocumentItemHistory.cs" />
@@ -372,11 +376,17 @@
     <Compile Include="Models\SubcontComponentCapability.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubcontDevRole.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SubcontDevUserRole.cs">
+      <DependentUpon>POTracking.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\SubcontDevVendor.cs">
       <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>AlertTools.tt</DependentUpon>
+      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>UserManagement.tt</DependentUpon>
@@ -550,19 +560,19 @@
     <Content Include="Models\UserManagement.edmx.diagram">
       <DependentUpon>UserManagement.edmx</DependentUpon>
     </Content>
-    <EntityDeploy Include="Models\POTracking.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\POTracking.edmx.diagram">
-      <DependentUpon>POTracking.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\AlertTools.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>AlertTools.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <Content Include="Models\AlertTools.edmx.diagram">
       <DependentUpon>AlertTools.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="Models\POTracking.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>POTracking.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\POTracking.edmx.diagram">
+      <DependentUpon>POTracking.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -670,6 +680,9 @@
     <Content Include="Views\Local\Report.cshtml" />
     <Content Include="Views\Import\History.cshtml" />
     <Content Include="Views\Local\History.cshtml" />
+    <Content Include="Views\SubcontDevUserRole\ViewSubcontDevUserRole.cshtml" />
+    <Content Include="Views\SubcontDevUserRole\CreateSubcontDevUserRole.cshtml" />
+    <Content Include="Views\SubcontDevUserRole\EditSubcontDevUserRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

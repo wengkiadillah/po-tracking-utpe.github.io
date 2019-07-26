@@ -41,11 +41,6 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        //public string index(IPagedList<POTracking.Models.SubcontComponentCapability> subcontComponents)
-        //{
-
-        //}
-
         // GET: MasterVendor/Details/5
         public ActionResult Details(int id)
         {
@@ -60,21 +55,6 @@ namespace POTrackingV2.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            //POTrackingEntities db = new POTrackingEntities();
-            //ViewBag.Vendors = new SelectList(db.Vendors, "Code", "Name");
-            //return View();
-
-            //using (POTrackingEntities db = new POTrackingEntities())
-            //{
-            //    var ViewModel = new MasterVendorViewModel
-            //    {
-
-            //        ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
-            //    };
-
-            //    return View(ViewModel);
-            //}
-
             POTrackingEntities db = new POTrackingEntities();
             var ViewModel = new MasterVendorViewModel
             {
@@ -84,15 +64,6 @@ namespace POTrackingV2.Controllers
             return View(ViewModel);
             //return View();
         }
-
-        //public ActionResult CreateDropdown()
-        //{
-        //    POTrackingEntities db = new POTrackingEntities();
-        //    var getVendorList = db.Vendors.ToList();
-        //    SelectList list = new SelectList(getVendorList, "Vendor", "Name");
-        //    ViewBag.VendorListName = list;
-        //    return View();
-        //}
 
         // POST: MasterVendor/Create
         [HttpPost]
@@ -207,23 +178,6 @@ namespace POTrackingV2.Controllers
                 return View();
             }
         }
-
-        //[HttpGet]
-        //public ActionResult getById(string Code, MasterVendorViewModel masterVendorView) {
-
-        //    try
-        //    {
-        //        Vendor vendor = db.Vendors.Find("100050");
-        //        //MasterVendorViewModel dataMasterVendorViewModel = db.
-        //        return Json(new { responseText = masterVendorView }, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        string errorMessage = (ex.Message + ex.StackTrace);
-        //        return View(errorMessage);
-        //    }
-        //}
 
         [HttpGet]
         public ActionResult getById(string code)
@@ -361,71 +315,12 @@ namespace POTrackingV2.Controllers
                 return Json(new { success = false, responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
             }
         }
-        //public ActionResult CreateVendorSubcontDev(SubcontDevVendor objNewVendor)
-        //{
-        //    using (POTrackingEntities db = new POTrackingEntities())
-        //    {
-        //        listRoleType = db.RolesTypes.ToList();
-        //        listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
-        //        ViewBag.RolesTypeID = new SelectList(listRoleType, "ID", "Name");
-        //        ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");
-        //        var chkUser = (db.UserVendors.FirstOrDefault(x => x.Username == objNewVendor.Username && x.VendorCode == objNewVendor.VendorCode));
-        //        if (chkUser == null)
-        //        {
-        //            var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewVendor.Username));
-        //            if (chkUserRole == null)
-        //            {
-        //                objNewVendor.Username = objNewVendor.Username;
-        //                if (objNewVendor.VendorCode == null)
-        //                {
-        //                    objNewVendor.VendorCode = "50000";
-        //                }
-        //                else
-        //                {
-        //                    objNewVendor.VendorCode = objNewVendor.VendorCode;
-        //                }
-
-        //                objNewVendor.Created = DateTime.Now;
-        //                objNewVendor.CreatedBy = User.Identity.Name;
-        //                objNewVendor.LastModified = DateTime.Now;
-        //                objNewVendor.LastModifiedBy = User.Identity.Name;
-        //                db.SubcontDevVendors.Add(objNewVendor);
-        //                db.SaveChanges();
-        //                ModelState.Clear();
-        //                return RedirectToAction("ViewVendorSubcontDev", "MasterVendor");
-        //            }
-        //            ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
-        //            return View();
-        //        }
-        //        ViewBag.ErrorMessage = "Username - Vendor Already Exist!";
-        //        return View();
-        //    }
-        //}
 
         [HttpGet]
         public ActionResult EditVendorSubcontDev(int ID)
         {
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                //subcontDevVendorViewModelEdit.SubcontDevVendor = db.SubcontDevVendors.Find(ID);
-
-                //listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
-                //subcontDevVendorViewModelEdit.VendorCode = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x=>x.VendorCode).ToList();
-                ////ViewBag.SelectedVendorCode = new SelectList(listRoleType, "ID", "Name", selectedVendorCode.RolesTypeID);
-                //ViewBag.SelectedVendorCode = subcontDevVendorViewModelEdit.VendorCode;
-                ////product.Categories = new MultiSelectList(list, "ID", "Name", cat.CategorySelected.Select(c => c.ID).ToArray());
-                ////List<SelectListItem> VendorSelected = new List<SelectListItem>();
-                ////MultiSelectList vendorSelectList = new MultiSelectList(listVendor, "Code", "CodeName", subcontDevVendorViewModelEdit.VendorCode.ToList());
-
-                //var subcontDevVendor = db.SubcontDevVendors.Find(ID);
-                //var vendorCodeList = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToList();
-                //ViewBag.SelectedVendorCode = db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToArray();
-                //ViewBag.VendorCode = new MultiSelectList(listVendor, "Code", "CodeName", db.SubcontDevVendors.Where(x => x.Username == subcontDevVendorViewModelEdit.SubcontDevVendor.Username).Select(x => x.VendorCode).ToArray());
-                //var ViewModel = new SubcontDevVendorViewModelEdit
-                //{
-                //    SubcontDevVendor = subcontDevVendor,
-                //    VendorCode = vendorCodeList
-                //};
                 var subcontDevVendor = db.SubcontDevVendors.Where(x => x.ID == ID).FirstOrDefault();
                 var listVendor = db.Vendors.Where(x => x.Code.Length == 5).ToList();
                 ViewBag.VendorCode = new SelectList(listVendor, "Code", "CodeName");

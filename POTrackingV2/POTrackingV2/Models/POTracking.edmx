@@ -39,6 +39,58 @@
           <Property Name="LastModified" Type="datetime" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="DimDate">
+          <Key>
+            <PropertyRef Name="DateKey" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Day" />
+            <PropertyRef Name="DaySuffix" />
+            <PropertyRef Name="Weekday" />
+            <PropertyRef Name="WeekDayName" />
+            <PropertyRef Name="WeekDayName_Short" />
+            <PropertyRef Name="WeekDayName_FirstLetter" />
+            <PropertyRef Name="DOWInMonth" />
+            <PropertyRef Name="DayOfYear" />
+            <PropertyRef Name="WeekOfMonth" />
+            <PropertyRef Name="WeekOfYear" />
+            <PropertyRef Name="Month" />
+            <PropertyRef Name="MonthName" />
+            <PropertyRef Name="MonthName_Short" />
+            <PropertyRef Name="MonthName_FirstLetter" />
+            <PropertyRef Name="Quarter" />
+            <PropertyRef Name="QuarterName" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="MMYYYY" />
+            <PropertyRef Name="MonthYear" />
+            <PropertyRef Name="IsWeekend" />
+            <PropertyRef Name="IsHoliday" />
+          </Key>
+          <Property Name="DateKey" Type="int" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Day" Type="tinyint" Nullable="false" />
+          <Property Name="DaySuffix" Type="char" MaxLength="2" Nullable="false" />
+          <Property Name="Weekday" Type="tinyint" Nullable="false" />
+          <Property Name="WeekDayName" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="WeekDayName_Short" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="WeekDayName_FirstLetter" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="DOWInMonth" Type="tinyint" Nullable="false" />
+          <Property Name="DayOfYear" Type="smallint" Nullable="false" />
+          <Property Name="WeekOfMonth" Type="tinyint" Nullable="false" />
+          <Property Name="WeekOfYear" Type="tinyint" Nullable="false" />
+          <Property Name="Month" Type="tinyint" Nullable="false" />
+          <Property Name="MonthName" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="MonthName_Short" Type="char" MaxLength="3" Nullable="false" />
+          <Property Name="MonthName_FirstLetter" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="Quarter" Type="tinyint" Nullable="false" />
+          <Property Name="QuarterName" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="Year" Type="int" Nullable="false" />
+          <Property Name="MMYYYY" Type="char" MaxLength="6" Nullable="false" />
+          <Property Name="MonthYear" Type="char" MaxLength="7" Nullable="false" />
+          <Property Name="IsWeekend" Type="bit" Nullable="false" />
+          <Property Name="IsHoliday" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="ETAHistory">
           <Key>
             <PropertyRef Name="ID" />
@@ -372,6 +424,30 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="LastModified" Type="datetime" Nullable="false" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubcontDevRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Modified" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SubcontDevUserRoles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="RoleID" Type="int" Nullable="false" />
+          <Property Name="IsHead" Type="bit" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Modified" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="SubcontDevVendors">
           <Key>
@@ -737,6 +813,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SubcontDevUserRoles_SubcontDevRoles_RoleID">
+          <End Role="SubcontDevRoles" Type="Self.SubcontDevRoles" Multiplicity="1" />
+          <End Role="SubcontDevUserRoles" Type="Self.SubcontDevUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubcontDevRoles">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SubcontDevUserRoles">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubcontDevVendors_Vendors_VendorCode">
           <End Role="Vendors" Type="Self.Vendors" Multiplicity="1" />
           <End Role="SubcontDevVendors" Type="Self.SubcontDevVendors" Multiplicity="*" />
@@ -809,12 +897,41 @@
           <EntitySet Name="SubcontCapabilities" EntityType="Self.SubcontCapabilities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubcontCategories" EntityType="Self.SubcontCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubcontComponentCapabilities" EntityType="Self.SubcontComponentCapabilities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubcontDevRoles" EntityType="Self.SubcontDevRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SubcontDevUserRoles" EntityType="Self.SubcontDevUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubcontDevVendors" EntityType="Self.SubcontDevVendors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserProcurementSuperior" EntityType="Self.UserProcurementSuperior" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoleType" EntityType="Self.UserRoleType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vendors" EntityType="Self.Vendors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DimDate" EntityType="Self.DimDate" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [DimDate].[DateKey] AS [DateKey], 
+    [DimDate].[Date] AS [Date], 
+    [DimDate].[Day] AS [Day], 
+    [DimDate].[DaySuffix] AS [DaySuffix], 
+    [DimDate].[Weekday] AS [Weekday], 
+    [DimDate].[WeekDayName] AS [WeekDayName], 
+    [DimDate].[WeekDayName_Short] AS [WeekDayName_Short], 
+    [DimDate].[WeekDayName_FirstLetter] AS [WeekDayName_FirstLetter], 
+    [DimDate].[DOWInMonth] AS [DOWInMonth], 
+    [DimDate].[DayOfYear] AS [DayOfYear], 
+    [DimDate].[WeekOfMonth] AS [WeekOfMonth], 
+    [DimDate].[WeekOfYear] AS [WeekOfYear], 
+    [DimDate].[Month] AS [Month], 
+    [DimDate].[MonthName] AS [MonthName], 
+    [DimDate].[MonthName_Short] AS [MonthName_Short], 
+    [DimDate].[MonthName_FirstLetter] AS [MonthName_FirstLetter], 
+    [DimDate].[Quarter] AS [Quarter], 
+    [DimDate].[QuarterName] AS [QuarterName], 
+    [DimDate].[Year] AS [Year], 
+    [DimDate].[MMYYYY] AS [MMYYYY], 
+    [DimDate].[MonthYear] AS [MonthYear], 
+    [DimDate].[IsWeekend] AS [IsWeekend], 
+    [DimDate].[IsHoliday] AS [IsHoliday]
+    FROM [dbo].[DimDate] AS [DimDate]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_ETAHistory_DelayReason_DelayReasonID" Association="Self.FK_ETAHistory_DelayReason_DelayReasonID">
             <End Role="DelayReason" EntitySet="DelayReason" />
             <End Role="ETAHistory" EntitySet="ETAHistory" />
@@ -906,6 +1023,10 @@
           <AssociationSet Name="FK_SubcontComponentCapabilities_Vendors_VendorCode" Association="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
             <End Role="SubcontComponentCapabilities" EntitySet="SubcontComponentCapabilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubcontDevUserRoles_SubcontDevRoles_RoleID" Association="Self.FK_SubcontDevUserRoles_SubcontDevRoles_RoleID">
+            <End Role="SubcontDevRoles" EntitySet="SubcontDevRoles" />
+            <End Role="SubcontDevUserRoles" EntitySet="SubcontDevUserRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_SubcontDevVendors_Vendors_VendorCode" Association="Self.FK_SubcontDevVendors_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
@@ -1342,6 +1463,32 @@
           <Property Name="LastModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Vendor" Relationship="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode" FromRole="SubcontComponentCapabilities" ToRole="Vendors" />
         </EntityType>
+        <EntityType Name="SubcontDevRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="SubcontDevUserRoles" Relationship="Self.FK_SubcontDevUserRoles_SubcontDevRoles_RoleID" FromRole="SubcontDevRoles" ToRole="SubcontDevUserRoles" />
+        </EntityType>
+        <EntityType Name="SubcontDevUserRole">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RoleID" Type="Int32" Nullable="false" />
+          <Property Name="IsHead" Type="Boolean" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="SubcontDevRole" Relationship="Self.FK_SubcontDevUserRoles_SubcontDevRoles_RoleID" FromRole="SubcontDevUserRoles" ToRole="SubcontDevRoles" />
+        </EntityType>
         <EntityType Name="SubcontDevVendor">
           <Key>
             <PropertyRef Name="ID" />
@@ -1438,6 +1585,56 @@
           <NavigationProperty Name="SubcontComponentCapabilities" Relationship="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode" FromRole="Vendors" ToRole="SubcontComponentCapabilities" />
           <NavigationProperty Name="SubcontDevVendors" Relationship="Self.FK_SubcontDevVendors_Vendors_VendorCode" FromRole="Vendors" ToRole="SubcontDevVendors" />
           <NavigationProperty Name="UserVendors" Relationship="Self.FK_UserVendors_Vendors_VendorCode" FromRole="Vendors" ToRole="UserVendors" />
+        </EntityType>
+        <EntityType Name="DimDate">
+          <Key>
+            <PropertyRef Name="DateKey" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="Day" />
+            <PropertyRef Name="DaySuffix" />
+            <PropertyRef Name="Weekday" />
+            <PropertyRef Name="WeekDayName" />
+            <PropertyRef Name="WeekDayName_Short" />
+            <PropertyRef Name="WeekDayName_FirstLetter" />
+            <PropertyRef Name="DOWInMonth" />
+            <PropertyRef Name="DayOfYear" />
+            <PropertyRef Name="WeekOfMonth" />
+            <PropertyRef Name="WeekOfYear" />
+            <PropertyRef Name="Month" />
+            <PropertyRef Name="MonthName" />
+            <PropertyRef Name="MonthName_Short" />
+            <PropertyRef Name="MonthName_FirstLetter" />
+            <PropertyRef Name="Quarter" />
+            <PropertyRef Name="QuarterName" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="MMYYYY" />
+            <PropertyRef Name="MonthYear" />
+            <PropertyRef Name="IsWeekend" />
+            <PropertyRef Name="IsHoliday" />
+          </Key>
+          <Property Name="DateKey" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Day" Type="Byte" Nullable="false" />
+          <Property Name="DaySuffix" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Weekday" Type="Byte" Nullable="false" />
+          <Property Name="WeekDayName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="WeekDayName_Short" Type="String" MaxLength="3" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="WeekDayName_FirstLetter" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="DOWInMonth" Type="Byte" Nullable="false" />
+          <Property Name="DayOfYear" Type="Int16" Nullable="false" />
+          <Property Name="WeekOfMonth" Type="Byte" Nullable="false" />
+          <Property Name="WeekOfYear" Type="Byte" Nullable="false" />
+          <Property Name="Month" Type="Byte" Nullable="false" />
+          <Property Name="MonthName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MonthName_Short" Type="String" MaxLength="3" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="MonthName_FirstLetter" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="Quarter" Type="Byte" Nullable="false" />
+          <Property Name="QuarterName" Type="String" MaxLength="6" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="MMYYYY" Type="String" MaxLength="6" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="MonthYear" Type="String" MaxLength="7" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="IsWeekend" Type="Boolean" Nullable="false" />
+          <Property Name="IsHoliday" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_SubcontCapabilities_Capabilities_SubcontCapabilityID">
           <End Role="Capabilities" Type="Self.Capability" Multiplicity="1" />
@@ -1739,6 +1936,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SubcontDevUserRoles_SubcontDevRoles_RoleID">
+          <End Role="SubcontDevRoles" Type="Self.SubcontDevRole" Multiplicity="1" />
+          <End Role="SubcontDevUserRoles" Type="Self.SubcontDevUserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubcontDevRoles">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="SubcontDevUserRoles">
+              <PropertyRef Name="RoleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubcontDevVendors_Vendors_VendorCode">
           <End Role="Vendors" Type="Self.Vendor" Multiplicity="1" />
           <End Role="SubcontDevVendors" Type="Self.SubcontDevVendor" Multiplicity="*" />
@@ -1787,12 +1996,15 @@
           <EntitySet Name="SubcontCapabilities" EntityType="Self.SubcontCapability" />
           <EntitySet Name="SubcontCategories" EntityType="Self.SubcontCategory" />
           <EntitySet Name="SubcontComponentCapabilities" EntityType="Self.SubcontComponentCapability" />
+          <EntitySet Name="SubcontDevRoles" EntityType="Self.SubcontDevRole" />
+          <EntitySet Name="SubcontDevUserRoles" EntityType="Self.SubcontDevUserRole" />
           <EntitySet Name="SubcontDevVendors" EntityType="Self.SubcontDevVendor" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="UserProcurementSuperiors" EntityType="Self.UserProcurementSuperior" />
           <EntitySet Name="UserRoleTypes" EntityType="Self.UserRoleType" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendor" />
           <EntitySet Name="Vendors" EntityType="Self.Vendor" />
+          <EntitySet Name="DimDates" EntityType="Self.DimDate" />
           <AssociationSet Name="FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" Association="Self.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID">
             <End Role="Capabilities" EntitySet="Capabilities" />
             <End Role="SubcontCapabilities" EntitySet="SubcontCapabilities" />
@@ -1892,6 +2104,10 @@
           <AssociationSet Name="FK_SubcontComponentCapabilities_Vendors_VendorCode" Association="Self.FK_SubcontComponentCapabilities_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
             <End Role="SubcontComponentCapabilities" EntitySet="SubcontComponentCapabilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SubcontDevUserRoles_SubcontDevRoles_RoleID" Association="Self.FK_SubcontDevUserRoles_SubcontDevRoles_RoleID">
+            <End Role="SubcontDevRoles" EntitySet="SubcontDevRoles" />
+            <End Role="SubcontDevUserRoles" EntitySet="SubcontDevUserRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_SubcontDevVendors_Vendors_VendorCode" Association="Self.FK_SubcontDevVendors_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
@@ -2299,6 +2515,32 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="SubcontDevRoles">
+            <EntityTypeMapping TypeName="POTrackingModel.SubcontDevRole">
+              <MappingFragment StoreEntitySet="SubcontDevRoles">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubcontDevUserRoles">
+            <EntityTypeMapping TypeName="POTrackingModel.SubcontDevUserRole">
+              <MappingFragment StoreEntitySet="SubcontDevUserRoles">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+                <ScalarProperty Name="IsHead" ColumnName="IsHead" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="SubcontDevVendors">
             <EntityTypeMapping TypeName="POTrackingModel.SubcontDevVendor">
               <MappingFragment StoreEntitySet="SubcontDevVendors">
@@ -2390,6 +2632,35 @@
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DimDates">
+            <EntityTypeMapping TypeName="POTrackingModel.DimDate">
+              <MappingFragment StoreEntitySet="DimDate">
+                <ScalarProperty Name="DateKey" ColumnName="DateKey" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Day" ColumnName="Day" />
+                <ScalarProperty Name="DaySuffix" ColumnName="DaySuffix" />
+                <ScalarProperty Name="Weekday" ColumnName="Weekday" />
+                <ScalarProperty Name="WeekDayName" ColumnName="WeekDayName" />
+                <ScalarProperty Name="WeekDayName_Short" ColumnName="WeekDayName_Short" />
+                <ScalarProperty Name="WeekDayName_FirstLetter" ColumnName="WeekDayName_FirstLetter" />
+                <ScalarProperty Name="DOWInMonth" ColumnName="DOWInMonth" />
+                <ScalarProperty Name="DayOfYear" ColumnName="DayOfYear" />
+                <ScalarProperty Name="WeekOfMonth" ColumnName="WeekOfMonth" />
+                <ScalarProperty Name="WeekOfYear" ColumnName="WeekOfYear" />
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="MonthName" ColumnName="MonthName" />
+                <ScalarProperty Name="MonthName_Short" ColumnName="MonthName_Short" />
+                <ScalarProperty Name="MonthName_FirstLetter" ColumnName="MonthName_FirstLetter" />
+                <ScalarProperty Name="Quarter" ColumnName="Quarter" />
+                <ScalarProperty Name="QuarterName" ColumnName="QuarterName" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="MMYYYY" ColumnName="MMYYYY" />
+                <ScalarProperty Name="MonthYear" ColumnName="MonthYear" />
+                <ScalarProperty Name="IsWeekend" ColumnName="IsWeekend" />
+                <ScalarProperty Name="IsHoliday" ColumnName="IsHoliday" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
