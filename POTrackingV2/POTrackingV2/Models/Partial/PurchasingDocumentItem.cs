@@ -817,18 +817,18 @@ namespace POTrackingV2.Models
         {
             get
             {
-                int donutProgress;
+                int stage;
 
                 if (!String.IsNullOrEmpty(this.ActiveStage))
                 {
-                    donutProgress = Convert.ToInt32(Regex.Replace(this.ActiveStage, "[^.0-9]", ""));
+                    stage = Convert.ToInt32(Regex.Replace(this.ActiveStage, "[^.0-9]", ""));
                 }
                 else
                 {
-                    donutProgress = 0;
+                    stage = 0;
                 }
 
-                return donutProgress;
+                return stage;
             }
         }
 

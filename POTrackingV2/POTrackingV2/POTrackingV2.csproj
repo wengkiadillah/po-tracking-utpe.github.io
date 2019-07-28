@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -288,6 +287,7 @@
     </Compile>
     <Compile Include="Models\Partial\ETAHistory.cs" />
     <Compile Include="Models\Partial\PO.cs" />
+    <Compile Include="Models\Partial\Notification.cs" />
     <Compile Include="Models\Partial\UserRoleType.cs" />
     <Compile Include="Models\Partial\SubcontDevVendor.cs" />
     <Compile Include="Models\Partial\SubcontDevUserRole.cs" />
