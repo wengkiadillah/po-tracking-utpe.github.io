@@ -169,7 +169,6 @@ namespace POTrackingV2.Controllers
                 List<string> userInternalList = DBUser.Users.Select(x=>x.Username).ToList();
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
-                //if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
                     //if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
@@ -206,11 +205,11 @@ namespace POTrackingV2.Controllers
                             
                             if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
                             {
-                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.StageToNumber < 2);
+                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.Stage == null || x.Stage == "0" || x.Stage == "1");
                             }
                             else if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
                             {
-                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.StageToNumber > 1);
+                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && (x.Stage != null && x.Stage != "0" && x.Stage != "1"));
                             }
                         }
                     }

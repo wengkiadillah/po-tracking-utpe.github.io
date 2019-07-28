@@ -138,39 +138,6 @@ namespace POTrackingV2.Controllers
                     }
                 }
                 SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
-                //SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == "ade").FirstOrDefault();
-                //if (subcontDevUserRole != null)
-                //{
-                //    ViewBag.Tes = subcontDevUserRole.RoleName.ToLower() + "1212";
-                //    if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
-                //    {
-                //        ViewBag.Tes = subcontDevUserRole.RoleName.ToLower() + "22";
-                //    }
-                //    else if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
-                //    {
-                //        //notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber > 1);
-                //        ViewBag.Tes = subcontDevUserRole.RoleName.ToLower() + "33";
-                //    }
-                //    //if (subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
-                //    //{
-                //    //    vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
-                //    //    notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                //    //}
-                //    //notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                //    //if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
-                //    //{
-                //    //    notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber < 2);
-                //    //}
-                //    //else// if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
-                //    //{
-                //    //    //notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber > 1);
-                //    //    notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                //    //}
-                //}
-                //else
-                //{
-                //    ViewBag.Tes = userName + "hoho";
-                //}
                 
                 string subcontDevUserRoleName = subcontDevUserRole != null ? subcontDevUserRole.RoleName.ToLower() : "";
                 ViewBag.CurrentRoleID = role.ToLower();
