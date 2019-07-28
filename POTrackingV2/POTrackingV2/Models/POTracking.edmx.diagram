@@ -4,38 +4,38 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="bca2bedf43dd44db97fa042e35405a4b" Name="Diagram1">
-        <EntityTypeShape EntityType="POTrackingModel.Capability" Width="1.5" PointX="1.5" PointY="33.25" IsExpanded="true" />
+      <Diagram DiagramId="1c7fe8dd38a848f998958abee0d556d1" Name="Diagram1" ZoomLevel="91">
+        <EntityTypeShape EntityType="POTrackingModel.Capability" Width="1.5" PointX="1.5" PointY="33.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.CapabilityCategory" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.DelayReason" Width="1.5" PointX="6" PointY="7.875" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ETAHistory" Width="1.5" PointX="8.25" PointY="20.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.KompoCategory" Width="1.5" PointX="1.5" PointY="7.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.Notification" Width="1.5" PointX="8.25" PointY="15.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.KompoCategory" Width="1.5" PointX="1.5" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.Notification" Width="1.5" PointX="8.25" PointY="15.25" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.NotificationStatu" Width="1.5" PointX="6" PointY="11.875" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.PO" Width="1.5" PointX="0.75" PointY="11" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ProductionSequenceData" Width="1.5" PointX="5.25" PointY="15.625" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ProgressPhoto" Width="1.5" PointX="5.25" PointY="19.5" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.PurchasingDocumentItem" Width="1.5" PointX="3" PointY="16.25" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.PurchasingDocumentItemHistory" Width="1.5" PointX="5.25" PointY="23" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.QualityControlProgress" Width="1.5" PointX="5.25" PointY="27.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderDetail" Width="1.5" PointX="7.5" PointY="31.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderPoFile" Width="1.5" PointX="7.5" PointY="34.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderProgressFile" Width="1.5" PointX="7.5" PointY="37.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrder" Width="1.5" PointX="5.25" PointY="34.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.RolesType" Width="1.5" PointX="5.75" PointY="1.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.SequencesProgressReason" Width="1.5" PointX="0.75" PointY="20.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.Shipment" Width="1.5" PointX="5.25" PointY="41.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.QualityControlProgress" Width="1.5" PointX="5.25" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderDetail" Width="1.5" PointX="7.5" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderPoFile" Width="1.5" PointX="7.5" PointY="34.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderProgressFile" Width="1.5" PointX="7.5" PointY="38.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrder" Width="1.5" PointX="5.25" PointY="34.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.RolesType" Width="1.5" PointX="5.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.SequencesProgressReason" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.Shipment" Width="1.5" PointX="5.25" PointY="41.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontCapability" Width="1.5" PointX="3.75" PointY="2.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.SubcontCategory" Width="1.5" PointX="1.5" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.SubcontCategory" Width="1.5" PointX="1.5" PointY="29.5" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontComponentCapability" Width="1.5" PointX="3.75" PointY="10" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontDevRole" Width="1.5" PointX="8.75" PointY="5.125" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.SubcontDevUserRole" Width="1.5" PointX="11" PointY="5" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.SubcontDevVendor" Width="1.5" PointX="3.75" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.SubcontDevVendor" Width="1.5" PointX="3.75" PointY="6.25" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.sysdiagram" Width="1.5" PointX="8.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.UserProcurementSuperior" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.UserRoleType" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.UserVendor" Width="1.5" PointX="3.75" PointY="46.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.Vendor" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.UserVendor" Width="1.5" PointX="3.75" PointY="46.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.Vendor" Width="1.5" PointX="1.5" PointY="0.875" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.DimDate" Width="1.5" PointX="10.75" PointY="8.75" IsExpanded="true" />
         <AssociationConnector Association="POTrackingModel.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_ETAHistory_DelayReason_DelayReasonID" ManuallyRouted="false" />

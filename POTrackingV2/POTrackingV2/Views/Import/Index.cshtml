@@ -92,7 +92,7 @@
             <li class="pagination-list__item" onclick="paginationShow(8)">7</li>
             <li class="pagination-list__item" onclick="paginationShow(9)">8</li>
             @*<li class="pagination-list__item" onclick="paginationShow(10)">9</li>*@
-            <li class="pagination-list__item" onclick="paginationShow(11)">9</li>
+            <li class="pagination-list__item" onclick="paginationShow(10)">9</li>
         </ul>
     </div>
 </div>
@@ -2614,77 +2614,6 @@
                         }
                     </div>
                 </div>
-                @*<div class="po-item-section stage-9">
-                        <div class="po-item-section-header justify-content-center">
-                            <p class="mb-0">Stage 8</p>
-                        </div>
-                        <div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text">Inbound Number</span>
-                            </div>
-                            @{
-                                var rowStage8 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                            {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage8 = 1;
-
-                                List<string> shipmentInboundNumbers = purchasingDocumentItem.ShipmentInboundNumbers;
-                                var maxCount = 0;
-
-                                if (shipmentInboundNumbers != null)
-                                {
-                                    maxCount = shipmentInboundNumbers.Count;
-                                }
-
-                                var count = 0;
-
-                                <div class="po-item-data-content row-@rowStage8">
-                                    <div class="po-item-data-content__outer">
-                                        @if (maxCount >= count + 1)
-                                        {
-                                            <span class="po-item-data-header__column">
-                                                @shipmentInboundNumbers[count]
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="po-item-data-header__column">
-                                                -
-                                            </span>
-                                        }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
-                                        {
-                                            count++;
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                <div class="po-item-data-content row-@rowStage8-@childRowStage8 mt-customize" row="@rowStage8" child="@childRowStage8">
-                                                    @if (maxCount >= count + 1)
-                                                    {
-                                                        <span class="po-item-data-header__column">
-                                                            @shipmentInboundNumbers[count]
-                                                        </span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="po-item-data-header__column">
-                                                            -
-                                                        </span>
-                                                    }
-                                                </div>
-                                                childRowStage8++;
-                                                count++;
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                                rowStage8++;
-                            }
-                        </div>
-                    </div>*@
                 <div class="po-item-section stage-9 info-stage">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 8</p>
@@ -2707,7 +2636,7 @@
                             var hideGR = "";
                             var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                             var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
-                            if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItem.ActiveStageToNumber < 4)
+                            if (roleID != "procurement" && roleID != "administrator" && purchasingDocumentItem.ActiveStageToNumber < 8)
                             {
                                 hideGR = "style=visibility:hidden";
                             }
@@ -2745,6 +2674,8 @@
                                                     <tr>
                                                         <td>GR / Inspection Date</td>
                                                         <td>&nbsp;</td>
+                                                        <td>Document Material</td>
+                                                        <td>&nbsp;</td>
                                                         <td>Movement Type</td>
                                                         <td>&nbsp;</td>
                                                         <td>Qty</td>
@@ -2755,6 +2686,8 @@
 
                                                         <tr>
                                                             <td class="secondary-text">@grDateNewDateFormat</td>
+                                                            <td>&nbsp;</td>
+                                                            <td class="secondary-text">@pdih.DocumentNumber</td>
                                                             <td>&nbsp;</td>
                                                             <td class="secondary-text">@pdih.MovementType</td>
                                                             <td>&nbsp;</td>
@@ -2780,7 +2713,7 @@
                                         }
                                         grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         hideGR = "";
-                                        if (ViewBag.CurrentRoleID != ViewBag.RoleSubcont && purchasingDocumentItemChild.ActiveStageToNumber < 4)
+                                        if (roleID != "procurement" && roleID != "administrator" && purchasingDocumentItemChild.ActiveStageToNumber < 8)
                                         {
                                             hideGR = "style=visibility:hidden";
                                         }
@@ -2797,6 +2730,8 @@
                                                             <tr>
                                                                 <td>GR / Inspection Date</td>
                                                                 <td>&nbsp;</td>
+                                                                <td>Document Material</td>
+                                                                <td>&nbsp;</td>
                                                                 <td>Movement Type</td>
                                                                 <td>&nbsp;</td>
                                                                 <td>Qty</td>
@@ -2806,6 +2741,8 @@
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
                                                                     <td class="secondary-text">@grDateNewDateFormat</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td class="secondary-text">@pdih.DocumentNumber</td>
                                                                     <td>&nbsp;</td>
                                                                     <td class="secondary-text">@pdih.MovementType</td>
                                                                     <td>&nbsp;</td>
@@ -2824,148 +2761,6 @@
                             row++;
                         }
                     </div>
-                    @*<div class="po-item-section-body">
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text gr-date">GR Date</span>
-                                <span class="po-item-data-header__text gr-qty">Qty</span>
-                                <span class="po-item-data-header__text gr-complete">GR Completed</span>
-                                <span class="po-item-data-header__text">info</span>
-                            </div>
-                            @{
-                                var rowStage9 = 1;
-                            }
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                            {
-                                var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                                var childRowStage9 = 1;
-
-                                var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                var isComplete = "No";
-                                if (purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= purchasingDocumentItem.ConfirmedQuantity)
-                                {
-                                    isComplete = "Yes";
-                                }
-
-                                var goodsReceiptQuantity = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
-                                var confirmedQuantity = purchasingDocumentItem.ConfirmedQuantity.ToString();
-
-                                if (purchasingDocumentItem.ActiveStageToNumber < 8)
-                                {
-                                    grDateNewDateFormat = "-";
-                                    goodsReceiptQuantity = "-";
-                                    confirmedQuantity = "-";
-                                    isComplete = "-";
-                                }
-
-                                <div class="po-item-data-content row-@rowStage9">
-                                    <div class="po-item-data-content__outer">
-                                        <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
-                                        <div class="po-item-data-header__column gr-qty">
-                                            <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
-                                        </div>
-                                        <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                        <span class="po-item-data-header__text info">
-                                            <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                            <div class="pop-up-notification">
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>GR / Inspection Date</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>Qty</td>
-                                                        </tr>
-                                                        @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
-                                                        {
-                                                            grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                                            var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
-
-                                                            if (purchasingDocumentItem.ActiveStageToNumber < 8)
-                                                            {
-                                                                pdihGoodsReceiptQuantity = "-";
-                                                                grDateNewDateFormat = "-";
-                                                            }
-
-                                                            <tr>
-                                                                <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                <td>&nbsp;</td>
-                                                                <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </span>
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @if (childPurchasingDocumentItems.Count() > 0)
-                                        {
-                                            foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
-                                            {
-                                                grDateNewDateFormat = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                                isComplete = "No";
-                                                if (childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity >= childPurchasingDocumentItem.ConfirmedQuantity)
-                                                {
-                                                    isComplete = "Yes";
-                                                }
-
-                                                goodsReceiptQuantity = childPurchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.ToString();
-                                                confirmedQuantity = childPurchasingDocumentItem.ConfirmedQuantity.ToString();
-
-                                                if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
-                                                {
-                                                    grDateNewDateFormat = "-";
-                                                    goodsReceiptQuantity = "-";
-                                                    confirmedQuantity = "-";
-                                                    isComplete = "-";
-                                                }
-
-                                                <div class="po-item-data-content row-@rowStage9-@childRowStage9 mt-customize" row="@rowStage9" child="@childRowStage9">
-                                                    <div class="po-item-data-header__column gr-date">@grDateNewDateFormat</div>
-                                                    <div class="po-item-data-header__column gr-qty">
-                                                        <div>@goodsReceiptQuantity<span class="secondary-text">/@confirmedQuantity</span></div>
-                                                    </div>
-                                                    <span class="po-item-data-header__column gr-complete">@isComplete</span>
-                                                    <span class="po-item-data-header__text info">
-                                                        <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                                                        <div class="pop-up-notification">
-                                                            <table>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>GR / Inspection Date</td>
-                                                                        <td>&nbsp;</td>
-                                                                        <td>Qty</td>
-                                                                    </tr>
-                                                                    @foreach (var pdih in childPurchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
-                                                                    {
-                                                                        grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
-                                                                        var pdihGoodsReceiptQuantity = pdih.GoodsReceiptQuantity.ToString();
-
-                                                                        if (childPurchasingDocumentItem.ActiveStageToNumber < 8)
-                                                                        {
-                                                                            pdihGoodsReceiptQuantity = "-";
-                                                                            grDateNewDateFormat = "-";
-                                                                        }
-
-                                                                        <tr>
-                                                                            <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                            <td>&nbsp;</td>
-                                                                            <td class="secondary-text">@pdihGoodsReceiptQuantity</td>
-                                                                        </tr>
-                                                                    }
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                childRowStage9++;
-                                            }
-                                        }
-                                    </div>
-                                </div>
-
-                                rowStage9++;
-                            }
-                        </div>*@
                 </div>
                 @*<div class="po-item-section stage-10">
                         <div class="po-item-section-header justify-content-center">
@@ -3098,104 +2893,10 @@
                             }
                         </div>
                     </div>*@
-                <div class="po-item-section stage-11">
+                <div class="po-item-section stage-10">
                     <div class="po-item-section-header justify-content-center">
                         <p class="mb-0">Stage 9</p>
                     </div>
-                    @*<div class="po-item-section-body">
-                            @{
-                                row = 1;
-                                var hidden = "";
-                                var hiddenPayTerms = "";
-
-                                if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                                {
-                                    hiddenPayTerms = "hidden";
-                                }
-                            }
-                            <div class="po-item-data-header">
-                                <span class="po-item-data-header__text parking-date">Parking Date</span>
-                                <span class="po-item-data-header__text term-date" @hiddenPayTerms>Term Date</span>
-                            </div>
-                            @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                            {
-                                var days = 0;
-                                var rowChild = 1;
-                                if (!string.IsNullOrEmpty(purchasingDocumentItem.LatestParkingDate.PayTerms))
-                                {
-                                    days = Convert.ToInt32(purchasingDocumentItem.LatestParkingDate.PayTerms);
-                                }
-
-                                if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                                {
-                                    hidden = "hidden";
-                                }
-                                var termDateNewDateFormat = "";
-
-                                DateTime? dateNewFormat = purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                                DateTime? termDate = (DateTime?)null;
-                                if (dateNewFormat != (DateTime?)null && days > 0)
-                                {
-                                    termDate = dateNewFormat.Value.AddDays(days);
-                                    termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
-                                }
-
-                                <div class="po-item-data-content row-@row" row="@row">
-                                    <div class="po-item-data-content__outer">
-                                        @if (dateNewFormat != null)
-                                        {
-                                            <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="po-item-data-header__column parking-date" @hidden></span>
-                                            <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
-                                        }
-                                    </div>
-                                    <div class="po-item-data-content__child">
-                                        @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
-                                        {
-                                            termDateNewDateFormat = "";
-                                            hidden = "";
-                                            if (purchasingDocumentItem.ActiveStageToNumber < 7 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
-                                            {
-                                                hidden = "hidden";
-                                            }
-                                            days = 0;
-                                            if (!string.IsNullOrEmpty(purchasingDocumentItemChild.LatestParkingDate.PayTerms))
-                                            {
-                                                days = Convert.ToInt32(purchasingDocumentItemChild.LatestParkingDate.PayTerms);
-                                            }
-
-                                            dateNewFormat = purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestParkingDate.GoodsReceiptDate.GetValueOrDefault() : (DateTime?)null;
-                                            termDate = (DateTime?)null;
-                                            if (dateNewFormat != (DateTime?)null && days > 0)
-                                            {
-                                                termDate = dateNewFormat.Value.AddDays(days);
-                                                termDateNewDateFormat = termDate.Value.ToString("dd/MM/yyyy");
-                                            }
-
-                                            <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
-                                                @if (dateNewFormat != null)
-                                                {
-                                                    <span class="po-item-data-header__column parking-date" @hidden>@dateNewFormat.Value.ToString("dd/MM/yyyy")</span>
-                                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@termDateNewDateFormat</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="po-item-data-header__column parking-date" @hidden></span>
-                                                    <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms></span>
-                                                }
-                                            </div>
-                                            rowChild++;
-                                        }
-                                    </div>
-                                </div>
-                                row++;
-                            }
-                        </div>*@
-
 
                     <div class="po-item-section-body">
                         @{
@@ -3203,7 +2904,7 @@
                             var hidden = "";
                             var hiddenPayTerms = "";
 
-                            if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                            if (roleID == "vendor")
                             {
                                 hiddenPayTerms = "hidden";
                             }
@@ -3216,7 +2917,7 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var rowChild = 1;
-                            if (purchasingDocumentItem.ActiveStageToNumber < 10 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                            if (purchasingDocumentItem.ActiveStageToNumber < 8 && roleID == "vendor")
                             {
                                 hidden = "hidden";
                             }
@@ -3231,7 +2932,7 @@
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         hidden = "";
-                                        if (purchasingDocumentItem.ActiveStageToNumber < 10 && ViewBag.CurrentRoleID == ViewBag.RoleVendor)
+                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 8 && roleID == "vendor")
                                         {
                                             hidden = "hidden";
                                         }
@@ -3246,9 +2947,9 @@
                             </div>
                             row++;
                         }
+
                     </div>
                 </div>
-
             </div>
         </li>
     </ul>

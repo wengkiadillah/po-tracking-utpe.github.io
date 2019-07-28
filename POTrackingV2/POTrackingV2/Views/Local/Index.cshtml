@@ -2238,11 +2238,10 @@
                                             <table>
                                                 <tbody>
                                                     <tr>
-                                                        <td>GR / Inspection Date</td>
-                                                        <td class="mr-2">Document Number</td>
-                                                        <td>&nbsp;</td>
-                                                        <td>Movement Type</td>
-                                                        <td>&nbsp;</td>
+                                                        <td class="pr-3">GR / Inspection Date</td>
+                                                        <td class="pr-3">Document Material</td>
+                                                        <td class="pr-3">Delivery Order</td>
+                                                        <td class="pr-3">Movement Type</td>
                                                         <td>Qty</td>
                                                     </tr>
                                                     @foreach (var pdih in purchasingDocumentItem.PurchasingDocumentItemHistoriesDetail)
@@ -2250,11 +2249,10 @@
                                                         grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
 
                                                     <tr>
-                                                        <td class="secondary-text">@grDateNewDateFormat</td>
-                                                        <td class="secondary-text mr-2">@pdih.DocumentNumber</td>
-                                                        <td>&nbsp;</td>
-                                                        <td class="secondary-text">@pdih.MovementType</td>
-                                                        <td>&nbsp;</td>
+                                                        <td class="secondary-text pr-3">@grDateNewDateFormat</td>
+                                                        <td class="secondary-text pr-3">@pdih.DocumentNumber</td>
+                                                        <td class="secondary-text pr-3">@pdih.DeliveryOrder</td>
+                                                        <td class="secondary-text pr-3">@pdih.MovementType</td>
                                                         <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
                                                     </tr>
                                                     }
@@ -2301,23 +2299,21 @@
                                                     <table>
                                                         <tbody>
                                                             <tr>
-                                                                <td>GR / Inspection Date</td>
-                                                                <td class="mr-2">Document Number</td>
-                                                                <td>&nbsp;</td>
-                                                                <td>Movement Type</td>
-                                                                <td>&nbsp;</td>
+                                                                <td class="pr-3">GR / Inspection Date</td>
+                                                                <td class="pr-3">Document Material</td>
+                                                                <td class="pr-3">Delivery Order</td>
+                                                                <td class="pr-3">Movement Type</td>
                                                                 <td>Qty</td>
                                                             </tr>
                                                             @foreach (var pdih in purchasingDocumentItemChild.PurchasingDocumentItemHistoriesDetail)
                                                             {
                                                                 grDateNewDateFormat = pdih.GoodsReceiptDate.HasValue ? pdih.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                                 <tr>
-                                                                    <td class="secondary-text">@grDateNewDateFormat</td>
-                                                                    <td class="secondary-text mr-2">@pdih.DocumentNumber</td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td class="secondary-text">@pdih.MovementType</td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td class="secondary-text">@pdih.GoodsReceiptQuantity</td>
+                                                                    <td class="secondary-text pr-3">@grDateNewDateFormat</td>
+                                                                    <td class="secondary-text pr-3">@pdih.DocumentNumber</td>
+                                                                    <td class="secondary-text pr-3">@pdih.DeliveryOrder</td>
+                                                                    <td class="secondary-text pr-3">@pdih.MovementType</td>
+                                                                    <td class="secondary-text pr-3">@pdih.GoodsReceiptQuantity</td>
                                                                 </tr>
                                                             }
                                                         </tbody>
