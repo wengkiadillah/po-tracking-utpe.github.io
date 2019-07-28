@@ -59,7 +59,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listSubcontDevRole = db.SubcontDevRoles.ToList();
-                listSubcontDevUserRole = db.SubcontDevUserRoles.ToList();
+                //listSubcontDevUserRole = db.SubcontDevUserRoles.ToList();
                 ViewBag.RolesTypeID = new SelectList(listSubcontDevRole, "ID", "Name");
                 //ViewBag.VendorCode = new SelectList(listSubcontDevUserRole, "Code", "CodeName");
                 return View();

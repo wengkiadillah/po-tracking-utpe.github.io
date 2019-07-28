@@ -444,7 +444,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="RoleID" Type="int" Nullable="false" />
-          <Property Name="IsHead" Type="bit" />
+          <Property Name="IsHead" Type="bit" Nullable="false" />
           <Property Name="Created" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Modified" Type="datetime" Nullable="false" />
@@ -1483,7 +1483,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="RoleID" Type="Int32" Nullable="false" />
-          <Property Name="IsHead" Type="Boolean" />
+          <Property Name="IsHead" Type="Boolean" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
