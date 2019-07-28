@@ -173,7 +173,7 @@ namespace POTrackingV2.Controllers
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
-                        SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username.ToLower() == userName).FirstOrDefault();
+                        SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
                         if(subcontDevUserRole != null)
                         {
                             if(subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)

@@ -137,9 +137,10 @@ namespace POTrackingV2.Controllers
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null));
                     }
                 }
-                string subcontDevUserRoleName = db.SubcontDevUserRoles.Where(x => x.Username.ToLower() == userName).Select(x => x.RoleName).FirstOrDefault();
+                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+                string subcontDevUserRoleName = subcontDevUserRole != null ? subcontDevUserRole.RoleName : "";
                 ViewBag.CurrentRoleID = role.ToLower();
-                ViewBag.CurrentSubcontDevRoleName = !string.IsNullOrEmpty(subcontDevUserRoleName) ? subcontDevUserRoleName.ToLower() : "";
+                ViewBag.CurrentSubcontDevRoleName = subcontDevUserRoleName;
                 ViewBag.CurrentSearchPOStatus = searchPOStatus;
                 ViewBag.RoleSubcontDev = LoginConstants.RoleSubcontDev.ToLower();
                 ViewBag.RoleAdministrator = LoginConstants.RoleAdministrator.ToLower();
