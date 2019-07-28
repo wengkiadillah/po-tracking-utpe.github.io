@@ -139,6 +139,7 @@ namespace POTrackingV2.Controllers
                 }
 
                 ViewBag.CurrentRoleID = role.ToLower();
+                ViewBag.CurrentSubcontDevRoleName = db.SubcontDevUserRoles.Where(x => x.Username.ToLower() == userName).Select(x => x.RoleName.ToLower()).FirstOrDefault();
                 ViewBag.CurrentSearchPOStatus = searchPOStatus;
                 ViewBag.RoleSubcontDev = LoginConstants.RoleSubcontDev.ToLower();
                 ViewBag.RoleAdministrator = LoginConstants.RoleAdministrator.ToLower();

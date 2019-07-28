@@ -434,7 +434,7 @@
                             else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
+                                if (ViewBag.SearchPOStatus == "newpo" || ViewBag.CurrentSubcontDevRoleName != "subcont management")
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
