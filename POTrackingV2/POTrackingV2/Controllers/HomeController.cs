@@ -182,11 +182,11 @@ namespace POTrackingV2.Controllers
                                 notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                             }
 
-                            if (subcontDevUserRole.RoleName.ToLower().Contains("subcont technical"))
+                            if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
                             {
                                 notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber < 2);
                             }
-                            else if(subcontDevUserRole.RoleName.ToLower().Contains("subcont management"))
+                            else if(subcontDevUserRole.RoleName.ToLower() == "subcont management")
                             {
                                 notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber > 1);
                             }

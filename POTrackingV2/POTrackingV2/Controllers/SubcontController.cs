@@ -138,6 +138,8 @@ namespace POTrackingV2.Controllers
                     }
                 }
                 SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+
+                ViewBag.Tes = userName + "hoho";
                 string subcontDevUserRoleName = subcontDevUserRole != null ? subcontDevUserRole.RoleName.ToLower() : "";
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.CurrentSubcontDevRoleName = subcontDevUserRoleName;
