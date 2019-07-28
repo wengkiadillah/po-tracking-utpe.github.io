@@ -23,6 +23,37 @@ namespace POTrackingV2.Controllers
         List<SubcontDevUserRole> listSubcontDevUserRole = new List<SubcontDevUserRole>();
 
         [HttpGet]
+        public JsonResult GetUserFromValue(string value)
+        {
+            UserManagementEntities dbUserManagement = new UserManagementEntities();
+            try
+            {
+                object data = null;
+                value = value.ToLower();
+
+                data = dbUserManagement.Users.Where(x => x.Username.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.Username,
+                        MatchEvaluation = x.Username.ToLower().IndexOf(value)
+                    }).Distinct().OrderBy(x => x.MatchEvaluation).Take(10);
+
+                if (data != null)
+                {
+                    return Json(new { success = true, responseCode = "200", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public ActionResult CreateSubcontDevUserRole()
         {
             using (POTrackingEntities db = new POTrackingEntities())
@@ -41,13 +72,15 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 listSubcontDevRole = db.SubcontDevRoles.ToList();
+                
                 ViewBag.RolesTypeID = new SelectList(listSubcontDevRole, "ID", "Name");
-                var chkUser = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
-                if (chkUser == null)
+                var chkUserRole = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
+                if (chkUserRole == null)
                 {
-                    var chkUserRole = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
-                    if (chkUserRole == null)
-                    {
+                    //UserManagementEntities dbUserManagement = new UserManagementEntities();
+                    //var checkUsername = dbUserManagement.Users.FirstOrDefault(x => x.Username == objNewUser.Username);
+                    //if (checkUsername != null)
+                    //{
                         objNewUser.Username = objNewUser.Username;
                         objNewUser.RoleID = objNewUser.RolesTypeID;
                         objNewUser.Created = DateTime.Now;
@@ -57,11 +90,15 @@ namespace POTrackingV2.Controllers
                         db.SubcontDevUserRoles.Add(objNewUser);
 
                         db.SaveChanges();
-                        //ModelState.Clear();
+                        ModelState.Clear();
                         return RedirectToAction("ViewSubcontDevUserRole", "SubcontDevUserRole");
-                    }
-                    ViewBag.ErrorMessage = "User Already Exist!";
-                    return View();
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.ErrorMessage = "User does not Exist!";
+                    //    return View();
+                    //}
+
                 }
                 ViewBag.ErrorMessage = "User Already Exist!";
                 return View();

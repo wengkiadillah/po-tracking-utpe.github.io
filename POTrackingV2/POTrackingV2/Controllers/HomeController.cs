@@ -214,6 +214,10 @@ namespace POTrackingV2.Controllers
                                 notifications = null;
                             }
                         }
+                        else
+                        {
+                            notifications = null;
+                        }
                     }
                     else
                     {
