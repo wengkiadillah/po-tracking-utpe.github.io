@@ -45,7 +45,7 @@ namespace POTrackingV2.Controllers
                 var chkUser = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
                 if (chkUser == null)
                 {
-                    var chkUserRole = (db.UserRoleTypes.FirstOrDefault(x => x.Username == objNewUser.Username));
+                    var chkUserRole = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
                     if (chkUserRole == null)
                     {
                         objNewUser.Username = objNewUser.Username;
