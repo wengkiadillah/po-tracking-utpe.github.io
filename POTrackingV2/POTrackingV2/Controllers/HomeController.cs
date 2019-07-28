@@ -194,7 +194,7 @@ namespace POTrackingV2.Controllers
                     //}
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
-                        SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == "ade").FirstOrDefault();
+                        SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
                         if (subcontDevUserRole != null)
                         {
                             if (subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
@@ -202,7 +202,7 @@ namespace POTrackingV2.Controllers
                                 vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
                                 notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
                             }
-                            
+
                             if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
                             {
                                 notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.Stage == null || x.Stage == "0" || x.Stage == "1");
@@ -210,6 +210,8 @@ namespace POTrackingV2.Controllers
                             else if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
                             {
                                 notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && (x.Stage != null && x.Stage != "0" && x.Stage != "1"));
+                            } else {
+                                notifications = null;
                             }
                         }
                     }
