@@ -61,7 +61,7 @@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
-    @if (roleID == ViewBag.RoleVendor || roleID == ViewBag.RoleAdministrator)
+    @if (roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator)
     {
         if (ViewBag.CurrentSearchPOStatus == "negotiated")
         {
@@ -408,7 +408,7 @@
                                 isPartial = "selected";
                             }
 
-                            if (ViewBag.CurrentRoleID == "vendor")
+                            if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)
                             {
                                 hideChildCheckedConfirmBtn = "style=visibility:hidden";
                                 disabledInputQty = "disabled";
@@ -434,7 +434,7 @@
                             else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
+                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
@@ -459,7 +459,7 @@
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0)
+                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0 || (purchasingDocumentItem.IsClosed!=null && purchasingDocumentItem.IsClosed!="") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -549,6 +549,11 @@
                                         var disabledBtnConfirmCancelChild = "disabled";
                                         var hideEditBtnChild = "";
 
+                                        if (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator)
+                                        {
+                                            selectedCheckboxChild = "disabled";
+                                        }
+
                                         if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
                                         {
                                             disabledChild = "disabled";
@@ -568,8 +573,8 @@
                                             selectedCheckboxChild = "checked";
                                             disabledChild = "disabled";
                                         }
-                                        
-                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2)
+
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || (purchasingDocumentItemChild.IsClosed != null && purchasingDocumentItem.IsClosed != "") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }

@@ -17,7 +17,7 @@ namespace POTrackingV2.Models
         public int ID { get; set; }
         public string Username { get; set; }
         public int RoleID { get; set; }
-        public Nullable<bool> IsHead { get; set; }
+        public bool IsHead { get; set; }
         public System.DateTime Created { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime Modified { get; set; }

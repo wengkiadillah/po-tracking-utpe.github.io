@@ -163,7 +163,7 @@ namespace POTrackingV2.Controllers
                 var role = myUser.Roles.ToLower();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
-                string userName = User.Identity.Name;
+                string userName = User.Identity.Name.ToLower();
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
                 List<string> userInternalList = DBUser.Users.Select(x=>x.Username).ToList();
@@ -171,11 +171,53 @@ namespace POTrackingV2.Controllers
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
+                    //if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                    //{
+                    //    SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+                    //    if(subcontDevUserRole != null)
+                    //    {
+                    //        if(subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
+                    //        {
+                    //            vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                    //            notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                    //        }
+
+                    //        if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
+                    //        {
+                    //            notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber < 2);
+                    //        }
+                    //        else if(subcontDevUserRole.RoleName.ToLower() == "subcont management")
+                    //        {
+                    //            notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber > 1);
+                    //        }
+                    //    }                        
+                    //}
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
-                        vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                        SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+                        if (subcontDevUserRole != null)
+                        {
+                            if (subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
+                            {
+                                vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                                notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                            }
 
-                        notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                            if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
+                            {
+                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.Stage == null || x.Stage == "0" || x.Stage == "1");
+                            }
+                            else if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
+                            {
+                                notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && (x.Stage != null && x.Stage != "0" && x.Stage != "1"));
+                            } else {
+                                notifications = null;
+                            }
+                        }
+                        else
+                        {
+                            notifications = null;
+                        }
                     }
                     else
                     {
