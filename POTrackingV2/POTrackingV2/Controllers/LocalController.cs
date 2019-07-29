@@ -1219,7 +1219,7 @@ namespace POTrackingV2.Controllers
 
         // POST: Local/ProcurementDeclineFirstEta
         [HttpPost]
-        public ActionResult ProcurementDeclinezFirstEta(List<int> inputPurchasingDocumentItemIDs)
+        public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (!(myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower()))
