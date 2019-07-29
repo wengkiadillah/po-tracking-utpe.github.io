@@ -1254,7 +1254,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
