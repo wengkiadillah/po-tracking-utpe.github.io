@@ -77,10 +77,10 @@ namespace POTrackingV2.Controllers
                 var chkUserRole = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objNewUser.Username));
                 if (chkUserRole == null)
                 {
-                    //UserManagementEntities dbUserManagement = new UserManagementEntities();
-                    //var checkUsername = dbUserManagement.Users.FirstOrDefault(x => x.Username == objNewUser.Username);
-                    //if (checkUsername != null)
-                    //{
+                    UserManagementEntities dbUserManagement = new UserManagementEntities();
+                    var checkUsername = dbUserManagement.Users.FirstOrDefault(x => x.Username == objNewUser.Username);
+                    if (checkUsername != null)
+                    {
                         objNewUser.Username = objNewUser.Username;
                         objNewUser.RoleID = objNewUser.RolesTypeID;
                         objNewUser.Created = DateTime.Now;
@@ -92,12 +92,12 @@ namespace POTrackingV2.Controllers
                         db.SaveChanges();
                         ModelState.Clear();
                         return RedirectToAction("ViewSubcontDevUserRole", "SubcontDevUserRole");
-                    //}
-                    //else
-                    //{
-                    //    ViewBag.ErrorMessage = "User does not Exist!";
-                    //    return View();
-                    //}
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "User does not Exist!";
+                        return View();
+                    }
 
                 }
                 ViewBag.ErrorMessage = "User Already Exist!";
