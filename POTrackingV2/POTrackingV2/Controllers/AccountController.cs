@@ -164,18 +164,25 @@ namespace POTrackingV2.Controllers
             Response.Cookies.Add(cookie);
 
             FormsAuthentication.SignOut();
-
-            var myrole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-
-            if (myrole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+            
+            if (User != null)
             {
-                return RedirectToAction("Login", "Account", null);
+                var myrole = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+                if (myrole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+                {
+                    return RedirectToAction("Login", "Account", null);
+                }
+                else
+                {
+                    string loginURL = WebConfigurationManager.AppSettings["LoginURL"];
+                    return Redirect(loginURL);
+                }
             }
             else
             {
-                string loginURL = WebConfigurationManager.AppSettings["LoginURL"];
-                return Redirect(loginURL);
+                return RedirectToAction("Login", "Account", null);
             }
+            
         }
     }
 }
