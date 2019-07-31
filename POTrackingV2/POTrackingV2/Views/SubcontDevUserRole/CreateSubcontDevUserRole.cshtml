@@ -55,7 +55,6 @@
 
 
         $(function () {
-
             $('.create-ad-user').click(function (e) {
                 var roleType = $('#RolesTypeID').val();
                 if (!$('form').valid() && (roleType == null || roleType == '')) {
@@ -70,7 +69,8 @@
                     e.preventDefault();
                 }
                 else {
-                    $('form').submit();
+                    //console.log($('form').data());
+                    //$('form').submit();
                 }
             });
 
