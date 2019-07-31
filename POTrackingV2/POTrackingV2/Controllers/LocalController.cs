@@ -1219,7 +1219,7 @@ namespace POTrackingV2.Controllers
 
         // POST: Local/ProcurementDeclineFirstEta
         [HttpPost]
-        public ActionResult ProcurementDeclinezFirstEta(List<int> inputPurchasingDocumentItemIDs)
+        public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (!(myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower()))
@@ -1254,7 +1254,7 @@ namespace POTrackingV2.Controllers
                         databasePurchasingDocumentItem.LastModified = now;
                         databasePurchasingDocumentItem.LastModifiedBy = user;
 
-                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID && x.StatusID == 3).ToList();
                         foreach (var previousNotification in previousNotifications)
                         {
                             previousNotification.isActive = false;
