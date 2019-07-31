@@ -53,7 +53,7 @@ namespace CopyFile
                 Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
                 System.IO.File.Copy(myFile.FullName, destFile, true);
 
-
+                // For FTP 
                 //CopyFile("test.csv", "test.csv", "administrator", "P@s5w0rd");
 
                 Console.WriteLine(@"Success !");
