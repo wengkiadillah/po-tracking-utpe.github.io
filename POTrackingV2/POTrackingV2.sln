@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POTrackingV2", "POTrackingV2\POTrackingV2.csproj", "{B4F7BF7C-D97F-43FD-AFDC-BD725B452D37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncDataPOTracking", "SyncDataPOTracking\SyncDataPOTracking.csproj", "{8BB04D59-F76A-4565-BA43-67D3343A3FE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B4F7BF7C-D97F-43FD-AFDC-BD725B452D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4F7BF7C-D97F-43FD-AFDC-BD725B452D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4F7BF7C-D97F-43FD-AFDC-BD725B452D37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BB04D59-F76A-4565-BA43-67D3343A3FE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB04D59-F76A-4565-BA43-67D3343A3FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BB04D59-F76A-4565-BA43-67D3343A3FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BB04D59-F76A-4565-BA43-67D3343A3FE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
