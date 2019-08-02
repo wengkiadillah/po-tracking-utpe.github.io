@@ -165,11 +165,11 @@ namespace SyncDataPOTracking
                         poValue.Information = string.Empty;
                         poValue.ProductGroup = string.Empty;
                         poValue.NumberPostedInvoice = string.Empty;
-                        poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? null : po.Value.PurchaseOrderCreator;
+                        poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
                         poValue.Status = string.Empty;
                         poValue.Reference = string.Empty;
                         poValue.Created = DateTime.Now.Date;
-                        poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator; ;
+                        poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
                         poValue.LastModified = DateTime.Now.Date;
                         poValue.LastModifiedBy = "SyncDataSAP";
                         db.POes.Add(poValue);
@@ -182,11 +182,11 @@ namespace SyncDataPOTracking
                         poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poExist.Date = po.Value.PODate;
                         poExist.ReleaseDate = po.Value.POReleaseDate;
-                        poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
+                        poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
                         poExist.Information = string.Empty;
                         poExist.ProductGroup = string.Empty;
                         poExist.NumberPostedInvoice = string.Empty;
-                        poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? null : po.Value.PurchaseOrderCreator;
+                        poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
                         poExist.Status = string.Empty;
                         poExist.Reference = string.Empty;
                         poExist.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
