@@ -248,6 +248,7 @@ namespace POTrackingV2.Controllers
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+            var today = DateTime.Now;
 
             //ViewBag.MyUser = myUser;
             //ViewBag.Role = role;
@@ -269,7 +270,7 @@ namespace POTrackingV2.Controllers
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                                 //.Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                                .Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                                .Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && !vendorSubcont.Contains(x.VendorCode) && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
                                 .Include(x => x.Vendor)
                                 .AsQueryable();
 
@@ -283,7 +284,7 @@ namespace POTrackingV2.Controllers
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
+                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && !vendorSubcont.Contains(x.VendorCode))
                                         .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
                 //.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
 
