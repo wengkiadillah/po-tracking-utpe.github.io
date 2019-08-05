@@ -54,6 +54,8 @@ namespace POTrackingV2.Models
         public System.DateTime Created { get; set; }
         public string LastModifiedBy { get; set; }
         public System.DateTime LastModified { get; set; }
+        public Nullable<System.DateTime> PRCreateDate { get; set; }
+        public Nullable<System.DateTime> PRReleaseDate { get; set; }
     
         public virtual KompoCategory KompoCategory { get; set; }
         public virtual Vendor Vendor { get; set; }
