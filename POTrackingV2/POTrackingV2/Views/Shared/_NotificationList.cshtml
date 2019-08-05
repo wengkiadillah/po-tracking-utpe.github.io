@@ -158,6 +158,8 @@
                             var shipmentCopyBLDate = jsonObj[k]['ShipmentCopyBLDate'];
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
                             var invoiceDocument = jsonObj[k]['InvoiceDocument'];
+                            var isHead = jsonObj[k]['IsHead'];
+                            var poCreatedBy = jsonObj[k]['POCreatedBy'];
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
 
@@ -245,6 +247,10 @@
                                     else {
                                         message += " has removed Invoice for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage;
                                     }
+                                }
+
+                                if (isHead == true) {
+                                    message += " PO Created by " + poCreatedBy
                                 }
                                 /*-------------------------------------------------------------END IMPORT-----------------------------------------------------------*/
                             }

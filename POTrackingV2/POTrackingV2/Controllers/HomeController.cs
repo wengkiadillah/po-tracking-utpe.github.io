@@ -166,7 +166,8 @@ namespace POTrackingV2.Controllers
                 string userName = User.Identity.Name.ToLower();
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
-                List<string> userInternalList = DBUser.Users.Select(x=>x.Username).ToList();
+                List<string> userInternalList = DBUser.Users.Select(x => x.Username).ToList();
+                bool isHead = false;
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
@@ -210,7 +211,9 @@ namespace POTrackingV2.Controllers
                             else if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
                             {
                                 notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && (x.Stage != null && x.Stage != "0" && x.Stage != "1"));
-                            } else {
+                            }
+                            else
+                            {
                                 notifications = null;
                             }
                         }
@@ -235,9 +238,15 @@ namespace POTrackingV2.Controllers
                         }
 
                         notifications = notifications.Except(noShowNotifications);
+
+                        // For Head or Superior
+                        if (myUserNRPs.Count() > 1)
+                        {
+                            isHead = true;
+                        }
                     }
                 }
-                else if(role == LoginConstants.RoleVendor.ToLower())
+                else if (role == LoginConstants.RoleVendor.ToLower())
                 {
                     var userEksternal = db.UserVendors.Where(x => x.Username == userName).FirstOrDefault();
 
@@ -281,7 +290,9 @@ namespace POTrackingV2.Controllers
                       ShipmentATD = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATDDate,
                       ShipmentCopyBLDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().CopyBLDate,
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
-                      InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument
+                      InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
+                      IsHead = isHead,
+                      POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
                   }).OrderByDescending(x => x.created);
 
                 if (notificationsDTO != null)
@@ -403,9 +414,14 @@ namespace POTrackingV2.Controllers
                 {
                     pOesImport = pOesImport.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                 }
-                string ImportPOItemsCountNew = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
-                string ImportPOItemsCountOnGoing = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
-                string ImportPOItemsDone = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                //string ImportPOItemsCountNew = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+                //string ImportPOItemsCountOnGoing = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+                //string ImportPOItemsDone = pOesImport.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsDone = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();
 
                 #endregion
 
@@ -462,7 +478,7 @@ namespace POTrackingV2.Controllers
                         foreach (var myUserNRP in myUserNRPs)
                         {
                             noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                        }                   
+                        }
                     }
                     pOesLocal = pOesLocal.Except(noShowPOes);
                 }
@@ -483,7 +499,7 @@ namespace POTrackingV2.Controllers
 
                 #endregion
 
-                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone, LocalPOItemsCountNew, LocalPOItemsCountOnGoing, LocalPOItemsDone}, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone, LocalPOItemsCountNew, LocalPOItemsCountOnGoing, LocalPOItemsDone }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
