@@ -18,7 +18,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44365</IISExpressSSLPort>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -445,6 +446,7 @@
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\semantic.min.css" />
     <Content Include="Content\styles.css" />
+    <Content Include="Content\stylesLogin.css" />
     <Content Include="Content\um-style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Files\Import\Invoice\donotdelete.txt" />
