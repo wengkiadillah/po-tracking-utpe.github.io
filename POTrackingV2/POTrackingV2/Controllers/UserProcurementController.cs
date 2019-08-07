@@ -30,7 +30,7 @@ namespace POTrackingV2.Controllers
 
             ViewBag.CurrentSearchUser = searchUser;
 
-            return View(userProcurementSuperiors.OrderBy(x=>x.Username));
+            return View(userProcurementSuperiors.OrderBy(x => x.Username));
         }
 
         public ActionResult Details(int id)
@@ -172,9 +172,9 @@ namespace POTrackingV2.Controllers
 
         public ActionResult PopulateUser(string username)
         {
-            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).ToList();
+            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).OrderBy(x => x.Name).ToList();
 
-            List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.ToList();
+            List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 
             foreach (var item in userProcurementInferiors)
             {

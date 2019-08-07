@@ -506,18 +506,10 @@ namespace POTrackingV2.Controllers
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        //foreach (var item in db.UserProcurementSuperiors)
-                        //{
-                        //    if (item.ParentID == childUser.ID)
-                        //    {
-                        //        userNRPs.Add(item.NRP);
-                        //    }
-                        //}
-
                         if (!string.IsNullOrEmpty(childUser.NRP))
                         {
                             userNRPs.Add(childUser.NRP);
