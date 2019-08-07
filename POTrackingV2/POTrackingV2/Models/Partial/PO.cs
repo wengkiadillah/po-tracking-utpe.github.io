@@ -11,9 +11,14 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.ProgressDay.HasValue && this.ReleaseDate.HasValue)
+                PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
+
+                if (purchasingDocumentItem.ConfirmedDate.HasValue && this.ReleaseDate.HasValue)
                 {
-                    int daysAdded = this.ProgressDay.GetValueOrDefault() / 4;
+                    DateTime date1 = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault();
+                    DateTime date2 = this.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = t.Days / 4;
                     DateTime today = DateTime.Now;
                     DateTime twentyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
 
@@ -37,9 +42,17 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.ProgressDay.HasValue && this.ReleaseDate.HasValue)
+                PurchasingDocumentItem purchasingDocumentItem = new PurchasingDocumentItem();
+
+                if (purchasingDocumentItem.HasETAHistory && this.ReleaseDate.HasValue)
                 {
-                    int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                    //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                    //DateTime today = DateTime.Now;
+                    //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                    DateTime date1 = purchasingDocumentItem.FirstETAHistory.ETADate.GetValueOrDefault();
+                    DateTime date2 = this.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = (t.Days *3) / 4;
                     DateTime today = DateTime.Now;
                     DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
 
