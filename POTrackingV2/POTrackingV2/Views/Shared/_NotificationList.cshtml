@@ -333,6 +333,10 @@
                                 } else {
                                     message += " has approved item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Qty: " + POConfirmedQty + " at stage " + stage;
                                 }
+
+                                if (isHead == true) {
+                                    message += " PO Created by " + poCreatedBy
+                                }
                                 /*---------------------------------------------------------------END LOCAL------------------------------------------------------------*/
                             } else if (POTypeCategory == "Subcont") {
                                 /*-------------------------------------------------------------BEGIN SUBCONT----------------------------------------------------------*/

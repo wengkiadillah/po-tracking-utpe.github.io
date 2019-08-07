@@ -135,29 +135,29 @@
 
         if (purchasingDocumentItems.Count() > 0)
         {
-
-            if (currentSearchPOStatus == "ongoing")
+            if (!String.IsNullOrEmpty(currentSearchPOStatus))
             {
-                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
-            }
-            else if (currentSearchPOStatus == "newpo")
-            {
-                purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
-            }
-            else if (roleID == "procurement" || roleID == "administrator")
-            {
-                if (currentSearchPOStatus == "negotiated")
-                {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
-                }
-                else
+                if (currentSearchPOStatus == "ongoing")
                 {
                     purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
                 }
+                else if (currentSearchPOStatus == "newpo")
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+                }
+                else if (roleID == "procurement" || roleID == "administrator")
+                {
+                    if (currentSearchPOStatus == "negotiated")
+                    {
+                        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
+                    }
+                    else
+                    {
+                        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+                    }
+                }
             }
-        }
-        if (purchasingDocumentItems.Count() > 0)
-        {
+
             if (!string.IsNullOrEmpty(currentSearchForMaterial))
             {
                 purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
@@ -165,10 +165,10 @@
         }
     }
 
-    if (purchasingDocumentItems.Count() < 1)
-    {
-        continue;
-    }
+    //if (purchasingDocumentItems.Count() < 1)
+    //{
+    //    continue;
+    //}
 
     purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
