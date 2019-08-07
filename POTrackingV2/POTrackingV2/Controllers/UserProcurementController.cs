@@ -21,7 +21,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult Index(string searchUser)
         {
-            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == null).ToList();
+            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
             if (!string.IsNullOrEmpty(searchUser))
             {
