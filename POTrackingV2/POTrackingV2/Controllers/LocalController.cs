@@ -479,23 +479,33 @@ namespace POTrackingV2.Controllers
             {
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
+                if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
+                {
+                    userNRPs.Add(userProcurementSuperior.NRP);
+                }
+
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        //foreach (var item in db.UserProcurementSuperiors)
-                        //{
-                        //    if (item.ParentID == childUser.ID)
-                        //    {
-                        //        userNRPs.Add(item.NRP);
-                        //    }
-                        //}
-
                         if (!string.IsNullOrEmpty(childUser.NRP))
                         {
                             userNRPs.Add(childUser.NRP);
+                        }
+
+                        List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
+
+                        if (grandchildUsers.Count > 0)
+                        {
+                            foreach (var grandchildUser in grandchildUsers)
+                            {
+                                if (!string.IsNullOrEmpty(grandchildUser.NRP))
+                                {
+                                    userNRPs.Add(grandchildUser.NRP);
+                                }
+                            }
                         }
                     }
                 }

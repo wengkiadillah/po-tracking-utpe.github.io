@@ -49,22 +49,19 @@ namespace POTrackingV2.Controllers
 
             var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
                             .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                            .Where(x=> x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
                             .AsQueryable();
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
-                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                //                .AsQueryable();
-
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
+                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
                                         .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
-                //.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -78,37 +75,11 @@ namespace POTrackingV2.Controllers
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
             {
-                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                //                .AsQueryable();
+                // SEE ALL
             }
             else
             {
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
-            }
-
-            //ViewBag.ImportPOItemsCountNew = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
-            //ViewBag.ImportPOItemsCountOnGoing = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx");
-            //ViewBag.ImportPOItemsDone = pOes.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
-
-            if (searchPOStatus == "ongoing")
-            {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
-            }
-            else if (searchPOStatus == "newpo")
-            {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
-            }
-            else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
-            {
-                if (searchPOStatus == "negotiated")
-                {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.ConfirmedItem != false));
-                }
-                else
-                {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
-                }
             }
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -152,6 +123,29 @@ namespace POTrackingV2.Controllers
                 DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                 pOes = pOes.Where(x => x.Date <= endDate);
+            }
+
+            if (!String.IsNullOrEmpty(searchPOStatus))
+            {
+                if (searchPOStatus.ToLower() == "ongoing")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                }
+                else if (searchPOStatus.ToLower() == "newpo")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+                }
+                else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+                {
+                    if (searchPOStatus.ToLower() == "negotiated")
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                    }
+                    else
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                    }
+                } 
             }
             #endregion
 
@@ -446,23 +440,33 @@ namespace POTrackingV2.Controllers
             {
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
 
+                if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
+                {
+                    userNRPs.Add(userProcurementSuperior.NRP);
+                }
+
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID || x.ID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
 
                     foreach (var childUser in childUsers)
                     {
-                        //foreach (var item in db.UserProcurementSuperiors)
-                        //{
-                        //    if (item.ParentID == childUser.ID)
-                        //    {
-                        //        userNRPs.Add(item.NRP);
-                        //    }
-                        //}
-
                         if (!string.IsNullOrEmpty(childUser.NRP))
                         {
                             userNRPs.Add(childUser.NRP);
+                        }
+
+                        List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
+
+                        if (grandchildUsers.Count > 0)
+                        {
+                            foreach (var grandchildUser in grandchildUsers)
+                            {
+                                if (!string.IsNullOrEmpty(grandchildUser.NRP))
+                                {
+                                    userNRPs.Add(grandchildUser.NRP);
+                                }
+                            }
                         }
                     }
                 }
