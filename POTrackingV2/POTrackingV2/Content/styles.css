@@ -1224,9 +1224,9 @@ small.label.pull-right.bg-red {
     margin-right: 4px;
 }
 
-small.label.pull-right.bg-black {
-    color:white;
-    background-color: black !important;
+button.label.pull-right.bg-white {
+    color: #CCCCCC;
+    background-color: white !important;
     margin-right: 4px;
 }
 
@@ -1245,4 +1245,15 @@ small.label {
 
 .dvPreview img:hover {
     transform: scale(3.5);
+}
+
+button.burger-toggle {
+    top: 30px;
+    position: absolute;
+    left: 10px;
+    height: 28px;
+    width: 35px;
+    font-size: 18px;
+    border: 0px;
+    z-index: 2;
 }
