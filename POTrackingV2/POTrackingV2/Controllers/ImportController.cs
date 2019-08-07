@@ -438,7 +438,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
                 {

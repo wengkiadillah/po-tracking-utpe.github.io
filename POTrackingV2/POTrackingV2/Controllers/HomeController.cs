@@ -345,7 +345,7 @@ namespace POTrackingV2.Controllers
 
             if (!string.IsNullOrEmpty(username))
             {
-                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower() && x.ParentID == null).SingleOrDefault();
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
                 if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
                 {
@@ -391,7 +391,6 @@ namespace POTrackingV2.Controllers
 
                 #region Import
                 var pOesImport = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
                                         .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
                                         .AsQueryable();                                
 
@@ -402,7 +401,6 @@ namespace POTrackingV2.Controllers
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                     var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                            .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
                                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                     if (myUserNRPs.Count > 0)
@@ -424,8 +422,9 @@ namespace POTrackingV2.Controllers
                     pOesImport = pOesImport.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                 }
 
-                string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0")).Count().ToString();
-                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0")).Count().ToString();
+
+                string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
                 string ImportPOItemsDone = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();
 
                 #endregion
