@@ -154,6 +154,8 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="Type" Type="varchar" MaxLength="25" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="ReleaseDate" Type="datetime" />
+          <Property Name="PRCreateDate" Type="datetime" />
+          <Property Name="PRReleaseDate" Type="datetime" />
           <Property Name="ProgressDay" Type="int" />
           <Property Name="VendorCode" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="KompoCategoryID" Type="int" />
@@ -1187,6 +1189,8 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <NavigationProperty Name="KompoCategory" Relationship="Self.FK_PO_KompoCategories_KompoCategoryID" FromRole="PO" ToRole="KompoCategories" />
           <NavigationProperty Name="Vendor" Relationship="Self.FK_PO_Vendors_VendorCode" FromRole="PO" ToRole="Vendors" />
           <NavigationProperty Name="PurchasingDocumentItems" Relationship="Self.FK_PurchasingDocumentItem_PO_POID" FromRole="PO" ToRole="PurchasingDocumentItem" />
+          <Property Name="PRCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="PRReleaseDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="ProductionSequenceData">
           <Key>
@@ -2223,6 +2227,8 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <EntitySetMapping Name="POes">
             <EntityTypeMapping TypeName="POTrackingModel.PO">
               <MappingFragment StoreEntitySet="PO">
+                <ScalarProperty Name="PRReleaseDate" ColumnName="PRReleaseDate" />
+                <ScalarProperty Name="PRCreateDate" ColumnName="PRCreateDate" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Number" ColumnName="Number" />
                 <ScalarProperty Name="Type" ColumnName="Type" />

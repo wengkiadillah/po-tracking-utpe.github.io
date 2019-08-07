@@ -83,6 +83,8 @@ namespace SyncDataPOTracking
                     poTemp.POCreator = dataItem.POCreator;
                     poTemp.PODate = dataItem.PODate;
                     poTemp.POReleaseDate = dataItem.POReleaseDate;
+                    poTemp.PRCreateDate = dataItem.PRCreateDate;
+                    poTemp.PRReleaseDate = dataItem.PRReleaseDate;
                     poTemp.VendorCode = dataItem.VendorCode;
 
                     if (!listPO.ContainsKey(poItemTempKey))
@@ -161,16 +163,20 @@ namespace SyncDataPOTracking
                         poValue.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poValue.Date = po.Value.PODate;
                         poValue.ReleaseDate = po.Value.POReleaseDate;
+                        poValue.PRCreateDate = po.Value.PRCreateDate;
+                        poValue.PRReleaseDate = po.Value.PRReleaseDate;
                         poValue.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
                         poValue.Information = string.Empty;
                         poValue.ProductGroup = string.Empty;
                         poValue.NumberPostedInvoice = string.Empty;
-                        poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? null : po.Value.PurchaseOrderCreator;
+                        poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
                         poValue.Status = string.Empty;
                         poValue.Reference = string.Empty;
-                        poValue.Created = DateTime.Now.Date;
-                        poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator; ;
-                        poValue.LastModified = DateTime.Now.Date;
+                        //poValue.Created = DateTime.Now.Date;
+                        poValue.Created = DateTime.Now;
+                        poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
+                        //poValue.LastModified = DateTime.Now.Date;
+                        poValue.LastModified = DateTime.Now;
                         poValue.LastModifiedBy = "SyncDataSAP";
                         db.POes.Add(poValue);
                         db.SaveChanges();
@@ -182,15 +188,18 @@ namespace SyncDataPOTracking
                         poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poExist.Date = po.Value.PODate;
                         poExist.ReleaseDate = po.Value.POReleaseDate;
-                        poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
+                        poExist.PRCreateDate = po.Value.PRCreateDate;
+                        poExist.PRReleaseDate = po.Value.PRReleaseDate;
+                        poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
                         poExist.Information = string.Empty;
                         poExist.ProductGroup = string.Empty;
                         poExist.NumberPostedInvoice = string.Empty;
-                        poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? null : po.Value.PurchaseOrderCreator;
+                        poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
                         poExist.Status = string.Empty;
                         poExist.Reference = string.Empty;
                         poExist.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
-                        poExist.LastModified = DateTime.Now.Date;
+                        //poExist.LastModified = DateTime.Now.Date;
+                        poExist.LastModified = DateTime.Now;
                         poExist.LastModifiedBy = "SyncDataSAP";
                         db.SaveChanges();
 
@@ -244,7 +253,8 @@ namespace SyncDataPOTracking
                                 itemExist[flagItemExist].DeliveryDate = itemPO.DeliveryDate;
                                 //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
                                 //itemExist[flagItem].ActiveStage = "2";
-                                itemExist[flagItemExist].LastModified = DateTime.Now.Date;
+                                //itemExist[flagItemExist].LastModified = DateTime.Now.Date;
+                                itemExist[flagItemExist].LastModified = DateTime.Now;
                                 itemExist[flagItemExist].LastModifiedBy = "SyncDataSAP";
 
                                 int itemID = itemExist[flagItemExist].ID > 0 ? itemExist[flagItemExist].ID : 0;
@@ -314,9 +324,11 @@ namespace SyncDataPOTracking
                                 //poItem.ConfirmedQuantity = null;
                                 poItem.ActiveStage = "0";
                                 poItem.DeliveryDate = itemPO.DeliveryDate;
-                                poItem.Created = DateTime.Now.Date;
+                                //poItem.Created = DateTime.Now.Date;
+                                poItem.Created = DateTime.Now;
                                 poItem.CreatedBy = "SyncDataSAP";
-                                poItem.LastModified = DateTime.Now.Date;
+                                //poItem.LastModified = DateTime.Now.Date;
+                                poItem.LastModified = DateTime.Now;
                                 poItem.LastModifiedBy = "SyncDataSAP";
                                 db.PurchasingDocumentItems.Add(poItem);
                                 db.SaveChanges();
@@ -441,7 +453,8 @@ namespace SyncDataPOTracking
                         }
 
 
-                        if ((itemPO.MovementType != null && (POHistoryAccept.Contains(itemPO.POHistoryCategory))) || itemPO.POHistoryCategory == "T")
+                        //if ((itemPO.MovementType != null && (POHistoryAccept.Contains(itemPO.POHistoryCategory))) || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "T")
+                        if ((itemPO.MovementType != null && itemPO.POHistoryCategory == "E") || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "Q")
                         {
                             if (isExistItemPOHistory.Count() > flagItem)
                             {
@@ -454,7 +467,8 @@ namespace SyncDataPOTracking
                                 isExistItemPOHistory[flagItem].DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
                                 isExistItemPOHistory[flagItem].PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
                                 isExistItemPOHistory[flagItem].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                                isExistItemPOHistory[flagItem].LastModified = DateTime.Now.Date;
+                                //isExistItemPOHistory[flagItem].LastModified = DateTime.Now.Date;
+                                isExistItemPOHistory[flagItem].LastModified = DateTime.Now;
                                 isExistItemPOHistory[flagItem].LastModifiedBy = "SyncDataSAP";
 
                                 Console.WriteLine("POHistory is updated");
@@ -470,9 +484,11 @@ namespace SyncDataPOTracking
                                 poHistoryAdd.DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
                                 poHistoryAdd.PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
                                 poHistoryAdd.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                                poHistoryAdd.Created = DateTime.Now.Date;
+                                //poHistoryAdd.Created = DateTime.Now.Date;
+                                poHistoryAdd.Created = DateTime.Now;
                                 poHistoryAdd.CreatedBy = "SyncDataSAP";
-                                poHistoryAdd.LastModified = DateTime.Now.Date;
+                                //poHistoryAdd.LastModified = DateTime.Now.Date;
+                                poHistoryAdd.LastModified = DateTime.Now;
                                 poHistoryAdd.LastModifiedBy = "SyncDataSAP";
 
                                 db.PurchasingDocumentItemHistories.Add(poHistoryAdd);
@@ -1094,6 +1110,8 @@ namespace SyncDataPOTracking
         public string Type { get; set; }
         public DateTime PODate { get; set; }
         public DateTime? POReleaseDate { get; set; }
+        public DateTime? PRCreateDate { get; set; }
+        public DateTime? PRReleaseDate { get; set; }
         public string VendorCode { get; set; }
         public string PurchaseOrderCreator { get; set; }
         public string POCreator { get; set; }
@@ -1137,6 +1155,8 @@ namespace SyncDataPOTracking
         public string VendorCode { get; set; }
         public string PurchaseOrderCreator { get; set; }
         public string POCreator { get; set; }
+        public DateTime? PRCreateDate { get; set; }
+        public DateTime? PRReleaseDate { get; set; }
         public int ItemNumber { get; set; }
         public string Material { get; set; }
         public string MaterialVendor { get; set; }
@@ -1169,6 +1189,8 @@ namespace SyncDataPOTracking
             csvModel.Type = val[0].ToString();
             csvModel.POReleaseDate = val[43].ToString() == "00.00.0000" ? (DateTime?)null : DateTime.ParseExact(val[43].ToString(), "dd.MM.yyyy", CultureInfo.InvariantCulture);
             csvModel.PODate = DateTime.ParseExact(val[5].ToString(), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            csvModel.PRReleaseDate = DateTime.ParseExact(val[29].ToString(), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            csvModel.PRCreateDate = DateTime.ParseExact(val[46].ToString(), "dd.MM.yyyy", CultureInfo.InvariantCulture);
             csvModel.VendorCode = val[9].ToString().TrimStart(new Char[] { '0' });
             csvModel.POCreator = val[6].ToString().TrimStart(new Char[] { '0' });
             csvModel.PurchaseOrderCreator = string.IsNullOrWhiteSpace(val[7].ToString()) ? string.Empty : val[7].ToString();

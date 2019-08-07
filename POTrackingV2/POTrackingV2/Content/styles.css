@@ -1224,6 +1224,12 @@ small.label.pull-right.bg-red {
     margin-right: 4px;
 }
 
+small.label.pull-right.bg-black {
+    color:white;
+    background-color: black !important;
+    margin-right: 4px;
+}
+
 small.label {
     display: inline;
     padding: .2em .6em .3em;
