@@ -22,8 +22,14 @@
 
 </head>
 <body>
+    <button onclick="clickExpand()" class="burger-toggle">☰</button>
     <div id="sidebar" class="sidebar-container custom-scrollbar">
-        <img class="corporate-logo" src="~/Images/logo-patria.png" alt="logo-patria" />
+        <div class="corporate-logo d-flex justify-content-center">
+            <img src="~/Images/logo-patria.png" alt="logo-patria" />
+            <span class="pull-right-container">
+                <button onclick="clickCollapse()" id="collapseSidebar" class="label pull-right bg-red btn bg-white" title="New PO" style="margin-right: 0px;display: none;">&#8592;</button>
+            </span>
+        </div>
         <div class="user-info-container">
             @Html.Partial("_LoginPartial")
         </div>
@@ -100,11 +106,11 @@
                             </li>
                             @if (myRole.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
                             {
-                            <li class="main-menu-submenu-item">
-                                <a href="~/Import/report" class="main-menu-submenu__link" data-menu="Report Import">
-                                    <span>Report PO Import</span>
-                                </a>
-                            </li>
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/Import/report" class="main-menu-submenu__link" data-menu="Report Import">
+                                        <span>Report PO Import</span>
+                                    </a>
+                                </li>
                             }
                         </ul>
                     </li>
@@ -145,7 +151,7 @@
                                 </li>
                             }
                         </ul>
-                    </li>                    
+                    </li>
                 }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont"))
                 {
@@ -160,24 +166,24 @@
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
                             <li class="main-menu-submenu-item">
-                             @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
-                             {
-                                <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
-                                    <span>On Going</span>
-                                    <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
-                                    </span>
-                                </a>
-                             }
-                             else
-                             {
-                                <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
-                                    <span>On Going</span>
-                                    <span class="pull-right-container">
-                                        <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
-                                    </span>
-                                </a>
-                             }
+                                @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+                                {
+                                    <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
+                                        <span>On Going</span>
+                                        <span class="pull-right-container">
+                                            <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                        </span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
+                                        <span>On Going</span>
+                                        <span class="pull-right-container">
+                                            <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                        </span>
+                                    </a>
+                                }
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
@@ -325,13 +331,15 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-
+        
     <script type="text/javascript">
     $(document).ready(function () {
-            if(window.innerWidth <= 500 ){
+            if(window.innerWidth <= 654 ){
                 document.getElementById("sidebar").style.width = "0px";
                 document.getElementById("sidebar").style.padding = "0px";
                 document.getElementById("main-container").style.left = "0px";
+                document.getElementById("collapseSidebar").style.display = "block";
+                document.getElementById("rpv-display").style.display = "block";
             }
             $('input#file').bind('change', function () {
                 var maxSizeKB = 1000; //Size in KB
@@ -368,6 +376,18 @@
             }
         });
     });
+
+        function clickExpand() {
+            document.getElementById("sidebar").style.width = "300px";
+            document.getElementById("sidebar").style.padding = "25px 40px";
+            document.getElementById("main-container").style.left = "300px";
+        }
+
+        function clickCollapse() {
+            document.getElementById("sidebar").style.width = "0px";
+            document.getElementById("sidebar").style.padding = "0px";
+            document.getElementById("main-container").style.left = "0px";
+        }
     </script>
 
     @RenderSection("scripts", required: false)

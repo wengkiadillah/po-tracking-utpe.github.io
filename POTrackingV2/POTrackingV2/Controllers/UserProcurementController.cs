@@ -21,7 +21,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult Index(string searchUser)
         {
-            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == null).ToList();
+            List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
             if (!string.IsNullOrEmpty(searchUser))
             {
@@ -172,7 +172,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult PopulateUser(string username)
         {
-            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).OrderBy(x => x.Name).ToList();
+            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).ToList();
 
             List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 
@@ -181,7 +181,7 @@ namespace POTrackingV2.Controllers
                 users = users.Where(x => x.Username.ToLower() != item.Username.ToLower()).ToList();
             }
 
-            SelectList selectListusers = new SelectList(users, "Username", "Name");
+            SelectList selectListusers = new SelectList(users.OrderBy(x => x.Name), "Username", "Name");
 
             return Json(new { success = true, selectListusers }, JsonRequestBehavior.AllowGet);
         }
