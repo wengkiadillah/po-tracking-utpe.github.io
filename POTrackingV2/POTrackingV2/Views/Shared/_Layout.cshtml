@@ -334,11 +334,12 @@
         
     <script type="text/javascript">
     $(document).ready(function () {
-            if(window.innerWidth <= 500 ){
+            if(window.innerWidth <= 654 ){
                 document.getElementById("sidebar").style.width = "0px";
                 document.getElementById("sidebar").style.padding = "0px";
                 document.getElementById("main-container").style.left = "0px";
                 document.getElementById("collapseSidebar").style.display = "block";
+                document.getElementById("rpv-display").style.display = "block";
             }
             $('input#file').bind('change', function () {
                 var maxSizeKB = 1000; //Size in KB
