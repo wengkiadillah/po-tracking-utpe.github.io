@@ -59,7 +59,7 @@ namespace POTrackingV2.Controllers
 
             var ViewModel = new UserProcurementViewModelCreate
             {
-                SuperiorUsernames = new SelectList(users, "Username", "Name"),
+                SuperiorUsernames = new SelectList(users.OrderBy(x => x.Name), "Username", "Name"),
                 InferiorUsernames = new SelectList(inferiorUsers, "Username", "Name")
             };
 
