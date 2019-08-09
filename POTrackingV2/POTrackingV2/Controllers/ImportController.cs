@@ -70,6 +70,11 @@ namespace POTrackingV2.Controllers
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
+                if (string.IsNullOrEmpty(searchUserProcurement))
+                {
+                    searchUserProcurement = "";
+                }
+
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
@@ -263,6 +268,11 @@ namespace POTrackingV2.Controllers
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
+                if (string.IsNullOrEmpty(searchUserProcurement))
+                {
+                    searchUserProcurement = "";
+                }
+
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
