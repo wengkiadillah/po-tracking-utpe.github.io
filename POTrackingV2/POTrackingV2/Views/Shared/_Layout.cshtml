@@ -334,7 +334,7 @@
         
     <script type="text/javascript">
     $(document).ready(function () {
-            if(window.innerWidth <= 654 ){
+            if(window.innerWidth <= 920 ){
                 document.getElementById("sidebar").style.width = "0px";
                 document.getElementById("sidebar").style.padding = "0px";
                 document.getElementById("main-container").style.left = "0px";
@@ -342,6 +342,15 @@
                 document.getElementById("rpv-display").style.display = "block";
             }
             $('input#file').bind('change', function () {
+                var maxSizeKB = 1000; //Size in KB
+                var maxSize = maxSizeKB * 1024; //File size is returned in Bytes
+                if (this.files[0].size > maxSize) {
+                    $(this).val("");
+                    alert("Max size exceeded");
+                    return false;
+                }
+            });
+             $('input#inputFilePB').bind('change', function () {
                 var maxSizeKB = 1000; //Size in KB
                 var maxSize = maxSizeKB * 1024; //File size is returned in Bytes
                 if (this.files[0].size > maxSize) {

@@ -1262,7 +1262,7 @@ h1.page-title#rpv-display{
     margin: 0 auto;
 }
 
-@media screen and (max-width: 654px) {
+@media screen and (max-width: 920px) {
     .form-group.mr-4 {
         margin-bottom: 1.5rem;
     }
@@ -1286,10 +1286,6 @@ h1.page-title#rpv-display{
         width: 280px;
     }
 
-    .filter-row.freeze {
-        display: none;
-    }
-
     .page-title {
         font-size: 1.3rem;
         font-weight: 400;
@@ -1299,8 +1295,9 @@ h1.page-title#rpv-display{
 
     .filter-row.tier-2.mt-0 {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         padding-top: 1.5rem;
+        min-width:1000px;
     }
 
     .tier-2 form.filter-form-container.form-inline {
