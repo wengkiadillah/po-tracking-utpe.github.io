@@ -86,7 +86,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                if (myUserNRPs.Count > 1)
+                if (myUserNRPs.Count > 2)
                 {
                     ViewBag.IsHeadProcurement = true;
                 }
@@ -278,7 +278,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                if (myUserNRPs.Count > 1)
+                if (myUserNRPs.Count > 2)
                 {
                     ViewBag.IsHeadProcurement = true;
                 }
