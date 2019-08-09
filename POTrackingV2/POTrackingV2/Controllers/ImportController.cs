@@ -28,7 +28,7 @@ namespace POTrackingV2.Controllers
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
-        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate,string searchUserProcurement, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -62,11 +62,12 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x=> x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
+
+            var noShowPOes = pOes;
+
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
@@ -78,10 +79,6 @@ namespace POTrackingV2.Controllers
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -141,23 +138,23 @@ namespace POTrackingV2.Controllers
             {
                 if (searchPOStatus.ToLower() == "ongoing")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
                 {
                     if (searchPOStatus.ToLower() == "negotiated")
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
                     else
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
-                } 
+                }
             }
             #endregion
 
@@ -239,7 +236,7 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate,string searchUserProcurement, int? page)
+        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -261,10 +258,11 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
-                            .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"))
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
+
+            var noShowPOes = pOes;
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
@@ -276,9 +274,6 @@ namespace POTrackingV2.Controllers
                 List<string> myUserNRPs = new List<string>();
                 myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -501,17 +496,17 @@ namespace POTrackingV2.Controllers
             return null;
         }
 
-        public List<string> GetChildNRPsByUsernameWithFilter(string username,string searchUserProcurement)
+        public List<string> GetChildNRPsByUsernameWithFilter(string username, string searchUserProcurement)
         {
-            List<string> userNRPs = new List<string>();
+            List<UserProcurementSuperior> userProcurements = new List<UserProcurementSuperior>();
 
             if (!string.IsNullOrEmpty(username))
             {
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
-                if (!String.IsNullOrEmpty(userProcurementSuperior.NRP) && userProcurementSuperior.Username.Contains(searchUserProcurement))
+                if (userProcurementSuperior != null)
                 {
-                    userNRPs.Add(userProcurementSuperior.NRP);
+                    userProcurements.Add(userProcurementSuperior);
                 }
 
                 if (userProcurementSuperior != null)
@@ -520,9 +515,9 @@ namespace POTrackingV2.Controllers
 
                     foreach (var childUser in childUsers)
                     {
-                        if (!string.IsNullOrEmpty(childUser.NRP))
+                        if (childUser != null)
                         {
-                            userNRPs.Add(childUser.NRP);
+                            userProcurements.Add(childUser);
                         }
 
                         List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID && userProcurementSuperior.Username.Contains(searchUserProcurement)).ToList();
@@ -531,9 +526,9 @@ namespace POTrackingV2.Controllers
                         {
                             foreach (var grandchildUser in grandchildUsers)
                             {
-                                if (!string.IsNullOrEmpty(grandchildUser.NRP))
+                                if (grandchildUser != null)
                                 {
-                                    userNRPs.Add(grandchildUser.NRP);
+                                    userProcurements.Add(grandchildUser);
                                 }
                             }
                         }
@@ -541,7 +536,9 @@ namespace POTrackingV2.Controllers
                 }
             }
 
-            return userNRPs;
+            userProcurements = userProcurements.Where(x => x.Username.Contains(searchUserProcurement)).ToList();
+
+            return userProcurements.Select(x => x.NRP).ToList();
         }
 
 
@@ -913,7 +910,7 @@ namespace POTrackingV2.Controllers
                             notificationSAP.Modified = now;
                             notificationSAP.ModifiedBy = User.Identity.Name;
 
-                            db.Notifications.Add(notificationSAP); 
+                            db.Notifications.Add(notificationSAP);
                         }
                     }
                 }
