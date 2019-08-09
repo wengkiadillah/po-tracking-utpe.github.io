@@ -32,6 +32,7 @@
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
+<h1 class="page-title mb-4" id="rpv-display" style="display:none"><img src="~/Images/logo-patria.png" alt="logo-patria"></h1>
 <h1 class="page-title"><a href="#" class="page-subtitle">PO Tracking Local System</a><span class="page-subtitle"><a href="@Url.Action("History", "Local")">History</a></span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
@@ -114,18 +115,7 @@
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-    // purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-    //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => (x.IsClosed != null) && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
-
-
-    //if (roleID == "procurement" || roleID == "administrator")
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity.HasValue || x.OpenQuantity.HasValue);
-    //}
-    //if (!string.IsNullOrEmpty(currentSearchForMaterial))
-    //{
-    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial) || x.Description.ToLower().Contains(currentSearchForMaterial) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial));
-    //}
+    
 
     if (purchasingDocumentItems.Count() > 0)
     {
@@ -186,169 +176,123 @@
     <ul class="list-unstyled po-list">
         <li class="po-item-container">
             @* Kalo dia bukan Procurement class po-item-sticky-procurement dihapus *@
-            <div class="po-item-section po-item-sticky @poItemStickyProcurementWidth">
-                @* Kalo dia bukan Procurement class po-item-sticky-procurement dihapus *@
-                <div class="po-item-section-header">
-                    <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
-                    <div class="po-item-section-header-text">
-                        <span class="po-item-section-header-text__label">No. PO</span>
-                        <span>@pO.Number</span>
-                    </div>
-                    <div class="po-item-section-header-text">
-                        <span class="po-item-section-header-text__label">PO Date</span>
-                        <span>@pO.Date.ToString("dd/MM/yyyy")</span>
-                    </div>
-                    <i class="fas fa-info-circle po-item-section-header__icon info"></i>
-                    <div class="pop-up-notification">
-                        <table>
-                            <tr>
-                                <td class="secondary-text">No. PO</td>
-                                <td>&nbsp;</td>
-                                <td>@pO.Number</td>
-                            </tr>
-                            <tr>
-                                <td class="secondary-text">PO Date</td>
-                                <td>&nbsp;</td>
-                                <td>@pO.Date.ToString("dd/MM/yyyy")</td>
-                            </tr>
-                            <tr>
-                                <td class="secondary-text">Vendor</td>
-                                <td>&nbsp;</td>
-                                @if (pO.Vendor != null)
-                                {
-                                    <td>@pO.Vendor.Name</td>
-                                }
-                                else
-                                {
-                                    <td>Vendor not in Database</td>
-                                }
-                            </tr>
-                            <tr>
-                                <td class="secondary-text">Vendor Code</td>
-                                <td>&nbsp;</td>
-                                @if (pO.Vendor != null)
-                                {
-                                    <td>@pO.Vendor.Code</td>
-                                }
-                                else
-                                {
-                                    <td>Vendor not in Database</td>
-                                }
-                            </tr>
-                            <tr>
-                                <td class="secondary-text">PO Creator</td>
-                                <td>&nbsp;</td>
-                                <td>@pO.PurchaseOrderCreator</td>
-                            </tr>
-                            <tr>
-                                <td class="secondary-text">Release PO Date</td>
-                                <td>&nbsp;</td>
-                                @if (pO.ReleaseDate != null)
-                                {
-                                    <td>@pO.ReleaseDate.Value.ToString("dd/MM/yyyy")</td>
-                                }
-                                else
-                                {
-                                    <td>Not found in Database</td>
-                                }
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <div class="po-item-section-body">
-                    <div class="po-item-data-header">
-                        <span class="po-item-data-header__text item-id">Item ID</span>
-                        <span class="po-item-data-header__text material">Material</span>
-                        @if (roleID == "procurement" || roleID == "administrator")
-                        {
-                            <span class="po-item-data-header__text material">Material Vendor</span>
-                        }
-                        <span class="po-item-data-header__text description">Item Description</span>
-                        <span class="po-item-data-header__text po-progress">Progress</span>
-                    </div>
-                    @{
-                        var row = 1;
-                        
-                    }
-                    @foreach (var purchasingDocumentItem in purchasingDocumentItems)
-                    {
-                        var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
-                        var childRow = 1;
-
-                        var materialUTPE = purchasingDocumentItem.Material;
-                        var materialVendor = "-";
-
-                        if (!string.IsNullOrEmpty(purchasingDocumentItem.MaterialVendor))
-                        {
-                            materialVendor = purchasingDocumentItem.MaterialVendor;
-
-                            if (roleID == "vendor")
-                            {
-                                materialUTPE = purchasingDocumentItem.MaterialVendor;
-                            }
-                        }
-                        <div class="po-item-data-content row-@row">
-                            <div class="po-item-data-content__outer">
-                                <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
-                                <span class="po-item-data-header__column material">@materialUTPE</span>
-                                @if (roleID == "procurement" || roleID == "administrator")
-                                {
-                                    <span class="po-item-data-header__column material">@materialVendor</span>
-                                }
-                                <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
-                                @if (purchasingDocumentItem.ConfirmedItem != false)
-                                {
-                                    <div class="po-item-data-header__column po-progress">
-                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@purchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    int donutProgress = 100;
-
-                                    <div class="po-item-data-header__column po-progress">
-                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div>Cancel</div>
-                                    </div>
-                                }
-
-                            </div>
-                            <div class="po-item-data-content__child">
-                                @if (childPurchasingDocumentItems.Count() > 0)
-                                {
-                                    foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+            <div>
+                <div class="po-item-section po-item-sticky @poItemStickyProcurementWidth">
+                    @* Kalo dia bukan Procurement class po-item-sticky-procurement dihapus *@
+                    <div class="po-item-section-header">
+                        <i onclick="poItemCollapse($(this))" class="fas fa-angle-up po-item-section-header__icon arrow"></i>
+                        <div class="po-item-section-header-text">
+                            <span class="po-item-section-header-text__label">No. PO</span>
+                            <span>@pO.Number</span>
+                        </div>
+                        <div class="po-item-section-header-text">
+                            <span class="po-item-section-header-text__label">PO Date</span>
+                            <span>@pO.Date.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <i class="fas fa-info-circle po-item-section-header__icon info"></i>
+                        <div class="pop-up-notification">
+                            <table>
+                                <tr>
+                                    <td class="secondary-text">No. PO</td>
+                                    <td>&nbsp;</td>
+                                    <td>@pO.Number</td>
+                                </tr>
+                                <tr>
+                                    <td class="secondary-text">PO Date</td>
+                                    <td>&nbsp;</td>
+                                    <td>@pO.Date.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="secondary-text">Vendor</td>
+                                    <td>&nbsp;</td>
+                                    @if (pO.Vendor != null)
                                     {
-                                        materialUTPE = childPurchasingDocumentItem.Material;
-                                        materialVendor = "-";
+                                        <td>@pO.Vendor.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Vendor not in Database</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td class="secondary-text">Vendor Code</td>
+                                    <td>&nbsp;</td>
+                                    @if (pO.Vendor != null)
+                                    {
+                                        <td>@pO.Vendor.Code</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Vendor not in Database</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td class="secondary-text">PO Creator</td>
+                                    <td>&nbsp;</td>
+                                    <td>@pO.PurchaseOrderCreator</td>
+                                </tr>
+                                <tr>
+                                    <td class="secondary-text">Release PO Date</td>
+                                    <td>&nbsp;</td>
+                                    @if (pO.ReleaseDate != null)
+                                    {
+                                        <td>@pO.ReleaseDate.Value.ToString("dd/MM/yyyy")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Not found in Database</td>
+                                    }
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="po-item-section-body">
+                        <div class="po-item-data-header">
+                            <span class="po-item-data-header__text item-id">Item ID</span>
+                            <span class="po-item-data-header__text material">Material</span>
+                            @if (roleID == "procurement" || roleID == "administrator")
+                            {
+                                <span class="po-item-data-header__text material">Material Vendor</span>
+                            }
+                            <span class="po-item-data-header__text description">Item Description</span>
+                            <span class="po-item-data-header__text po-progress">Progress</span>
+                        </div>
+                        @{
+                            var row = 1;
 
-                                        if (!string.IsNullOrEmpty(childPurchasingDocumentItem.MaterialVendor))
-                                        {
-                                            materialVendor = childPurchasingDocumentItem.MaterialVendor;
+                        }
+                        @foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                        {
+                            var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
+                            var childRow = 1;
 
-                                            if (roleID == "vendor")
-                                            {
-                                                materialUTPE = childPurchasingDocumentItem.MaterialVendor;
-                                            }
-                                        }
-                                <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
-                                    <span class="po-item-data-header__column item-id" style="visibility:hidden">@childPurchasingDocumentItem.ItemNumber</span>
-                                    <span class="po-item-data-header__column material" style="visibility:hidden">@materialUTPE</span>
-                                    @*  IF Procurement Show *@
+                            var materialUTPE = purchasingDocumentItem.Material;
+                            var materialVendor = "-";
+
+                            if (!string.IsNullOrEmpty(purchasingDocumentItem.MaterialVendor))
+                            {
+                                materialVendor = purchasingDocumentItem.MaterialVendor;
+
+                                if (roleID == "vendor")
+                                {
+                                    materialUTPE = purchasingDocumentItem.MaterialVendor;
+                                }
+                            }
+                            <div class="po-item-data-content row-@row">
+                                <div class="po-item-data-content__outer">
+                                    <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
+                                    <span class="po-item-data-header__column material">@materialUTPE</span>
                                     @if (roleID == "procurement" || roleID == "administrator")
                                     {
-                                        <span class="po-item-data-header__column material" style="visibility:hidden">@materialVendor</span>
+                                        <span class="po-item-data-header__column material">@materialVendor</span>
                                     }
-                                    @*  IF Procurement Show *@
-                                    <span class="po-item-data-header__column description" style="visibility:hidden">@childPurchasingDocumentItem.Description</span>
-                                    @if (childPurchasingDocumentItem.ConfirmedItem != false)
+                                    <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
+                                    @if (purchasingDocumentItem.ConfirmedItem != false)
                                     {
                                         <div class="po-item-data-header__column po-progress">
                                             <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                 data-value="@childPurchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                            <div><span class="mark-donut" id="activeStagePo-@poSignRow">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
+                                                 data-value="@purchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                            <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
                                         </div>
                                     }
                                     else
@@ -361,15 +305,63 @@
                                             <div>Cancel</div>
                                         </div>
                                     }
-                                </div>
-                                        childRow++;
-                                    }
-                                }
-                            </div>
-                        </div>
 
-                        row++;
-                    }
+                                </div>
+                                <div class="po-item-data-content__child">
+                                    @if (childPurchasingDocumentItems.Count() > 0)
+                                    {
+                                        foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
+                                        {
+                                            materialUTPE = childPurchasingDocumentItem.Material;
+                                            materialVendor = "-";
+
+                                            if (!string.IsNullOrEmpty(childPurchasingDocumentItem.MaterialVendor))
+                                            {
+                                                materialVendor = childPurchasingDocumentItem.MaterialVendor;
+
+                                                if (roleID == "vendor")
+                                                {
+                                                    materialUTPE = childPurchasingDocumentItem.MaterialVendor;
+                                                }
+                                            }
+                                            <div class="po-item-data-content row-@row-@childRow" row="@row" child="@childRow">
+                                                <span class="po-item-data-header__column item-id" style="visibility:hidden">@childPurchasingDocumentItem.ItemNumber</span>
+                                                <span class="po-item-data-header__column material" style="visibility:hidden">@materialUTPE</span>
+                                                @*  IF Procurement Show *@
+                                                @if (roleID == "procurement" || roleID == "administrator")
+                                                {
+                                                    <span class="po-item-data-header__column material" style="visibility:hidden">@materialVendor</span>
+                                                }
+                                                @*  IF Procurement Show *@
+                                                <span class="po-item-data-header__column description" style="visibility:hidden">@childPurchasingDocumentItem.Description</span>
+                                                @if (childPurchasingDocumentItem.ConfirmedItem != false)
+                                                {
+                                                    <div class="po-item-data-header__column po-progress">
+                                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                             data-value="@childPurchasingDocumentItem.DonutProgressLocal" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@childPurchasingDocumentItem.ActiveStageView</span><span class="secondary-text">/7</span></div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    int donutProgress = 100;
+
+                                                    <div class="po-item-data-header__column po-progress">
+                                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                             data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                        <div>Cancel</div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            childRow++;
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            row++;
+                        }
+                    </div>
                 </div>
             </div>
             @* Remove po-item-scrollable-procurement if not procurement *@

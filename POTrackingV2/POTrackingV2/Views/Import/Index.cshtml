@@ -15,6 +15,7 @@
 }
 
 <input hidden value="@ViewBag.myUserNRPs" />
+<h1 class="page-title mb-4" id="rpv-display" style="display:none"><img src="~/Images/logo-patria.png" alt="logo-patria" id="rpv-display" style="display:none"></h1>
 <h1 class="page-title">PO Tracking System <span class="page-subtitle"><a href="@Url.Action("History", "Import")">History</a></span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
@@ -370,7 +371,7 @@
                         </div>
                         @{
                             var rowInformation = 1;
-                        }
+                        } 
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             <div class="po-item-data-content row-@rowInformation">
