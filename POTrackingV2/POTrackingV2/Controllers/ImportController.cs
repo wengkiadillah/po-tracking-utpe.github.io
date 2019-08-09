@@ -260,7 +260,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" && y.IsClosed.ToLower() == "l" && y.IsClosed.ToLower() == "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
 
             var noShowPOes = pOes;
