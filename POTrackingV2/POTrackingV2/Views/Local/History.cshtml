@@ -2670,6 +2670,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 });
             });
 
+            $("form input").prop("disabled", true);
+
             $("#searchVendorName").on("keyup focus", function () {
                 $.ajax({
                     type: "GET",

@@ -167,7 +167,7 @@ namespace POTrackingV2.Controllers
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
                 List<string> userInternalList = DBUser.Users.Select(x => x.Username).ToList();
-                bool isHead = false;
+                bool isHeadProcurement = false;
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
@@ -240,9 +240,9 @@ namespace POTrackingV2.Controllers
                         notifications = notifications.Except(noShowNotifications);
 
                         // For Head or Superior
-                        if (myUserNRPs.Count() > 1)
+                        if (myUserNRPs.Count() > 2)
                         {
-                            isHead = true;
+                            isHeadProcurement = true;
                         }
                     }
                 }
@@ -291,7 +291,7 @@ namespace POTrackingV2.Controllers
                       ShipmentCopyBLDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().CopyBLDate,
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
                       InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
-                      IsHead = isHead,
+                      IsHead = isHeadProcurement,
                       POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
                   }).OrderByDescending(x => x.created);
 

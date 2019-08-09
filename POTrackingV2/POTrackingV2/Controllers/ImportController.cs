@@ -28,11 +28,26 @@ namespace POTrackingV2.Controllers
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
         // GET: Import
-        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            ViewBag.IsHeadProcurement = false;
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+            ViewBag.CurrentStartPODate = searchStartPODate;
+            ViewBag.CurrentEndPODate = searchEndPODate;
+            ViewBag.CurrentRoleID = role.ToLower();
+            ViewBag.CurrentSearchPOStatus = searchPOStatus;
+            ViewBag.CurrentSearchUserProcurement = searchUserProcurement;
+            ViewBag.IISAppName = iisAppName;
+
+            List<DelayReason> delayReasons = db.DelayReasons.ToList();
+
+            ViewBag.DelayReasons = delayReasons;
 
             if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
             {
@@ -47,21 +62,29 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x=> x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
+
+            var noShowPOes = pOes;
+
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
+
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"))
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+                if (myUserNRPs.Count > 2)
+                {
+                    ViewBag.IsHeadProcurement = true;
+                }
+
+                if (!string.IsNullOrEmpty(searchUserProcurement))
+                {
+                    myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
+                }
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -81,19 +104,6 @@ namespace POTrackingV2.Controllers
             {
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
-
-            ViewBag.CurrentSearchPONumber = searchPONumber;
-            ViewBag.CurrentSearchVendorName = searchVendorName;
-            ViewBag.CurrentSearchMaterial = searchMaterial;
-            ViewBag.CurrentStartPODate = searchStartPODate;
-            ViewBag.CurrentEndPODate = searchEndPODate;
-            ViewBag.CurrentRoleID = role.ToLower();
-            ViewBag.CurrentSearchPOStatus = searchPOStatus;
-            ViewBag.IISAppName = iisAppName;
-
-            List<DelayReason> delayReasons = db.DelayReasons.ToList();
-
-            ViewBag.DelayReasons = delayReasons;
 
             #region Filter
             if (!String.IsNullOrEmpty(searchPONumber))
@@ -129,23 +139,23 @@ namespace POTrackingV2.Controllers
             {
                 if (searchPOStatus.ToLower() == "ongoing")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == null || y.ActiveStage == "0"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
                 {
                     if (searchPOStatus.ToLower() == "negotiated")
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate)));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
                     else
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
-                } 
+                }
             }
             #endregion
 
@@ -227,12 +237,14 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
             var today = DateTime.Now;
+
+            ViewBag.IsHeadProcurement = false;
 
             if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
             {
@@ -247,19 +259,28 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
-                            .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"))
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
+
+            var noShowPOes = pOes;
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
+
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx"));
+                if (myUserNRPs.Count > 2)
+                {
+                    ViewBag.IsHeadProcurement = true;
+                }
+
+                if (!string.IsNullOrEmpty(searchUserProcurement))
+                {
+                    myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
+                }
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -285,6 +306,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchMaterial = searchMaterial;
             ViewBag.CurrentStartPODate = searchStartPODate;
             ViewBag.CurrentEndPODate = searchEndPODate;
+            ViewBag.CurrentSearchUserProcurement = searchUserProcurement;
             ViewBag.CurrentRoleID = role.ToLower();
             ViewBag.IISAppName = iisAppName;
 
@@ -326,7 +348,6 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-
         public JsonResult GetDataForSearch(string searchFilterBy, string value)
         {
             try
@@ -364,6 +385,51 @@ namespace POTrackingV2.Controllers
                         Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
                         MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+                }
+                else if (searchFilterBy == "userProcurement")
+                {
+                    CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+
+                    //Get Child User
+                    List<string> userProcurementInferiors = new List<string>();
+
+                    if (!string.IsNullOrEmpty(myUser.UserName))
+                    {
+                        UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == myUser.UserName.ToLower()).SingleOrDefault();
+
+                        if (userProcurementSuperior != null)
+                        {
+                            List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+
+                            foreach (var childUser in childUsers)
+                            {
+                                if (!string.IsNullOrEmpty(childUser.Username))
+                                {
+                                    userProcurementInferiors.Add(childUser.Username);
+                                }
+
+                                List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
+
+                                if (grandchildUsers.Count > 0)
+                                {
+                                    foreach (var grandchildUser in grandchildUsers)
+                                    {
+                                        if (!string.IsNullOrEmpty(grandchildUser.Username))
+                                        {
+                                            userProcurementInferiors.Add(grandchildUser.Username);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        data = userProcurementInferiors.Select(x =>
+                    new
+                    {
+                        Data = x,
+                        MatchEvaluation = x.ToLower().IndexOf(value)
+                    }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+                    }
                 }
 
                 if (data != null)
@@ -473,6 +539,51 @@ namespace POTrackingV2.Controllers
             }
 
             return userNRPs;
+        }
+
+        public List<string> GetChildNRPsByUsernameWithFilter(string username, string searchUserProcurement)
+        {
+            List<UserProcurementSuperior> userProcurements = new List<UserProcurementSuperior>();
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
+
+                if (userProcurementSuperior != null)
+                {
+                    userProcurements.Add(userProcurementSuperior);
+                }
+
+                if (userProcurementSuperior != null)
+                {
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+
+                    foreach (var childUser in childUsers)
+                    {
+                        if (childUser != null)
+                        {
+                            userProcurements.Add(childUser);
+                        }
+
+                        List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
+
+                        if (grandchildUsers.Count > 0)
+                        {
+                            foreach (var grandchildUser in grandchildUsers)
+                            {
+                                if (grandchildUser != null)
+                                {
+                                    userProcurements.Add(grandchildUser);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            userProcurements = userProcurements.Where(x => x.Username.ToLower().Contains(searchUserProcurement.ToLower())).ToList();
+
+            return userProcurements.Select(x => x.NRP).ToList();
         }
 
 
@@ -844,7 +955,7 @@ namespace POTrackingV2.Controllers
                             notificationSAP.Modified = now;
                             notificationSAP.ModifiedBy = User.Identity.Name;
 
-                            db.Notifications.Add(notificationSAP); 
+                            db.Notifications.Add(notificationSAP);
                         }
                     }
                 }

@@ -36,7 +36,7 @@ namespace POTrackingV2.Controllers
         public ActionResult Details(int id)
         {
             UserProcurementSuperior superiorUser = dbPOTracking.UserProcurementSuperiors.Find(id);
-            List<UserProcurementSuperior> inferiorUsers = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == id).ToList();
+            List<UserProcurementSuperior> inferiorUsers = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID == id).OrderBy(x => x.Username).ToList();
 
             var ViewModel = new UserProcurementViewModelDetails
             {
@@ -49,7 +49,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult Create()
         {
-            IQueryable<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()));
+            IQueryable<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower())).OrderBy(x => x.Username);
             IQueryable<User> inferiorUsers = users;
 
             foreach (var item in dbPOTracking.UserProcurementSuperiors)
@@ -172,13 +172,13 @@ namespace POTrackingV2.Controllers
 
         public ActionResult PopulateUser(string username)
         {
-            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).ToList();
+            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).OrderBy(x => x.Username).ToList();
 
             List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 
-            foreach (var item in userProcurementInferiors)
+            foreach (var userProcurementInferior in userProcurementInferiors)
             {
-                users = users.Where(x => x.Username.ToLower() != item.Username.ToLower()).ToList();
+                users = users.Where(x => x.Username.ToLower() != userProcurementInferior.Username.ToLower()).ToList();
             }
 
             SelectList selectListusers = new SelectList(users.OrderBy(x => x.Name), "Username", "Name");
