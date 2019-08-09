@@ -73,7 +73,7 @@ namespace POTrackingV2.Controllers
             {
                 List<string> myUserNRPs = new List<string>();
 
-                GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 if (myUserNRPs.Count > 2)
@@ -268,6 +268,8 @@ namespace POTrackingV2.Controllers
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
+
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 if (myUserNRPs.Count > 2)
