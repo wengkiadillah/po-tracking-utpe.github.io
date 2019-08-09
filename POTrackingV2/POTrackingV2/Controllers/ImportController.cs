@@ -71,7 +71,7 @@ namespace POTrackingV2.Controllers
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
@@ -191,7 +191,7 @@ namespace POTrackingV2.Controllers
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, "");
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
@@ -264,7 +264,7 @@ namespace POTrackingV2.Controllers
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
                 var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.Date.Year == today.Year || x.Date.Year == today.Year - 1))
@@ -491,7 +491,7 @@ namespace POTrackingV2.Controllers
             return null;
         }
 
-        public List<string> GetChildNRPsByUsername(string username)
+        public List<string> GetChildNRPsByUsernameWithFilter(string username,string searchUserProcurement)
         {
             List<string> userNRPs = new List<string>();
 
@@ -499,14 +499,14 @@ namespace POTrackingV2.Controllers
             {
                 UserProcurementSuperior userProcurementSuperior = db.UserProcurementSuperiors.Where(x => x.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
-                if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
+                if (!String.IsNullOrEmpty(userProcurementSuperior.NRP) && userProcurementSuperior.Username.Contains(searchUserProcurement))
                 {
                     userNRPs.Add(userProcurementSuperior.NRP);
                 }
 
                 if (userProcurementSuperior != null)
                 {
-                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID).ToList();
+                    List<UserProcurementSuperior> childUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == userProcurementSuperior.ID && userProcurementSuperior.Username.Contains(searchUserProcurement)).ToList();
 
                     foreach (var childUser in childUsers)
                     {
@@ -515,7 +515,7 @@ namespace POTrackingV2.Controllers
                             userNRPs.Add(childUser.NRP);
                         }
 
-                        List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
+                        List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID && userProcurementSuperior.Username.Contains(searchUserProcurement)).ToList();
 
                         if (grandchildUsers.Count > 0)
                         {
