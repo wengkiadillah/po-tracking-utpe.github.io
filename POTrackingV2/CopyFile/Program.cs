@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,9 +16,13 @@ namespace CopyFile
         {
             try
             {
-                string source = @WebConfigurationManager.AppSettings["Source"];
-                string destination = @WebConfigurationManager.AppSettings["Destination"];
+                //string source = @WebConfigurationManager.AppSettings["Source"];
+                //string destination = @WebConfigurationManager.AppSettings["Destination"];
                 string filename = @WebConfigurationManager.AppSettings["FileName"];
+                string ftpSource = @WebConfigurationManager.AppSettings["FTPSource"];
+                string ftpDestination = @WebConfigurationManager.AppSettings["FTPDestination"];
+                string syncDestination = @WebConfigurationManager.AppSettings["SyncDestination"];
+                string fileToCopy = @WebConfigurationManager.AppSettings["FileToCopy"];
 
                 //private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
@@ -55,8 +60,21 @@ namespace CopyFile
                 //Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
                 //System.IO.File.Copy(myFile.FullName, destFile, true);
 
+                // Versioning
+                int fileVersion = Int32.Parse(@WebConfigurationManager.AppSettings["FileVersion"]);
+                fileVersion = fileVersion + 1;
+
+                string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string configFile = System.IO.Path.Combine(appPath, "CopyFile.exe.config");
+                ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap();
+                configFileMap.ExeConfigFilename = configFile;
+                System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+
+                config.AppSettings.Settings["FileVersion"].Value = fileVersion.ToString();
+                config.Save();
+
                 // For FTP 
-                CopyFile(filename, filename, "administrator", "P@s5w0rd");
+                CopyFile(filename, fileToCopy, "administrator", "P@s5w0rd", fileVersion.ToString(), ftpSource, ftpDestination, syncDestination);
 
                 Console.WriteLine(@"Success !");
                 //Console.ReadLine();
@@ -69,29 +87,37 @@ namespace CopyFile
         }
 
 
-        public static bool CopyFile(string fileName, string FileToCopy, string userName, string password)
+        public static bool CopyFile(string fileName, string fileToCopy, string userName, string password, string fileVersion,string ftpSource, string ftpDestination, string syncDestination)
         {
             try
             {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/MCS/" + fileName);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpSource + fileName);
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
-
                 request.Credentials = new NetworkCredential(userName, password);
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
 
-                //Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+                string fileNameWithoutExetension = fileName.Split('.').First();
 
-                // Create Files onto destination
                 using (Stream ftpStream = request.GetResponse().GetResponseStream())
                 {
-                    using (Stream fileStream = File.Create(@"C:\Altrovis\CopyFiles\zemes.csv"))
+                    // Copy to History
+                    using (Stream fileStream = File.Create($"{ftpDestination}{fileNameWithoutExetension}_{fileVersion}.csv"))
                     {
                         ftpStream.CopyTo(fileStream);
                     }
                 }
 
-                responseStream.Close();
+                // Copy to Data
+                var directory = new DirectoryInfo(ftpDestination);
+                var target = new DirectoryInfo(syncDestination);
+                var myFile = (from f in directory.GetFiles()
+                              orderby f.LastWriteTime descending
+                              select f).First();
+
+                string destFile = Path.Combine(syncDestination, fileToCopy);
+                System.IO.File.Copy(myFile.FullName, destFile, true);
+
+                //Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+
                 return true;
             }
             catch
@@ -99,6 +125,7 @@ namespace CopyFile
                 return false;
             }
         }
+
         public static Byte[] ToByteArray(Stream stream)
         {
             MemoryStream ms = new MemoryStream();
