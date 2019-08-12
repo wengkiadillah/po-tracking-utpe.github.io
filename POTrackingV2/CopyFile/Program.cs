@@ -37,27 +37,29 @@ namespace CopyFile
                 //    System.IO.Directory.CreateDirectory(destination);
                 //}
 
-                var directory = new DirectoryInfo(source);
-                var target = new DirectoryInfo(destination);
-                var myFile = (from f in directory.GetFiles()
-                              orderby f.LastWriteTime descending
-                              select f).First();
-                
+                // Copy Files
+                //var directory = new DirectoryInfo(source);
+                //var target = new DirectoryInfo(destination);
+                //var myFile = (from f in directory.GetFiles()
+                //              orderby f.LastWriteTime descending
+                //              select f).First();
+
                 //foreach (FileInfo fi in directory.GetFiles())
                 //{
                 //    Console.WriteLine(@"Read File {0}\{1}", target.FullName, fi.Name);
                 //    //fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
                 //}
 
-                string destFile = Path.Combine(destination, filename);
-                Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
-                System.IO.File.Copy(myFile.FullName, destFile, true);
+                // Copy Files (2)
+                //string destFile = Path.Combine(destination, filename);
+                //Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
+                //System.IO.File.Copy(myFile.FullName, destFile, true);
 
                 // For FTP 
-                //CopyFile("test.csv", "test.csv", "administrator", "P@s5w0rd");
+                CopyFile(filename, filename, "administrator", "P@s5w0rd");
 
                 Console.WriteLine(@"Success !");
-                Console.ReadLine();
+                //Console.ReadLine();
             }
             catch (Exception ex)
             {
@@ -65,19 +67,30 @@ namespace CopyFile
                 //Console.ReadLine();
             }
         }
-        
+
 
         public static bool CopyFile(string fileName, string FileToCopy, string userName, string password)
         {
             try
             {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/MCS" + fileName);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/MCS/" + fileName);
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
 
                 request.Credentials = new NetworkCredential(userName, password);
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
-                Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+
+                //Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+
+                // Create Files onto destination
+                using (Stream ftpStream = request.GetResponse().GetResponseStream())
+                {
+                    using (Stream fileStream = File.Create(@"C:\Altrovis\CopyFiles\zemes.csv"))
+                    {
+                        ftpStream.CopyTo(fileStream);
+                    }
+                }
+
                 responseStream.Close();
                 return true;
             }
