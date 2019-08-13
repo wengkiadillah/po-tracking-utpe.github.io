@@ -28,7 +28,6 @@ namespace POTrackingV2.Controllers
         private DateTime now = DateTime.Now;
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
-        // GET: Import
         public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
@@ -188,8 +187,8 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
-                            .AsQueryable();
+                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0"))))
+                        .AsQueryable();
 
             var noShowPOes = pOes;
 
@@ -210,8 +209,6 @@ namespace POTrackingV2.Controllers
 
                 pOes = pOes.Except(noShowPOes);
             }
-
-            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
@@ -250,7 +247,7 @@ namespace POTrackingV2.Controllers
             {
                 Response.ClearContent();
                 Response.Buffer = true;
-                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xlsx"));
+                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xls"));
                 Response.ContentType = "application/ms-excel";
                 DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
                 string str = string.Empty;
@@ -280,25 +277,16 @@ namespace POTrackingV2.Controllers
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
-            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
-            {
-                return null;
-            }
-            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
-            {
-                return null;
-            }
-            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import")
-            {
-                return null;
-            }
-            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            if ((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower()))
             {
                 return null;
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
+                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0"))))
                         .AsQueryable();
 
             var noShowPOes = pOes;
@@ -316,8 +304,6 @@ namespace POTrackingV2.Controllers
             }
 
             pOes = pOes.Except(noShowPOes);
-
-            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
             #region Filter
             if (!String.IsNullOrEmpty(searchPONumber))
@@ -351,7 +337,7 @@ namespace POTrackingV2.Controllers
 
             foreach (var po in pOes)
             {
-                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
                                                                         .OrderBy(x => x.ItemNumber);
 
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
