@@ -250,7 +250,7 @@ namespace POTrackingV2.Controllers
             {
                 Response.ClearContent();
                 Response.Buffer = true;
-                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "Customers.xls"));
+                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xls"));
                 Response.ContentType = "application/ms-excel";
                 DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
                 string str = string.Empty;
