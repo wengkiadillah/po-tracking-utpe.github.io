@@ -235,7 +235,7 @@ namespace POTrackingV2.Controllers
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
-        public JsonResult DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
+        public JsonResult DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial)
         {
             Microsoft.Office.Interop.Excel.Application excel;
             Microsoft.Office.Interop.Excel.Workbook workBook;
