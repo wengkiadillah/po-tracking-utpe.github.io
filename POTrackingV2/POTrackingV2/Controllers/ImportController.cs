@@ -15,6 +15,8 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
+using Excel = Microsoft.Office.Interop.Excel;
+
 namespace POTrackingV2.Controllers
 {
     [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
@@ -237,10 +239,10 @@ namespace POTrackingV2.Controllers
 
         public JsonResult DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial)
         {
-            Microsoft.Office.Interop.Excel.Application excel;
-            Microsoft.Office.Interop.Excel.Workbook workBook;
-            Microsoft.Office.Interop.Excel.Worksheet workSheet;
-            Microsoft.Office.Interop.Excel.Range cellRange;
+            Excel.Application excel;
+            Excel.Workbook workBook;
+            Excel.Worksheet workSheet;
+            Excel.Range cellRange;
 
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles.ToLower();
@@ -392,8 +394,8 @@ namespace POTrackingV2.Controllers
 
                 cellRange = workSheet.Range[workSheet.Cells[1, 1], workSheet.Cells[rowCount, coloumnCount]];
                 cellRange.EntireColumn.AutoFit();
-                Microsoft.Office.Interop.Excel.Borders border = cellRange.Borders;
-                border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                Excel.Borders border = cellRange.Borders;
+                border.LineStyle = Excel.XlLineStyle.xlContinuous;
                 border.Weight = 2d;
 
                 cellRange = workSheet.Range[workSheet.Cells[1, 1], workSheet.Cells[2, coloumnCount]];
