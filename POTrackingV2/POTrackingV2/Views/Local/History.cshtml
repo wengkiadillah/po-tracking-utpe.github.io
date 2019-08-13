@@ -2677,7 +2677,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 });
             });
 
-            $("form input").prop("disabled", true);
+            $(".po-item-scrollable form input").prop("disabled", true);
 
             $("#searchVendorName").on("keyup focus", function () {
                 $.ajax({
