@@ -188,7 +188,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))))
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
 
             var noShowPOes = pOes;
@@ -243,14 +243,14 @@ namespace POTrackingV2.Controllers
             string role = myUser.Roles.ToLower();
             var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
 
-            if (!((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") || 
+            if (!((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
                 (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
                 (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
                 (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())))
             {
                 Response.ClearContent();
                 Response.Buffer = true;
-                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xls"));
+                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xlsx"));
                 Response.ContentType = "application/ms-excel";
                 DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
                 string str = string.Empty;
@@ -298,34 +298,26 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))))
-                            .AsQueryable();
+                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))
+                        .AsQueryable();
 
             var noShowPOes = pOes;
+            List<string> myUserNRPs = new List<string>();
 
-            if (role == LoginConstants.RoleProcurement.ToLower())
+            myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+            myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+            if (myUserNRPs.Count > 0)
             {
-                List<string> myUserNRPs = new List<string>();
-
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                if (myUserNRPs.Count > 0)
+                foreach (var myUserNRP in myUserNRPs)
                 {
-                    foreach (var myUserNRP in myUserNRPs)
-                    {
-                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
-                    }
+                    noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
                 }
-
-                pOes = pOes.Except(noShowPOes);
             }
 
-            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+            pOes = pOes.Except(noShowPOes);
 
-            ViewBag.CurrentSearchPONumber = searchPONumber;
-            ViewBag.CurrentSearchVendorName = searchVendorName;
-            ViewBag.CurrentSearchMaterial = searchMaterial;
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
             #region Filter
             if (!String.IsNullOrEmpty(searchPONumber))
@@ -359,7 +351,10 @@ namespace POTrackingV2.Controllers
 
             foreach (var po in pOes)
             {
-                foreach (var purchasingDocumentItem in po.PurchasingDocumentItems)
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
+                                                                        .OrderBy(x => x.ItemNumber);
+
+                foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
                     string deliveryDate = "-";
                     string estimatedTimeArrival = "-";

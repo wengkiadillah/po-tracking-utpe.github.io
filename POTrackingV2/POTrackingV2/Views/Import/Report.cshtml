@@ -78,10 +78,6 @@
                 var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
                                                                         .OrderBy(x => x.ItemNumber);
 
-                if (purchasingDocumentItems.Count() < 1)
-                {
-                    continue;
-                }
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
                     <tr>
