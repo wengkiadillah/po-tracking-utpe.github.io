@@ -15,7 +15,6 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
-
 namespace POTrackingV2.Controllers
 {
     [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
@@ -186,19 +185,18 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))))
                             .AsQueryable();
+
+            var noShowPOes = pOes;
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
+
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -235,6 +233,189 @@ namespace POTrackingV2.Controllers
             #endregion
 
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+        }
+
+        public JsonResult DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial, int? page)
+        {
+            Microsoft.Office.Interop.Excel.Application excel;
+            Microsoft.Office.Interop.Excel.Workbook workBook;
+            Microsoft.Office.Interop.Excel.Worksheet workSheet;
+            Microsoft.Office.Interop.Excel.Range cellRange;
+
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local")
+            {
+                return null;
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont")
+            {
+                return null;
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import")
+            {
+                return null;
+            }
+            if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+            {
+                return null;
+            }
+
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                            (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))))
+                            .AsQueryable();
+
+            var noShowPOes = pOes;
+
+            if (role == LoginConstants.RoleProcurement.ToLower())
+            {
+                List<string> myUserNRPs = new List<string>();
+
+                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+                if (myUserNRPs.Count > 0)
+                {
+                    foreach (var myUserNRP in myUserNRPs)
+                    {
+                        noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                    }
+                }
+
+                pOes = pOes.Except(noShowPOes);
+            }
+
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
+
+            ViewBag.CurrentSearchPONumber = searchPONumber;
+            ViewBag.CurrentSearchVendorName = searchVendorName;
+            ViewBag.CurrentSearchMaterial = searchMaterial;
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower())));
+            }
+            #endregion
+
+            try
+            {
+                excel = new Microsoft.Office.Interop.Excel.Application();
+                excel.Visible = false;
+                excel.DisplayAlerts = false;
+                workBook = excel.Workbooks.Add(Type.Missing);
+
+                workSheet = (Microsoft.Office.Interop.Excel.Worksheet)workBook.ActiveSheet;
+                workSheet.Name = "POImport";
+
+                workSheet.Range[workSheet.Cells[1, 1], workSheet.Cells[1, 9]].Merge();
+                workSheet.Cells.Font.Size = 15;
+
+                workSheet.Cells[1, 1] = "Report PO Import";
+                workSheet.Cells[2, 1] = "Number";
+                workSheet.Cells[2, 2] = "PO Number";
+                workSheet.Cells[2, 3] = "Item Number";
+                workSheet.Cells[2, 4] = "Material";
+                workSheet.Cells[2, 5] = "Description";
+                workSheet.Cells[2, 6] = "Quantity";
+                workSheet.Cells[2, 7] = "Delivery Date";
+                workSheet.Cells[2, 8] = "Vendor";
+                workSheet.Cells[2, 9] = "ETA";
+
+                int rowCount = 3;
+                int coloumnCount = 9;
+
+                foreach (var po in pOes)
+                {
+                    foreach (var purchasingDocumentItem in po.PurchasingDocumentItems)
+                    {
+                        string deliveryDate = "-";
+                        string estimatedTimeArrival = "-";
+
+                        if (purchasingDocumentItem.DeliveryDate != null)
+                        {
+                            deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                        }
+
+                        if (purchasingDocumentItem.HasETAHistory)
+                        {
+                            if (purchasingDocumentItem.HasShipment)
+                            {
+                                if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                }
+                            }
+                            else
+                            {
+                                if (purchasingDocumentItem.LastETAHistory.ETADate != null)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                }
+                                else if (purchasingDocumentItem.FirstETAHistory.ETADate != null)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                                }
+                            }
+                        }
+                        else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                        {
+                            estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                        }
+
+                        workSheet.Cells[rowCount, 1] = rowCount - 2;
+                        workSheet.Cells[rowCount, 2] = po.Number;
+                        workSheet.Cells[rowCount, 3] = purchasingDocumentItem.ItemNumber;
+                        workSheet.Cells[rowCount, 4] = purchasingDocumentItem.Material;
+                        workSheet.Cells[rowCount, 5] = purchasingDocumentItem.Description;
+                        workSheet.Cells[rowCount, 6] = purchasingDocumentItem.Quantity;
+                        workSheet.Cells[rowCount, 7] = deliveryDate;
+                        workSheet.Cells[rowCount, 8] = po.Vendor;
+                        workSheet.Cells[rowCount, 9] = estimatedTimeArrival;
+
+                        rowCount++;
+                    }
+                }
+
+                cellRange = workSheet.Range[workSheet.Cells[1, 1], workSheet.Cells[rowCount, coloumnCount]];
+                cellRange.EntireColumn.AutoFit();
+                Microsoft.Office.Interop.Excel.Borders border = cellRange.Borders;
+                border.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+                border.Weight = 2d;
+
+                cellRange = workSheet.Range[workSheet.Cells[1, 1], workSheet.Cells[2, coloumnCount]];
+
+                workBook.SaveAs("ReportPOImport.xlsx"); ;
+                workBook.Close();
+                excel.Quit();
+
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = (ex.Message + ex.StackTrace);
+                return Json(new { responseText = errorMessage }, JsonRequestBehavior.AllowGet);
+            }
+            finally
+            {
+                workSheet = null;
+                cellRange = null;
+                workBook = null;
+            }
+
+            return null;
         }
 
         public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
