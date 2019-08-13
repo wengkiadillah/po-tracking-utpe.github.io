@@ -292,6 +292,8 @@ namespace POTrackingV2.Controllers
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
                       InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
                       IsHead = isHeadProcurement,
+                      //ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
+                      //ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
                       POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
                   }).OrderByDescending(x => x.created);
 
