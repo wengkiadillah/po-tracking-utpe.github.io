@@ -4,7 +4,8 @@
     ViewBag.Role = Model;
     @*<input id="roleNotification" name="roleNotification" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
     <input id="role" name="role" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+
     <script type="text/javascript">
         Date.prototype.newDateFormatMMDD = function () {
             const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -168,7 +169,7 @@
                             ////////////25% ETA
                             var resultTwentyFivePercent = "";
                             if (releaseDate != null && confirmedDate != null) {
-                                
+
                                 var confirm = moment(confirmedDate.split('T')[0], 'YYYY-MM-DD');
                                 var release = moment(releaseDate.split('T')[0], 'YYYY-MM-DD');
                                 var div4 = confirm.diff(release, 'days') / 4;
@@ -183,7 +184,7 @@
                                 var released = moment(releaseDate.split('T')[0], 'YYYY-MM-DD');
                                 var divSeventyFive = (firsEta.diff(released, 'days')* 3) / 4;
                                 resultSeventyFivePercent = released.add(divSeventyFive, 'days').format('dddd, DD MMMM YYYY');
-                            } 
+                            }
 
                             created = new Date(created);
                             //var url = "~/" + POTypeCategory + "?searchData=" + PONumber + "&filterBy=poNumber&role=" + targetRole.toLowerCase() + "&activeStage=" + stage;
@@ -287,14 +288,14 @@
                                         message += " Please update Data " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at SAP";
                                         assignedFrom = "";
                                     } else if (confirmedItem == true) {
-                                        if (targetRole = "vendor") {                                                                   
+                                        if (targetRole = "vendor") {
                                             if (releaseDate != null) {
-                                                
+
                                                 message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage + ", please update ETA on " + resultTwentyFivePercent;
                                             }
                                             else {
                                                 message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage + ", please update ETA ";
-                                            }                                            
+                                            }
                                         }
                                         else {
                                             if (releaseDate != null) {
@@ -302,7 +303,7 @@
                                             }
                                             else {
                                                 message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage + " without delay ";
-                                            }                                            
+                                            }
                                         }
                                     } else if (confirmedItem == false) {
                                         message += " has declined item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POQty + " at stage " + stage;
@@ -346,7 +347,7 @@
                                         } else if (confirmedPaymentReceive == null) {
                                             message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage + ", please proceed to ETA Confirmation ";
                                         }
-                                    }                                    
+                                    }
                                 } else if (stage == "4") {
                                     if (countProgressPhotos > 0) {
                                         message += " has uploaded Progress photos and asked to update GR for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage;
