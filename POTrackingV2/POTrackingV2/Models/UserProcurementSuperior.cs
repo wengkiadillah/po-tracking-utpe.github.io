@@ -17,6 +17,7 @@ namespace POTrackingV2.Models
         public int ID { get; set; }
         public Nullable<int> ParentID { get; set; }
         public string Username { get; set; }
+        public string FullName { get; set; }
         public string NRP { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public string CreatedBy { get; set; }

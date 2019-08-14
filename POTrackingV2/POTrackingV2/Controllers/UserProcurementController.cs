@@ -54,7 +54,7 @@ namespace POTrackingV2.Controllers
 
             foreach (var item in dbPOTracking.UserProcurementSuperiors)
             {
-                users = users.Where(x => x.Username != item.Username);
+                users = users.Where(x => x.Username.ToLower() != item.Username.ToLower());
             }
 
             var ViewModel = new UserProcurementViewModelCreate
@@ -73,11 +73,13 @@ namespace POTrackingV2.Controllers
             {
                 List<UserProcurementSuperior> databaseUserProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
-                string description = GetNRPByUsername(username);
+                string description = GetNRPByUsername(username.ToLower());
+                string fullName = GetFullNameByUsername(username.ToLower());
 
                 UserProcurementSuperior userProcurementSuperior = new UserProcurementSuperior();
                 userProcurementSuperior.Username = username;
                 userProcurementSuperior.NRP = description;
+                userProcurementSuperior.FullName = fullName;
                 userProcurementSuperior.Created = now;
                 userProcurementSuperior.CreatedBy = User.Identity.Name;
                 userProcurementSuperior.LastModified = now;
@@ -89,13 +91,13 @@ namespace POTrackingV2.Controllers
 
                 int id = userProcurementSuperior.ID;
 
-                foreach (var item in inferiorUsernames)
+                foreach (var inferiorUsername in inferiorUsernames)
                 {
                     UserProcurementSuperior userProcurementInferior = new UserProcurementSuperior();
 
-                    if (databaseUserProcurementSuperiors.Any(x => x.Username == item))
+                    if (databaseUserProcurementSuperiors.Any(x => x.Username.ToLower() == inferiorUsername.ToLower()))
                     {
-                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
+                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username.ToLower() == inferiorUsername.ToLower()).SingleOrDefault();
 
                         userProcurementInferior.ParentID = id;
                         userProcurementInferior.LastModified = now;
@@ -103,11 +105,13 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        description = GetNRPByUsername(item);
+                        description = GetNRPByUsername(inferiorUsername.ToLower());
+                        fullName = GetFullNameByUsername(inferiorUsername.ToLower());
 
                         userProcurementInferior.ParentID = id;
-                        userProcurementInferior.Username = item;
+                        userProcurementInferior.Username = inferiorUsername;
                         userProcurementInferior.NRP = description;
+                        userProcurementInferior.FullName = fullName;
                         userProcurementInferior.Created = now;
                         userProcurementInferior.CreatedBy = User.Identity.Name;
                         userProcurementInferior.LastModified = now;
@@ -133,13 +137,13 @@ namespace POTrackingV2.Controllers
             {
                 List<UserProcurementSuperior> databaseUserProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
-                foreach (var item in inferiorUsernames)
+                foreach (var inferiorUsername in inferiorUsernames)
                 {
                     UserProcurementSuperior userProcurementInferior = new UserProcurementSuperior();
 
-                    if (databaseUserProcurementSuperiors.Any(x => x.Username == item))
+                    if (databaseUserProcurementSuperiors.Any(x => x.Username.ToLower() == inferiorUsername.ToLower()))
                     {
-                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username == item).SingleOrDefault();
+                        userProcurementInferior = databaseUserProcurementSuperiors.Where(x => x.Username.ToLower() == inferiorUsername.ToLower()).SingleOrDefault();
 
                         userProcurementInferior.ParentID = userSuperiorID;
                         userProcurementInferior.LastModified = now;
@@ -147,11 +151,13 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        string description = GetNRPByUsername(item);
+                        string description = GetNRPByUsername(inferiorUsername.ToLower());
+                        string fullName = GetFullNameByUsername(inferiorUsername.ToLower());
 
                         userProcurementInferior.ParentID = userSuperiorID;
-                        userProcurementInferior.Username = item;
+                        userProcurementInferior.Username = inferiorUsername;
                         userProcurementInferior.NRP = description;
+                        userProcurementInferior.FullName = fullName;
                         userProcurementInferior.Created = now;
                         userProcurementInferior.CreatedBy = User.Identity.Name;
                         userProcurementInferior.LastModified = now;
@@ -172,7 +178,7 @@ namespace POTrackingV2.Controllers
 
         public ActionResult PopulateUser(string username)
         {
-            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username != username).OrderBy(x => x.Username).ToList();
+            List<User> users = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username.ToLower() != username.ToLower()).OrderBy(x => x.Username).ToList();
 
             List<UserProcurementSuperior> userProcurementInferiors = dbPOTracking.UserProcurementSuperiors.Where(x => x.ParentID != null).ToList();
 
@@ -266,6 +272,13 @@ namespace POTrackingV2.Controllers
             }
 
             return null;
+        }
+
+        public string GetFullNameByUsername(string username)
+        {
+            string fullname = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username.ToLower() == username.ToLower()).FirstOrDefault().Name;
+
+            return fullname;
         }
     }
 }

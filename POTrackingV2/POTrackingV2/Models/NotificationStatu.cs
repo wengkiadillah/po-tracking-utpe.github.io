@@ -29,5 +29,7 @@ namespace POTrackingV2.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual NotificationStatu NotificationStatus1 { get; set; }
+        public virtual NotificationStatu NotificationStatu1 { get; set; }
     }
 }

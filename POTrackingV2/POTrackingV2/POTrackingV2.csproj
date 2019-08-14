@@ -238,9 +238,6 @@
     <Compile Include="Models\DeliveryLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\DimDate.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\DrawingLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
     </Compile>
