@@ -9,7 +9,7 @@
 }
 
 @*<link rel="stylesheet" href="~/Content/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="~/Content/bootstrap.min.css">*@
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">*@
 
 @Scripts.Render("~/bundles/jquery")
 
@@ -33,6 +33,7 @@
         </div>
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
+        @Html.ActionLink("Download", "DownloadReport", "Import", new {searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }, new { @class = "btn btn-info mr-3 mt-1" })
     }
 </div>
 
@@ -74,13 +75,9 @@
         {
             foreach (var po in Model)
             {
-                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0")
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
                                                                         .OrderBy(x => x.ItemNumber);
 
-                if (purchasingDocumentItems.Count() < 1)
-                {
-                    continue;
-                }
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
                     <tr>
@@ -130,12 +127,30 @@
                             @{
                                 string estimatedTimeArrival = "-";
 
-                                if (purchasingDocumentItem.HasShipment)
+                                if (purchasingDocumentItem.HasETAHistory)
                                 {
-                                    if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                    if (purchasingDocumentItem.HasShipment)
                                     {
-                                        estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                        if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                        }
                                     }
+                                    else
+                                    {
+                                        if (purchasingDocumentItem.LastETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                        }
+                                        else if (purchasingDocumentItem.FirstETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                                        }
+                                    }
+                                }
+                                else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
                             }
 
@@ -169,7 +184,7 @@
 
    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Report",
-new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial}))
+new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }))
 
 
 <script type="text/javascript">

@@ -6,6 +6,7 @@ using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.DirectoryServices;
 using System.Globalization;
@@ -27,7 +28,6 @@ namespace POTrackingV2.Controllers
         private DateTime now = DateTime.Now;
         private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
-        // GET: Import
         public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
@@ -186,19 +186,18 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
-                            .Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
-                            .AsQueryable();
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0"))))
+                        .AsQueryable();
+
+            var noShowPOes = pOes;
 
             if (role == LoginConstants.RoleProcurement.ToLower())
             {
                 List<string> myUserNRPs = new List<string>();
+
                 myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                 myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
-
-                var noShowPOes = db.POes.Where(x => x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08")
-                                        .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                 if (myUserNRPs.Count > 0)
                 {
@@ -210,8 +209,6 @@ namespace POTrackingV2.Controllers
 
                 pOes = pOes.Except(noShowPOes);
             }
-
-            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0"));
 
             ViewBag.CurrentSearchPONumber = searchPONumber;
             ViewBag.CurrentSearchVendorName = searchVendorName;
@@ -235,6 +232,157 @@ namespace POTrackingV2.Controllers
             #endregion
 
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+        }
+
+        public void DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            if (!((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())))
+            {
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xls"));
+                Response.ContentType = "application/ms-excel";
+                DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
+                string str = string.Empty;
+                foreach (DataColumn dtcol in dt.Columns)
+                {
+                    Response.Write(str + dtcol.ColumnName);
+                    str = "\t";
+                }
+                Response.Write("\n");
+                foreach (DataRow dr in dt.Rows)
+                {
+                    str = "";
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        Response.Write(str + Convert.ToString(dr[j]));
+                        str = "\t";
+                    }
+                    Response.Write("\n");
+                }
+                Response.End();
+            }
+        }
+
+        public DataTable BindDataTable(string searchPONumber, string searchVendorName, string searchMaterial)
+        {
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            if ((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower()))
+            {
+                return null;
+            }
+
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0"))))
+                        .AsQueryable();
+
+            var noShowPOes = pOes;
+            List<string> myUserNRPs = new List<string>();
+
+            myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+            myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+            if (myUserNRPs.Count > 0)
+            {
+                foreach (var myUserNRP in myUserNRPs)
+                {
+                    noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                }
+            }
+
+            pOes = pOes.Except(noShowPOes);
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(x => x.Number.ToLower().Contains(searchPONumber.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(x => x.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower())));
+            }
+            #endregion
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Number", typeof(Int32));
+            dt.Columns.Add("PO Number", typeof(string));
+            dt.Columns.Add("Item Number", typeof(string));
+            dt.Columns.Add("Material", typeof(string));
+            dt.Columns.Add("Description", typeof(string));
+            dt.Columns.Add("Quantity", typeof(string));
+            dt.Columns.Add("Delivery Date", typeof(string));
+            dt.Columns.Add("Vendor", typeof(string));
+            dt.Columns.Add("ETA", typeof(string));
+
+            int rowNumber = 1;
+
+            foreach (var po in pOes)
+            {
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
+                                                                        .OrderBy(x => x.ItemNumber);
+
+                foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                {
+                    string deliveryDate = "-";
+                    string estimatedTimeArrival = "-";
+
+                    if (purchasingDocumentItem.DeliveryDate != null)
+                    {
+                        deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                    }
+
+                    if (purchasingDocumentItem.HasETAHistory)
+                    {
+                        if (purchasingDocumentItem.HasShipment)
+                        {
+                            if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
+                            {
+                                estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                            }
+                        }
+                        else
+                        {
+                            if (purchasingDocumentItem.LastETAHistory.ETADate != null)
+                            {
+                                estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
+                            }
+                            else if (purchasingDocumentItem.FirstETAHistory.ETADate != null)
+                            {
+                                estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                            }
+                        }
+                    }
+                    else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                    {
+                        estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                    }
+
+                    dt.Rows.Add(rowNumber, po.Number, purchasingDocumentItem.ItemNumber, purchasingDocumentItem.Material, purchasingDocumentItem.Description, purchasingDocumentItem.Quantity, deliveryDate, po.Vendor.Name, estimatedTimeArrival);
+
+                    rowNumber++;
+                }
+            }
+
+            return dt;
         }
 
         public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
