@@ -167,7 +167,7 @@ namespace POTrackingV2.Controllers
                 List<string> vendorCode = new List<string>();
                 List<string> myUserNRPs = new List<string>();
                 List<string> userInternalList = DBUser.Users.Select(x => x.Username).ToList();
-                bool isHead = false;
+                bool isHeadProcurement = false;
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
@@ -240,9 +240,9 @@ namespace POTrackingV2.Controllers
                         notifications = notifications.Except(noShowNotifications);
 
                         // For Head or Superior
-                        if (myUserNRPs.Count() > 1)
+                        if (myUserNRPs.Count() > 2)
                         {
-                            isHead = true;
+                            isHeadProcurement = true;
                         }
                     }
                 }
@@ -285,13 +285,16 @@ namespace POTrackingV2.Controllers
                       ProformaInvoice = x.PurchasingDocumentItem.ProformaInvoiceDocument,
                       ConfirmedPaymentReceive = x.PurchasingDocumentItem.ConfirmReceivedPaymentDate,
                       SecondETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderByDescending(y => y.Created).FirstOrDefault().ETADate,
+                      FirstETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderBy(y => y.Created).FirstOrDefault().ETADate,
                       CountProgressPhotos = x.PurchasingDocumentItem.ProgressPhotoes.Count(),
                       ShipmentBookingDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().BookingDate,
                       ShipmentATD = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATDDate,
                       ShipmentCopyBLDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().CopyBLDate,
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
                       InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
-                      IsHead = isHead,
+                      IsHead = isHeadProcurement,
+                      ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
+                      ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
                       POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
                   }).OrderByDescending(x => x.created);
 
@@ -474,8 +477,7 @@ namespace POTrackingV2.Controllers
                     myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
-                                            
+                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))                                            
                                             .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
 
                     if (myUserNRPs.Count > 0)
@@ -498,6 +500,12 @@ namespace POTrackingV2.Controllers
                 {
                     pOesLocal = pOesLocal.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
                 }
+                //count by item
+                //string LocalPOItemsCountNew = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+                //string LocalPOItemsCountOnGoing = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+                //string LocalPOItemsDone = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+
+                //count by po
                 string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
                 string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
                 string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();

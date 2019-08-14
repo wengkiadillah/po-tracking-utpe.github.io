@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="POTrackingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="POTracking.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Capabilities">
           <Key>
             <PropertyRef Name="ID" />
@@ -102,6 +102,8 @@
           <Property Name="Type" Type="varchar" MaxLength="25" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="ReleaseDate" Type="datetime" />
+          <Property Name="PRCreateDate" Type="datetime" />
+          <Property Name="PRReleaseDate" Type="datetime" />
           <Property Name="ProgressDay" Type="int" />
           <Property Name="VendorCode" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="KompoCategoryID" Type="int" />
@@ -166,9 +168,6 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="POID" Type="int" Nullable="false" />
-          <Property Name="PRNumber" Type="varchar" MaxLength="25" />
-          <Property Name="PRCreateDate" Type="datetime" />
-          <Property Name="PRReleaseDate" Type="datetime" />
           <Property Name="DeliveryDate" Type="datetime" />
           <Property Name="ParentID" Type="int" />
           <Property Name="ItemNumber" Type="int" Nullable="false" />
@@ -838,7 +837,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="POTrackingModelStoreContainer">
+        <EntityContainer Name="POTrackingStoreContainer">
           <EntitySet Name="Capabilities" EntityType="Self.Capabilities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CapabilityCategories" EntityType="Self.CapabilityCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DelayReason" EntityType="Self.DelayReason" Schema="dbo" store:Type="Tables" />
@@ -991,7 +990,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="POTrackingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="POTracking" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Capability">
           <Key>
             <PropertyRef Name="ID" />
@@ -1099,6 +1098,8 @@
           <Property Name="Type" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ReleaseDate" Type="DateTime" Precision="3" />
+          <Property Name="PRCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="PRReleaseDate" Type="DateTime" Precision="3" />
           <Property Name="ProgressDay" Type="Int32" />
           <Property Name="VendorCode" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="KompoCategoryID" Type="Int32" />
@@ -1168,9 +1169,6 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="POID" Type="Int32" Nullable="false" />
-          <Property Name="PRNumber" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Name="PRCreateDate" Type="DateTime" Precision="3" />
-          <Property Name="PRReleaseDate" Type="DateTime" Precision="3" />
           <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
           <Property Name="ParentID" Type="Int32" />
           <Property Name="ItemNumber" Type="Int32" Nullable="false" />
@@ -2037,9 +2035,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="POTrackingModelStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="POTrackingStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="Capabilities">
-            <EntityTypeMapping TypeName="POTrackingModel.Capability">
+            <EntityTypeMapping TypeName="POTracking.Capability">
               <MappingFragment StoreEntitySet="Capabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2052,7 +2050,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="CapabilityCategories">
-            <EntityTypeMapping TypeName="POTrackingModel.CapabilityCategory">
+            <EntityTypeMapping TypeName="POTracking.CapabilityCategory">
               <MappingFragment StoreEntitySet="CapabilityCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2064,7 +2062,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DelayReasons">
-            <EntityTypeMapping TypeName="POTrackingModel.DelayReason">
+            <EntityTypeMapping TypeName="POTracking.DelayReason">
               <MappingFragment StoreEntitySet="DelayReason">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2076,7 +2074,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ETAHistories">
-            <EntityTypeMapping TypeName="POTrackingModel.ETAHistory">
+            <EntityTypeMapping TypeName="POTracking.ETAHistory">
               <MappingFragment StoreEntitySet="ETAHistory">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2092,7 +2090,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="KompoCategories">
-            <EntityTypeMapping TypeName="POTrackingModel.KompoCategory">
+            <EntityTypeMapping TypeName="POTracking.KompoCategory">
               <MappingFragment StoreEntitySet="KompoCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2104,7 +2102,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Notifications">
-            <EntityTypeMapping TypeName="POTrackingModel.Notification">
+            <EntityTypeMapping TypeName="POTracking.Notification">
               <MappingFragment StoreEntitySet="Notification">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2122,7 +2120,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="NotificationStatus">
-            <EntityTypeMapping TypeName="POTrackingModel.NotificationStatu">
+            <EntityTypeMapping TypeName="POTracking.NotificationStatu">
               <MappingFragment StoreEntitySet="NotificationStatus">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2134,13 +2132,15 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="POes">
-            <EntityTypeMapping TypeName="POTrackingModel.PO">
+            <EntityTypeMapping TypeName="POTracking.PO">
               <MappingFragment StoreEntitySet="PO">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Number" ColumnName="Number" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="ReleaseDate" ColumnName="ReleaseDate" />
+                <ScalarProperty Name="PRCreateDate" ColumnName="PRCreateDate" />
+                <ScalarProperty Name="PRReleaseDate" ColumnName="PRReleaseDate" />
                 <ScalarProperty Name="ProgressDay" ColumnName="ProgressDay" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
                 <ScalarProperty Name="KompoCategoryID" ColumnName="KompoCategoryID" />
@@ -2174,7 +2174,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProductionSequenceDatas">
-            <EntityTypeMapping TypeName="POTrackingModel.ProductionSequenceData">
+            <EntityTypeMapping TypeName="POTracking.ProductionSequenceData">
               <MappingFragment StoreEntitySet="ProductionSequenceData">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -2190,7 +2190,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProgressPhotoes">
-            <EntityTypeMapping TypeName="POTrackingModel.ProgressPhoto">
+            <EntityTypeMapping TypeName="POTracking.ProgressPhoto">
               <MappingFragment StoreEntitySet="ProgressPhoto">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2204,13 +2204,10 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PurchasingDocumentItems">
-            <EntityTypeMapping TypeName="POTrackingModel.PurchasingDocumentItem">
+            <EntityTypeMapping TypeName="POTracking.PurchasingDocumentItem">
               <MappingFragment StoreEntitySet="PurchasingDocumentItem">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="POID" ColumnName="POID" />
-                <ScalarProperty Name="PRNumber" ColumnName="PRNumber" />
-                <ScalarProperty Name="PRCreateDate" ColumnName="PRCreateDate" />
-                <ScalarProperty Name="PRReleaseDate" ColumnName="PRReleaseDate" />
                 <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
                 <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
@@ -2255,7 +2252,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PurchasingDocumentItemHistories">
-            <EntityTypeMapping TypeName="POTrackingModel.PurchasingDocumentItemHistory">
+            <EntityTypeMapping TypeName="POTracking.PurchasingDocumentItemHistory">
               <MappingFragment StoreEntitySet="PurchasingDocumentItemHistory">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2276,7 +2273,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="QualityControlProgresses">
-            <EntityTypeMapping TypeName="POTrackingModel.QualityControlProgress">
+            <EntityTypeMapping TypeName="POTracking.QualityControlProgress">
               <MappingFragment StoreEntitySet="QualityControlProgress">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
@@ -2290,7 +2287,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderDetails">
-            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderDetail">
+            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderDetail">
               <MappingFragment StoreEntitySet="RawMaterialOrderDetails">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="RawMaterialName" ColumnName="RawMaterialName" />
@@ -2304,7 +2301,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderPoFiles">
-            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderPoFile">
+            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderPoFile">
               <MappingFragment StoreEntitySet="RawMaterialOrderPoFiles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -2317,7 +2314,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrderProgressFiles">
-            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrderProgressFile">
+            <EntityTypeMapping TypeName="POTracking.RawMaterialOrderProgressFile">
               <MappingFragment StoreEntitySet="RawMaterialOrderProgressFiles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -2330,7 +2327,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RawMaterialOrders">
-            <EntityTypeMapping TypeName="POTrackingModel.RawMaterialOrder">
+            <EntityTypeMapping TypeName="POTracking.RawMaterialOrder">
               <MappingFragment StoreEntitySet="RawMaterialOrders">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentsItemID" ColumnName="PurchasingDocumentsItemID" />
@@ -2344,7 +2341,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RolesTypes">
-            <EntityTypeMapping TypeName="POTrackingModel.RolesType">
+            <EntityTypeMapping TypeName="POTracking.RolesType">
               <MappingFragment StoreEntitySet="RolesType">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2352,7 +2349,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SequencesProgressReasons">
-            <EntityTypeMapping TypeName="POTrackingModel.SequencesProgressReason">
+            <EntityTypeMapping TypeName="POTracking.SequencesProgressReason">
               <MappingFragment StoreEntitySet="SequencesProgressReasons">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2364,7 +2361,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Shipments">
-            <EntityTypeMapping TypeName="POTrackingModel.Shipment">
+            <EntityTypeMapping TypeName="POTracking.Shipment">
               <MappingFragment StoreEntitySet="Shipment">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PurchasingDocumentItemID" ColumnName="PurchasingDocumentItemID" />
@@ -2386,7 +2383,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontCapabilities">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontCapability">
+            <EntityTypeMapping TypeName="POTracking.SubcontCapability">
               <MappingFragment StoreEntitySet="SubcontCapabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
@@ -2399,7 +2396,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontCategories">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontCategory">
+            <EntityTypeMapping TypeName="POTracking.SubcontCategory">
               <MappingFragment StoreEntitySet="SubcontCategories">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2411,7 +2408,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontComponentCapabilities">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontComponentCapability">
+            <EntityTypeMapping TypeName="POTracking.SubcontComponentCapability">
               <MappingFragment StoreEntitySet="SubcontComponentCapabilities">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
@@ -2434,7 +2431,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontDevRoles">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontDevRole">
+            <EntityTypeMapping TypeName="POTracking.SubcontDevRole">
               <MappingFragment StoreEntitySet="SubcontDevRoles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2446,7 +2443,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontDevUserRoles">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontDevUserRole">
+            <EntityTypeMapping TypeName="POTracking.SubcontDevUserRole">
               <MappingFragment StoreEntitySet="SubcontDevUserRoles">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -2460,7 +2457,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SubcontDevVendors">
-            <EntityTypeMapping TypeName="POTrackingModel.SubcontDevVendor">
+            <EntityTypeMapping TypeName="POTracking.SubcontDevVendor">
               <MappingFragment StoreEntitySet="SubcontDevVendors">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -2473,7 +2470,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="POTrackingModel.sysdiagram">
+            <EntityTypeMapping TypeName="POTracking.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -2484,7 +2481,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserProcurementSuperiors">
-            <EntityTypeMapping TypeName="POTrackingModel.UserProcurementSuperior">
+            <EntityTypeMapping TypeName="POTracking.UserProcurementSuperior">
               <MappingFragment StoreEntitySet="UserProcurementSuperior">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
@@ -2499,7 +2496,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserRoleTypes">
-            <EntityTypeMapping TypeName="POTrackingModel.UserRoleType">
+            <EntityTypeMapping TypeName="POTracking.UserRoleType">
               <MappingFragment StoreEntitySet="UserRoleType">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -2512,7 +2509,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserVendors">
-            <EntityTypeMapping TypeName="POTrackingModel.UserVendor">
+            <EntityTypeMapping TypeName="POTracking.UserVendor">
               <MappingFragment StoreEntitySet="UserVendors">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2531,7 +2528,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Vendors">
-            <EntityTypeMapping TypeName="POTrackingModel.Vendor">
+            <EntityTypeMapping TypeName="POTracking.Vendor">
               <MappingFragment StoreEntitySet="Vendors">
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

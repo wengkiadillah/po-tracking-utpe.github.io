@@ -25,6 +25,8 @@ namespace POTrackingV2.Models
         public string Type { get; set; }
         public System.DateTime Date { get; set; }
         public Nullable<System.DateTime> ReleaseDate { get; set; }
+        public Nullable<System.DateTime> PRCreateDate { get; set; }
+        public Nullable<System.DateTime> PRReleaseDate { get; set; }
         public Nullable<int> ProgressDay { get; set; }
         public string VendorCode { get; set; }
         public Nullable<int> KompoCategoryID { get; set; }

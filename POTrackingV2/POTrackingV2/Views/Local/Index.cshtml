@@ -52,6 +52,13 @@
             <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
+        if (ViewBag.IsHeadProcurement)
+        {
+            <div class="form-group mr-4 ml-0">
+                <input id="searchUserProcurement" name="searchUserProcurement" list="data-list-userprocurement" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Procurement" autocomplete="off" value="@ViewBag.CurrentSearchUserProcurement" />
+                <datalist id="data-list-userprocurement"></datalist>
+            </div>
+        }
         <div class="form-group mr-0 ml-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
@@ -2620,7 +2627,7 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, searchPOStatus = ViewBag.CurrentSearchPOStatus, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchPOStatus = ViewBag.CurrentSearchPOStatus, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, searchUserProcurement = ViewBag.CurrentSearchUserProcurement }))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -2718,6 +2725,33 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             }
                             $("#data-list-material").html(element);
                             $("#searchMaterial").css("background", "");                            
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status + " : " + error);
+                    }
+                });
+            });
+
+            $("#searchUserProcurement").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataForSearch", "Local")",
+                    data: { 'searchFilterBy': 'userProcurement', 'value': $("#searchUserProcurement").val() },
+                    beforeSend: function () {
+                        $("#searchUserProcurement").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                            }
+                            $("#data-list-userprocurement").html(element);
+                            $("#searchUserProcurement").css("background", "");
                         } else {
                             console.log(response.responseCode + response.responseText);
                         }

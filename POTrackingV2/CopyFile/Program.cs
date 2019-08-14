@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,9 +16,13 @@ namespace CopyFile
         {
             try
             {
-                string source = @WebConfigurationManager.AppSettings["Source"];
-                string destination = @WebConfigurationManager.AppSettings["Destination"];
+                //string source = @WebConfigurationManager.AppSettings["Source"];
+                //string destination = @WebConfigurationManager.AppSettings["Destination"];
                 string filename = @WebConfigurationManager.AppSettings["FileName"];
+                string ftpSource = @WebConfigurationManager.AppSettings["FTPSource"];
+                string ftpDestination = @WebConfigurationManager.AppSettings["FTPDestination"];
+                string syncDestination = @WebConfigurationManager.AppSettings["SyncDestination"];
+                string fileToCopy = @WebConfigurationManager.AppSettings["FileToCopy"];
 
                 //private string iisAppName = WebConfigurationManager.AppSettings["IISAppName"];
 
@@ -37,27 +42,42 @@ namespace CopyFile
                 //    System.IO.Directory.CreateDirectory(destination);
                 //}
 
-                var directory = new DirectoryInfo(source);
-                var target = new DirectoryInfo(destination);
-                var myFile = (from f in directory.GetFiles()
-                              orderby f.LastWriteTime descending
-                              select f).First();
-                
+                // Copy Files
+                //var directory = new DirectoryInfo(source);
+                //var target = new DirectoryInfo(destination);
+                //var myFile = (from f in directory.GetFiles()
+                //              orderby f.LastWriteTime descending
+                //              select f).First();
+
                 //foreach (FileInfo fi in directory.GetFiles())
                 //{
                 //    Console.WriteLine(@"Read File {0}\{1}", target.FullName, fi.Name);
                 //    //fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
                 //}
 
-                string destFile = Path.Combine(destination, filename);
-                Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
-                System.IO.File.Copy(myFile.FullName, destFile, true);
+                // Copy Files (2)
+                //string destFile = Path.Combine(destination, filename);
+                //Console.WriteLine(@"Copying {0}\{1}", target.FullName, myFile.Name);
+                //System.IO.File.Copy(myFile.FullName, destFile, true);
+
+                // Versioning
+                int fileVersion = Int32.Parse(@WebConfigurationManager.AppSettings["FileVersion"]);
+                fileVersion = fileVersion + 1;
+
+                string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string configFile = System.IO.Path.Combine(appPath, "CopyFile.exe.config");
+                ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap();
+                configFileMap.ExeConfigFilename = configFile;
+                System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+
+                config.AppSettings.Settings["FileVersion"].Value = fileVersion.ToString();
+                config.Save();
 
                 // For FTP 
-                //CopyFile("test.csv", "test.csv", "administrator", "P@s5w0rd");
+                CopyFile(filename, fileToCopy, "administrator", "P@s5w0rd", fileVersion.ToString(), ftpSource, ftpDestination, syncDestination);
 
                 Console.WriteLine(@"Success !");
-                Console.ReadLine();
+                //Console.ReadLine();
             }
             catch (Exception ex)
             {
@@ -65,28 +85,47 @@ namespace CopyFile
                 //Console.ReadLine();
             }
         }
-        
 
-        public static bool CopyFile(string fileName, string FileToCopy, string userName, string password)
+
+        public static bool CopyFile(string fileName, string fileToCopy, string userName, string password, string fileVersion,string ftpSource, string ftpDestination, string syncDestination)
         {
             try
             {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/POTRACKING/OUT" + fileName);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpSource + fileName);
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
-
                 request.Credentials = new NetworkCredential(userName, password);
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                Upload("ftp://10.48.10.116/POTRACKING/IN" + FileToCopy, ToByteArray(responseStream), userName, password);
-                responseStream.Close();
+
+                string fileNameWithoutExetension = fileName.Split('.').First();
+
+                using (Stream ftpStream = request.GetResponse().GetResponseStream())
+                {
+                    // Copy to History
+                    using (Stream fileStream = File.Create($"{ftpDestination}{fileNameWithoutExetension}_{fileVersion}.csv"))
+                    {
+                        ftpStream.CopyTo(fileStream);
+                    }
+                }
+
+                // Copy to Data
+                var directory = new DirectoryInfo(ftpDestination);
+                var target = new DirectoryInfo(syncDestination);
+                var myFile = (from f in directory.GetFiles()
+                              orderby f.LastWriteTime descending
+                              select f).First();
+
+                string destFile = Path.Combine(syncDestination, fileToCopy);
+                System.IO.File.Copy(myFile.FullName, destFile, true);
+
+                //Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Source + ex.StackTrace);
                 return false;
             }
         }
+
         public static Byte[] ToByteArray(Stream stream)
         {
             MemoryStream ms = new MemoryStream();
@@ -114,9 +153,8 @@ namespace CopyFile
                 clsStream.Dispose();
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Source + ex.StackTrace);
                 return false;
             }
         }

@@ -35,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -681,6 +682,7 @@
     <Content Include="Views\SubcontDevUserRole\ViewSubcontDevUserRole.cshtml" />
     <Content Include="Views\SubcontDevUserRole\CreateSubcontDevUserRole.cshtml" />
     <Content Include="Views\SubcontDevUserRole\EditSubcontDevUserRole.cshtml" />
+    <Content Include="Scripts\moment.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
