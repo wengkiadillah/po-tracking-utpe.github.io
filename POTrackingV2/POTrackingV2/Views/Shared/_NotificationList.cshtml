@@ -165,7 +165,6 @@
                             var confirmedDate = jsonObj[k]['ConfirmedDate'];
                             var releaseDate = jsonObj[k]['ReleaseDate'];
                             var firstETAHistory = jsonObj[k]['FirstETAHistory'];
-                            var twentyFiveDate = jsonObj[k]['TwentyFiveDate'];
 
                             ////////////25% ETA
                             var resultTwentyFivePercent = "";
@@ -206,7 +205,7 @@
                                         assignedFrom = "";
                                     } else if (confirmedItem == true) {
                                         if (targetRole = "vendor") {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + twentyFiveDate;
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + resultTwentyFivePercent;
                                         }
                                         else {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay";
@@ -243,9 +242,9 @@
                                     }
                                 } else if (stage == "3") {
                                     if (confirmedPaymentReceive != null) {
-                                        message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation";
+                                        message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
                                     } else if (confirmedPaymentReceive == null) {
-                                        message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation";
+                                        message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
                                     }
                                 } else if (stage == "4") {
                                     if (countProgressPhotos > 0) {
