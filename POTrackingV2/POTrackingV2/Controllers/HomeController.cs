@@ -285,6 +285,7 @@ namespace POTrackingV2.Controllers
                       ProformaInvoice = x.PurchasingDocumentItem.ProformaInvoiceDocument,
                       ConfirmedPaymentReceive = x.PurchasingDocumentItem.ConfirmReceivedPaymentDate,
                       SecondETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderByDescending(y => y.Created).FirstOrDefault().ETADate,
+                      FirstETAHistory = x.PurchasingDocumentItem.ETAHistories.OrderBy(y => y.Created).FirstOrDefault().ETADate,
                       CountProgressPhotos = x.PurchasingDocumentItem.ProgressPhotoes.Count(),
                       ShipmentBookingDate = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().BookingDate,
                       ShipmentATD = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATDDate,
@@ -292,8 +293,8 @@ namespace POTrackingV2.Controllers
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
                       InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
                       IsHead = isHeadProcurement,
-                      //ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
-                      //ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
+                      ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
+                      ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
                       POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
                   }).OrderByDescending(x => x.created);
 
