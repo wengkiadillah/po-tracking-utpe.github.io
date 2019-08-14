@@ -71,18 +71,19 @@ namespace CopyFile
         {
             try
             {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/MCS" + fileName);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://10.48.10.116/POTRACKING/OUT" + fileName);
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
 
                 request.Credentials = new NetworkCredential(userName, password);
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
-                Upload("ftp://10.48.10.116/MCS" + FileToCopy, ToByteArray(responseStream), userName, password);
+                Upload("ftp://10.48.10.116/POTRACKING/IN" + FileToCopy, ToByteArray(responseStream), userName, password);
                 responseStream.Close();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Source + ex.StackTrace);
                 return false;
             }
         }
@@ -113,8 +114,9 @@ namespace CopyFile
                 clsStream.Dispose();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Source + ex.StackTrace);
                 return false;
             }
         }

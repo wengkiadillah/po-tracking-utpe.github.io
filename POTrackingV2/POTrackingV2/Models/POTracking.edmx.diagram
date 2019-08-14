@@ -4,18 +4,18 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1c7fe8dd38a848f998958abee0d556d1" Name="Diagram1" ZoomLevel="91">
+      <Diagram DiagramId="9ea677ede8f04b7dbfd48cbb80c87275" Name="Diagram1">
         <EntityTypeShape EntityType="POTrackingModel.Capability" Width="1.5" PointX="1.5" PointY="33.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.CapabilityCategory" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.DelayReason" Width="1.5" PointX="6" PointY="7.875" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ETAHistory" Width="1.5" PointX="8.25" PointY="20.375" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.KompoCategory" Width="1.5" PointX="1.5" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.Notification" Width="1.5" PointX="8.25" PointY="15.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.NotificationStatu" Width="1.5" PointX="6" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.NotificationStatu" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.PO" Width="1.5" PointX="0.75" PointY="11" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ProductionSequenceData" Width="1.5" PointX="5.25" PointY="15.625" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.ProgressPhoto" Width="1.5" PointX="5.25" PointY="19.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.PurchasingDocumentItem" Width="1.5" PointX="3" PointY="16.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="POTrackingModel.PurchasingDocumentItem" Width="1.5" PointX="3" PointY="16" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.PurchasingDocumentItemHistory" Width="1.5" PointX="5.25" PointY="23" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.QualityControlProgress" Width="1.5" PointX="5.25" PointY="27.75" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.RawMaterialOrderDetail" Width="1.5" PointX="7.5" PointY="31.25" IsExpanded="true" />
@@ -36,13 +36,13 @@
         <EntityTypeShape EntityType="POTrackingModel.UserRoleType" Width="1.5" PointX="8" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.UserVendor" Width="1.5" PointX="3.75" PointY="46.625" IsExpanded="true" />
         <EntityTypeShape EntityType="POTrackingModel.Vendor" Width="1.5" PointX="1.5" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="POTrackingModel.DimDate" Width="1.5" PointX="10.75" PointY="8.75" IsExpanded="true" />
         <AssociationConnector Association="POTrackingModel.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_ETAHistory_DelayReason_DelayReasonID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_ETAHistory_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_PO_KompoCategories_KompoCategoryID" ManuallyRouted="false" />
-        <AssociationConnector Association="POTrackingModel.FK_Notification_NotificationStatus_StatusID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTrackingModel.FK_Notification_NotificationStatus_Notification" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" ManuallyRouted="false" />
+        <AssociationConnector Association="POTrackingModel.FK_NotificationStatus_NotificationStatus" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_PO_Vendors_VendorCode" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_PurchasingDocumentItem_PO_POID" ManuallyRouted="false" />
         <AssociationConnector Association="POTrackingModel.FK_ProductionSequanceData_PurchasingDocumentItem_PurchasingDocumentsItemID" ManuallyRouted="false" />

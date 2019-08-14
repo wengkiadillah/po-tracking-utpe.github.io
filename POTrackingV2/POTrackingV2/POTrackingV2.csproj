@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -236,9 +235,6 @@
     </Compile>
     <Compile Include="Models\DeliveryLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DimDate.cs">
-      <DependentUpon>POTracking.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\DrawingLateness.cs">
       <DependentUpon>AlertTools.tt</DependentUpon>

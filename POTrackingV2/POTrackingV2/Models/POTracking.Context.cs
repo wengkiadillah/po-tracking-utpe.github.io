@@ -56,6 +56,5 @@ namespace POTrackingV2.Models
         public virtual DbSet<UserRoleType> UserRoleTypes { get; set; }
         public virtual DbSet<UserVendor> UserVendors { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
-        public virtual DbSet<DimDate> DimDates { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="POTrackingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="POTrackingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Capabilities">
           <Key>
             <PropertyRef Name="ID" />
@@ -38,58 +38,6 @@
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="LastModified" Type="datetime" />
           <Property Name="LastModifiedBy" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="DimDate">
-          <Key>
-            <PropertyRef Name="DateKey" />
-            <PropertyRef Name="Date" />
-            <PropertyRef Name="Day" />
-            <PropertyRef Name="DaySuffix" />
-            <PropertyRef Name="Weekday" />
-            <PropertyRef Name="WeekDayName" />
-            <PropertyRef Name="WeekDayName_Short" />
-            <PropertyRef Name="WeekDayName_FirstLetter" />
-            <PropertyRef Name="DOWInMonth" />
-            <PropertyRef Name="DayOfYear" />
-            <PropertyRef Name="WeekOfMonth" />
-            <PropertyRef Name="WeekOfYear" />
-            <PropertyRef Name="Month" />
-            <PropertyRef Name="MonthName" />
-            <PropertyRef Name="MonthName_Short" />
-            <PropertyRef Name="MonthName_FirstLetter" />
-            <PropertyRef Name="Quarter" />
-            <PropertyRef Name="QuarterName" />
-            <PropertyRef Name="Year" />
-            <PropertyRef Name="MMYYYY" />
-            <PropertyRef Name="MonthYear" />
-            <PropertyRef Name="IsWeekend" />
-            <PropertyRef Name="IsHoliday" />
-          </Key>
-          <Property Name="DateKey" Type="int" Nullable="false" />
-          <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="Day" Type="tinyint" Nullable="false" />
-          <Property Name="DaySuffix" Type="char" MaxLength="2" Nullable="false" />
-          <Property Name="Weekday" Type="tinyint" Nullable="false" />
-          <Property Name="WeekDayName" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="WeekDayName_Short" Type="char" MaxLength="3" Nullable="false" />
-          <Property Name="WeekDayName_FirstLetter" Type="char" MaxLength="1" Nullable="false" />
-          <Property Name="DOWInMonth" Type="tinyint" Nullable="false" />
-          <Property Name="DayOfYear" Type="smallint" Nullable="false" />
-          <Property Name="WeekOfMonth" Type="tinyint" Nullable="false" />
-          <Property Name="WeekOfYear" Type="tinyint" Nullable="false" />
-          <Property Name="Month" Type="tinyint" Nullable="false" />
-          <Property Name="MonthName" Type="varchar" MaxLength="10" Nullable="false" />
-          <Property Name="MonthName_Short" Type="char" MaxLength="3" Nullable="false" />
-          <Property Name="MonthName_FirstLetter" Type="char" MaxLength="1" Nullable="false" />
-          <Property Name="Quarter" Type="tinyint" Nullable="false" />
-          <Property Name="QuarterName" Type="varchar" MaxLength="6" Nullable="false" />
-          <Property Name="Year" Type="int" Nullable="false" />
-          <Property Name="MMYYYY" Type="char" MaxLength="6" Nullable="false" />
-          <Property Name="MonthYear" Type="char" MaxLength="7" Nullable="false" />
-          <Property Name="IsWeekend" Type="bit" Nullable="false" />
-          <Property Name="IsHoliday" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ETAHistory">
           <Key>
@@ -154,8 +102,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="Type" Type="varchar" MaxLength="25" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="ReleaseDate" Type="datetime" />
-          <Property Name="PRCreateDate" Type="datetime" />
-          <Property Name="PRReleaseDate" Type="datetime" />
           <Property Name="ProgressDay" Type="int" />
           <Property Name="VendorCode" Type="varchar" MaxLength="25" Nullable="false" />
           <Property Name="KompoCategoryID" Type="int" />
@@ -220,6 +166,9 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="POID" Type="int" Nullable="false" />
+          <Property Name="PRNumber" Type="varchar" MaxLength="25" />
+          <Property Name="PRCreateDate" Type="datetime" />
+          <Property Name="PRReleaseDate" Type="datetime" />
           <Property Name="DeliveryDate" Type="datetime" />
           <Property Name="ParentID" Type="int" />
           <Property Name="ItemNumber" Type="int" Nullable="false" />
@@ -481,6 +430,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentID" Type="int" />
           <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FullName" Type="varchar" MaxLength="50" />
           <Property Name="NRP" Type="varchar" MaxLength="50" />
           <Property Name="Created" Type="datetime" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="100" />
@@ -564,7 +514,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Notification_NotificationStatus_StatusID">
+        <Association Name="FK_Notification_NotificationStatus_Notification">
           <End Role="NotificationStatus" Type="Self.NotificationStatus" Multiplicity="1" />
           <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -585,6 +535,18 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             </Principal>
             <Dependent Role="Notification">
               <PropertyRef Name="PurchasingDocumentItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NotificationStatus_NotificationStatus">
+          <End Role="NotificationStatus" Type="Self.NotificationStatus" Multiplicity="1" />
+          <End Role="NotificationStatus1" Type="Self.NotificationStatus" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NotificationStatus">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="NotificationStatus1">
+              <PropertyRef Name="ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -908,33 +870,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <EntitySet Name="UserRoleType" EntityType="Self.UserRoleType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vendors" EntityType="Self.Vendors" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DimDate" EntityType="Self.DimDate" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [DimDate].[DateKey] AS [DateKey], 
-    [DimDate].[Date] AS [Date], 
-    [DimDate].[Day] AS [Day], 
-    [DimDate].[DaySuffix] AS [DaySuffix], 
-    [DimDate].[Weekday] AS [Weekday], 
-    [DimDate].[WeekDayName] AS [WeekDayName], 
-    [DimDate].[WeekDayName_Short] AS [WeekDayName_Short], 
-    [DimDate].[WeekDayName_FirstLetter] AS [WeekDayName_FirstLetter], 
-    [DimDate].[DOWInMonth] AS [DOWInMonth], 
-    [DimDate].[DayOfYear] AS [DayOfYear], 
-    [DimDate].[WeekOfMonth] AS [WeekOfMonth], 
-    [DimDate].[WeekOfYear] AS [WeekOfYear], 
-    [DimDate].[Month] AS [Month], 
-    [DimDate].[MonthName] AS [MonthName], 
-    [DimDate].[MonthName_Short] AS [MonthName_Short], 
-    [DimDate].[MonthName_FirstLetter] AS [MonthName_FirstLetter], 
-    [DimDate].[Quarter] AS [Quarter], 
-    [DimDate].[QuarterName] AS [QuarterName], 
-    [DimDate].[Year] AS [Year], 
-    [DimDate].[MMYYYY] AS [MMYYYY], 
-    [DimDate].[MonthYear] AS [MonthYear], 
-    [DimDate].[IsWeekend] AS [IsWeekend], 
-    [DimDate].[IsHoliday] AS [IsHoliday]
-    FROM [dbo].[DimDate] AS [DimDate]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_ETAHistory_DelayReason_DelayReasonID" Association="Self.FK_ETAHistory_DelayReason_DelayReasonID">
             <End Role="DelayReason" EntitySet="DelayReason" />
             <End Role="ETAHistory" EntitySet="ETAHistory" />
@@ -943,13 +878,17 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             <End Role="PurchasingDocumentItem" EntitySet="PurchasingDocumentItem" />
             <End Role="ETAHistory" EntitySet="ETAHistory" />
           </AssociationSet>
-          <AssociationSet Name="FK_Notification_NotificationStatus_StatusID" Association="Self.FK_Notification_NotificationStatus_StatusID">
+          <AssociationSet Name="FK_Notification_NotificationStatus_Notification" Association="Self.FK_Notification_NotificationStatus_Notification">
             <End Role="NotificationStatus" EntitySet="NotificationStatus" />
             <End Role="Notification" EntitySet="Notification" />
           </AssociationSet>
           <AssociationSet Name="FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" Association="Self.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID">
             <End Role="PurchasingDocumentItem" EntitySet="PurchasingDocumentItem" />
             <End Role="Notification" EntitySet="Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NotificationStatus_NotificationStatus" Association="Self.FK_NotificationStatus_NotificationStatus">
+            <End Role="NotificationStatus" EntitySet="NotificationStatus" />
+            <End Role="NotificationStatus1" EntitySet="NotificationStatus" />
           </AssociationSet>
           <AssociationSet Name="FK_PO_KompoCategories_KompoCategoryID" Association="Self.FK_PO_KompoCategories_KompoCategoryID">
             <End Role="KompoCategories" EntitySet="KompoCategories" />
@@ -1048,7 +987,8 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             <End Role="Vendors" EntitySet="Vendors" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="POTrackingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1133,7 +1073,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="NotificationStatu" Relationship="Self.FK_Notification_NotificationStatus_StatusID" FromRole="Notification" ToRole="NotificationStatus" />
+          <NavigationProperty Name="NotificationStatu" Relationship="Self.FK_Notification_NotificationStatus_Notification" FromRole="Notification" ToRole="NotificationStatus" />
           <NavigationProperty Name="PurchasingDocumentItem" Relationship="Self.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" FromRole="Notification" ToRole="PurchasingDocumentItem" />
         </EntityType>
         <EntityType Name="NotificationStatu">
@@ -1146,7 +1086,9 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Notifications" Relationship="Self.FK_Notification_NotificationStatus_StatusID" FromRole="NotificationStatus" ToRole="Notification" />
+          <NavigationProperty Name="Notifications" Relationship="Self.FK_Notification_NotificationStatus_Notification" FromRole="NotificationStatus" ToRole="Notification" />
+          <NavigationProperty Name="NotificationStatus1" Relationship="Self.FK_NotificationStatus_NotificationStatus" FromRole="NotificationStatus" ToRole="NotificationStatus1" />
+          <NavigationProperty Name="NotificationStatu1" Relationship="Self.FK_NotificationStatus_NotificationStatus" FromRole="NotificationStatus1" ToRole="NotificationStatus" />
         </EntityType>
         <EntityType Name="PO">
           <Key>
@@ -1189,8 +1131,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <NavigationProperty Name="KompoCategory" Relationship="Self.FK_PO_KompoCategories_KompoCategoryID" FromRole="PO" ToRole="KompoCategories" />
           <NavigationProperty Name="Vendor" Relationship="Self.FK_PO_Vendors_VendorCode" FromRole="PO" ToRole="Vendors" />
           <NavigationProperty Name="PurchasingDocumentItems" Relationship="Self.FK_PurchasingDocumentItem_PO_POID" FromRole="PO" ToRole="PurchasingDocumentItem" />
-          <Property Name="PRCreateDate" Type="DateTime" Precision="3" />
-          <Property Name="PRReleaseDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="ProductionSequenceData">
           <Key>
@@ -1228,6 +1168,9 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="POID" Type="Int32" Nullable="false" />
+          <Property Name="PRNumber" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="PRCreateDate" Type="DateTime" Precision="3" />
+          <Property Name="PRReleaseDate" Type="DateTime" Precision="3" />
           <Property Name="DeliveryDate" Type="DateTime" Precision="3" />
           <Property Name="ParentID" Type="Int32" />
           <Property Name="ItemNumber" Type="Int32" Nullable="false" />
@@ -1524,6 +1467,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentID" Type="Int32" />
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="NRP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Created" Type="DateTime" Precision="3" />
           <Property Name="CreatedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -1591,56 +1535,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <NavigationProperty Name="SubcontDevVendors" Relationship="Self.FK_SubcontDevVendors_Vendors_VendorCode" FromRole="Vendors" ToRole="SubcontDevVendors" />
           <NavigationProperty Name="UserVendors" Relationship="Self.FK_UserVendors_Vendors_VendorCode" FromRole="Vendors" ToRole="UserVendors" />
         </EntityType>
-        <EntityType Name="DimDate">
-          <Key>
-            <PropertyRef Name="DateKey" />
-            <PropertyRef Name="Date" />
-            <PropertyRef Name="Day" />
-            <PropertyRef Name="DaySuffix" />
-            <PropertyRef Name="Weekday" />
-            <PropertyRef Name="WeekDayName" />
-            <PropertyRef Name="WeekDayName_Short" />
-            <PropertyRef Name="WeekDayName_FirstLetter" />
-            <PropertyRef Name="DOWInMonth" />
-            <PropertyRef Name="DayOfYear" />
-            <PropertyRef Name="WeekOfMonth" />
-            <PropertyRef Name="WeekOfYear" />
-            <PropertyRef Name="Month" />
-            <PropertyRef Name="MonthName" />
-            <PropertyRef Name="MonthName_Short" />
-            <PropertyRef Name="MonthName_FirstLetter" />
-            <PropertyRef Name="Quarter" />
-            <PropertyRef Name="QuarterName" />
-            <PropertyRef Name="Year" />
-            <PropertyRef Name="MMYYYY" />
-            <PropertyRef Name="MonthYear" />
-            <PropertyRef Name="IsWeekend" />
-            <PropertyRef Name="IsHoliday" />
-          </Key>
-          <Property Name="DateKey" Type="Int32" Nullable="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Day" Type="Byte" Nullable="false" />
-          <Property Name="DaySuffix" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="Weekday" Type="Byte" Nullable="false" />
-          <Property Name="WeekDayName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="WeekDayName_Short" Type="String" MaxLength="3" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="WeekDayName_FirstLetter" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="DOWInMonth" Type="Byte" Nullable="false" />
-          <Property Name="DayOfYear" Type="Int16" Nullable="false" />
-          <Property Name="WeekOfMonth" Type="Byte" Nullable="false" />
-          <Property Name="WeekOfYear" Type="Byte" Nullable="false" />
-          <Property Name="Month" Type="Byte" Nullable="false" />
-          <Property Name="MonthName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="MonthName_Short" Type="String" MaxLength="3" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="MonthName_FirstLetter" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="Quarter" Type="Byte" Nullable="false" />
-          <Property Name="QuarterName" Type="String" MaxLength="6" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Year" Type="Int32" Nullable="false" />
-          <Property Name="MMYYYY" Type="String" MaxLength="6" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="MonthYear" Type="String" MaxLength="7" FixedLength="true" Unicode="false" Nullable="false" />
-          <Property Name="IsWeekend" Type="Boolean" Nullable="false" />
-          <Property Name="IsHoliday" Type="Boolean" Nullable="false" />
-        </EntityType>
         <Association Name="FK_SubcontCapabilities_Capabilities_SubcontCapabilityID">
           <End Role="Capabilities" Type="Self.Capability" Multiplicity="1" />
           <End Role="SubcontCapabilities" Type="Self.SubcontCapability" Multiplicity="*" />
@@ -1689,7 +1583,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Notification_NotificationStatus_StatusID">
+        <Association Name="FK_Notification_NotificationStatus_Notification">
           <End Role="NotificationStatus" Type="Self.NotificationStatu" Multiplicity="1" />
           <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1710,6 +1604,18 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             </Principal>
             <Dependent Role="Notification">
               <PropertyRef Name="PurchasingDocumentItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NotificationStatus_NotificationStatus">
+          <End Role="NotificationStatus" Type="Self.NotificationStatu" Multiplicity="1" />
+          <End Role="NotificationStatus1" Type="Self.NotificationStatu" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NotificationStatus">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="NotificationStatus1">
+              <PropertyRef Name="ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2009,7 +1915,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <EntitySet Name="UserRoleTypes" EntityType="Self.UserRoleType" />
           <EntitySet Name="UserVendors" EntityType="Self.UserVendor" />
           <EntitySet Name="Vendors" EntityType="Self.Vendor" />
-          <EntitySet Name="DimDates" EntityType="Self.DimDate" />
           <AssociationSet Name="FK_SubcontCapabilities_Capabilities_SubcontCapabilityID" Association="Self.FK_SubcontCapabilities_Capabilities_SubcontCapabilityID">
             <End Role="Capabilities" EntitySet="Capabilities" />
             <End Role="SubcontCapabilities" EntitySet="SubcontCapabilities" />
@@ -2026,13 +1931,17 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
             <End Role="KompoCategories" EntitySet="KompoCategories" />
             <End Role="PO" EntitySet="POes" />
           </AssociationSet>
-          <AssociationSet Name="FK_Notification_NotificationStatus_StatusID" Association="Self.FK_Notification_NotificationStatus_StatusID">
+          <AssociationSet Name="FK_Notification_NotificationStatus_Notification" Association="Self.FK_Notification_NotificationStatus_Notification">
             <End Role="NotificationStatus" EntitySet="NotificationStatus" />
             <End Role="Notification" EntitySet="Notifications" />
           </AssociationSet>
           <AssociationSet Name="FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID" Association="Self.FK_Notification_PurchasingDocumentItem_PurchasingDocumentItemID">
             <End Role="PurchasingDocumentItem" EntitySet="PurchasingDocumentItems" />
             <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NotificationStatus_NotificationStatus" Association="Self.FK_NotificationStatus_NotificationStatus">
+            <End Role="NotificationStatus" EntitySet="NotificationStatus" />
+            <End Role="NotificationStatus1" EntitySet="NotificationStatus" />
           </AssociationSet>
           <AssociationSet Name="FK_PO_Vendors_VendorCode" Association="Self.FK_PO_Vendors_VendorCode">
             <End Role="Vendors" EntitySet="Vendors" />
@@ -2227,8 +2136,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
           <EntitySetMapping Name="POes">
             <EntityTypeMapping TypeName="POTrackingModel.PO">
               <MappingFragment StoreEntitySet="PO">
-                <ScalarProperty Name="PRReleaseDate" ColumnName="PRReleaseDate" />
-                <ScalarProperty Name="PRCreateDate" ColumnName="PRCreateDate" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Number" ColumnName="Number" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -2301,6 +2208,9 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
               <MappingFragment StoreEntitySet="PurchasingDocumentItem">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="POID" ColumnName="POID" />
+                <ScalarProperty Name="PRNumber" ColumnName="PRNumber" />
+                <ScalarProperty Name="PRCreateDate" ColumnName="PRCreateDate" />
+                <ScalarProperty Name="PRReleaseDate" ColumnName="PRReleaseDate" />
                 <ScalarProperty Name="DeliveryDate" ColumnName="DeliveryDate" />
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
                 <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
@@ -2579,6 +2489,7 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ParentID" ColumnName="ParentID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="NRP" ColumnName="NRP" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
@@ -2640,35 +2551,6 @@ warning 6002: The table/view 'patria-db-po-tracking.dbo.DimDate' does not have a
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="DimDates">
-            <EntityTypeMapping TypeName="POTrackingModel.DimDate">
-              <MappingFragment StoreEntitySet="DimDate">
-                <ScalarProperty Name="DateKey" ColumnName="DateKey" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Day" ColumnName="Day" />
-                <ScalarProperty Name="DaySuffix" ColumnName="DaySuffix" />
-                <ScalarProperty Name="Weekday" ColumnName="Weekday" />
-                <ScalarProperty Name="WeekDayName" ColumnName="WeekDayName" />
-                <ScalarProperty Name="WeekDayName_Short" ColumnName="WeekDayName_Short" />
-                <ScalarProperty Name="WeekDayName_FirstLetter" ColumnName="WeekDayName_FirstLetter" />
-                <ScalarProperty Name="DOWInMonth" ColumnName="DOWInMonth" />
-                <ScalarProperty Name="DayOfYear" ColumnName="DayOfYear" />
-                <ScalarProperty Name="WeekOfMonth" ColumnName="WeekOfMonth" />
-                <ScalarProperty Name="WeekOfYear" ColumnName="WeekOfYear" />
-                <ScalarProperty Name="Month" ColumnName="Month" />
-                <ScalarProperty Name="MonthName" ColumnName="MonthName" />
-                <ScalarProperty Name="MonthName_Short" ColumnName="MonthName_Short" />
-                <ScalarProperty Name="MonthName_FirstLetter" ColumnName="MonthName_FirstLetter" />
-                <ScalarProperty Name="Quarter" ColumnName="Quarter" />
-                <ScalarProperty Name="QuarterName" ColumnName="QuarterName" />
-                <ScalarProperty Name="Year" ColumnName="Year" />
-                <ScalarProperty Name="MMYYYY" ColumnName="MMYYYY" />
-                <ScalarProperty Name="MonthYear" ColumnName="MonthYear" />
-                <ScalarProperty Name="IsWeekend" ColumnName="IsWeekend" />
-                <ScalarProperty Name="IsHoliday" ColumnName="IsHoliday" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
