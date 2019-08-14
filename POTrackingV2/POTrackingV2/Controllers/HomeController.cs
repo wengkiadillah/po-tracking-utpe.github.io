@@ -295,8 +295,9 @@ namespace POTrackingV2.Controllers
                       IsHead = isHeadProcurement,
                       ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
                       ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
-                      POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
-                  }).OrderByDescending(x => x.created);
+                      POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator,
+                      TwentyFiveDate = x.PurchasingDocumentItem.ConfirmedDate.HasValue && x.PurchasingDocumentItem.PO.ReleaseDate.HasValue ? x.PurchasingDocumentItem.ConfirmedDate.GetValueOrDefault().AddDays((x.PurchasingDocumentItem.PO.ReleaseDate.GetValueOrDefault() - x.PurchasingDocumentItem.ConfirmedDate.GetValueOrDefault()).Days / 4).ToString("dd/MM/yyyy") : x.PurchasingDocumentItem.PO.ReleaseDate.GetValueOrDefault().ToString("dd/MM/yyyy")
+            }).OrderByDescending(x => x.created);
 
                 if (notificationsDTO != null)
                 {

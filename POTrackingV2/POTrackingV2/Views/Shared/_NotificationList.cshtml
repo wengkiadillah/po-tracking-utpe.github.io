@@ -165,6 +165,7 @@
                             var confirmedDate = jsonObj[k]['ConfirmedDate'];
                             var releaseDate = jsonObj[k]['ReleaseDate'];
                             var firstETAHistory = jsonObj[k]['FirstETAHistory'];
+                            var twentyFiveDate = jsonObj[k]['TwentyFiveDate'];
 
                             ////////////25% ETA
                             var resultTwentyFivePercent = "";
@@ -205,7 +206,7 @@
                                         assignedFrom = "";
                                     } else if (confirmedItem == true) {
                                         if (targetRole = "vendor") {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA";
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + twentyFiveDate;
                                         }
                                         else {
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay";
