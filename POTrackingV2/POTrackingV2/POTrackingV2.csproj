@@ -683,6 +683,7 @@
     <Content Include="Views\SubcontDevUserRole\ViewSubcontDevUserRole.cshtml" />
     <Content Include="Views\SubcontDevUserRole\CreateSubcontDevUserRole.cshtml" />
     <Content Include="Views\SubcontDevUserRole\EditSubcontDevUserRole.cshtml" />
+    <Content Include="Scripts\moment.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
