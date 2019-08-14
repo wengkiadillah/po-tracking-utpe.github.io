@@ -29,6 +29,9 @@ namespace POTrackingV2.Models
     
         public int ID { get; set; }
         public int POID { get; set; }
+        public string PRNumber { get; set; }
+        public Nullable<System.DateTime> PRCreateDate { get; set; }
+        public Nullable<System.DateTime> PRReleaseDate { get; set; }
         public Nullable<System.DateTime> DeliveryDate { get; set; }
         public Nullable<int> ParentID { get; set; }
         public int ItemNumber { get; set; }

@@ -83,8 +83,6 @@ namespace SyncDataPOTracking
                     poTemp.POCreator = dataItem.POCreator;
                     poTemp.PODate = dataItem.PODate;
                     poTemp.POReleaseDate = dataItem.POReleaseDate;
-                    poTemp.PRCreateDate = dataItem.PRCreateDate;
-                    poTemp.PRReleaseDate = dataItem.PRReleaseDate;
                     poTemp.VendorCode = dataItem.VendorCode;
 
                     if (!listPO.ContainsKey(poItemTempKey))
@@ -112,6 +110,8 @@ namespace SyncDataPOTracking
                     poItemTemp.InboundNumber = dataItem.InboundNumber;
                     poItemTemp.PayTerm = dataItem.PayTerm;
                     poItemTemp.PRNumber = dataItem.PRNumber;
+                    poItemTemp.PRCreateDate = dataItem.PRCreateDate;
+                    poItemTemp.PRReleaseDate = dataItem.PRReleaseDate;
                     poItemTemp.ProgressDay = dataItem.ProgressDay;
 
                     listPOItem.Add(poItemTemp);
@@ -163,8 +163,6 @@ namespace SyncDataPOTracking
                         poValue.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poValue.Date = po.Value.PODate;
                         poValue.ReleaseDate = po.Value.POReleaseDate;
-                        poValue.PRCreateDate = po.Value.PRCreateDate;
-                        poValue.PRReleaseDate = po.Value.PRReleaseDate;
                         poValue.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
                         poValue.Information = string.Empty;
                         poValue.ProductGroup = string.Empty;
@@ -188,8 +186,6 @@ namespace SyncDataPOTracking
                         poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poExist.Date = po.Value.PODate;
                         poExist.ReleaseDate = po.Value.POReleaseDate;
-                        poExist.PRCreateDate = po.Value.PRCreateDate;
-                        poExist.PRReleaseDate = po.Value.PRReleaseDate;
                         poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
                         poExist.Information = string.Empty;
                         poExist.ProductGroup = string.Empty;
@@ -254,6 +250,9 @@ namespace SyncDataPOTracking
                                 //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
                                 //itemExist[flagItem].ActiveStage = "2";
                                 //itemExist[flagItemExist].LastModified = DateTime.Now.Date;
+                                itemExist[flagItemExist].PRNumber = itemPO.PRNumber;
+                                itemExist[flagItemExist].PRCreateDate = itemPO.PRCreateDate;
+                                itemExist[flagItemExist].PRReleaseDate = itemPO.PRReleaseDate;
                                 itemExist[flagItemExist].LastModified = DateTime.Now;
                                 itemExist[flagItemExist].LastModifiedBy = "SyncDataSAP";
 
@@ -325,6 +324,9 @@ namespace SyncDataPOTracking
                                 poItem.ActiveStage = "0";
                                 poItem.DeliveryDate = itemPO.DeliveryDate;
                                 //poItem.Created = DateTime.Now.Date;
+                                poItem.PRNumber = itemPO.PRNumber;
+                                poItem.PRCreateDate = itemPO.PRCreateDate;
+                                poItem.PRReleaseDate = itemPO.PRReleaseDate;
                                 poItem.Created = DateTime.Now;
                                 poItem.CreatedBy = "SyncDataSAP";
                                 //poItem.LastModified = DateTime.Now.Date;
@@ -1110,8 +1112,6 @@ namespace SyncDataPOTracking
         public string Type { get; set; }
         public DateTime PODate { get; set; }
         public DateTime? POReleaseDate { get; set; }
-        public DateTime? PRCreateDate { get; set; }
-        public DateTime? PRReleaseDate { get; set; }
         public string VendorCode { get; set; }
         public string PurchaseOrderCreator { get; set; }
         public string POCreator { get; set; }
@@ -1140,6 +1140,8 @@ namespace SyncDataPOTracking
         public string InboundNumber { get; set; }
         public string PayTerm { get; set; }
         public string PRNumber { get; set; }
+        public DateTime? PRCreateDate { get; set; }
+        public DateTime? PRReleaseDate { get; set; }
         public int ProgressDay { get; set; }
 
 
@@ -1155,8 +1157,6 @@ namespace SyncDataPOTracking
         public string VendorCode { get; set; }
         public string PurchaseOrderCreator { get; set; }
         public string POCreator { get; set; }
-        public DateTime? PRCreateDate { get; set; }
-        public DateTime? PRReleaseDate { get; set; }
         public int ItemNumber { get; set; }
         public string Material { get; set; }
         public string MaterialVendor { get; set; }
@@ -1176,7 +1176,8 @@ namespace SyncDataPOTracking
         public string InboundNumber { get; set; }
         public string PayTerm { get; set; }
         public string PRNumber { get; set; }
-
+        public DateTime? PRCreateDate { get; set; }
+        public DateTime? PRReleaseDate { get; set; }
         public int ProgressDay { get; set; }
 
 
@@ -1217,6 +1218,5 @@ namespace SyncDataPOTracking
             return csvModel;
         }
     }
-
 
 }
