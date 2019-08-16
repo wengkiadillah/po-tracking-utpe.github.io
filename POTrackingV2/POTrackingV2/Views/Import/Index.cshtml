@@ -378,7 +378,7 @@
                         </div>
                         @{
                             var rowInformation = 1;
-                        } 
+                        }
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             <div class="po-item-data-content row-@rowInformation">
@@ -2765,8 +2765,8 @@
                                     }
                                 </div>
                             </div>
-                            row++;
-                        }
+                                            row++;
+                                        }
                     </div>
                 </div>
                 @*<div class="po-item-section stage-10">
@@ -2960,8 +2960,8 @@
             </div>
         </li>
     </ul>
-    poSignRow++;
-}
+                                poSignRow++;
+                            }
 
 <div class="modal fade st6-modal" id="fillForm" tabindex="-1" role="dialog" aria-labelledby="fillFormModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -3058,7 +3058,7 @@
 <br />
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Index",
-        new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, searchPOStatus = ViewBag.CurrentSearchPOStatus, searchUserProcurement = ViewBag.CurrentSearchUserProcurement}))
+        new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate, searchPOStatus = ViewBag.CurrentSearchPOStatus, searchUserProcurement = ViewBag.CurrentSearchUserProcurement }))
     @section scripts {
         <script src="~/Scripts/datepicker.min.js"></script>
         <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -3078,91 +3078,93 @@
             var scrollLength = [];
 
             $(document).ready(function () {
-                    $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-                    //$('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
-                    $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-                    $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+                $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+                //$('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+                $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
+                $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
 
 
-                    //stage scrollbar fixed
-                    var chooseStagePosition = $('.filter-row').offset();
+                //stage scrollbar fixed
+                var chooseStagePosition = $('.filter-row').offset();
 
+                if ($(window).width() > 654) {
                     $(".main-container").scroll(function () {
                         if ($(".main-container").scrollTop() > chooseStagePosition.top) {
-                            //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
                             $('.filter-row').addClass("freeze");
                         } else {
-                            //$('.stage-pagination-container').css('position', 'static');
                             $('.filter-row').removeClass("freeze");
                         }
                     });
+                }
+                else { }
 
-                    var tempArray = [];
-                    var tempMaxHeight = 0;
-                    var tempMaxWidth = 0;
 
-                    $(".po-item-container").each(function (index) {
-                        var rowExist = 1;
+                var tempArray = [];
+                var tempMaxHeight = 0;
+                var tempMaxWidth = 0;
 
-                        while (rowExist > 0) {
-                            if ($(this).find(".row-" + rowExist).length > 0) {
-                                tempArray = [];
-                                tempMaxHeight = 0;
-                                $(this).find(".row-" + rowExist).each(function () {
-                                    tempArray.push($(this).height());
-                                });
-                                tempMaxHeight = Math.max(...tempArray);
-                                $(this).find(".row-" + rowExist).height(tempMaxHeight);
-                                rowExist++;
-                            } else {
-                                rowExist = -1;
-                            }
+                $(".po-item-container").each(function (index) {
+                    var rowExist = 1;
+
+                    while (rowExist > 0) {
+                        if ($(this).find(".row-" + rowExist).length > 0) {
+                            tempArray = [];
+                            tempMaxHeight = 0;
+                            $(this).find(".row-" + rowExist).each(function () {
+                                tempArray.push($(this).height());
+                            });
+                            tempMaxHeight = Math.max(...tempArray);
+                            $(this).find(".row-" + rowExist).height(tempMaxHeight);
+                            rowExist++;
+                        } else {
+                            rowExist = -1;
                         }
-                    });
+                    }
+                });
 
-                    var outHeightArray = [];
-                    var tempOuterHeight = 0;
-                    $(".po-item-container").each(function () {
-                        var ptr = 1;
+                var outHeightArray = [];
+                var tempOuterHeight = 0;
+                $(".po-item-container").each(function () {
+                    var ptr = 1;
 
-                        while (ptr > 0) {
-                            if ($(this).find(".row-" + ptr).length > 0) {
-                                outHeightArray = [];
-                                $(this).find(".po-item-data-content__outer").each(function () {
-                                    outHeightArray.push($(this).height());
-                                });
-                                tempOuterHeight = Math.max(...outHeightArray);
-                                $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
-                                ptr++;
-                            } else {
-                                ptr = -1;
-                            }
+                    while (ptr > 0) {
+                        if ($(this).find(".row-" + ptr).length > 0) {
+                            outHeightArray = [];
+                            $(this).find(".po-item-data-content__outer").each(function () {
+                                outHeightArray.push($(this).height());
+                            });
+                            tempOuterHeight = Math.max(...outHeightArray);
+                            $(this).find(".row-" + ptr).find(".po-item-data-content__outer").height(tempOuterHeight);
+                            ptr++;
+                        } else {
+                            ptr = -1;
                         }
-                    })
+                    }
+                })
 
+                tempArray = [];
+                $(".po-item-section.information").each(function () {
+                    tempArray.push($(this).outerWidth(true));
+                });
+                tempMaxWidth = Math.max(...tempArray);
+                $(".po-item-section.information").width(tempMaxWidth);
+                scrollLength.push(tempMaxWidth + 1.5);
+
+                for (var i = 1; i <= 13; i++) {
                     tempArray = [];
-                    $(".po-item-section.information").each(function () {
+                    $(".po-item-section.stage-" + i).each(function () {
                         tempArray.push($(this).outerWidth(true));
                     });
                     tempMaxWidth = Math.max(...tempArray);
-                    $(".po-item-section.information").width(tempMaxWidth);
+                    $(".po-item-section.stage-" + i).width(tempMaxWidth);
                     scrollLength.push(tempMaxWidth + 1.5);
+                }
 
-                    for (var i = 1; i <= 13; i++) {
-                        tempArray = [];
-                        $(".po-item-section.stage-" + i).each(function () {
-                            tempArray.push($(this).outerWidth(true));
-                        });
-                        tempMaxWidth = Math.max(...tempArray);
-                        $(".po-item-section.stage-" + i).width(tempMaxWidth);
-                        scrollLength.push(tempMaxWidth + 1.5);
-                    }
-
-                    var totalDistance = 0;
-                    for (var i = 0; i < scrollLength.length; i++) {
-                        scrollLength[i] += totalDistance;
-                        totalDistance = scrollLength[i];
-                    }
+                var totalDistance = 0;
+                for (var i = 0; i < scrollLength.length; i++) {
+                    scrollLength[i] += totalDistance;
+                    totalDistance = scrollLength[i];
+                }
 
                 // Every PO to Active Stage
                 var count = 1;
@@ -3187,11 +3189,11 @@
                         }
                     });
 
-                activeStages.sort();
-                findID = ".po-sign-row-" + count;
-                var biggestActiveStages = activeStages[activeStages.length - 1];
-                $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
-                count++;
+                    activeStages.sort();
+                    findID = ".po-sign-row-" + count;
+                    var biggestActiveStages = activeStages[activeStages.length - 1];
+                    $(this).find(findID).animate({ scrollLeft: scrollLength[biggestActiveStages - 1] }, 500);
+                    count++;
                 });
 
                 $(".info-stage .pop-up-notification img").hover(function () {
@@ -3242,112 +3244,112 @@
             });
 
 
-                    $("#searchPONumber").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'poNumber', 'value': $("#searchPONumber").val() },
-                            beforeSend: function () {
-                                $("#searchPONumber").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-ponumber").html(element);
-                                    $("#searchPONumber").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
+            $("#searchPONumber").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataForSearch", "Import")",
+                    data: { 'searchFilterBy': 'poNumber', 'value': $("#searchPONumber").val() },
+                    beforeSend: function () {
+                        $("#searchPONumber").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
-                        });
-                    });
+                            $("#data-list-ponumber").html(element);
+                            $("#searchPONumber").css("background", "");
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status + " : " + error);
+                    }
+                });
+            });
 
-                    $("#searchVendorName").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'vendor', 'value': $("#searchVendorName").val() },
-                            beforeSend: function () {
-                                $("#searchVendorName").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-vendorname").html(element);
-                                    $("#searchVendorName").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
+            $("#searchVendorName").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataForSearch", "Import")",
+                    data: { 'searchFilterBy': 'vendor', 'value': $("#searchVendorName").val() },
+                    beforeSend: function () {
+                        $("#searchVendorName").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
-                        });
-                    });
+                            $("#data-list-vendorname").html(element);
+                            $("#searchVendorName").css("background", "");
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status + " : " + error);
+                    }
+                });
+            });
 
-                    $("#searchUserProcurement").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'userProcurement', 'value': $("#searchUserProcurement").val() },
-                            beforeSend: function () {
-                                $("#searchUserProcurement").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-userprocurement").html(element);
-                                    $("#searchUserProcurement").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
+            $("#searchUserProcurement").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataForSearch", "Import")",
+                    data: { 'searchFilterBy': 'userProcurement', 'value': $("#searchUserProcurement").val() },
+                    beforeSend: function () {
+                        $("#searchUserProcurement").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
-                        });
-                    });
+                            $("#data-list-userprocurement").html(element);
+                            $("#searchUserProcurement").css("background", "");
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status + " : " + error);
+                    }
+                });
+            });
 
-                    $("#searchMaterial").on("keyup focus", function () {
-                        $.ajax({
-                            type: "GET",
-                            url: "@Url.Action("GetDataForSearch", "Import")",
-                            data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
-                            beforeSend: function () {
-                                $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
-                            },
-                            success: function (response) {
-                                if (response.responseCode == "200") {
-                                    var jsonObjSuggestion = $.parseJSON(response.data);
-                                    var element = "";
-                                    for (var k in jsonObjSuggestion) {
-                                        element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
-                                    }
-                                    $("#data-list-material").html(element);
-                                    $("#searchMaterial").css("background", "");
-                                } else {
-                                    console.log(response.responseCode + response.responseText);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(xhr.status + " : " + error);
+            $("#searchMaterial").on("keyup focus", function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetDataForSearch", "Import")",
+                    data: { 'searchFilterBy': 'material', 'value': $("#searchMaterial").val() },
+                    beforeSend: function () {
+                        $("#searchMaterial").css("background", "url(" + siteUrl + "/Images/LoaderIcon.gif) no-repeat 165px");
+                    },
+                    success: function (response) {
+                        if (response.responseCode == "200") {
+                            var jsonObjSuggestion = $.parseJSON(response.data);
+                            var element = "";
+                            for (var k in jsonObjSuggestion) {
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
-                        });
-                    });
+                            $("#data-list-material").html(element);
+                            $("#searchMaterial").css("background", "");
+                        } else {
+                            console.log(response.responseCode + response.responseText);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status + " : " + error);
+                    }
+                });
+            });
         </script>
     }
