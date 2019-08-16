@@ -2765,16 +2765,16 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             //stage scrollbar fixed
             var chooseStagePosition = $('.filter-row').offset();
 
-            $(".main-container").scroll(function () {
-                if ($(".main-container").scrollTop() > chooseStagePosition.top) {
-                    //$('.stage-pagination-container').css('position', 'fixed').css('top', '10px');
-                    $('.filter-row').addClass("freeze");
-                } else {
-                    //$('.stage-pagination-container').css('position', 'static');
-                    $('.filter-row').removeClass("freeze");
-                }
-            });
-
+            if ($(window).width() > 654) {
+                $(".main-container").scroll(function () {
+                    if ($(".main-container").scrollTop() > chooseStagePosition.top) {
+                        $('.filter-row').addClass("freeze");
+                    } else {
+                        $('.filter-row').removeClass("freeze");
+                    }
+                });
+            }
+            else { }
 
             var tempArray = [];
             var tempMaxHeight = 0;
