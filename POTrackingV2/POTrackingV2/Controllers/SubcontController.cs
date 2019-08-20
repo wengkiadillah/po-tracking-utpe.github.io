@@ -95,7 +95,7 @@ namespace POTrackingV2.Controllers
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-
+                    
                     List<string> listUsername;
                     //var listUsername = userName;
                     if (subcontDevUserRole != null)
