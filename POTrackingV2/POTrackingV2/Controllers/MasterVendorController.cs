@@ -393,7 +393,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
 
-                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
+                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
 
             }
         }
