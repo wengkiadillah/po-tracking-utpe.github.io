@@ -1479,6 +1479,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     filterBy = "material";
                     searchData = $("#searchMaterial");
                     list = "material";
+                } else if ($(this).attr("name") == "searchSubcontDev") {
+                    filterBy = "subcontdev";
+                    searchData = $("#searchSubcontDev");
+                    list = "subcontdev";
                 }
 
                 $.ajax({

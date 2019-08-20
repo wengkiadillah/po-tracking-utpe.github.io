@@ -60,6 +60,15 @@ namespace POTrackingV2.Controllers
                         MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
                 }
+                else if (filterBy == "subcontdev")
+                {
+                    data = db.POes.Where(x => x.PurchaseOrderCreator.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.PurchaseOrderCreator,
+                        MatchEvaluation = x.PurchaseOrderCreator.ToLower().IndexOf(value)
+                    }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+                }
 
                 if (data != null)
                 {
