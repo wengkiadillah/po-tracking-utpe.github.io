@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
@@ -32,11 +32,11 @@ namespace POTrackingV2.Controllers
             {
                 if (searchBy == "description")
                 {
-                    return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                    return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).OrderBy(x=> x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
                 }
                 else
                 {
-                    return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                    return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
                 }
             }
         }
@@ -393,7 +393,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
 
-                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).OrderBy(x => x.Name).ToList().ToPagedList(page ?? 1, 10));
 
             }
         }
@@ -402,7 +402,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchString = search;
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).GroupBy(x => x.Username).Select(x => x.FirstOrDefault()).ToList().ToPagedList(page ?? 1, 10));
+                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).GroupBy(x => x.Username).Select(x => x.FirstOrDefault()).OrderBy(x => x.Username).ToList().ToPagedList(page ?? 1, 10));
             }
         }
 
