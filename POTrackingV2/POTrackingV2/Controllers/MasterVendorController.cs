@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
-    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class MasterVendorController : Controller
     {
         List<RolesType> listRoleType = new List<RolesType>();
