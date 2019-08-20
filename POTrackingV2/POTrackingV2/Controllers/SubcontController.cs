@@ -162,6 +162,7 @@ namespace POTrackingV2.Controllers
                 ViewBag.CurrentDataPONumber = searchPONumber;
                 ViewBag.CurrentDataVendorName = searchVendorName;
                 ViewBag.CurrentDataMaterial = searchMaterial;
+                ViewBag.CurrentDataSubcontDev = searchSubcontDev;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
