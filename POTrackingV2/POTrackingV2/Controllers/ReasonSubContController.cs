@@ -19,7 +19,7 @@ namespace POTracking.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 //return View(db.SequencesProgressReasons.ToList());
-                return View(db.SequencesProgressReasons.Where(x => x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
+                return View(db.SequencesProgressReasons.Where(x => x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
             }
                 
         }

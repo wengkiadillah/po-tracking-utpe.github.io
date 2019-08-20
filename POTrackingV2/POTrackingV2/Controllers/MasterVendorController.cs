@@ -59,7 +59,7 @@ namespace POTrackingV2.Controllers
             var ViewModel = new MasterVendorViewModel
             {
 
-                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Code), "Code", "Name")
+                ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name), "Code", "Name")
             };
             return View(ViewModel);
             //return View();
@@ -393,7 +393,7 @@ namespace POTrackingV2.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
 
-                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 3));
+                return View(db.UserVendors.Where(x => x.Username.Contains(search) || x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
 
             }
         }
@@ -402,7 +402,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchString = search;
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).GroupBy(x => x.Username).Select(x => x.FirstOrDefault()).ToList().ToPagedList(page ?? 1, 5));
+                return View(db.SubcontDevVendors.Where(x => x.Username.Contains(search) || x.VendorCode.Contains(search) || search == null).GroupBy(x => x.Username).Select(x => x.FirstOrDefault()).ToList().ToPagedList(page ?? 1, 10));
             }
         }
 
