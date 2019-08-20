@@ -1,5 +1,6 @@
 ﻿using POTrackingV2.Models;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -184,15 +185,15 @@ namespace POTrackingV2.Controllers
 
                 pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode));
 
+                var noShowPOes = pOes;
+
                 if (role == LoginConstants.RoleProcurement.ToLower())
                 {
                     List<string> myUserNRPs = new List<string>();
                     myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
-                                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
-
+                   
                     if (myUserNRPs.Count > 0)
                     {
                         foreach (var myUserNRP in myUserNRPs)

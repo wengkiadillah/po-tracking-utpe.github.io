@@ -198,7 +198,7 @@ namespace POTrackingV2.Controllers
                         SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
                         if (subcontDevUserRole != null)
                         {
-                            if (subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
+                            if (subcontDevUserRole.IsHead == false)
                             {
                                 vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
                                 notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
@@ -391,7 +391,7 @@ namespace POTrackingV2.Controllers
             {
                 CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
                 string role = myUser.Roles.ToLower();
-
+                string userName = User.Identity.Name;
                 #region Import
 
                 var pOesImport = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
@@ -449,6 +449,19 @@ namespace POTrackingV2.Controllers
                 else if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == myUser.UserName).Select(x => x.VendorCode).Distinct();
+
+                    SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+                    List<string> listUsername;
+                    //var listUsername = userName;
+                    if (subcontDevUserRole != null)
+                    {
+                        if (subcontDevUserRole.IsHead == true)
+                        {
+                            listUsername = db.SubcontDevUserRoles.Where(x => x.RoleID == subcontDevUserRole.RoleID).Select(x => x.Username.ToLower()).ToList();
+                            listVendorSubconDev = db.SubcontDevVendors.Where(x => listUsername.Contains(x.Username.ToLower())).Select(x => x.VendorCode).Distinct();
+                        }
+                    }
+
                     if (listVendorSubconDev != null)
                     {
                         pOesSubcont = pOesSubcont.Where(po => listVendorSubconDev.Contains(po.VendorCode));
