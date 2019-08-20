@@ -88,12 +88,25 @@ namespace POTrackingV2.Controllers
             {
                 //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
 
                 var pOes = db.POes.AsQueryable();
 
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
+
+                    List<string> listUsername;
+                    //var listUsername = userName;
+                    if (subcontDevUserRole != null)
+                    {
+                        if (subcontDevUserRole.IsHead == true)
+                        {
+                            listUsername = db.SubcontDevUserRoles.Where(x => x.RoleID == subcontDevUserRole.RoleID).Select(x => x.Username.ToLower()).ToList();
+                            listVendorSubconDev = db.SubcontDevVendors.Where(x => listUsername.Contains(x.Username.ToLower())).Select(x => x.VendorCode).Distinct();
+                        }
+                    }
+
                     if (listVendorSubconDev != null && role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
@@ -137,7 +150,6 @@ namespace POTrackingV2.Controllers
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null));
                     }
                 }
-                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
                 
                 string subcontDevUserRoleName = subcontDevUserRole != null ? subcontDevUserRole.RoleName.ToLower() : "";
                 ViewBag.CurrentRoleID = role.ToLower();

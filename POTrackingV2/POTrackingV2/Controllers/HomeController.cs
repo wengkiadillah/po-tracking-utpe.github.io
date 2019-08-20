@@ -198,7 +198,7 @@ namespace POTrackingV2.Controllers
                         SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
                         if (subcontDevUserRole != null)
                         {
-                            if (subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
+                            if (subcontDevUserRole.IsHead == false)
                             {
                                 vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
                                 notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
