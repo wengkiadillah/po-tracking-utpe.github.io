@@ -1037,7 +1037,7 @@ namespace SyncDataPOTracking
                 Console.WriteLine("end sync po alert");
 
                 Console.WriteLine("finish");
-                Console.Read();
+                //Console.Read();
 
             }
             catch (Exception ex)
