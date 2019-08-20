@@ -1126,7 +1126,7 @@ namespace SyncDataPOTracking
         public string MaterialVendor { get; set; }
 
         public string Description { get; set; }
-        public int NetPrice { get; set; }
+        public decimal NetPrice { get; set; }
         public string Currency { get; set; }
         public int Quantity { get; set; }
         public int? MovementType { get; set; }
@@ -1162,7 +1162,7 @@ namespace SyncDataPOTracking
         public string MaterialVendor { get; set; }
 
         public string Description { get; set; }
-        public int NetPrice { get; set; }
+        public decimal NetPrice { get; set; }
         public string Currency { get; set; }
         public int Quantity { get; set; }
         public int? MovementType { get; set; }
@@ -1184,6 +1184,7 @@ namespace SyncDataPOTracking
         public static CSVModel FromCSV(string csv)
         {
             string[] val = csv.Split(';');
+            CultureInfo culture = new CultureInfo("en-US");
             CSVModel csvModel = new CSVModel();
 
             csvModel.Number = val[1].ToString().TrimStart(new Char[] { '0' });
@@ -1200,7 +1201,8 @@ namespace SyncDataPOTracking
             csvModel.MaterialVendor = string.IsNullOrWhiteSpace(val[45].ToString()) ? string.Empty : val[45].ToString();
             csvModel.Description = val[39].ToString();
             //csvModel.NetPrice = Convert.ToInt32(val[21].ToString().Split(',')[0].Trim().Replace(".", ""));
-            csvModel.NetPrice = Convert.ToInt32(val[44].ToString().Split(',')[0].Trim().Replace(".", ""));
+            //csvModel.NetPrice = Convert.ToInt32(val[44].ToString().Split(',')[0].Trim().Replace(".", ""));
+            csvModel.NetPrice = Convert.ToDecimal(val[44].ToString().Trim().Replace(".", "").Replace(",","."), culture);
             csvModel.Currency = val[13].ToString();
             csvModel.Quantity = Convert.ToInt32(val[8].ToString().Split(',')[0].Trim().Replace(".", ""));
             csvModel.MovementType = string.IsNullOrWhiteSpace(val[18].ToString()) ? (int?)null : Convert.ToInt32(val[18].ToString().TrimStart(new Char[] { '0' }));
