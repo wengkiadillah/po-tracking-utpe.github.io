@@ -203,7 +203,8 @@
                             }
                             else
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                             }
                         }
                         //if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
@@ -416,7 +417,7 @@
                             else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) || purchasingDocumentItem.ConfirmedQuantity == null)
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
