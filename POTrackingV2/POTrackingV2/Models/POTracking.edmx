@@ -175,7 +175,7 @@
           <Property Name="Material" Type="varchar" MaxLength="30" />
           <Property Name="MaterialVendor" Type="varchar" MaxLength="30" />
           <Property Name="Description" Type="varchar" MaxLength="250" />
-          <Property Name="NetPrice" Type="int" Nullable="false" />
+          <Property Name="NetPrice" Type="money" Nullable="false" />
           <Property Name="Currency" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="ConfirmedDate" Type="datetime" />
@@ -1177,7 +1177,7 @@
           <Property Name="Material" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="MaterialVendor" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="NetPrice" Type="Int32" Nullable="false" />
+          <Property Name="NetPrice" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
           <Property Name="Currency" Type="String" MaxLength="15" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="ConfirmedDate" Type="DateTime" Precision="3" />

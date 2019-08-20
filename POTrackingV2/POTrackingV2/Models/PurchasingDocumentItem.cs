@@ -38,7 +38,7 @@ namespace POTrackingV2.Models
         public string Material { get; set; }
         public string MaterialVendor { get; set; }
         public string Description { get; set; }
-        public int NetPrice { get; set; }
+        public decimal NetPrice { get; set; }
         public string Currency { get; set; }
         public int Quantity { get; set; }
         public Nullable<System.DateTime> ConfirmedDate { get; set; }

@@ -1201,7 +1201,7 @@ namespace SyncDataPOTracking
             csvModel.Description = val[39].ToString();
             //csvModel.NetPrice = Convert.ToInt32(val[21].ToString().Split(',')[0].Trim().Replace(".", ""));
             csvModel.NetPrice = Convert.ToInt32(val[44].ToString().Split(',')[0].Trim().Replace(".", ""));
-            csvModel.Currency = val[22].ToString();
+            csvModel.Currency = val[13].ToString();
             csvModel.Quantity = Convert.ToInt32(val[8].ToString().Split(',')[0].Trim().Replace(".", ""));
             csvModel.MovementType = string.IsNullOrWhiteSpace(val[18].ToString()) ? (int?)null : Convert.ToInt32(val[18].ToString().TrimStart(new Char[] { '0' }));
             csvModel.IsDelete = !string.IsNullOrWhiteSpace(val[3].ToString()) && val[3].ToString() == "L" ? val[3].ToString() : string.Empty;

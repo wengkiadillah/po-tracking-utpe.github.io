@@ -1181,9 +1181,7 @@ namespace POTrackingV2.Models
                     }
                     count++;
                 }
-
-                netPriceView = netPriceView.Insert(netPriceView.Length, ",-");
-
+                
                 return netPriceView;
             }
         }
