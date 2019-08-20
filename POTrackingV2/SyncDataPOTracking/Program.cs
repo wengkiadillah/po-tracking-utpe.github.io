@@ -235,7 +235,7 @@ namespace SyncDataPOTracking
                                 itemExist[flagItemExist].ItemNumber = itemPO.ItemNumber;
                                 itemExist[flagItemExist].Material = itemPO.Material;
                                 //itemExist[flagItemExist].ProgressDay = itemPO.ProgressDay;
-                                //itemExist[flagItemExist].MaterialVendor = itemPO.MaterialVendor;
+                                itemExist[flagItemExist].MaterialVendor = itemPO.MaterialVendor;
                                 itemExist[flagItemExist].Description = itemPO.Description;
                                 itemExist[flagItemExist].NetPrice = itemPO.NetPrice;
                                 itemExist[flagItemExist].Currency = itemPO.Currency;
@@ -308,7 +308,7 @@ namespace SyncDataPOTracking
                                 poItem.POID = ID;
                                 poItem.ItemNumber = itemPO.ItemNumber;
                                 poItem.Material = itemPO.Material;
-                                //poItem.MaterialVendor = itemPO.MaterialVendor;
+                                poItem.MaterialVendor = itemPO.MaterialVendor;
                                 //poItem.ProgressDay = itemPO.ProgressDay;
                                 poItem.Description = itemPO.Description;
                                 poItem.NetPrice = itemPO.NetPrice;
@@ -1198,7 +1198,7 @@ namespace SyncDataPOTracking
             csvModel.PurchaseOrderCreator = string.IsNullOrWhiteSpace(val[7].ToString()) ? string.Empty : val[7].ToString();
             csvModel.ItemNumber = Convert.ToInt32(val[2].ToString().TrimStart(new Char[] { '0' }));
             csvModel.Material = val[33].ToString();
-            csvModel.MaterialVendor = string.IsNullOrWhiteSpace(val[45].ToString()) ? string.Empty : val[45].ToString();
+            csvModel.MaterialVendor = string.IsNullOrWhiteSpace(val[45].ToString()) ? string.Empty : val[45].ToString().Trim();
             csvModel.Description = val[39].ToString();
             //csvModel.NetPrice = Convert.ToInt32(val[21].ToString().Split(',')[0].Trim().Replace(".", ""));
             //csvModel.NetPrice = Convert.ToInt32(val[44].ToString().Split(',')[0].Trim().Replace(".", ""));
