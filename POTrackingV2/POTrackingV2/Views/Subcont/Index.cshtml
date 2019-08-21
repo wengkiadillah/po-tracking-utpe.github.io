@@ -43,6 +43,10 @@
             <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
             <datalist id="data-list-material"></datalist>
         </div>
+        <div class="form-group mr-4 ml-0 frmSearch">
+            <input id="searchSubcontDev" name="searchSubcontDev" list="data-list-subcontdev" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search SubcontDev" autocomplete="off" value="@ViewBag.CurrentDataSubcontDev" @hideVendorSearch/>
+            <datalist id="data-list-subcontdev"></datalist>
+        </div>
         <div class="form-group mr-0">
             <label for="startPODate">PO Date</label>
             <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
@@ -66,12 +70,12 @@
     {
         if (ViewBag.CurrentSearchPOStatus == "negotiated")
         {
-            @Html.ActionLink("On Going", "Index", "Subcont", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("On Going", "Index", "Subcont", new { searchPOStatus = "ongoing", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchSubcontDev = ViewBag.CurrentSearchSubcontDev, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
 
         }
         else if (ViewBag.CurrentSearchPOStatus == "ongoing" || String.IsNullOrEmpty(ViewBag.CurrentSearchPOStatus))
         {
-            @Html.ActionLink("Negotiated Items", "Index", "Subcont", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
+            @Html.ActionLink("Negotiated Items", "Index", "Subcont", new { searchPOStatus = "negotiated", searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, searchSubcontDev = ViewBag.CurrentSearchSubcontDev, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info mr-3 mt-1" })
         }
     }
     <div></div>
@@ -203,7 +207,8 @@
                             }
                             else
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                             }
                         }
                         //if (!String.IsNullOrEmpty(ViewBag.CurrentData) && ViewBag.CurrentFilter == "material")
@@ -416,7 +421,7 @@
                             else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) || purchasingDocumentItem.ConfirmedQuantity == null)
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
@@ -1440,7 +1445,7 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
     //new { page, role = ViewBag.CurrentRoleID, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
-    new { page, searchPOStatus = @ViewBag.SearchPOStatus, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchPOStatus = @ViewBag.SearchPOStatus, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchSubcontDev = ViewBag.CurrentDataSubcontDev, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
@@ -1474,6 +1479,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     filterBy = "material";
                     searchData = $("#searchMaterial");
                     list = "material";
+                } else if ($(this).attr("name") == "searchSubcontDev") {
+                    filterBy = "subcontdev";
+                    searchData = $("#searchSubcontDev");
+                    list = "subcontdev";
                 }
 
                 $.ajax({

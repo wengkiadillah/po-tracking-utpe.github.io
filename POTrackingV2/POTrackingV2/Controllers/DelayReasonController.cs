@@ -21,7 +21,7 @@ namespace POTracking.Controllers
             using (POTrackingEntities db = new POTrackingEntities())
             {
                 //return View(db.DelayReasons.ToList());
-                return View(db.DelayReasons.Where(x => x.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                return View(db.DelayReasons.Where(x => x.Name.Contains(search) || search == null).OrderBy(x=> x.Name).ToList().ToPagedList(page ?? 1, 10));
             }
         }
 

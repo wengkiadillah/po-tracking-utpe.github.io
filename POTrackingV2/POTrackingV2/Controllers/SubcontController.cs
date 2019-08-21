@@ -60,6 +60,15 @@ namespace POTrackingV2.Controllers
                         MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
                 }
+                else if (filterBy == "subcontdev")
+                {
+                    data = db.POes.Where(x => x.PurchaseOrderCreator.Contains(value)).Select(x =>
+                    new
+                    {
+                        Data = x.PurchaseOrderCreator,
+                        MatchEvaluation = x.PurchaseOrderCreator.ToLower().IndexOf(value)
+                    }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+                }
 
                 if (data != null)
                 {
@@ -77,7 +86,7 @@ namespace POTrackingV2.Controllers
         }
 
         // GET: POSubcont
-        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
+        public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchSubcontDev, string searchStartPODate, string searchEndPODate, int? page)
         {
             POTrackingEntities db = new POTrackingEntities();
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
@@ -126,7 +135,8 @@ namespace POTrackingV2.Controllers
                     }
                     else
                     {
-                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
+                        //pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
+                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
                     }
                 }
                 else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
@@ -161,6 +171,7 @@ namespace POTrackingV2.Controllers
                 ViewBag.CurrentDataPONumber = searchPONumber;
                 ViewBag.CurrentDataVendorName = searchVendorName;
                 ViewBag.CurrentDataMaterial = searchMaterial;
+                ViewBag.CurrentDataSubcontDev = searchSubcontDev;
                 ViewBag.CurrentStartPODate = searchStartPODate;
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
@@ -177,6 +188,10 @@ namespace POTrackingV2.Controllers
                 if (!String.IsNullOrEmpty(searchMaterial))
                 {
                     pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
+                }
+                if (!String.IsNullOrEmpty(searchSubcontDev))
+                {
+                    pOes = pOes.Where(po => po.PurchaseOrderCreator.ToLower().Contains(searchSubcontDev.ToLower()));
                 }
 
                 if (!String.IsNullOrEmpty(searchStartPODate))

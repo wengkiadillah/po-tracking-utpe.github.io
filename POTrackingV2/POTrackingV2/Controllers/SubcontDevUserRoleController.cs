@@ -110,7 +110,7 @@ namespace POTrackingV2.Controllers
             ViewBag.CurrentSearchString = search;
             using (POTrackingEntities db = new POTrackingEntities())
             {
-                return View(db.SubcontDevUserRoles.Where(x => x.Username.Contains(search) || x.SubcontDevRole.Name.Contains(search) || search == null).ToList().ToPagedList(page ?? 1, 10));
+                return View(db.SubcontDevUserRoles.Where(x => x.Username.Contains(search) || x.SubcontDevRole.Name.Contains(search) || search == null).OrderBy(x => x.Username).ToList().ToPagedList(page ?? 1, 10));
             }
         }
 
