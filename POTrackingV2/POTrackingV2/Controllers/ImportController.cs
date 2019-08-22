@@ -812,7 +812,6 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = true;
                                 databasePurchasingDocumentItem.ActiveStage = "2";
                                 isSameAsProcs.Add(true);
-                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
                                 Notification notificationVendor = new Notification();
                                 notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -845,7 +844,6 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = null;
                                 databasePurchasingDocumentItem.ActiveStage = "1";
                                 isSameAsProcs.Add(false);
-                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
                                 Notification notification = new Notification();
                                 notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -861,7 +859,9 @@ namespace POTrackingV2.Controllers
                                 db.Notifications.Add(notification);
                             }
 
+                            db.SaveChanges();
 
+                            isTwentyFivePercents.Add(db.PurchasingDocumentItems.Find(databasePurchasingDocumentItem.ID).IsTwentyFivePercent);
                         }
                     }
                     else
@@ -882,6 +882,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
                             inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
+                            inputPurchasingDocumentItem.PRNumber = databasePurchasingDocumentItem.PRNumber;
+                            inputPurchasingDocumentItem.PRCreateDate= databasePurchasingDocumentItem.PRCreateDate;
+                            inputPurchasingDocumentItem.PRReleaseDate = databasePurchasingDocumentItem.PRReleaseDate;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
                             inputPurchasingDocumentItem.Created = now;
@@ -889,12 +892,11 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.LastModified = now;
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             isSameAsProcs.Add(false);
-                            isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
-                            int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
+                            PurchasingDocumentItem newPurchasingDocumentItem = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem);
 
                             Notification notification = new Notification();
-                            notification.PurchasingDocumentItemID = idNewPDI;
+                            notification.PurchasingDocumentItemID = newPurchasingDocumentItem.ID;
                             notification.StatusID = 3;
                             notification.Stage = "1";
                             notification.Role = "procurement";
@@ -907,6 +909,8 @@ namespace POTrackingV2.Controllers
                             db.Notifications.Add(notification);
 
                             db.SaveChanges();
+
+                            isTwentyFivePercents.Add(newPurchasingDocumentItem.IsTwentyFivePercent);
 
                             counter++;
                         }

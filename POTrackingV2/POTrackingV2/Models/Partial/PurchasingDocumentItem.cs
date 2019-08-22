@@ -24,7 +24,7 @@ namespace POTrackingV2.Models
                 //? Level3Data.AsQueryable().Sum(d => d.DurationMonths)
                 //: null;
                 //return this.PurchasingDocumentItemHistories.Sum(x => x.GoodsReceiptQuantity ?? 0);
-                
+
                 if (this.ParentID == null)
                 {
                     int totalApprovedItems = this.PurchasingDocumentItemHistories.Where(pdih => pdih.MovementType == 101 || pdih.MovementType == 105).Sum(x => x.GoodsReceiptQuantity ?? 0);
@@ -33,7 +33,7 @@ namespace POTrackingV2.Models
                 }
                 else
                 {
-                    List <PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesAppovedItems = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
+                    List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesAppovedItems = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 101 || pdih.MovementType == 105) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                     List<PurchasingDocumentItemHistory> dbPurchasingDocumentItemHistoriesRejectedItems = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 102 || pdih.MovementType == 106 || pdih.MovementType == 124) && pdih.PurchasingDocumentItemID == this.ParentID).ToList();
                     int totalApprovedItems = dbPurchasingDocumentItemHistoriesAppovedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesAppovedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
                     int totalRejectedItems = dbPurchasingDocumentItemHistoriesRejectedItems.Count > 0 ? dbPurchasingDocumentItemHistoriesRejectedItems.Sum(x => x.GoodsReceiptQuantity ?? 0) : 0;
@@ -48,7 +48,7 @@ namespace POTrackingV2.Models
             {
                 if (this.ParentID == null)
                 {
-                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t" && pdih.PurchasingDocumentItemID == this.ID).Select(x=>x.GoodsReceiptDate).FirstOrDefault();
+                    return db.PurchasingDocumentItemHistories.Where(pdih => pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t" && pdih.PurchasingDocumentItemID == this.ID).Select(x => x.GoodsReceiptDate).FirstOrDefault();
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace POTrackingV2.Models
                     }
                 }
 
-                if(latestPurchasingDocumentItemsHistoryList.Count > 0)
+                if (latestPurchasingDocumentItemsHistoryList.Count > 0)
                 {
                     latestPurchasingDocumentItemHistory.GoodsReceiptQuantity = totalQty;
                 }
@@ -153,13 +153,13 @@ namespace POTrackingV2.Models
                 {
                     purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ID || x.ParentID == this.ID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
                     //purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.MovementType == 105 || pdih.MovementType == 101) && pdih.PurchasingDocumentItemID == this.ID).ToList();
-                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ID).OrderBy(x=>x.GoodsReceiptDate).ToList();
+                    purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ID).OrderBy(x => x.GoodsReceiptDate).ToList();
                 }
                 else
                 {
                     purchasingDocumentItems = db.PurchasingDocumentItems.Where(x => (x.ID == this.ParentID || x.ParentID == this.ParentID) && x.ConfirmedItem != false).OrderBy(x => x.ConfirmedDate).ToList();
                     purchasingDocumentItemHistories = db.PurchasingDocumentItemHistories.Where(pdih => (pdih.POHistoryCategory.ToLower() != "q" && pdih.POHistoryCategory.ToLower() != "t") && pdih.PurchasingDocumentItemID == this.ParentID).OrderBy(x => x.GoodsReceiptDate).ToList();
-                    
+
                 }
 
                 //if (purchasingDocumentItems.Count > 0 && purchasingDocumentItemHistories.Count > 0 && this.TotalGR > 0 && this.ConfirmedQuantity > 0)
@@ -334,7 +334,7 @@ namespace POTrackingV2.Models
                                         {
                                             newPurchasingDocumentItemHistory.GoodsReceiptQuantity = confirmQty - (totalCurrentGR + currentGR);
                                         }
-                                            
+
                                         listPurchasingDocumentItemHistory.Add(newPurchasingDocumentItemHistory);
                                     }
                                     else
@@ -1183,8 +1183,6 @@ namespace POTrackingV2.Models
                     count++;
                 }
 
-                netPriceDecimal = netPriceDecimal.Substring(0,2);
-
                 return netPricePrimary + "," + netPriceDecimal;
             }
         }
@@ -1319,18 +1317,25 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
+                if (this.POID != 0 && this.POID != null)
                 {
-                    DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
-                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
-                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
-                    int daysAdded = t.Days / 4;
-                    DateTime today = DateTime.Now;
-                    DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
-
-                    if (today >= twentyFivePercentDate)
+                    if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
                     {
-                        return true;
+                        DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
+                        DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                        TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                        int daysAdded = t.Days / 4;
+                        DateTime today = DateTime.Now;
+                        DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                        if (today >= twentyFivePercentDate)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
@@ -1339,7 +1344,7 @@ namespace POTrackingV2.Models
                 }
                 else
                 {
-                    return true;
+                    return false;
                 }
             }
         }
@@ -1348,16 +1353,23 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
+                if (this.POID != 0 && this.POID != null)
                 {
-                    DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
-                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
-                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
-                    int daysAdded = t.Days / 4;
-                    //DateTime today = DateTime.Now;
-                    DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                    if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
+                    {
+                        DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
+                        DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                        TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                        int daysAdded = t.Days / 4;
+                        //DateTime today = DateTime.Now;
+                        DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
 
-                    return twentyFivePercentDate.ToString("dd/MM/yyyy");
+                        return twentyFivePercentDate.ToString("dd/MM/yyyy");
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
                 }
                 else
                 {
@@ -1371,21 +1383,28 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
+                if (this.POID != 0 && this.POID != null)
                 {
-                    //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
-                    //DateTime today = DateTime.Now;
-                    //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
-                    DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
-                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
-                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
-                    int daysAdded = (t.Days * 3) / 4;
-                    DateTime today = DateTime.Now;
-                    DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
-
-                    if (today >= seventyFivePercentDate)
+                    if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
                     {
-                        return true;
+                        //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                        //DateTime today = DateTime.Now;
+                        //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                        DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
+                        DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                        TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                        int daysAdded = (t.Days * 3) / 4;
+                        DateTime today = DateTime.Now;
+                        DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                        if (today >= seventyFivePercentDate)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
@@ -1394,7 +1413,7 @@ namespace POTrackingV2.Models
                 }
                 else
                 {
-                    return true;
+                    return false;
                 }
             }
         }
@@ -1403,19 +1422,26 @@ namespace POTrackingV2.Models
         {
             get
             {
-                if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
+                if (this.POID != 0 && this.POID != null)
                 {
-                    //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
-                    //DateTime today = DateTime.Now;
-                    //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
-                    DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
-                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
-                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
-                    int daysAdded = (t.Days * 3) / 4;
-                    DateTime today = DateTime.Now;
-                    DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                    if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
+                    {
+                        //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                        //DateTime today = DateTime.Now;
+                        //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                        DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
+                        DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                        TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                        int daysAdded = (t.Days * 3) / 4;
+                        DateTime today = DateTime.Now;
+                        DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
 
-                    return seventyFivePercentDate.ToString("dd/MM/yyyy");
+                        return seventyFivePercentDate.ToString("dd/MM/yyyy");
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
                 }
                 else
                 {
