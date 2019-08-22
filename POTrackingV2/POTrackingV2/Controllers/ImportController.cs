@@ -812,7 +812,7 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = true;
                                 databasePurchasingDocumentItem.ActiveStage = "2";
                                 isSameAsProcs.Add(true);
-                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
+                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
                                 Notification notificationVendor = new Notification();
                                 notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -845,7 +845,7 @@ namespace POTrackingV2.Controllers
                                 databasePurchasingDocumentItem.ConfirmedItem = null;
                                 databasePurchasingDocumentItem.ActiveStage = "1";
                                 isSameAsProcs.Add(false);
-                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
+                                isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
                                 Notification notification = new Notification();
                                 notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
@@ -889,7 +889,7 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.LastModified = now;
                             inputPurchasingDocumentItem.LastModifiedBy = User.Identity.Name;
                             isSameAsProcs.Add(false);
-                            isTwentyFivePercents.Add(databasePurchasingDocumentItem.PO.IsTwentyFivePercent);
+                            isTwentyFivePercents.Add(databasePurchasingDocumentItem.IsTwentyFivePercent);
 
                             int idNewPDI = db.PurchasingDocumentItems.Add(inputPurchasingDocumentItem).ID;
 
@@ -1236,7 +1236,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputETAHistory.PurchasingDocumentItemID);
 
-                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ApproveProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.IsTwentyFivePercent)
                     {
                         List<ETAHistory> databaseEtaHistories = db.ETAHistories.Where(x => x.PurchasingDocumentItemID == inputETAHistory.PurchasingDocumentItemID).ToList();
 
@@ -1365,7 +1365,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.IsTwentyFivePercent)
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -1454,7 +1454,7 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.PO.IsTwentyFivePercent)
+                    if ((databasePurchasingDocumentItem.ActiveStage == "2" || (databasePurchasingDocumentItem.ActiveStage == "2a" && databasePurchasingDocumentItem.ProformaInvoiceDocument == null)) && databasePurchasingDocumentItem.IsTwentyFivePercent)
                     {
                         ETAHistory firstETAHistory = databasePurchasingDocumentItem.FirstETAHistory;
 
@@ -2005,7 +2005,7 @@ namespace POTrackingV2.Controllers
 
             try
             {
-                if (purchasingDocumentItem.ActiveStage == "4" && purchasingDocumentItem.PO.IsSeventyFivePercent)
+                if (purchasingDocumentItem.ActiveStage == "4" && purchasingDocumentItem.IsSeventyFivePercent)
                 {
                     string user = User.Identity.Name;
 
@@ -2115,7 +2115,7 @@ namespace POTrackingV2.Controllers
 
             PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-            if (databasePurchasingDocumentItem.ProgressPhotoes.Count < 1 && databasePurchasingDocumentItem.PO.IsSeventyFivePercent)
+            if (databasePurchasingDocumentItem.ProgressPhotoes.Count < 1 && databasePurchasingDocumentItem.IsSeventyFivePercent)
             {
                 foreach (var fileProgressPhoto in fileProgressPhotoes)
                 {

@@ -1312,5 +1312,119 @@ namespace POTrackingV2.Models
         }
 
         #endregion
+
+        #region IsPercentage
+
+        public bool IsTwentyFivePercent
+        {
+            get
+            {
+                if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
+                {
+                    DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
+                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = t.Days / 4;
+                    DateTime today = DateTime.Now;
+                    DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                    if (today >= twentyFivePercentDate)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public string GetTwentyFivePercentdate
+        {
+            get
+            {
+                if (this.ConfirmedDate.HasValue && this.PO.ReleaseDate.HasValue)
+                {
+                    DateTime date1 = this.ConfirmedDate.GetValueOrDefault();
+                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = t.Days / 4;
+                    //DateTime today = DateTime.Now;
+                    DateTime twentyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                    return twentyFivePercentDate.ToString("dd/MM/yyyy");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+        }
+
+        public bool IsSeventyFivePercent
+        {
+            get
+            {
+                if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
+                {
+                    //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                    //DateTime today = DateTime.Now;
+                    //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                    DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
+                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = (t.Days * 3) / 4;
+                    DateTime today = DateTime.Now;
+                    DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                    if (today >= seventyFivePercentDate)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public string GetSeventyFivePercentDate
+        {
+            get
+            {
+                if (this.HasETAHistory && this.PO.ReleaseDate.HasValue)
+                {
+                    //int daysAdded = (this.ProgressDay.GetValueOrDefault() * 3) / 4 ;
+                    //DateTime today = DateTime.Now;
+                    //DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+                    DateTime date1 = this.FirstETAHistory.ETADate.GetValueOrDefault();
+                    DateTime date2 = this.PO.ReleaseDate.GetValueOrDefault();
+                    TimeSpan t = date1.Subtract(date2);//date1 - date2;
+                    int daysAdded = (t.Days * 3) / 4;
+                    DateTime today = DateTime.Now;
+                    DateTime seventyFivePercentDate = this.PO.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
+
+                    return seventyFivePercentDate.ToString("dd/MM/yyyy");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+        }
+
+        #endregion
     }
 }
