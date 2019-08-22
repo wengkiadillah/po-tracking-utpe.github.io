@@ -36,14 +36,14 @@
         <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
         //</div>
-        //if (ViewBag.IsHeadProcurement)
-        //{
+        if (ViewBag.IsHeadProcurement)
+        {
         //<div class="form-group mr-md-4 ml-md-0">
         <input id="searchUserProcurement" name="searchUserProcurement" list="data-list-userprocurement" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Procurement" autocomplete="off" value="@ViewBag.CurrentSearchUserProcurement" />
                 <datalist id="data-list-userprocurement"></datalist>
         //</div>
-        //}
-        @*<div class="form-group mr-0 ml-0">
+        }
+        <div class="form-group mr-0 ml-0">
                 <label for="startPODate">PO Date</label>
                 <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
                        placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
@@ -54,13 +54,13 @@
                 <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
                        placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
                 <i class="far fa-calendar-alt form-type-icon"></i>
-            </div>*@
+            </div>
         <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
         <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
-        @*<button type="submit" class="btn btn-info mr-3">Find</button>*@
+        <button type="submit" class="btn btn-info mr-3">Find</button>
     }
 </div>
-<div class="filter-row subtier mt-0 mb-1">
+@*<div class="filter-row subtier mt-0 mb-1">
     <div class="filter-form-container form-inline">
         <div class="form-group mr-0 ml-0 mb-1">
             <label for="startPODate">PO Date</label>
@@ -75,7 +75,7 @@
             <button type="submit" class="btn btn-info mr-1">Find</button>
             @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info" })
     </div>
-</div>
+</div>*@
 
 
 <div class="filter-row tier-2 mt-0">
