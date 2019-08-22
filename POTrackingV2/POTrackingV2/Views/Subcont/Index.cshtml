@@ -25,8 +25,12 @@
 <h1 class="page-title"><a href="~/SubCont/index" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle"><a href="~/SubCont/index?searchPOStatus=done" class="page-subtitle">History</a></span></h1>
 @*<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>*@
 <div class="filter-row mb-2">
-    @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "" }))
     {
+
+        <div class="filter-form-container form-inline">
+
+        </div>
         @*<div class="filter-form-container form-inline">*@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
         <div class="form-group mr-4 ml-0 frmSearch">
@@ -35,34 +39,33 @@
             <datalist id="data-list-po"></datalist>
             @*<i class="fas fa-search form-type-icon hint"></i>*@
         </div>
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" @hideVendorSearch/>
-            <datalist id="data-list-vendor"></datalist>
-        </div>
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
-            <datalist id="data-list-material"></datalist>
-        </div>
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchSubcontDev" name="searchSubcontDev" list="data-list-subcontdev" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search SubcontDev" autocomplete="off" value="@ViewBag.CurrentDataSubcontDev" @hideVendorSearch/>
-            <datalist id="data-list-subcontdev"></datalist>
-        </div>
-        <div class="form-group mr-0">
-            <label for="startPODate">PO Date</label>
-            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
-                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-
-        <div class="form-group">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
-                   placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
-        @*</div>*@
+            <div class="form-group mr-4 ml-0 frmSearch">
+                <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" @hideVendorSearch />
+                <datalist id="data-list-vendor"></datalist>
+            </div>
+            <div class="form-group mr-4 ml-0 frmSearch">
+                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
+                <datalist id="data-list-material"></datalist>
+            </div>
+            <div class="form-group mr-4 ml-0 frmSearch">
+                <input id="searchSubcontDev" name="searchSubcontDev" list="data-list-subcontdev" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search SubcontDev" autocomplete="off" value="@ViewBag.CurrentDataSubcontDev" @hideVendorSearch />
+                <datalist id="data-list-subcontdev"></datalist>
+            </div>
+            <div class="form-group mr-0">
+                <label for="startPODate">PO Date</label>
+                <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
+                <i class="far fa-calendar-alt form-type-icon"></i>
+            </div>
+            <div class="form-group">
+                <label for="endPODate">to</label>
+                <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
+                <i class="far fa-calendar-alt form-type-icon"></i>
+            </div>
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
+            @*</div>*@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
@@ -183,7 +186,8 @@
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
-                            } else if (ViewBag.SearchPOStatus == "ongoing")
+                            }
+                            else if (ViewBag.SearchPOStatus == "ongoing")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                             }
@@ -201,7 +205,8 @@
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
-                            }else if (ViewBag.SearchPOStatus == "done")
+                            }
+                            else if (ViewBag.SearchPOStatus == "done")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
                             }
@@ -343,7 +348,7 @@
                         <div>
                             @*<input class="checkbox-all" type="checkbox" />*@
                             <label class="checkbox-custom__label mr-0">
-                                <input class="checkbox-custom checkbox-all" type="checkbox" @disabledCheckbox/>
+                                <input class="checkbox-custom checkbox-all" type="checkbox" @disabledCheckbox />
                                 <span class="checkmark"></span>
                             </label>
                         </div>
@@ -446,23 +451,23 @@
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0 || (purchasingDocumentItem.IsClosed!=null && purchasingDocumentItem.IsClosed!="") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0 || (purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed != "") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
                             //if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
                             if (ViewBag.CurrentRoleID == "vendor" &&
                                     (
-                                        //(purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || 
+                                        //(purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) ||
                                         //(purchasingDocumentItem.ConfirmedItem == true ||
-                                        //(purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || 
+                                        //(purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) ||
                                         //purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)
                                         //)
                                         /*
                                         (purchasingDocumentItem.PB != null || purchasingDocumentItem.Setting != null || purchasingDocumentItem.Fullweld != null || purchasingDocumentItem.Primer != null) ||
                                         (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x=> x.PB != null || x.Setting != null || x.Fullweld != null || x.Primer != null))
                                         */
-                                        (purchasingDocumentItem.ActiveStageToNumber>2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber >2))
+                                        (purchasingDocumentItem.ActiveStageToNumber > 2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber > 2))
                                     )
                                 )
                             {
@@ -745,12 +750,10 @@
                             @*<span class="po-item-data-header__text">Inspection Date</span>
                                 <span class="po-item-data-header__text">Qty</span>*@
                             <span class="po-item-data-header__text">info</span>
-
                         </div>
                         @{
                             row = 1;
                         }
-
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var hideGR = "";
@@ -821,10 +824,9 @@
                                             </table>
                                         </div>
                                     </span>
-
                                 </div>
                                 <div class="po-item-data-content__child">
-                                    @{ 
+                                    @{
                                         rowChild = 1;
                                     }
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
@@ -884,8 +886,8 @@
                                     }
                                 </div>
                             </div>
-                            row++;
-                        }
+                                            row++;
+                                        }
                     </div>
                 </div>
                 <div class="po-item-section stage-5">
@@ -1162,14 +1164,13 @@
                             </div>
                             row++;
                         }
-
                     </div>
                 </div>
             </div>
         </li>
     </ul>
-    poSignRow++;
-}
+                                poSignRow++;
+                            }
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1300,10 +1301,10 @@
                                 <select class="form-control sequences-progress-reasons" id="ATAPBReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
                                     @*<option value="1">Problem Teknis</option>
-                                    <option value="2">Perubahan DWG(Drawing)</option>
-                                    <option value="3">Material Tidak Ada Dipasaran</option>
-                                    <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>*@
+                                        <option value="2">Perubahan DWG(Drawing)</option>
+                                        <option value="3">Material Tidak Ada Dipasaran</option>
+                                        <option value="4">Mesin Rusak</option>
+                                        <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1338,10 +1339,10 @@
                                 <select class="form-control sequences-progress-reasons" id="ATASettingReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
                                     @*<option value="1">Problem Teknis</option>
-                                    <option value="2">Perubahan DWG(Drawing)</option>
-                                    <option value="3">Material Tidak Ada Dipasaran</option>
-                                    <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>*@
+                                        <option value="2">Perubahan DWG(Drawing)</option>
+                                        <option value="3">Material Tidak Ada Dipasaran</option>
+                                        <option value="4">Mesin Rusak</option>
+                                        <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1376,10 +1377,10 @@
                                 <select class="form-control sequences-progress-reasons" id="ATAFullweldReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
                                     @*<option value="1">Problem Teknis</option>
-                                    <option value="2">Perubahan DWG(Drawing)</option>
-                                    <option value="3">Material Tidak Ada Dipasaran</option>
-                                    <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>*@
+                                        <option value="2">Perubahan DWG(Drawing)</option>
+                                        <option value="3">Material Tidak Ada Dipasaran</option>
+                                        <option value="4">Mesin Rusak</option>
+                                        <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1414,10 +1415,10 @@
                                 <select class="form-control sequences-progress-reasons" id="ATAPrimerReasonID" disabled>
                                     <option value="0" selected>Choose One</option>
                                     @*<option value="1">Problem Teknis</option>
-                                    <option value="2">Perubahan DWG(Drawing)</option>
-                                    <option value="3">Material Tidak Ada Dipasaran</option>
-                                    <option value="4">Mesin Rusak</option>
-                                    <option value="5">Switching Product</option>*@
+                                        <option value="2">Perubahan DWG(Drawing)</option>
+                                        <option value="3">Material Tidak Ada Dipasaran</option>
+                                        <option value="4">Mesin Rusak</option>
+                                        <option value="5">Switching Product</option>*@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
@@ -1471,7 +1472,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     filterBy = "poNumber";
                     searchData = $("#searchPONumber");
                     list = "po";
-                } else if ($(this).attr("name") == "searchVendorName"){
+                } else if ($(this).attr("name") == "searchVendorName") {
                     filterBy = "vendor";
                     searchData = $("#searchVendorName");
                     list = "vendor";
@@ -1498,7 +1499,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             var element = "";
                             //console.log(response.data);
                             for (var k in jsonObjSuggestion) {
-                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
                             $("#data-list-" + list).html(element);
                             searchData.css("background", "");
@@ -1825,7 +1826,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var stage2 = $(this).closest(".custom-scrollbar").find(".po-item-section.stage-2 .po-item-data-content.row-" + row + " .po-item-data-content__child");
                 var itemID = $(this).closest(".stage-1").find(".po-item-data-content.row-" + row + " .po-item-data-content__outer .pd-item-id").val();
                 var newDate = confirmedDate.replaceDayMonth();
-                
+
                 var currentRow = 1;
                 $(this).closest(".po-item-data-content__outer").find(".add-row").attr("style", "visibility:display");
                 $(this).closest(".po-item-data-content__outer").find(".del-row").attr("style", "visibility:display");
@@ -2073,7 +2074,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 var btnEditItem = $(this).find(".edit-row");
                 var btnAddItem = $(this).find(".add-row");
                 var btnDellItem = $(this).find(".del-row");
-                
+
                 var donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
                 if (childNumber > 0) {
                     donutRow = $(this).closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
@@ -2099,9 +2100,9 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             btnConfirmPO.addClass("isUpdated buttonClicked");
                             btnCancelPO.addClass("isUpdated");
                             //if (deliveryDate != confirmedDate.val() || maxQuantity != confirmedQtyParent.val()) {
-                                btnEditItem.addClass("editable");
+                            btnEditItem.addClass("editable");
                             //}
-                            if (role == "subcontdev"  || role == "administrator" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
+                            if (role == "subcontdev" || role == "administrator" || (deliveryDate == confirmedDate.val() && maxQuantity == confirmedQtyParent.val())) {
                                 stage2.find(".po-item-data-content.row-" + $(this).closest(".po-item-data-content").attr("row") + " .po-item-data-content__outer .sequences-modal").addClass("enableButton");
                                 donutRow.addClass("progressChanged");
                             }
@@ -2743,7 +2744,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 alert("Data Component Not Found");
             } else if (total > totalLeadTime) {
                 alert("Total lead time must be equal or less than " + totalLeadTime + " days");
-            } else if ($("#PB").val() != "" && $("#Setting").val() != "" && $("#Fullweld").val() != "" && $("#Primer").val() != "" && $("#LeadTime").text() !=0) {
+            } else if ($("#PB").val() != "" && $("#Setting").val() != "" && $("#Fullweld").val() != "" && $("#Primer").val() != "" && $("#LeadTime").text() != 0) {
 
                 $.ajax({
                     type: "POST",
@@ -2761,7 +2762,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             stage3.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .input-progress").removeAttr("disabled");
                             stage1.find(".po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer .edit-row").attr("style", "visibility:hidden");
                         }
-                        
+
                         donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                         donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
 
@@ -2869,7 +2870,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
                         }
 
-                        if ($("#ATAPrimer").val()){
+                        if ($("#ATAPrimer").val()) {
                             $("#ATAPrimer").attr("disabled", "disabled");
                             $("#inputFilePrimer").attr("disabled", "disabled");
                         } else {
@@ -2929,7 +2930,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             if (childNumber > 0) {
                 donutRow = $(".modal-progess-show").closest(".custom-scrollbar").prev().find(".po-item-data-content.row-" + rowNumber + "-" + childNumber + "");
             }
-            
+
             var isValid = true;
             var errorMessage = "";
 
@@ -2980,7 +2981,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 errorMessage += "- Progress Photos Must Be Filled\n";
                 isValid = false;
             }
-           
+
             if (isValid) {
                 if (!isNaN(Date.parse(ATADate))) { //&& newETADate < newATADate
                     var formData = new FormData();
@@ -3037,7 +3038,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAPrimer").val()) {
                                     $("#ATAPrimer").attr("disabled", "disabled");
                                     $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                   
+
                                     if (childNumber > 0) {
                                         stage4Child.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber).attr("style", "visibility:display");
                                     } else {
@@ -3104,8 +3105,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     $("#inputProgressModal .form-date[disabled!='disabled']").focus();
                 }
             }
-            else
-            {
+            else {
                 alert(errorMessage);
             }
         });
@@ -3142,11 +3142,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             }
 
             if (invoiceMethod.val() != "") {
-                
+
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("SaveInvoiceMethod", "Subcont")",
-                    data: { 'pdItemID': pdItemID, 'invoiceMethod': invoiceMethod.val()},
+                    data: { 'pdItemID': pdItemID, 'invoiceMethod': invoiceMethod.val() },
                     contentType: "application/x-www-form-urlencoded; charset=utf-8",
                     //dataType: "json",
                     success: function (response) {
@@ -3160,12 +3160,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 stage6Parent.find(".save-invoice").removeAttr("disabled");
                             }
                         });
-                        if (invoiceMethod.val() == "partial"){
+                        if (invoiceMethod.val() == "partial") {
                             stage4Child.find(".gr-complete").each(function () {
                                 if ($(this).html().toLowerCase() == "yes" && $(this).closest(".po-item-data-content").attr("style") != "visibility:hidden") {
                                     childNumber = $(this).closest(".po-item-data-content").attr("child");
                                     stage6Child.find("[child=" + childNumber + "] .file-invoice").removeAttr("disabled");
-                                    stage6Child.find("[child=" + childNumber +"] .save-invoice").removeAttr("disabled");
+                                    stage6Child.find("[child=" + childNumber + "] .save-invoice").removeAttr("disabled");
                                 }
                             });
                         }
@@ -3233,7 +3233,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                             donutRow.find(".donut-chart").first().next().find("span.mark-donut").text(progressNumber);
                         } else {
-                            alert(response.responseCode+response.responseText);
+                            alert(response.responseCode + response.responseText);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -3343,8 +3343,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#ATAPrimerReasonID").removeAttr("disabled");
                             }
                         }
-                        else
-                        {
+                        else {
                             if ($(this).attr("id") == "ATAPB") {
                                 $("#ATAPBReasonID").attr("disabled", "disabled"); $("#ATAPBReasonID").val(0);
                             }
@@ -3478,7 +3477,6 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         }
 
     </script>
-
     <!-- Live PReview PIc-->
     <script language="javascript" type="text/javascript">
         window.onload = function () {
