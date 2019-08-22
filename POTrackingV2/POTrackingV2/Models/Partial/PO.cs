@@ -77,7 +77,7 @@ namespace POTrackingV2.Models
                     DateTime date1 = purchasingDocumentItem.FirstETAHistory.ETADate.GetValueOrDefault();
                     DateTime date2 = this.ReleaseDate.GetValueOrDefault();
                     TimeSpan t = date1.Subtract(date2);//date1 - date2;
-                    int daysAdded = (t.Days *3) / 4;
+                    int daysAdded = (t.Days * 3) / 4;
                     DateTime today = DateTime.Now;
                     DateTime seventyFivePercentDate = this.ReleaseDate.GetValueOrDefault().AddDays(daysAdded);
 

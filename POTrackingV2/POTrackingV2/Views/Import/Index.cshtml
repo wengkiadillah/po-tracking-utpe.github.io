@@ -19,64 +19,50 @@
 <h1 class="page-title">PO Tracking System <span class="page-subtitle"><a href="@Url.Action("History", "Import")">History</a></span></h1>
 <div class="filter-row mb-1">
 
-    @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "" }))
     {
-        //<div class="form-group mr-md-4">
-        <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+
+        <div class="filter-form-container form-inline">
+            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-ponumber"></datalist>
-        //</div>
-        if (roleID == "procurement" || roleID == "administrator")
-        {
-            //<div class="form-group mr-md-4 ml-md-0">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            @if (roleID == "procurement" || roleID == "administrator")
+                {
+                <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
                 <datalist id="data-list-vendorname"></datalist>
-            //</div>
-        }
-        //<div class="form-group mr-md-4 ml-md-0">
-        <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            }
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
-        //</div>
-        if (ViewBag.IsHeadProcurement)
-        {
-        //<div class="form-group mr-md-4 ml-md-0">
-        <input id="searchUserProcurement" name="searchUserProcurement" list="data-list-userprocurement" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Procurement" autocomplete="off" value="@ViewBag.CurrentSearchUserProcurement" />
+            @if (ViewBag.IsHeadProcurement)
+                {
+                <input id="searchUserProcurement" name="searchUserProcurement" list="data-list-userprocurement" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Procurement" autocomplete="off" value="@ViewBag.CurrentSearchUserProcurement" />
                 <datalist id="data-list-userprocurement"></datalist>
-        //</div>
-        }
-        <div class="form-group mr-0 ml-0">
-                <label for="startPODate">PO Date</label>
-                <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
+            }
+
+        </div>
+
+
+        <div class="filter-row subtier mt-0 mb-1">
+            <div class="filter-form-container form-inline">
+                <div class="form-group mr-0 ml-0 mb-1">
+                    <label for="startPODate">PO Date</label>
+                    <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                           placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
+                    <i class="far fa-calendar-alt form-type-icon"></i>
+                </div>
+                <div class="form-group mb-1">
+                    <label for="endPODate">to</label>
+                    <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                           placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
+                    <i class="far fa-calendar-alt form-type-icon"></i>
+                </div>
+                <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
+                <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
+                <button type="submit" class="btn btn-info mr-3">Find</button>
+                @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info" })
             </div>
-            <div class="form-group">
-                <label for="endPODate">to</label>
-                <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
-            </div>
-        <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
-        <input name="roleID" type="hidden" value="@ViewBag.CurrentRoleID" />
-        <button type="submit" class="btn btn-info mr-3">Find</button>
+        </div>
     }
 </div>
-@*<div class="filter-row subtier mt-0 mb-1">
-    <div class="filter-form-container form-inline">
-        <div class="form-group mr-0 ml-0 mb-1">
-            <label for="startPODate">PO Date</label>
-            <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" placeholder="dd/mm/yyyy" autocomplete="off" />
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-        <div class="form-group mb-1">
-            <label for="endPODate">to</label>
-            <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" placeholder="dd/mm/yyyy" autocomplete="off" />
-            <i class="far fa-calendar-alt form-type-icon"></i>
-        </div>
-            <button type="submit" class="btn btn-info mr-1">Find</button>
-            @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info" })
-    </div>
-</div>*@
-
 
 <div class="filter-row tier-2 mt-0">
 
@@ -956,7 +942,7 @@
                                 }
                             }
 
-                            if (!pO.IsTwentyFivePercent)
+                            if (!purchasingDocumentItem.IsTwentyFivePercent)
                             {
                                 disabledInputCheckbox = "disabled";
                             }
@@ -1066,7 +1052,7 @@
                                                 }
                                             }
 
-                                            if (!pO.IsTwentyFivePercent)
+                                            if (!childPurchasingDocumentItem.IsTwentyFivePercent)
                                             {
                                                 disabledInputCheckbox = "disabled";
                                             }
@@ -1827,7 +1813,7 @@
                                 }
                             }
 
-                            if (!pO.IsSeventyFivePercent)
+                            if (!purchasingDocumentItem.IsSeventyFivePercent)
                             {
                                 disabledInputUpdateEtaDateOnTime = "disabled";
                                 disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
@@ -2077,7 +2063,7 @@
                                                 }
                                             }
 
-                                            if (!pO.IsSeventyFivePercent)
+                                            if (!childPurchasingDocumentItem.IsSeventyFivePercent)
                                             {
                                                 disabledInputUpdateEtaDateOnTime = "disabled";
                                                 disabledInputUpdateEtaDateOnTimeConfirm = "disabled";

@@ -214,6 +214,8 @@ $(".st1-accept-item").on("click", function (obj) {
         if (validateMinQuantity === true) {
             if (validateDate === true) {
                 //if (isEdit === "false") {
+                console.log(inputPurchasingDocumentItems[0]);
+
                 $.ajax({
                     type: "POST",
                     url: stage1VendorConfirmItem,
@@ -242,7 +244,6 @@ $(".st1-accept-item").on("click", function (obj) {
 
                         for (var i = 0; i < response.isSameAsProcs.length; i++) {
                             if (response.isSameAsProcs[i] === true) {
-
                                 if (response.isTwentyFivePercents[i] === true) {
                                     $(".next-row-updated").first().removeAttr("disabled");
                                     $(".next-row-updated").first().removeClass("next-row-updated");
@@ -588,8 +589,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
 
-                        $(".row-updated-link").attr("style", "visibility:display");
-                        $(".row-updated-link").removeClass("row-updated-link");
+                        $(".row-updated-link").first().attr("style", "visibility:display");
+                        $(".row-updated-link").first().removeClass("row-updated-link");
                     }
                     else {
                         $(".next-row-updated").first().attr("disabled", "disabled");
@@ -603,8 +604,8 @@ $(".st1-accept-all-po").on("click", function (obj) {
                         $(".row-updated-donut").first().removeClass("row-updated-donut");
                         $(".row-updated-donut-text").first().removeClass("row-updated-donut-text");
 
-                        $(".row-updated-link").attr("style", "visibility:display");
-                        $(".row-updated-link").removeClass("row-updated-link");
+                        $(".row-updated-link").first().attr("style", "visibility:display");
+                        $(".row-updated-link").first().removeClass("row-updated-link");
                     }
                 }
             }
