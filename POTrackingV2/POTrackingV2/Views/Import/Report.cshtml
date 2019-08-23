@@ -1,39 +1,29 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-
 @model IPagedList<POTrackingV2.Models.PO>
-
 @{
     ViewBag.Title = "Report PO Import";
     int number = 1;
 }
-
 @*<link rel="stylesheet" href="~/Content/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/Content/bootstrap.min.css">*@
-
 @Scripts.Render("~/bundles/jquery")
-
 <h2>Report</h2>
 
-
 <div class="filter-row">
-    @using (Html.BeginForm("Report", "Import", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+    @using (Html.BeginForm("Report", "Import", null, FormMethod.Get, new { @class = "" }))
     {
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+        <div class="filter-form-container form-inline">
+            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-po"></datalist>
-        </div>
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
             <datalist id="data-list-vendor"></datalist>
-        </div>
-        <div class="form-group mr-4 ml-0 frmSearch">
-            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
+            @Html.ActionLink("Download", "DownloadReport", "Import", new { searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }, new { @class = "btn btn-info" })
         </div>
-        <button type="submit" class="btn btn-info mr-3">Find</button>
-        @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
-        @Html.ActionLink("Download", "DownloadReport", "Import", new {searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }, new { @class = "btn btn-info mr-3 mt-1" })
     }
 </div>
 
@@ -69,7 +59,6 @@
             </th>
         </tr>
     </thead>
-
     <tbody>
         @if (Model.Count() > 0)
         {
@@ -102,7 +91,6 @@
                                     description = purchasingDocumentItem.Description;
                                 }
                             }
-
                             @description
                         </td>
                         <td>
@@ -117,7 +105,6 @@
                                     deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
                             }
-
                             @deliveryDate
                         </td>
                         <td>
@@ -153,39 +140,36 @@
                                     estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
                             }
-
                             @estimatedTimeArrival
                         </td>
                     </tr>
 
-                    number++;
-                }
+                                            number++;
+                                        }
 
-            }
-        }
-        else
-        {
-            <tr>
-                <td>
-                    No Data
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        }
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>
+                                            No Data
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                }
     </tbody>
 </table>
-
    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Report",
 new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }))
-
 
 <script type="text/javascript">
     //$(document).ready(function () {

@@ -29,43 +29,42 @@
     {
 
         <div class="filter-form-container form-inline">
-
+            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
+            <datalist id="data-list-po"></datalist>
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" @hideVendorSearch />
+            <datalist id="data-list-vendor"></datalist>
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
+            <datalist id="data-list-material"></datalist>
+            <input id="searchSubcontDev" name="searchSubcontDev" list="data-list-subcontdev" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search SubcontDev" autocomplete="off" value="@ViewBag.CurrentDataSubcontDev" @hideVendorSearch />
+            <datalist id="data-list-subcontdev"></datalist>
         </div>
         @*<div class="filter-form-container form-inline">*@
         @*<input id="role" name="role" type="hidden" class="form-control form-control-lg filter-search with-icon" placeholder="Search No. PO" value="@ViewBag.Role" />*@
-        <div class="form-group mr-4 ml-0 frmSearch">
-            @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
-            <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
-            <datalist id="data-list-po"></datalist>
-            @*<i class="fas fa-search form-type-icon hint"></i>*@
+        @*<label><input class="form-control form-control-lg filter-search with-icon search-data" list="data-list" /></label>*@
+        @*<i class="fas fa-search form-type-icon hint"></i>*@
+
+        <div class="filter-row subtier mt-0 mb-1">
+            <div class="filter-form-container form-inline">
+                <div class="form-group mr-0 ml-0 mb-1">
+                    <label for="startPODate">PO Date</label>
+                    <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
+                           placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
+                    <i class="far fa-calendar-alt form-type-icon"></i>
+                </div>
+                <div class="form-group mb-1">
+                    <label for="endPODate">to</label>
+                    <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
+                           placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
+                    <i class="far fa-calendar-alt form-type-icon"></i>
+                </div>
+                <button type="submit" class="btn btn-info mr-3">Find</button>
+                @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info" })
+
+
+            </div>
         </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" @hideVendorSearch />
-                <datalist id="data-list-vendor"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
-                <datalist id="data-list-material"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchSubcontDev" name="searchSubcontDev" list="data-list-subcontdev" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search SubcontDev" autocomplete="off" value="@ViewBag.CurrentDataSubcontDev" @hideVendorSearch />
-                <datalist id="data-list-subcontdev"></datalist>
-            </div>
-            <div class="form-group mr-0">
-                <label for="startPODate">PO Date</label>
-                <input name="searchStartPODate" type="text" class="form-control form-control-lg form-date with-icon" id="startPODate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartPODate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
-            </div>
-            <div class="form-group">
-                <label for="endPODate">to</label>
-                <input name="searchEndPODate" type="text" class="form-control form-control-lg form-date with-icon" id="endPODate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
-            </div>
-            <button type="submit" class="btn btn-info mr-3">Find</button>
-            @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
-            @*</div>*@
+
+        @*</div>*@
     }
 </div>
 <div class="filter-row tier-2 mt-0">
