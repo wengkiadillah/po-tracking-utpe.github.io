@@ -1,50 +1,46 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-
 @*@model IEnumerable<POTracking.Models.SubcontComponentCapability>*@
 @model IPagedList<POTrackingV2.Models.PO>
-
 @{
     ViewBag.Title = "Master Vendor";
 }
-
 @section styles {
     <link href="~/Content/um-style.css" rel="stylesheet" />
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-
 <div class="um">
     <h1>Report ETA</h1>
     <div class="filter-row">
-        @using (Html.BeginForm("Report", "Subcont", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+        @using (Html.BeginForm("Report", "Subcont", null, FormMethod.Get, new { @class = "" }))
         {
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
+            <div class="filter-form-container form-inline">
+                <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
                 <datalist id="data-list-po"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
+                <input id="searchVendorName" name="searchVendorName" list="data-list-vendor" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Subcont Name" autocomplete="off" value="@ViewBag.CurrentDataVendorName" />
                 <datalist id="data-list-vendor"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
+                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentDataMaterial" />
                 <datalist id="data-list-material"></datalist>
             </div>
-            <div class="form-group mr-0">
-                <label for="startInspectionDate">Inspection Date</label>
-                <input name="searchStartInspectionDate" type="text" class="form-control form-control-lg form-date with-icon" id="startInspectionDate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartInspectionDate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
-            </div>
 
-            <div class="form-group">
-                <label for="endInspectionDate">to</label>
-                <input name="searchEndInspectionDate" type="text" class="form-control form-control-lg form-date with-icon" id="endInspectionDate"
-                       placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndInspectionDate" autocomplete="off" />
-                <i class="far fa-calendar-alt form-type-icon"></i>
+            <div class="filter-row subtier mt-0 mb-1">
+                <div class="filter-form-container form-inline">
+                    <div class="form-group mr-0 ml-0 mb-1">
+                        <label for="startInspectionDate">Inspection Date</label>
+                        <input name="searchStartInspectionDate" type="text" class="form-control form-control-lg form-date with-icon" id="startInspectionDate"
+                               placeholder="dd/mm/yyyy" value="@ViewBag.CurrentStartInspectionDate" autocomplete="off" />
+                        <i class="far fa-calendar-alt form-type-icon"></i>
+                    </div>
+                    <div class="form-group">
+                        <label for="endInspectionDate">to</label>
+                        <input name="searchEndInspectionDate" type="text" class="form-control form-control-lg form-date with-icon" id="endInspectionDate"
+                               placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndInspectionDate" autocomplete="off" />
+                        <i class="far fa-calendar-alt form-type-icon"></i>
+                    </div>
+                    <button type="submit" class="btn btn-info mr-3">Find</button>
+                    @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
+                </div>
             </div>
-            <button type="submit" class="btn btn-info mr-3">Find</button>
-            @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
         }
     </div>
 
@@ -152,7 +148,6 @@
     @Html.PagedListPager(Model, page => Url.Action("Report",
     new { page, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 
-
 </div>
 
 @section scripts {
@@ -174,7 +169,7 @@
                     filterBy = "poNumber";
                     searchData = $("#searchPONumber");
                     list = "po";
-                } else if ($(this).attr("name") == "searchVendorName"){
+                } else if ($(this).attr("name") == "searchVendorName") {
                     filterBy = "vendor";
                     searchData = $("#searchVendorName");
                     list = "vendor";
@@ -197,7 +192,7 @@
                             var element = "";
                             //console.log(response.data);
                             for (var k in jsonObjSuggestion) {
-                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
                             $("#data-list-" + list).html(element);
                             searchData.css("background", "");
