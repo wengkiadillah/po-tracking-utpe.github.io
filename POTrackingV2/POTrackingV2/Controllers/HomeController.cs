@@ -395,7 +395,8 @@ namespace POTrackingV2.Controllers
                 #region Import
 
                 var pOesImport = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                        (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))))
+                        (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))) &&
+                        (x.ReleaseDate != null))
                         .AsQueryable();
 
                 if (role == LoginConstants.RoleProcurement.ToLower())
