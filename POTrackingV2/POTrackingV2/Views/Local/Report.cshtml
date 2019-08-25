@@ -1,38 +1,30 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-
 @*@model IEnumerable<POTrackingV2.Models.PO>*@
 @model IPagedList<POTrackingV2.Models.PO>
-
 @{
     ViewBag.Title = "PO Local Report";
 
 }
-
 @section styles {
     <link href="~/Content/um-style.css" rel="stylesheet" />
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
-
 <div class="um">
     <h1>Report PO Local</h1>
     <div class="filter-row">
-        @using (Html.BeginForm("Report", "Local", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+        @using (Html.BeginForm("Report", "Local", null, FormMethod.Get, new { @class = "" }))
         {
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <div class="filter-form-container form-inline">
+                <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
                 <datalist id="data-list-ponumber"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+                <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
                 <datalist id="data-list-vendorname"></datalist>
-            </div>
-            <div class="form-group mr-4 ml-0 frmSearch">
-                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
                 <datalist id="data-list-material"></datalist>
+                <button type="submit" class="btn btn-info mr-3">Find</button>
+                @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
             </div>
-            <button type="submit" class="btn btn-info mr-3">Find</button>
-            @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
         }
     </div>
 
@@ -107,7 +99,6 @@
                                     deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
                             }
-
                             @deliveryDate
                         </td>
                         <td>
@@ -135,22 +126,17 @@
                                     }
                                 }
                             }
-
                             @eTAConfirmation
                         </td>
                     </tr>
-                }
-            }
-        }
-
+                                        }
+                                    }
+                                }
     </table>
-
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Report",
     new { page, searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial, filterBy = ViewBag.CurrentSearchFilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
-
 </div>
-
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script type="text/javascript">
@@ -170,7 +156,7 @@
                     filterBy = "poNumber";
                     searchData = $("#searchPONumber");
                     list = "ponumber";
-                } else if ($(this).attr("name") == "searchVendorName"){
+                } else if ($(this).attr("name") == "searchVendorName") {
                     filterBy = "vendor";
                     searchData = $("#searchVendorName");
                     list = "vendorname";
@@ -193,7 +179,7 @@
                             var element = "";
                             //console.log(response.data);
                             for (var k in jsonObjSuggestion) {
-                                element += "<option value='" + jsonObjSuggestion[k]['Data']+"'></option>";
+                                element += "<option value='" + jsonObjSuggestion[k]['Data'] + "'></option>";
                             }
                             $("#data-list-" + list).html(element);
                             searchData.css("background", "");
