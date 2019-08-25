@@ -480,8 +480,8 @@ namespace POTrackingV2.Controllers
 
                 #region Local
                 //var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                var pOesLocal = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
-                                     .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
+                var pOesLocal = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
+                                     (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))) && (x.ReleaseDate != null))
                                      .AsQueryable();
 
                 if (role == LoginConstants.RoleProcurement.ToLower())
@@ -490,8 +490,7 @@ namespace POTrackingV2.Controllers
                     myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                    var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
-                                            .Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+                    var noShowPOes = pOesLocal;
 
                     if (myUserNRPs.Count > 0)
                     {
