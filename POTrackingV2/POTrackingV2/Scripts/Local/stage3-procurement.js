@@ -295,34 +295,39 @@ $(".st3-skip-all-comfirm-payment").on("click", function (obj) {
         }
     });
 
-    $.ajax({
-        type: "POST",
-        url: stage3ProcurementSkipConfirmPayment,
-        data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            alert(response.responseText);
+    if (inputPurchasingDocumentItemIDs.length > 0) {
+        $.ajax({
+            type: "POST",
+            url: stage3ProcurementSkipConfirmPayment,
+            data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert(response.responseText);
 
-            $(".row-updated").attr("disabled", "disabled");
-            $(".row-updated").removeClass("row-updated");
-            $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
-            $(".row-updated-button").removeClass("row-updated-button");
-            $(".row-updated-link").attr("style", "visibility:display");
-            $(".row-updated-link").removeClass("row-updated-link");
+                $(".row-updated").attr("disabled", "disabled");
+                $(".row-updated").removeClass("row-updated");
+                $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
+                $(".row-updated-button").removeClass("row-updated-button");
+                $(".row-updated-link").attr("style", "visibility:display");
+                $(".row-updated-link").removeClass("row-updated-link");
 
-            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-            $(".row-updated-donut-text").text("4");
-            $(".row-updated-donut").removeClass("row-updated-donut");
-            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                $(".row-updated-donut-text").text("4");
+                $(".row-updated-donut").removeClass("row-updated-donut");
+                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
-            //$(".row-updated-next-content").removeClass("row-updated-next-content");
-        }
-    });
+                //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+                //$(".row-updated-next-content").removeClass("row-updated-next-content");
+            }
+        });
+    }
+    else {
+        alert("0 Data affected");
+    }
 });
 
 //edit item Click - PROCUREMENT
