@@ -1183,7 +1183,7 @@ namespace POTrackingV2.Models
                     count++;
                 }
 
-                netPriceDecimal = netPriceDecimal.Substring(0,2);
+                  netPriceDecimal = netPriceDecimal.Substring(0,2);
 
                 return netPricePrimary + "," + netPriceDecimal;
             }

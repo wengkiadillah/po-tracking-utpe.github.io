@@ -758,6 +758,9 @@ namespace POTrackingV2.Controllers
                             inputPurchasingDocumentItem.NetValue = databasePurchasingDocumentItem.NetValue;
                             inputPurchasingDocumentItem.WorkTime = databasePurchasingDocumentItem.WorkTime;
                             inputPurchasingDocumentItem.LeadTimeItem = databasePurchasingDocumentItem.LeadTimeItem;
+                            inputPurchasingDocumentItem.PRNumber = databasePurchasingDocumentItem.PRNumber;
+                            inputPurchasingDocumentItem.PRCreateDate = databasePurchasingDocumentItem.PRCreateDate;
+                            inputPurchasingDocumentItem.PRReleaseDate = databasePurchasingDocumentItem.PRReleaseDate;
                             //inputPurchasingDocumentItem.DeliveryDate = databasePurchasingDocumentItem.DeliveryDate;
 
                             inputPurchasingDocumentItem.ActiveStage = "1";
@@ -1875,54 +1878,58 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult ProcurementSkipConfirmPayment(int inputPurchasingDocumentItemID)
+        public ActionResult ProcurementSkipConfirmPayment(List<int> inputPurchasingDocumentItemIDs)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (!(myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower()))
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
-
-            PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
-
+            
             try
             {
-                if (databasePurchasingDocumentItem.ActiveStage == "3" || databasePurchasingDocumentItem.ActiveStage == "4")
+                int counter = 0;
+
+                foreach (var inputPurchasingDocumentItemID in inputPurchasingDocumentItemIDs)
                 {
-                    string user = User.Identity.Name;
+                    PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItemID);
 
-                    databasePurchasingDocumentItem.ConfirmReceivedPaymentDate = null;
-                    databasePurchasingDocumentItem.ActiveStage = "4";
-                    databasePurchasingDocumentItem.LastModified = now;
-                    databasePurchasingDocumentItem.LastModifiedBy = user;
-
-                    List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
-                    foreach (var previousNotification in previousNotifications)
+                    if (databasePurchasingDocumentItem.ActiveStage == "3" || databasePurchasingDocumentItem.ActiveStage == "4")
                     {
-                        previousNotification.isActive = false;
+                        string user = User.Identity.Name;
+
+                        databasePurchasingDocumentItem.ConfirmReceivedPaymentDate = null;
+                        databasePurchasingDocumentItem.ActiveStage = "4";
+                        databasePurchasingDocumentItem.LastModified = now;
+                        databasePurchasingDocumentItem.LastModifiedBy = user;
+
+                        List<Notification> previousNotifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == databasePurchasingDocumentItem.ID).ToList();
+                        foreach (var previousNotification in previousNotifications)
+                        {
+                            previousNotification.isActive = false;
+                        }
+
+                        Notification notification = new Notification();
+                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notification.StatusID = 3;
+                        notification.Stage = "3";
+                        notification.Role = "vendor";
+                        notification.isActive = true;
+                        notification.Created = now;
+                        notification.CreatedBy = User.Identity.Name;
+                        notification.Modified = now;
+                        notification.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notification);
+
+                        counter++;                        
                     }
-
-                    Notification notification = new Notification();
-                    notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                    notification.StatusID = 3;
-                    notification.Stage = "3";
-                    notification.Role = "vendor";
-                    notification.isActive = true;
-                    notification.Created = now;
-                    notification.CreatedBy = User.Identity.Name;
-                    notification.Modified = now;
-                    notification.ModifiedBy = User.Identity.Name;
-
-                    db.Notifications.Add(notification);
-
-                    db.SaveChanges();
-
-                    return Json(new { responseText = $"Stage successfully Skipped" }, JsonRequestBehavior.AllowGet);
                 }
-                else
-                {
-                    return Json(new { responseText = $"Stage failed to skip" }, JsonRequestBehavior.AllowGet);
-                }
+
+                db.SaveChanges();
+
+                return Json(new { responseText = $"{counter} data successfully Skipped" }, JsonRequestBehavior.AllowGet);
+
             }
             catch (Exception ex)
             {
