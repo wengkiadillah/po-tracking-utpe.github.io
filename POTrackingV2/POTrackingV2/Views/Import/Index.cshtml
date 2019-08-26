@@ -26,14 +26,14 @@
             <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
             <datalist id="data-list-ponumber"></datalist>
             @if (roleID == "procurement" || roleID == "administrator")
-                {
+            {
                 <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
                 <datalist id="data-list-vendorname"></datalist>
             }
             <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
             <datalist id="data-list-material"></datalist>
             @if (ViewBag.IsHeadProcurement)
-                {
+            {
                 <input id="searchUserProcurement" name="searchUserProcurement" list="data-list-userprocurement" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Procurement" autocomplete="off" value="@ViewBag.CurrentSearchUserProcurement" />
                 <datalist id="data-list-userprocurement"></datalist>
             }
@@ -1403,13 +1403,21 @@
                     @{
                         var st3CheckboxAll = "st3-checkbox-all";
                         var st3ConfirmPaymentAll = "st3-confirm-payment-all";
+                        var st3SkipAll = "st3-skip-payment-all";
                         var disabledst3ConfirmPaymentAll = "";
+                        var disabledst3SkipAll = "";
+                        var hiddenst3ConfirmAll = "";
+                        var hiddenst3SkipAll = "";
 
                         if (roleID == "vendor")
                         {
                             st3CheckboxAll = "";
                             st3ConfirmPaymentAll = "";
+                            st3SkipAll = "";
                             disabledst3ConfirmPaymentAll = "disabled";
+                            disabledst3SkipAll = "disabled";
+                            hiddenst3ConfirmAll = "hidden";
+                            hiddenst3SkipAll = "hidden";
                         }
                     }
 
@@ -1422,7 +1430,8 @@
                         </div>
                         <div><p class="mb-0">Stage 3</p></div>
                         <div>
-                            <input class="btn btn-positive @st3ConfirmPaymentAll" type="submit" value="Save All" @disabledst3ConfirmPaymentAll />
+                            <input class="btn btn-positive @st3ConfirmPaymentAll" type="submit" value="Save All" @disabledst3ConfirmPaymentAll @hiddenst3ConfirmAll />
+                            <input class="btn btn-negative @st3SkipAll" type="submit" value="Skip All" @disabledst3SkipAll @hiddenst3SkipAll />
                         </div>
                     </div>
                     <div class="po-item-section-body">
@@ -2769,8 +2778,8 @@
                                     }
                                 </div>
                             </div>
-                                            row++;
-                                        }
+                            row++;
+                        }
                     </div>
                 </div>
                 @*<div class="po-item-section stage-10">
@@ -2964,8 +2973,8 @@
             </div>
         </li>
     </ul>
-                                poSignRow++;
-                            }
+    poSignRow++;
+}
 
 <div class="modal fade st6-modal" id="fillForm" tabindex="-1" role="dialog" aria-labelledby="fillFormModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">

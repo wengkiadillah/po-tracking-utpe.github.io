@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using POTrackingV2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace SyncDataPOTracking
 
                 #region initiate dictionary and field
                 int row = 6;
+                int index = 0;
 
                 Dictionary<string, POTemp> listPO = new Dictionary<string, POTemp>();
                 List<POItemTemp> listPOItem = new List<POItemTemp>();
@@ -48,7 +50,17 @@ namespace SyncDataPOTracking
                 //// Download the Web resource and save it into the current filesystem folder.
                 //request.DownloadFile(url, fileName);
 
-                List<CSVModel> dataFromCSV = File.ReadAllLines("Data\\test.csv").Select(x => CSVModel.FromCSV(x)).ToList();
+                List<CSVModel> dataFromCSV = new List<CSVModel>();
+                bool skipHeader = Convert.ToBoolean(ConfigurationManager.AppSettings["skipHeader"]);
+                if (skipHeader)
+                {
+                    dataFromCSV = File.ReadAllLines("Data\\test.csv").Skip(1).Select(x => CSVModel.FromCSV(x)).ToList();
+                }
+                else
+                {
+                    dataFromCSV = File.ReadAllLines("Data\\test.csv").Select(x => CSVModel.FromCSV(x)).ToList();
+                }
+                
                 foreach (var dataItem in dataFromCSV)
                 {
                     //Console.WriteLine("PONumber : " + dataItem.Number);
@@ -144,10 +156,10 @@ namespace SyncDataPOTracking
                     }
 
                     //}
-
                     row++;
                 }
 
+                index = 0;
                 foreach (var po in listPO)
                 {
                     PO poValue = new PO();
@@ -554,10 +566,9 @@ namespace SyncDataPOTracking
                     //        itemPOHistoryFlag++;
                     //    }
                     //}
+                    #endregion
                 }
-
-                #endregion
-
+                
                 #region data excel
                 //FileInfo fileInfo = new FileInfo("Olahan utk PO Tracking 10052019.xlsx");
 

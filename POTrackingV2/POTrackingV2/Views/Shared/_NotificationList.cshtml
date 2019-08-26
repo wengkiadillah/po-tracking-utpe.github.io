@@ -161,6 +161,7 @@
                             var shipmentATA = jsonObj[k]['ShipmentATA'];
                             var invoiceDocument = jsonObj[k]['InvoiceDocument'];
                             var isHead = jsonObj[k]['IsHead'];
+                            var isHeadSubcont = jsonObj[k]['IsHeadSubcont'];
                             var poCreatedBy = jsonObj[k]['POCreatedBy'];
                             var confirmedDate = jsonObj[k]['ConfirmedDate'];
                             var releaseDate = jsonObj[k]['ReleaseDate'];
@@ -479,6 +480,10 @@
                                     } else {
                                         message += " has uploaded invoice for item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > at stage " + stage;
                                     }
+                                }
+
+                                if (isHeadSubcont == true) {
+                                    message += " PO Created by " + poCreatedBy
                                 }
 
                                 /*--------------------------------------------------------------END SUBCONT-----------------------------------------------------------*/

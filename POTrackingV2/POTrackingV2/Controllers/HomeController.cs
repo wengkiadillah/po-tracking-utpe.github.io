@@ -168,6 +168,7 @@ namespace POTrackingV2.Controllers
                 List<string> myUserNRPs = new List<string>();
                 List<string> userInternalList = DBUser.Users.Select(x => x.Username).ToList();
                 bool isHeadProcurement = false;
+                bool isHeadSubcont = false;
 
                 if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
@@ -202,6 +203,10 @@ namespace POTrackingV2.Controllers
                             {
                                 vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
                                 notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
+                            }
+                            else
+                            {
+                                isHeadSubcont = true;
                             }
 
                             if (subcontDevUserRole.RoleName.ToLower() == "subcont management")
@@ -293,6 +298,7 @@ namespace POTrackingV2.Controllers
                       ShipmentATA = x.PurchasingDocumentItem.Shipments.OrderBy(y => y.Created).FirstOrDefault().ATADate,
                       InvoiceDocument = x.PurchasingDocumentItem.InvoiceDocument,
                       IsHead = isHeadProcurement,
+                      IsHeadSubcont = isHeadSubcont,
                       ConfirmedDate = x.PurchasingDocumentItem.ConfirmedDate,
                       ReleaseDate = x.PurchasingDocumentItem.PO.ReleaseDate,
                       POCreatedBy = x.PurchasingDocumentItem.PO.PurchaseOrderCreator
