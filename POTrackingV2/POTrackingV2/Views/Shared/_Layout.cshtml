@@ -166,15 +166,15 @@
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
                             <li class="main-menu-submenu-item">
-                                @if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
-                                {
+                                @*@if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
+                                {*@
                                     <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
                                         <span>On Going</span>
                                         <span class="pull-right-container">
                                             <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
                                         </span>
                                     </a>
-                                }
+                                @*}
                                 else
                                 {
                                     <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
@@ -183,7 +183,7 @@
                                             <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
                                         </span>
                                     </a>
-                                }
+                                }*@
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
