@@ -192,6 +192,7 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
 $(".st3-confirm-payment-skip").on("click", function (obj) {
     var stage3ProcurementSkipConfirmPayment = $("#stage3ProcurementSkipConfirmPayment").val();
     obj.preventDefault();
+    var inputPurchasingDocumentItemIDs = [];
 
     var buttonConfirmPaymentSkip = $(this);
     var buttonConfirmPayment = $(this).closest(".form-inline").find(".st3-confirm-payment-submit");
@@ -200,6 +201,8 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
     var editRow = $(this).closest(".form-inline").find(".edit-row-st3");
 
     var inputPurchasingDocumentItemID = $(this).closest(".form-inline").find("input.st3-item-id").val();
+
+    inputPurchasingDocumentItemIDs.push(inputPurchasingDocumentItemID);
 
     // Donut Progress
     var donutProgressUnit = 75.39822368615503 / 13;
@@ -219,7 +222,7 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
         $.ajax({
             type: "POST",
             url: stage3ProcurementSkipConfirmPayment,
-            data: JSON.stringify({ 'inputPurchasingDocumentItemID': inputPurchasingDocumentItemID }),
+            data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
             contentType: "application/json; charset=utf-8",
             success: function (response) {
                 alert(response.responseText);
@@ -244,6 +247,83 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
             }
         });
     }
+});
+
+//Vendor Skip All PO
+$(".st3-skip-payment-all").on("click", function (obj) {
+
+    var stage3ProcurementSkipConfirmPayment = $("#stage3ProcurementSkipConfirmPayment").val();
+    var inputPurchasingDocumentItemIDs = [];
+    var donutProgress;
+
+    $(this).closest(".po-item-section.stage-4").find(".po-form-item-st3").each(function (index) {
+
+        var buttonConfirmPayment = $(this).find(".st3-confirm-payment-submit");
+        var buttonConfirmPaymentSkip = $(this).find(".st3-confirm-payment-skip");
+        var inputCheckboxItem = $(this).find(".st3-checkbox-item");
+        var inputConfirmReceivedPaymentDate = $(this).find(".st3-item-confirm-payment-date");
+        var editRow = $(this).find(".edit-row-st3");
+
+        var itemID = $(this).find(".st3-item-id").val();
+
+        // Donut Progress
+        var donutProgressUnit = 75.39822368615503 / 13;
+        donutProgress = 75.39822368615503 - 5 * donutProgressUnit;
+        var cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var donutRow = $(this).closest(".custom-scrollbar").prev().find(cssRow);
+
+        // Next stage Controller
+        cssRow = $(this).closest(".po-item-data-content").prop("class");
+        cssRow = cssRow.replace(" ", ".");
+        cssRow = "." + cssRow;
+        var nextDataContent = $(this).closest(".po-item-section").next().find(cssRow);
+
+        if (inputConfirmReceivedPaymentDate.attr("disabled") !== "disabled" && inputCheckboxItem.prop("checked") === true && inputCheckboxItem.attr("disabled") !== "disabled") {
+            inputPurchasingDocumentItemIDs.push(itemID);
+
+            inputConfirmReceivedPaymentDate.addClass("row-updated");
+            inputCheckboxItem.addClass("row-updated");
+            buttonConfirmPaymentSkip.addClass("row-updated-button");
+            buttonConfirmPayment.addClass("row-updated");
+            editRow.addClass("row-updated-link");
+
+            donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+            donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+
+            //nextDataContent.first().addClass("row-updated-next-content");
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: stage3ProcurementSkipConfirmPayment,
+        data: JSON.stringify({ 'inputPurchasingDocumentItemIDs': inputPurchasingDocumentItemIDs }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            alert(response.responseText);
+
+            $(".row-updated").attr("disabled", "disabled");
+            $(".row-updated").removeClass("row-updated");
+            $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
+            $(".row-updated-button").removeClass("row-updated-button");
+            $(".row-updated-link").attr("style", "visibility:display");
+            $(".row-updated-link").removeClass("row-updated-link");
+
+            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+            $(".row-updated-donut-text").text("4");
+            $(".row-updated-donut").removeClass("row-updated-donut");
+            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+
+            //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+            //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+            //$(".row-updated-next-content").removeClass("row-updated-next-content");
+        }
+    });
 });
 
 //edit item Click - PROCUREMENT
