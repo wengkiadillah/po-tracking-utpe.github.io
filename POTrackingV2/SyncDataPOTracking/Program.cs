@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using POTrackingV2.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace SyncDataPOTracking
 
                 #region initiate dictionary and field
                 int row = 6;
+                int index = 0;
 
                 Dictionary<string, POTemp> listPO = new Dictionary<string, POTemp>();
                 List<POItemTemp> listPOItem = new List<POItemTemp>();
@@ -49,514 +51,525 @@ namespace SyncDataPOTracking
                 //request.DownloadFile(url, fileName);
 
                 List<CSVModel> dataFromCSV = File.ReadAllLines("Data\\test.csv").Select(x => CSVModel.FromCSV(x)).ToList();
+                int indexStart = Convert.ToInt32(ConfigurationManager.AppSettings["indexStart"]);
+                
                 foreach (var dataItem in dataFromCSV)
                 {
-                    //Console.WriteLine("PONumber : " + dataItem.Number);
-                    //Console.WriteLine("Type : " + dataItem.Type);
-                    //Console.WriteLine("POReleaseDate : " + dataItem.POReleaseDate);
-                    //Console.WriteLine("PODate : " + dataItem.PODate);
-                    //Console.WriteLine("VendorCode : " + dataItem.VendorCode);
-                    //Console.WriteLine("PurchaseOrderCreator : " + dataItem.PurchaseOrderCreator);
-                    //Console.WriteLine("ItemNumber : " + dataItem.ItemNumber);
-                    //Console.WriteLine("Material : " + dataItem.Material);
-                    //Console.WriteLine("Description : " + dataItem.Description);
-                    //Console.WriteLine("NetPrice : " + dataItem.NetPrice);
-                    //Console.WriteLine("Currency : " + dataItem.Currency);
-                    //Console.WriteLine("Quantity : " + dataItem.Quantity);
-                    //Console.WriteLine("MovementType : " + dataItem.MovementType);
-                    //Console.WriteLine("IsDelete : " + dataItem.IsDelete);
-                    //Console.WriteLine("IsClose : " + dataItem.IsClose);
-                    //Console.WriteLine("DeliveryDate : " + dataItem.DeliveryDate);
-                    //Console.WriteLine("GRDate : " + dataItem.GRDate);
-                    //Console.WriteLine("GRQuantity : " + dataItem.GRQuantity);
-                    //Console.WriteLine("POHistoryCategory : " + dataItem.POHistoryCategory);
-                    //Console.WriteLine("DocumentNumber : " + dataItem.DocumentNumber);
-                    //Console.WriteLine("HasInbound : " + dataItem.HasInbound);
-
-                    //if (POHistoryAccept.Contains(dataItem.POHistoryCategory))
-                    //{
-                    var poItemTempKey = dataItem.Number + "-" + dataItem.ItemNumber;
-                    POTemp poTemp = new POTemp();
-                    poTemp.Number = dataItem.Number;
-                    poTemp.Type = dataItem.Type;
-                    poTemp.PurchaseOrderCreator = dataItem.PurchaseOrderCreator;
-                    poTemp.POCreator = dataItem.POCreator;
-                    poTemp.PODate = dataItem.PODate;
-                    poTemp.POReleaseDate = dataItem.POReleaseDate;
-                    poTemp.VendorCode = dataItem.VendorCode;
-
-                    if (!listPO.ContainsKey(poItemTempKey))
+                    if(indexStart <= index)
                     {
-                        listPO.Add(poItemTempKey, poTemp);
-                    }
+                        //Console.WriteLine("PONumber : " + dataItem.Number);
+                        //Console.WriteLine("Type : " + dataItem.Type);
+                        //Console.WriteLine("POReleaseDate : " + dataItem.POReleaseDate);
+                        //Console.WriteLine("PODate : " + dataItem.PODate);
+                        //Console.WriteLine("VendorCode : " + dataItem.VendorCode);
+                        //Console.WriteLine("PurchaseOrderCreator : " + dataItem.PurchaseOrderCreator);
+                        //Console.WriteLine("ItemNumber : " + dataItem.ItemNumber);
+                        //Console.WriteLine("Material : " + dataItem.Material);
+                        //Console.WriteLine("Description : " + dataItem.Description);
+                        //Console.WriteLine("NetPrice : " + dataItem.NetPrice);
+                        //Console.WriteLine("Currency : " + dataItem.Currency);
+                        //Console.WriteLine("Quantity : " + dataItem.Quantity);
+                        //Console.WriteLine("MovementType : " + dataItem.MovementType);
+                        //Console.WriteLine("IsDelete : " + dataItem.IsDelete);
+                        //Console.WriteLine("IsClose : " + dataItem.IsClose);
+                        //Console.WriteLine("DeliveryDate : " + dataItem.DeliveryDate);
+                        //Console.WriteLine("GRDate : " + dataItem.GRDate);
+                        //Console.WriteLine("GRQuantity : " + dataItem.GRQuantity);
+                        //Console.WriteLine("POHistoryCategory : " + dataItem.POHistoryCategory);
+                        //Console.WriteLine("DocumentNumber : " + dataItem.DocumentNumber);
+                        //Console.WriteLine("HasInbound : " + dataItem.HasInbound);
 
-                    POItemTemp poItemTemp = new POItemTemp();
-                    poItemTemp.PONumber = dataItem.Number;
-                    poItemTemp.ItemNumber = dataItem.ItemNumber;
-                    poItemTemp.Material = dataItem.Material;
-                    poItemTemp.MaterialVendor = dataItem.MaterialVendor;
-                    poItemTemp.Description = dataItem.Description;
-                    poItemTemp.NetPrice = dataItem.NetPrice;
-                    poItemTemp.Currency = dataItem.Currency;
-                    poItemTemp.Quantity = dataItem.Quantity;
-                    poItemTemp.MovementType = dataItem.MovementType;
-                    poItemTemp.IsClose = dataItem.IsClose;
-                    poItemTemp.IsDelete = dataItem.IsDelete;
-                    poItemTemp.DeliveryDate = dataItem.DeliveryDate;
-                    poItemTemp.GRQuantity = dataItem.GRQuantity;
-                    poItemTemp.GRDate = dataItem.GRDate;
-                    poItemTemp.POHistoryCategory = dataItem.POHistoryCategory;
-                    poItemTemp.DocumentNumber = dataItem.DocumentNumber;
-                    poItemTemp.InboundNumber = dataItem.InboundNumber;
-                    poItemTemp.PayTerm = dataItem.PayTerm;
-                    poItemTemp.PRNumber = dataItem.PRNumber;
-                    poItemTemp.PRCreateDate = dataItem.PRCreateDate;
-                    poItemTemp.PRReleaseDate = dataItem.PRReleaseDate;
-                    poItemTemp.ProgressDay = dataItem.ProgressDay;
+                        //if (POHistoryAccept.Contains(dataItem.POHistoryCategory))
+                        //{
+                        var poItemTempKey = dataItem.Number + "-" + dataItem.ItemNumber;
+                        POTemp poTemp = new POTemp();
+                        poTemp.Number = dataItem.Number;
+                        poTemp.Type = dataItem.Type;
+                        poTemp.PurchaseOrderCreator = dataItem.PurchaseOrderCreator;
+                        poTemp.POCreator = dataItem.POCreator;
+                        poTemp.PODate = dataItem.PODate;
+                        poTemp.POReleaseDate = dataItem.POReleaseDate;
+                        poTemp.VendorCode = dataItem.VendorCode;
 
-                    listPOItem.Add(poItemTemp);
-
-                    if (listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem == null)
-                    {
-
-                        listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem = new List<POItemTemp>();
-                    }
-
-
-                    listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem.Add(poItemTemp);
-
-                    if (poItemTemp.MovementType != null)
-                    {
-                        if (MovementTypeAlert.Contains((int)poItemTemp.MovementType))
+                        if (!listPO.ContainsKey(poItemTempKey))
                         {
-                            if (!listPOAlert.ContainsKey(poItemTempKey))
-                            {
-                                listPOAlert.Add(poItemTempKey, poTemp);
-                            }
-
-                            if (listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem == null)
-                            {
-                                listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem = new List<POItemTemp>();
-                            }
-
-                            listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem.Add(poItemTemp);
+                            listPO.Add(poItemTempKey, poTemp);
                         }
+
+                        POItemTemp poItemTemp = new POItemTemp();
+                        poItemTemp.PONumber = dataItem.Number;
+                        poItemTemp.ItemNumber = dataItem.ItemNumber;
+                        poItemTemp.Material = dataItem.Material;
+                        poItemTemp.MaterialVendor = dataItem.MaterialVendor;
+                        poItemTemp.Description = dataItem.Description;
+                        poItemTemp.NetPrice = dataItem.NetPrice;
+                        poItemTemp.Currency = dataItem.Currency;
+                        poItemTemp.Quantity = dataItem.Quantity;
+                        poItemTemp.MovementType = dataItem.MovementType;
+                        poItemTemp.IsClose = dataItem.IsClose;
+                        poItemTemp.IsDelete = dataItem.IsDelete;
+                        poItemTemp.DeliveryDate = dataItem.DeliveryDate;
+                        poItemTemp.GRQuantity = dataItem.GRQuantity;
+                        poItemTemp.GRDate = dataItem.GRDate;
+                        poItemTemp.POHistoryCategory = dataItem.POHistoryCategory;
+                        poItemTemp.DocumentNumber = dataItem.DocumentNumber;
+                        poItemTemp.InboundNumber = dataItem.InboundNumber;
+                        poItemTemp.PayTerm = dataItem.PayTerm;
+                        poItemTemp.PRNumber = dataItem.PRNumber;
+                        poItemTemp.PRCreateDate = dataItem.PRCreateDate;
+                        poItemTemp.PRReleaseDate = dataItem.PRReleaseDate;
+                        poItemTemp.ProgressDay = dataItem.ProgressDay;
+
+                        listPOItem.Add(poItemTemp);
+
+                        if (listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem == null)
+                        {
+
+                            listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem = new List<POItemTemp>();
+                        }
+
+
+                        listPO.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem.Add(poItemTemp);
+
+                        if (poItemTemp.MovementType != null)
+                        {
+                            if (MovementTypeAlert.Contains((int)poItemTemp.MovementType))
+                            {
+                                if (!listPOAlert.ContainsKey(poItemTempKey))
+                                {
+                                    listPOAlert.Add(poItemTempKey, poTemp);
+                                }
+
+                                if (listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem == null)
+                                {
+                                    listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem = new List<POItemTemp>();
+                                }
+
+                                listPOAlert.SingleOrDefault(x => x.Key == poItemTempKey).Value.listItem.Add(poItemTemp);
+                            }
+                        }
+
+                        //}
+
+                        row++;
                     }
-
-                    //}
-
-                    row++;
+                    index++;
                 }
 
+                index = 0;
                 foreach (var po in listPO)
                 {
-                    PO poValue = new PO();
-                    var poNumberKey = po.Key.Split('-')[0].ToString();
-                    var itemNumberKey = Convert.ToInt32(po.Key.Split('-')[1].ToString());
-
-                    var poExist = db.POes.Where(x => x.Number == poNumberKey).SingleOrDefault();
-                    var ID = 0;
-
-                    if (poExist == null)
+                    if(indexStart <= index)
                     {
-                        poValue.Number = po.Value.Number;
-                        poValue.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
-                        poValue.Date = po.Value.PODate;
-                        poValue.ReleaseDate = po.Value.POReleaseDate;
-                        poValue.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
-                        poValue.Information = string.Empty;
-                        poValue.ProductGroup = string.Empty;
-                        poValue.NumberPostedInvoice = string.Empty;
-                        poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
-                        poValue.Status = string.Empty;
-                        poValue.Reference = string.Empty;
-                        //poValue.Created = DateTime.Now.Date;
-                        poValue.Created = DateTime.Now;
-                        poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
-                        //poValue.LastModified = DateTime.Now.Date;
-                        poValue.LastModified = DateTime.Now;
-                        poValue.LastModifiedBy = "SyncDataSAP";
-                        db.POes.Add(poValue);
-                        db.SaveChanges();
-                        ID = poValue.ID;
-                        Console.WriteLine("PO with ID : " + ID + " is added");
-                    }
-                    else
-                    {
-                        poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
-                        poExist.Date = po.Value.PODate;
-                        poExist.ReleaseDate = po.Value.POReleaseDate;
-                        poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
-                        poExist.Information = string.Empty;
-                        poExist.ProductGroup = string.Empty;
-                        poExist.NumberPostedInvoice = string.Empty;
-                        poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
-                        poExist.Status = string.Empty;
-                        poExist.Reference = string.Empty;
-                        poExist.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
-                        //poExist.LastModified = DateTime.Now.Date;
-                        poExist.LastModified = DateTime.Now;
-                        poExist.LastModifiedBy = "SyncDataSAP";
-                        db.SaveChanges();
+                        PO poValue = new PO();
+                        var poNumberKey = po.Key.Split('-')[0].ToString();
+                        var itemNumberKey = Convert.ToInt32(po.Key.Split('-')[1].ToString());
 
-                        ID = poExist.ID;
-                        Console.WriteLine("PO with ID " + ID + " is updated");
+                        var poExist = db.POes.Where(x => x.Number == poNumberKey).SingleOrDefault();
+                        var ID = 0;
 
-                    }
-
-                    var itemExist = db.PurchasingDocumentItems.Where(x => x.POID == ID && x.ItemNumber == itemNumberKey).ToList();
-                    var itemExistCount = itemExist.Count();
-                    //int? itemExistParentID = itemExistCount > 0 ? itemExist.SingleOrDefault(x => x.ParentID == null && (string.IsNullOrEmpty(x.IsClosed) ? true : (x.IsClosed.Contains(costIsDelete) ? false : true))).ID : (int?)null;
-                    int? itemExistParentID = itemExistCount > 0 ? itemExist.SingleOrDefault(x => x.ParentID == null).ID : (int?)null;
-                    var isExistItemPOHistory = new List<PurchasingDocumentItemHistory>();
-
-                    if (itemExistParentID != null)
-                    {
-                        isExistItemPOHistory = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == itemExistParentID).ToList();
-                    }
-
-                    var itemClose = po.Value.listItem.Any(x => x.IsClose.Contains(costIsClose));
-
-                    var flagItem = 0;
-                    int? idItem = null;
-
-                    foreach (var itemPO in po.Value.listItem.OrderBy(x => x.GRDate))
-                    {
-                        PurchasingDocumentItem poItem = new PurchasingDocumentItem();
-                        PurchasingDocumentItemHistory poHistoryAdd = new PurchasingDocumentItemHistory();
-
-                        if (itemExistCount > 0)
+                        if (poExist == null)
                         {
-                            var flagItemExist = 0;
-                            foreach (var itemExistVar in itemExist)
-                            {
-                                int itemQuantityTemp = itemExist[flagItemExist].Quantity;
-
-                                itemExist[flagItemExist].ItemNumber = itemPO.ItemNumber;
-                                itemExist[flagItemExist].Material = itemPO.Material;
-                                //itemExist[flagItemExist].ProgressDay = itemPO.ProgressDay;
-                                itemExist[flagItemExist].MaterialVendor = itemPO.MaterialVendor;
-                                itemExist[flagItemExist].Description = itemPO.Description;
-                                itemExist[flagItemExist].NetPrice = itemPO.NetPrice;
-                                itemExist[flagItemExist].Currency = itemPO.Currency;
-                                itemExist[flagItemExist].Quantity = itemPO.Quantity;
-                                //itemExist[flagItem].NetValue = 0;
-                                //itemExist[flagItem].WorkTime = 0;
-                                //itemExist[flagItemExist].ConfirmedQuantity = null;
-                                //itemExist[flagItemExist].ConfirmedDate = null;
-                                //itemExist[flagItemExist].ConfirmedItem = null;
-                                itemExist[flagItemExist].IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
-                                itemExist[flagItemExist].DeliveryDate = itemPO.DeliveryDate;
-                                //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
-                                //itemExist[flagItem].ActiveStage = "2";
-                                //itemExist[flagItemExist].LastModified = DateTime.Now.Date;
-                                itemExist[flagItemExist].PRNumber = itemPO.PRNumber;
-                                itemExist[flagItemExist].PRCreateDate = itemPO.PRCreateDate;
-                                itemExist[flagItemExist].PRReleaseDate = itemPO.PRReleaseDate;
-                                itemExist[flagItemExist].LastModified = DateTime.Now;
-                                itemExist[flagItemExist].LastModifiedBy = "SyncDataSAP";
-
-                                int itemID = itemExist[flagItemExist].ID > 0 ? itemExist[flagItemExist].ID : 0;
-                                List<int> notificationIDs = db.PurchasingDocumentItems.Where(x => x.ParentID == itemID || x.ID == itemID).Select(x => x.ID).ToList();
-
-                                #region deactivate Canceled or Closed Notification 
-                                if (itemExist[flagItemExist].IsClosed != null && itemExist[flagItemExist].IsClosed != "")
-                                {
-                                    if (notificationIDs.Count > 0)
-                                    {
-                                        List<Notification> notificationsCloseds = db.Notifications.Where(x => notificationIDs.Contains(x.PurchasingDocumentItemID) && x.NotificationStatu.ID == 2).ToList();
-                                        foreach (Notification notificationsClosed in notificationsCloseds)
-                                        {
-                                            notificationsClosed.isActive = false;
-                                            notificationsClosed.Modified = DateTime.Now;
-                                            notificationsClosed.ModifiedBy = "SyncSAP";
-                                            Console.WriteLine("Notification with ID : " + itemID + "is updated");
-                                        }
-                                    }
-                                }
-                                #endregion
-
-                                #region Deactivate Notification IsNeededUpdateFromSAP
-                                if (itemQuantityTemp != itemPO.Quantity && itemExist[flagItemExist].Quantity == itemExist[flagItemExist].ConfirmedQuantity)
-                                {
-                                    if (notificationIDs.Count > 0)
-                                    {
-                                        List<Notification> notificationsIsNeededUpdateSAPs = db.Notifications.Where(x => notificationIDs.Contains(x.PurchasingDocumentItemID) && x.NotificationStatu.ID == 4).ToList();
-                                        foreach (Notification notificationsIsNeededUpdateSAP in notificationsIsNeededUpdateSAPs)
-                                        {
-                                            notificationsIsNeededUpdateSAP.isActive = false;
-                                            notificationsIsNeededUpdateSAP.Modified = DateTime.Now;
-                                            notificationsIsNeededUpdateSAP.ModifiedBy = "SyncSAP";
-                                            Console.WriteLine("Notification with ID : " + itemID + " (change quantity) is updated from SAP");
-                                        }
-                                    }
-                                }
-                                #endregion
-
-                                db.SaveChanges();
-                                idItem = itemExist[flagItemExist].ID;
-
-                                Console.WriteLine("POItem with ID : " + itemExist[flagItemExist].ID + "is updated");
-
-                                flagItemExist++;
-                            }
+                            poValue.Number = po.Value.Number;
+                            poValue.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
+                            poValue.Date = po.Value.PODate;
+                            poValue.ReleaseDate = po.Value.POReleaseDate;
+                            poValue.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? null : po.Value.VendorCode;
+                            poValue.Information = string.Empty;
+                            poValue.ProductGroup = string.Empty;
+                            poValue.NumberPostedInvoice = string.Empty;
+                            poValue.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
+                            poValue.Status = string.Empty;
+                            poValue.Reference = string.Empty;
+                            //poValue.Created = DateTime.Now.Date;
+                            poValue.Created = DateTime.Now;
+                            poValue.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
+                            //poValue.LastModified = DateTime.Now.Date;
+                            poValue.LastModified = DateTime.Now;
+                            poValue.LastModifiedBy = "SyncDataSAP";
+                            db.POes.Add(poValue);
+                            db.SaveChanges();
+                            ID = poValue.ID;
+                            Console.WriteLine("PO with ID : " + ID + " is added");
                         }
                         else
                         {
-                            if (flagItem == 0)
-                            {
-                                poItem.POID = ID;
-                                poItem.ItemNumber = itemPO.ItemNumber;
-                                poItem.Material = itemPO.Material;
-                                poItem.MaterialVendor = itemPO.MaterialVendor;
-                                //poItem.ProgressDay = itemPO.ProgressDay;
-                                poItem.Description = itemPO.Description;
-                                poItem.NetPrice = itemPO.NetPrice;
-                                poItem.Currency = itemPO.Currency;
-                                poItem.Quantity = itemPO.Quantity;
-                                poItem.NetValue = 0;
-                                poItem.WorkTime = 0;
-                                poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
-                                poItem.LeadTimeItem = Convert.ToDecimal("0.00");
-                                //poItem.ConfirmedDate = null;
-                                //poItem.ConfirmedItem = null;
-                                //poItem.ConfirmedQuantity = null;
-                                poItem.ActiveStage = "0";
-                                poItem.DeliveryDate = itemPO.DeliveryDate;
-                                //poItem.Created = DateTime.Now.Date;
-                                poItem.PRNumber = itemPO.PRNumber;
-                                poItem.PRCreateDate = itemPO.PRCreateDate;
-                                poItem.PRReleaseDate = itemPO.PRReleaseDate;
-                                poItem.Created = DateTime.Now;
-                                poItem.CreatedBy = "SyncDataSAP";
-                                //poItem.LastModified = DateTime.Now.Date;
-                                poItem.LastModified = DateTime.Now;
-                                poItem.LastModifiedBy = "SyncDataSAP";
-                                db.PurchasingDocumentItems.Add(poItem);
-                                db.SaveChanges();
-                                idItem = poItem.ID;
-                                itemExistParentID = idItem;
-                                Console.WriteLine("POItem with ID : " + idItem + "is added");
-                            }
+                            poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
+                            poExist.Date = po.Value.PODate;
+                            poExist.ReleaseDate = po.Value.POReleaseDate;
+                            poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
+                            poExist.Information = string.Empty;
+                            poExist.ProductGroup = string.Empty;
+                            poExist.NumberPostedInvoice = string.Empty;
+                            poExist.PurchaseOrderCreator = string.IsNullOrWhiteSpace(po.Value.PurchaseOrderCreator) ? "" : po.Value.PurchaseOrderCreator;
+                            poExist.Status = string.Empty;
+                            poExist.Reference = string.Empty;
+                            poExist.CreatedBy = string.IsNullOrWhiteSpace(po.Value.POCreator) ? null : po.Value.POCreator;
+                            //poExist.LastModified = DateTime.Now.Date;
+                            poExist.LastModified = DateTime.Now;
+                            poExist.LastModifiedBy = "SyncDataSAP";
+                            db.SaveChanges();
+
+                            ID = poExist.ID;
+                            Console.WriteLine("PO with ID " + ID + " is updated");
 
                         }
-                        #region ga dipake
-                        //if (itemExistCount > 0)
-                        //{
-                        //    if (itemExistCount > flagItem)
-                        //    {
-                        //        itemExist[flagItem].ItemNumber = itemPO.ItemNumber;
-                        //        itemExist[flagItem].Material = itemPO.Material;
-                        //        itemExist[flagItem].Description = "description";//itemPO.Description;
-                        //        itemExist[flagItem].NetPrice = itemPO.NetPrice;
-                        //        itemExist[flagItem].Currency = itemPO.Currency;
-                        //        itemExist[flagItem].Quantity = itemPO.Quantity;
-                        //        //itemExist[flagItem].NetValue = 0;
-                        //        //itemExist[flagItem].WorkTime = 0;
-                        //        itemExist[flagItem].ConfirmedQuantity = itemPO.GRQuantity;
-                        //        itemExist[flagItem].ConfirmedDate = itemPO.GRDate;
-                        //        itemExist[flagItem].IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
-                        //        //itemExist[flagItem].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                        //        itemExist[flagItem].DeliveryDate = itemPO.DeliveryDate;
-                        //        //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
-                        //        itemExist[flagItem].ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
-                        //        //itemExist[flagItem].ActiveStage = "2";
-                        //        itemExist[flagItem].LastModified = DateTime.Now.Date;
-                        //        itemExist[flagItem].LastModifiedBy = "SyncDataSAP";
-                        //        db.SaveChanges();
-                        //        idItem = itemExist[flagItem].ID;
 
-                        //        Console.WriteLine("POItem with ID : " + itemExist[flagItem].ID + "is updated");
+                        var itemExist = db.PurchasingDocumentItems.Where(x => x.POID == ID && x.ItemNumber == itemNumberKey).ToList();
+                        var itemExistCount = itemExist.Count();
+                        //int? itemExistParentID = itemExistCount > 0 ? itemExist.SingleOrDefault(x => x.ParentID == null && (string.IsNullOrEmpty(x.IsClosed) ? true : (x.IsClosed.Contains(costIsDelete) ? false : true))).ID : (int?)null;
+                        int? itemExistParentID = itemExistCount > 0 ? itemExist.SingleOrDefault(x => x.ParentID == null).ID : (int?)null;
+                        var isExistItemPOHistory = new List<PurchasingDocumentItemHistory>();
 
-                        //    }
-                        //    else
-                        //    {
-                        //        poItem.POID = (int)itemExistPOID;
-                        //        poItem.ParentID = itemExistParentID;
-                        //        poItem.ItemNumber = itemPO.ItemNumber;
-                        //        poItem.Material = itemPO.Material;
-                        //        poItem.Description = "description";//itemPO.Description;
-                        //        poItem.NetPrice = itemPO.NetPrice;
-                        //        poItem.Currency = itemPO.Currency;
-                        //        poItem.Quantity = itemPO.Quantity;
-                        //        poItem.NetValue = 0;
-                        //        poItem.WorkTime = 0;
-                        //        poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
-                        //        poItem.LeadTimeItem = Convert.ToDecimal("0.00");
-                        //        poItem.ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
-                        //        poItem.ConfirmedItem = null;
-                        //        poItem.ActiveStage = "0";
-                        //        poItem.DeliveryDate = itemPO.DeliveryDate;
-                        //        //poItem.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                        //        poItem.Created = DateTime.Now.Date;
-                        //        poItem.CreatedBy = "SyncDataSAP";
-                        //        poItem.LastModified = DateTime.Now.Date;
-                        //        poItem.LastModifiedBy = "SyncDataSAP";
-                        //        db.PurchasingDocumentItems.Add(poItem);
-                        //        db.SaveChanges();
-
-                        //        idItem = poItem.ID;
-                        //        Console.WriteLine("POItem with ID : " + idItem + "is added");
-
-                        //    }
-
-                        //    //if (!listPOItemHistory.ContainsKey((int)itemExistParentID))
-                        //    //{
-                        //    //    listPOItemHistory.Add((int)itemExistParentID, listPOItem.Where(x => x.PONumber == itemPO.PONumber && x.ItemNumber == itemPO.ItemNumber).ToList());
-                        //    //}
-                        //}
-                        //else
-                        //{
-                        //    poItem.POID = ID;
-                        //    if (flagItem > 0)
-                        //    {
-                        //        poItem.ParentID = itemExistParentID;
-                        //    }
-                        //    poItem.ItemNumber = itemPO.ItemNumber;
-                        //    poItem.Material = itemPO.Material;
-                        //    poItem.Description = "description";//itemPO.Description;
-                        //    poItem.NetPrice = itemPO.NetPrice;
-                        //    poItem.Currency = itemPO.Currency;
-                        //    poItem.Quantity = itemPO.Quantity;
-                        //    poItem.NetValue = 0;
-                        //    poItem.WorkTime = 0;
-                        //    poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
-                        //    poItem.LeadTimeItem = Convert.ToDecimal("0.00");
-                        //    poItem.ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
-                        //    poItem.ConfirmedItem = null;
-                        //    poItem.ActiveStage = "0";
-                        //    poItem.DeliveryDate = itemPO.DeliveryDate;
-                        //    //poItem.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                        //    poItem.Created = DateTime.Now.Date;
-                        //    poItem.CreatedBy = "SyncDataSAP";
-                        //    poItem.LastModified = DateTime.Now.Date;
-                        //    poItem.LastModifiedBy = "SyncDataSAP";
-                        //    db.PurchasingDocumentItems.Add(poItem);
-                        //    db.SaveChanges();
-                        //    idItem = poItem.ID;
-
-                        //    Console.WriteLine("POItem with ID : " + idItem + "is added");
-
-
-                        //}
-                        //if (flagItem == 0)
-                        //{
-                        //    if (!listPOItemHistory.ContainsKey((int)idItem))
-                        //    {
-                        //        itemExistParentID = idItem;
-                        //        listPOItemHistory.Add((int)idItem, listPOItem.Where(x => x.PONumber == itemPO.PONumber && x.ItemNumber == itemPO.ItemNumber).ToList());
-                        //    }
-                        //}
-                        #endregion
-
-                        if (flagItem == 0 && itemExistParentID == null)
+                        if (itemExistParentID != null)
                         {
-                            itemExistParentID = idItem;
+                            isExistItemPOHistory = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == itemExistParentID).ToList();
                         }
 
+                        var itemClose = po.Value.listItem.Any(x => x.IsClose.Contains(costIsClose));
 
-                        //if ((itemPO.MovementType != null && (POHistoryAccept.Contains(itemPO.POHistoryCategory))) || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "T")
-                        if ((itemPO.MovementType != null && itemPO.POHistoryCategory == "E") || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "Q")
+                        var flagItem = 0;
+                        int? idItem = null;
+
+                        foreach (var itemPO in po.Value.listItem.OrderBy(x => x.GRDate))
                         {
-                            if (isExistItemPOHistory.Count() > flagItem)
-                            {
-                                isExistItemPOHistory[flagItem].PurchasingDocumentItemID = (int)itemExistParentID;
-                                isExistItemPOHistory[flagItem].DeliveryDate = itemPO.DeliveryDate;
-                                isExistItemPOHistory[flagItem].GoodsReceiptDate = itemPO.GRDate;
-                                isExistItemPOHistory[flagItem].GoodsReceiptQuantity = itemPO.GRQuantity;
-                                isExistItemPOHistory[flagItem].MovementType = itemPO.MovementType;
-                                isExistItemPOHistory[flagItem].POHistoryCategory = !string.IsNullOrWhiteSpace(itemPO.POHistoryCategory) ? itemPO.POHistoryCategory : null;
-                                isExistItemPOHistory[flagItem].DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
-                                isExistItemPOHistory[flagItem].PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
-                                isExistItemPOHistory[flagItem].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                                //isExistItemPOHistory[flagItem].LastModified = DateTime.Now.Date;
-                                isExistItemPOHistory[flagItem].LastModified = DateTime.Now;
-                                isExistItemPOHistory[flagItem].LastModifiedBy = "SyncDataSAP";
+                            PurchasingDocumentItem poItem = new PurchasingDocumentItem();
+                            PurchasingDocumentItemHistory poHistoryAdd = new PurchasingDocumentItemHistory();
 
-                                Console.WriteLine("POHistory is updated");
+                            if (itemExistCount > 0)
+                            {
+                                var flagItemExist = 0;
+                                foreach (var itemExistVar in itemExist)
+                                {
+                                    int itemQuantityTemp = itemExist[flagItemExist].Quantity;
+
+                                    itemExist[flagItemExist].ItemNumber = itemPO.ItemNumber;
+                                    itemExist[flagItemExist].Material = itemPO.Material;
+                                    //itemExist[flagItemExist].ProgressDay = itemPO.ProgressDay;
+                                    itemExist[flagItemExist].MaterialVendor = itemPO.MaterialVendor;
+                                    itemExist[flagItemExist].Description = itemPO.Description;
+                                    itemExist[flagItemExist].NetPrice = itemPO.NetPrice;
+                                    itemExist[flagItemExist].Currency = itemPO.Currency;
+                                    itemExist[flagItemExist].Quantity = itemPO.Quantity;
+                                    //itemExist[flagItem].NetValue = 0;
+                                    //itemExist[flagItem].WorkTime = 0;
+                                    //itemExist[flagItemExist].ConfirmedQuantity = null;
+                                    //itemExist[flagItemExist].ConfirmedDate = null;
+                                    //itemExist[flagItemExist].ConfirmedItem = null;
+                                    itemExist[flagItemExist].IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
+                                    itemExist[flagItemExist].DeliveryDate = itemPO.DeliveryDate;
+                                    //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
+                                    //itemExist[flagItem].ActiveStage = "2";
+                                    //itemExist[flagItemExist].LastModified = DateTime.Now.Date;
+                                    itemExist[flagItemExist].PRNumber = itemPO.PRNumber;
+                                    itemExist[flagItemExist].PRCreateDate = itemPO.PRCreateDate;
+                                    itemExist[flagItemExist].PRReleaseDate = itemPO.PRReleaseDate;
+                                    itemExist[flagItemExist].LastModified = DateTime.Now;
+                                    itemExist[flagItemExist].LastModifiedBy = "SyncDataSAP";
+
+                                    int itemID = itemExist[flagItemExist].ID > 0 ? itemExist[flagItemExist].ID : 0;
+                                    List<int> notificationIDs = db.PurchasingDocumentItems.Where(x => x.ParentID == itemID || x.ID == itemID).Select(x => x.ID).ToList();
+
+                                    #region deactivate Canceled or Closed Notification 
+                                    if (itemExist[flagItemExist].IsClosed != null && itemExist[flagItemExist].IsClosed != "")
+                                    {
+                                        if (notificationIDs.Count > 0)
+                                        {
+                                            List<Notification> notificationsCloseds = db.Notifications.Where(x => notificationIDs.Contains(x.PurchasingDocumentItemID) && x.NotificationStatu.ID == 2).ToList();
+                                            foreach (Notification notificationsClosed in notificationsCloseds)
+                                            {
+                                                notificationsClosed.isActive = false;
+                                                notificationsClosed.Modified = DateTime.Now;
+                                                notificationsClosed.ModifiedBy = "SyncSAP";
+                                                Console.WriteLine("Notification with ID : " + itemID + "is updated");
+                                            }
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Deactivate Notification IsNeededUpdateFromSAP
+                                    if (itemQuantityTemp != itemPO.Quantity && itemExist[flagItemExist].Quantity == itemExist[flagItemExist].ConfirmedQuantity)
+                                    {
+                                        if (notificationIDs.Count > 0)
+                                        {
+                                            List<Notification> notificationsIsNeededUpdateSAPs = db.Notifications.Where(x => notificationIDs.Contains(x.PurchasingDocumentItemID) && x.NotificationStatu.ID == 4).ToList();
+                                            foreach (Notification notificationsIsNeededUpdateSAP in notificationsIsNeededUpdateSAPs)
+                                            {
+                                                notificationsIsNeededUpdateSAP.isActive = false;
+                                                notificationsIsNeededUpdateSAP.Modified = DateTime.Now;
+                                                notificationsIsNeededUpdateSAP.ModifiedBy = "SyncSAP";
+                                                Console.WriteLine("Notification with ID : " + itemID + " (change quantity) is updated from SAP");
+                                            }
+                                        }
+                                    }
+                                    #endregion
+
+                                    db.SaveChanges();
+                                    idItem = itemExist[flagItemExist].ID;
+
+                                    Console.WriteLine("POItem with ID : " + itemExist[flagItemExist].ID + "is updated");
+
+                                    flagItemExist++;
+                                }
                             }
                             else
                             {
-                                poHistoryAdd.PurchasingDocumentItemID = (int)itemExistParentID;
-                                poHistoryAdd.DeliveryDate = itemPO.DeliveryDate;
-                                poHistoryAdd.GoodsReceiptDate = itemPO.GRDate;
-                                poHistoryAdd.GoodsReceiptQuantity = itemPO.GRQuantity;
-                                poHistoryAdd.MovementType = itemPO.MovementType;
-                                poHistoryAdd.POHistoryCategory = !string.IsNullOrWhiteSpace(itemPO.POHistoryCategory) ? itemPO.POHistoryCategory : null;
-                                poHistoryAdd.DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
-                                poHistoryAdd.PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
-                                poHistoryAdd.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
-                                //poHistoryAdd.Created = DateTime.Now.Date;
-                                poHistoryAdd.Created = DateTime.Now;
-                                poHistoryAdd.CreatedBy = "SyncDataSAP";
-                                //poHistoryAdd.LastModified = DateTime.Now.Date;
-                                poHistoryAdd.LastModified = DateTime.Now;
-                                poHistoryAdd.LastModifiedBy = "SyncDataSAP";
-
-                                db.PurchasingDocumentItemHistories.Add(poHistoryAdd);
-
-                                Console.WriteLine("POHistory is added");
+                                if (flagItem == 0)
+                                {
+                                    poItem.POID = ID;
+                                    poItem.ItemNumber = itemPO.ItemNumber;
+                                    poItem.Material = itemPO.Material;
+                                    poItem.MaterialVendor = itemPO.MaterialVendor;
+                                    //poItem.ProgressDay = itemPO.ProgressDay;
+                                    poItem.Description = itemPO.Description;
+                                    poItem.NetPrice = itemPO.NetPrice;
+                                    poItem.Currency = itemPO.Currency;
+                                    poItem.Quantity = itemPO.Quantity;
+                                    poItem.NetValue = 0;
+                                    poItem.WorkTime = 0;
+                                    poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
+                                    poItem.LeadTimeItem = Convert.ToDecimal("0.00");
+                                    //poItem.ConfirmedDate = null;
+                                    //poItem.ConfirmedItem = null;
+                                    //poItem.ConfirmedQuantity = null;
+                                    poItem.ActiveStage = "0";
+                                    poItem.DeliveryDate = itemPO.DeliveryDate;
+                                    //poItem.Created = DateTime.Now.Date;
+                                    poItem.PRNumber = itemPO.PRNumber;
+                                    poItem.PRCreateDate = itemPO.PRCreateDate;
+                                    poItem.PRReleaseDate = itemPO.PRReleaseDate;
+                                    poItem.Created = DateTime.Now;
+                                    poItem.CreatedBy = "SyncDataSAP";
+                                    //poItem.LastModified = DateTime.Now.Date;
+                                    poItem.LastModified = DateTime.Now;
+                                    poItem.LastModifiedBy = "SyncDataSAP";
+                                    db.PurchasingDocumentItems.Add(poItem);
+                                    db.SaveChanges();
+                                    idItem = poItem.ID;
+                                    itemExistParentID = idItem;
+                                    Console.WriteLine("POItem with ID : " + idItem + "is added");
+                                }
 
                             }
+                            #region ga dipake
+                            //if (itemExistCount > 0)
+                            //{
+                            //    if (itemExistCount > flagItem)
+                            //    {
+                            //        itemExist[flagItem].ItemNumber = itemPO.ItemNumber;
+                            //        itemExist[flagItem].Material = itemPO.Material;
+                            //        itemExist[flagItem].Description = "description";//itemPO.Description;
+                            //        itemExist[flagItem].NetPrice = itemPO.NetPrice;
+                            //        itemExist[flagItem].Currency = itemPO.Currency;
+                            //        itemExist[flagItem].Quantity = itemPO.Quantity;
+                            //        //itemExist[flagItem].NetValue = 0;
+                            //        //itemExist[flagItem].WorkTime = 0;
+                            //        itemExist[flagItem].ConfirmedQuantity = itemPO.GRQuantity;
+                            //        itemExist[flagItem].ConfirmedDate = itemPO.GRDate;
+                            //        itemExist[flagItem].IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
+                            //        //itemExist[flagItem].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
+                            //        itemExist[flagItem].DeliveryDate = itemPO.DeliveryDate;
+                            //        //itemExist[flagItem].LeadTimeItem = Convert.ToDecimal("0.00");
+                            //        itemExist[flagItem].ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
+                            //        //itemExist[flagItem].ActiveStage = "2";
+                            //        itemExist[flagItem].LastModified = DateTime.Now.Date;
+                            //        itemExist[flagItem].LastModifiedBy = "SyncDataSAP";
+                            //        db.SaveChanges();
+                            //        idItem = itemExist[flagItem].ID;
+
+                            //        Console.WriteLine("POItem with ID : " + itemExist[flagItem].ID + "is updated");
+
+                            //    }
+                            //    else
+                            //    {
+                            //        poItem.POID = (int)itemExistPOID;
+                            //        poItem.ParentID = itemExistParentID;
+                            //        poItem.ItemNumber = itemPO.ItemNumber;
+                            //        poItem.Material = itemPO.Material;
+                            //        poItem.Description = "description";//itemPO.Description;
+                            //        poItem.NetPrice = itemPO.NetPrice;
+                            //        poItem.Currency = itemPO.Currency;
+                            //        poItem.Quantity = itemPO.Quantity;
+                            //        poItem.NetValue = 0;
+                            //        poItem.WorkTime = 0;
+                            //        poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
+                            //        poItem.LeadTimeItem = Convert.ToDecimal("0.00");
+                            //        poItem.ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
+                            //        poItem.ConfirmedItem = null;
+                            //        poItem.ActiveStage = "0";
+                            //        poItem.DeliveryDate = itemPO.DeliveryDate;
+                            //        //poItem.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
+                            //        poItem.Created = DateTime.Now.Date;
+                            //        poItem.CreatedBy = "SyncDataSAP";
+                            //        poItem.LastModified = DateTime.Now.Date;
+                            //        poItem.LastModifiedBy = "SyncDataSAP";
+                            //        db.PurchasingDocumentItems.Add(poItem);
+                            //        db.SaveChanges();
+
+                            //        idItem = poItem.ID;
+                            //        Console.WriteLine("POItem with ID : " + idItem + "is added");
+
+                            //    }
+
+                            //    //if (!listPOItemHistory.ContainsKey((int)itemExistParentID))
+                            //    //{
+                            //    //    listPOItemHistory.Add((int)itemExistParentID, listPOItem.Where(x => x.PONumber == itemPO.PONumber && x.ItemNumber == itemPO.ItemNumber).ToList());
+                            //    //}
+                            //}
+                            //else
+                            //{
+                            //    poItem.POID = ID;
+                            //    if (flagItem > 0)
+                            //    {
+                            //        poItem.ParentID = itemExistParentID;
+                            //    }
+                            //    poItem.ItemNumber = itemPO.ItemNumber;
+                            //    poItem.Material = itemPO.Material;
+                            //    poItem.Description = "description";//itemPO.Description;
+                            //    poItem.NetPrice = itemPO.NetPrice;
+                            //    poItem.Currency = itemPO.Currency;
+                            //    poItem.Quantity = itemPO.Quantity;
+                            //    poItem.NetValue = 0;
+                            //    poItem.WorkTime = 0;
+                            //    poItem.IsClosed = itemPO.IsDelete + (itemClose ? costIsClose : itemPO.IsClose);
+                            //    poItem.LeadTimeItem = Convert.ToDecimal("0.00");
+                            //    poItem.ConfirmedDate = itemPO.GRDate == null ? itemPO.DeliveryDate : itemPO.GRDate;
+                            //    poItem.ConfirmedItem = null;
+                            //    poItem.ActiveStage = "0";
+                            //    poItem.DeliveryDate = itemPO.DeliveryDate;
+                            //    //poItem.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
+                            //    poItem.Created = DateTime.Now.Date;
+                            //    poItem.CreatedBy = "SyncDataSAP";
+                            //    poItem.LastModified = DateTime.Now.Date;
+                            //    poItem.LastModifiedBy = "SyncDataSAP";
+                            //    db.PurchasingDocumentItems.Add(poItem);
+                            //    db.SaveChanges();
+                            //    idItem = poItem.ID;
+
+                            //    Console.WriteLine("POItem with ID : " + idItem + "is added");
+
+
+                            //}
+                            //if (flagItem == 0)
+                            //{
+                            //    if (!listPOItemHistory.ContainsKey((int)idItem))
+                            //    {
+                            //        itemExistParentID = idItem;
+                            //        listPOItemHistory.Add((int)idItem, listPOItem.Where(x => x.PONumber == itemPO.PONumber && x.ItemNumber == itemPO.ItemNumber).ToList());
+                            //    }
+                            //}
+                            #endregion
+
+                            if (flagItem == 0 && itemExistParentID == null)
+                            {
+                                itemExistParentID = idItem;
+                            }
+
+
+                            //if ((itemPO.MovementType != null && (POHistoryAccept.Contains(itemPO.POHistoryCategory))) || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "T")
+                            if ((itemPO.MovementType != null && itemPO.POHistoryCategory == "E") || itemPO.POHistoryCategory == "T" || itemPO.POHistoryCategory == "Q")
+                            {
+                                if (isExistItemPOHistory.Count() > flagItem)
+                                {
+                                    isExistItemPOHistory[flagItem].PurchasingDocumentItemID = (int)itemExistParentID;
+                                    isExistItemPOHistory[flagItem].DeliveryDate = itemPO.DeliveryDate;
+                                    isExistItemPOHistory[flagItem].GoodsReceiptDate = itemPO.GRDate;
+                                    isExistItemPOHistory[flagItem].GoodsReceiptQuantity = itemPO.GRQuantity;
+                                    isExistItemPOHistory[flagItem].MovementType = itemPO.MovementType;
+                                    isExistItemPOHistory[flagItem].POHistoryCategory = !string.IsNullOrWhiteSpace(itemPO.POHistoryCategory) ? itemPO.POHistoryCategory : null;
+                                    isExistItemPOHistory[flagItem].DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
+                                    isExistItemPOHistory[flagItem].PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
+                                    isExistItemPOHistory[flagItem].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
+                                    //isExistItemPOHistory[flagItem].LastModified = DateTime.Now.Date;
+                                    isExistItemPOHistory[flagItem].LastModified = DateTime.Now;
+                                    isExistItemPOHistory[flagItem].LastModifiedBy = "SyncDataSAP";
+
+                                    Console.WriteLine("POHistory is updated");
+                                }
+                                else
+                                {
+                                    poHistoryAdd.PurchasingDocumentItemID = (int)itemExistParentID;
+                                    poHistoryAdd.DeliveryDate = itemPO.DeliveryDate;
+                                    poHistoryAdd.GoodsReceiptDate = itemPO.GRDate;
+                                    poHistoryAdd.GoodsReceiptQuantity = itemPO.GRQuantity;
+                                    poHistoryAdd.MovementType = itemPO.MovementType;
+                                    poHistoryAdd.POHistoryCategory = !string.IsNullOrWhiteSpace(itemPO.POHistoryCategory) ? itemPO.POHistoryCategory : null;
+                                    poHistoryAdd.DocumentNumber = !string.IsNullOrWhiteSpace(itemPO.DocumentNumber) ? itemPO.DocumentNumber : null;
+                                    poHistoryAdd.PayTerms = !string.IsNullOrWhiteSpace(itemPO.PayTerm) ? itemPO.PayTerm : null;
+                                    poHistoryAdd.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPO.InboundNumber) ? itemPO.InboundNumber : null;
+                                    //poHistoryAdd.Created = DateTime.Now.Date;
+                                    poHistoryAdd.Created = DateTime.Now;
+                                    poHistoryAdd.CreatedBy = "SyncDataSAP";
+                                    //poHistoryAdd.LastModified = DateTime.Now.Date;
+                                    poHistoryAdd.LastModified = DateTime.Now;
+                                    poHistoryAdd.LastModifiedBy = "SyncDataSAP";
+
+                                    db.PurchasingDocumentItemHistories.Add(poHistoryAdd);
+
+                                    Console.WriteLine("POHistory is added");
+
+                                }
+                            }
+
+
+                            flagItem++;
                         }
+                        db.SaveChanges();
+                        #region ga kepake
+                        //foreach (var poHistory in listPOItemHistory)
+                        //{
+                        //    var isExistItemPOHistory = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == poHistory.Key).ToList();
+                        //    var itemPOHistoryFlag = 0;
 
+                        //    foreach (var itemPOHistory in poHistory.Value)
+                        //    {
+                        //        PurchasingDocumentItemHistory poHistoryAdd = new PurchasingDocumentItemHistory();
+                        //        if (isExistItemPOHistory.Count() > itemPOHistoryFlag)
+                        //        {
+                        //            isExistItemPOHistory[itemPOHistoryFlag].PurchasingDocumentItemID = poHistory.Key;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].DeliveryDate = itemPOHistory.DeliveryDate;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].GoodsReceiptDate = itemPOHistory.GRDate;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].GoodsReceiptQuantity = itemPOHistory.GRQuantity;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].MovementType = itemPOHistory.MovementType;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].POHistoryCategory = !string.IsNullOrWhiteSpace(itemPOHistory.POHistoryCategory) ? itemPOHistory.POHistoryCategory : null;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].DocumentNumber = !string.IsNullOrWhiteSpace(itemPOHistory.DocumentNumber) ? itemPOHistory.DocumentNumber : null;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].PayTerms = !string.IsNullOrWhiteSpace(itemPOHistory.PayTerm) ? itemPOHistory.PayTerm : null;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPOHistory.InboundNumber) ? itemPOHistory.InboundNumber : null;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].LastModified = DateTime.Now.Date;
+                        //            isExistItemPOHistory[itemPOHistoryFlag].LastModifiedBy = "SyncDataSAP";
 
-                        flagItem++;
+                        //            Console.WriteLine("POHistory is updated");
+                        //        }
+                        //        else
+                        //        {
+                        //            poHistoryAdd.PurchasingDocumentItemID = poHistory.Key;
+                        //            poHistoryAdd.DeliveryDate = itemPOHistory.DeliveryDate;
+                        //            poHistoryAdd.GoodsReceiptDate = itemPOHistory.GRDate;
+                        //            poHistoryAdd.GoodsReceiptQuantity = itemPOHistory.GRQuantity;
+                        //            poHistoryAdd.MovementType = itemPOHistory.MovementType;
+                        //            poHistoryAdd.POHistoryCategory = !string.IsNullOrWhiteSpace(itemPOHistory.POHistoryCategory) ? itemPOHistory.POHistoryCategory : null;
+                        //            poHistoryAdd.DocumentNumber = !string.IsNullOrWhiteSpace(itemPOHistory.DocumentNumber) ? itemPOHistory.DocumentNumber : null;
+                        //            poHistoryAdd.PayTerms = !string.IsNullOrWhiteSpace(itemPOHistory.PayTerm) ? itemPOHistory.PayTerm : null;
+                        //            poHistoryAdd.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPOHistory.InboundNumber) ? itemPOHistory.InboundNumber : null;
+                        //            poHistoryAdd.Created = DateTime.Now.Date;
+                        //            poHistoryAdd.CreatedBy = "SyncDataSAP";
+                        //            poHistoryAdd.LastModified = DateTime.Now.Date;
+                        //            poHistoryAdd.LastModifiedBy = "SyncDataSAP";
+
+                        //            db.PurchasingDocumentItemHistories.Add(poHistoryAdd);
+
+                        //            Console.WriteLine("POHistory is added");
+
+                        //        }
+
+                        //        itemPOHistoryFlag++;
+                        //    }
+                        //}
+                        #endregion
                     }
-                    db.SaveChanges();
-                    #region ga kepake
-                    //foreach (var poHistory in listPOItemHistory)
-                    //{
-                    //    var isExistItemPOHistory = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == poHistory.Key).ToList();
-                    //    var itemPOHistoryFlag = 0;
-
-                    //    foreach (var itemPOHistory in poHistory.Value)
-                    //    {
-                    //        PurchasingDocumentItemHistory poHistoryAdd = new PurchasingDocumentItemHistory();
-                    //        if (isExistItemPOHistory.Count() > itemPOHistoryFlag)
-                    //        {
-                    //            isExistItemPOHistory[itemPOHistoryFlag].PurchasingDocumentItemID = poHistory.Key;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].DeliveryDate = itemPOHistory.DeliveryDate;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].GoodsReceiptDate = itemPOHistory.GRDate;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].GoodsReceiptQuantity = itemPOHistory.GRQuantity;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].MovementType = itemPOHistory.MovementType;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].POHistoryCategory = !string.IsNullOrWhiteSpace(itemPOHistory.POHistoryCategory) ? itemPOHistory.POHistoryCategory : null;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].DocumentNumber = !string.IsNullOrWhiteSpace(itemPOHistory.DocumentNumber) ? itemPOHistory.DocumentNumber : null;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].PayTerms = !string.IsNullOrWhiteSpace(itemPOHistory.PayTerm) ? itemPOHistory.PayTerm : null;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPOHistory.InboundNumber) ? itemPOHistory.InboundNumber : null;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].LastModified = DateTime.Now.Date;
-                    //            isExistItemPOHistory[itemPOHistoryFlag].LastModifiedBy = "SyncDataSAP";
-
-                    //            Console.WriteLine("POHistory is updated");
-                    //        }
-                    //        else
-                    //        {
-                    //            poHistoryAdd.PurchasingDocumentItemID = poHistory.Key;
-                    //            poHistoryAdd.DeliveryDate = itemPOHistory.DeliveryDate;
-                    //            poHistoryAdd.GoodsReceiptDate = itemPOHistory.GRDate;
-                    //            poHistoryAdd.GoodsReceiptQuantity = itemPOHistory.GRQuantity;
-                    //            poHistoryAdd.MovementType = itemPOHistory.MovementType;
-                    //            poHistoryAdd.POHistoryCategory = !string.IsNullOrWhiteSpace(itemPOHistory.POHistoryCategory) ? itemPOHistory.POHistoryCategory : null;
-                    //            poHistoryAdd.DocumentNumber = !string.IsNullOrWhiteSpace(itemPOHistory.DocumentNumber) ? itemPOHistory.DocumentNumber : null;
-                    //            poHistoryAdd.PayTerms = !string.IsNullOrWhiteSpace(itemPOHistory.PayTerm) ? itemPOHistory.PayTerm : null;
-                    //            poHistoryAdd.Shipment_InboundNumber = !string.IsNullOrWhiteSpace(itemPOHistory.InboundNumber) ? itemPOHistory.InboundNumber : null;
-                    //            poHistoryAdd.Created = DateTime.Now.Date;
-                    //            poHistoryAdd.CreatedBy = "SyncDataSAP";
-                    //            poHistoryAdd.LastModified = DateTime.Now.Date;
-                    //            poHistoryAdd.LastModifiedBy = "SyncDataSAP";
-
-                    //            db.PurchasingDocumentItemHistories.Add(poHistoryAdd);
-
-                    //            Console.WriteLine("POHistory is added");
-
-                    //        }
-
-                    //        itemPOHistoryFlag++;
-                    //    }
-                    //}
+                    index++;
                 }
-
-                #endregion
+                
 
                 #region data excel
                 //FileInfo fileInfo = new FileInfo("Olahan utk PO Tracking 10052019.xlsx");
