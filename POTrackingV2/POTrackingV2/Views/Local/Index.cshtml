@@ -1431,13 +1431,21 @@ else
                                 @{
                                     var st3CheckboxAll = "st3-checkbox-all";
                                     var st3ConfirmPaymentAll = "st3-confirm-payment-all";
+                                    var st3SkipAllComfirmPayment = "st3-skip-all-comfirm-payment";
                                     var disabledst3ConfirmPaymentAll = "";
+                                    var disabledst3SkipAllComfirmPayment = "";
+                                    var hiddenst3ConfirmPaymentAll = "";
+                                    var hiddenSkipAllComfirmPayment = "";
 
                                     if (roleID == "vendor")
                                     {
                                         st3CheckboxAll = "";
                                         st3ConfirmPaymentAll = "";
+                                        st3SkipAllComfirmPayment = "";
                                         disabledst3ConfirmPaymentAll = "disabled";
+                                        disabledst3SkipAllComfirmPayment = "disabled";
+                                        hiddenst3ConfirmPaymentAll = "hidden";
+                                        hiddenSkipAllComfirmPayment = "hidden";
                                     }
                                 }
 
@@ -1450,7 +1458,8 @@ else
                                     </div>
                                     <div><p class="mb-0">Stage 3</p></div>
                                     <div>
-                                        <input class="btn btn-positive @st3ConfirmPaymentAll" type="submit" value="Save All" @disabledst3ConfirmPaymentAll />
+                                        <input class="btn btn-positive @st3ConfirmPaymentAll" type="submit" value="Save All" @disabledst3ConfirmPaymentAll @hiddenst3ConfirmPaymentAll />
+                                        <input class="btn btn-negative @st3SkipAllComfirmPayment" type="submit" value="Skip All" @disabledst3SkipAllComfirmPayment @hiddenSkipAllComfirmPayment />
                                     </div>
                                 </div>
                                 <div class="po-item-section-body">

@@ -139,7 +139,7 @@ $(".st2a-skip-proforma").on("click", function (obj) {
     inputPurchasingDocumentItemIDs.push(inputPurchasingDocumentItemID);
 
     // Donut Progress
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 4 * donutProgressUnit;
     var cssRow = $(this).closest(".po-item-data-content").prop("class");
     cssRow = cssRow.replace(" ", ".");
@@ -198,7 +198,7 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
         var inputPurchasingDocumentItemID = $(this).find(".st2a-item-id").val();
 
         // Donut Progress
-        var donutProgressUnit = 75.39822368615503 / 13;
+        var donutProgressUnit = 75.39822368615503 / 8;
         var donutProgress = 75.39822368615503 - 4 * donutProgressUnit;
         var cssRow = $(this).closest(".po-item-data-content").prop("class");
         cssRow = cssRow.replace(" ", ".");

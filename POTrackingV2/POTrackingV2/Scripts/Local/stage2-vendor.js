@@ -135,7 +135,7 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
 
     obj.preventDefault();
 
-    var donutProgressUnit = 75.39822368615503 / 13;
+    var donutProgressUnit = 75.39822368615503 / 8;
     var donutProgress = 75.39822368615503 - 3 * donutProgressUnit;
 
     var inputETAHistories = [];
