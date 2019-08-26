@@ -310,6 +310,7 @@ $(".st1-accept-all-po").on("click", function (obj) {
                             $(".next-row-updated-input").first().attr("mindate", "");
                             $(".next-row-updated-input").first().val("");
                             $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                            //nextDataContent.find(".st2-checkbox-item").first().attr("disabled", "disabled");
                         }
 
                         $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);
@@ -538,6 +539,7 @@ $(".st1-accept-item").on("click", function (obj) {
                                     $(".next-row-updated-input").first().attr("mindate", "");
                                     $(".next-row-updated-input").first().val("");
                                     $(".next-row-updated-input").first().removeClass("next-row-updated-input");
+                                    //nextDataContent.find(".st2-checkbox-item").first().attr("disabled", "disabled");
                                 }
 
                                 $(".row-updated-donut").first().attr("stroke-dashoffset", donutProgressDoubled);

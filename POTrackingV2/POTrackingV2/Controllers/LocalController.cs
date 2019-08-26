@@ -54,7 +54,7 @@ namespace POTrackingV2.Controllers
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
-                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))))                               
+                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))) && (x.ReleaseDate != null))                               
                                 .AsQueryable();
 
             //var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
@@ -183,7 +183,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode));
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
 
                 var noShowPOes = pOes;
 
@@ -264,7 +264,7 @@ namespace POTrackingV2.Controllers
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
-                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" && !String.IsNullOrEmpty(y.Material))))
+                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null )
                                .AsQueryable();
             //var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
             //                    //.Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
