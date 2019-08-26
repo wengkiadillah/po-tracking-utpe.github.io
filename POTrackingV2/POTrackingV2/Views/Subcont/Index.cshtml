@@ -205,6 +205,10 @@
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                             }
+                            if (ViewBag.SearchPOStatus == "ongoing")
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                            }
                             else if (ViewBag.SearchPOStatus == "done")
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
