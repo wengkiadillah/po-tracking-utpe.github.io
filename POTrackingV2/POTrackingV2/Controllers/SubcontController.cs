@@ -116,7 +116,7 @@ namespace POTrackingV2.Controllers
                         }
                     }
 
-                    if (listVendorSubconDev != null && role.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                    if (listVendorSubconDev != null && role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() && subcontDevUserRole.RoleID == 1)
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
@@ -310,13 +310,14 @@ namespace POTrackingV2.Controllers
             {
                 //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
 
                 var pOes = db.POes.AsQueryable();
 
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    if (listVendorSubconDev != null)
+                    if (listVendorSubconDev != null  && subcontDevUserRole.RoleID == 1)
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
