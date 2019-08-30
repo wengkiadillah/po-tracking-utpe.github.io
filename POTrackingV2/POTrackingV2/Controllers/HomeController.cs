@@ -469,10 +469,11 @@ namespace POTrackingV2.Controllers
                         }
                     }
 
-                    if (listVendorSubconDev != null)
+                    if (listVendorSubconDev != null && subcontDevUserRole.RoleID == 1)
                     {
                         pOesSubcont = pOesSubcont.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
+
                     subcontNewPO = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontOngoing = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
