@@ -1099,8 +1099,8 @@ namespace POTrackingV2.Controllers
                 PurchasingDocumentItem Existed_PDI = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
                 //SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material).FirstOrDefault();
 
-                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
-                if (Existed_notification != null)
+                List<Notification> Existed_notifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3 && x.Role.ToLower() == LoginConstants.RoleVendor.ToLower()).ToList();
+                foreach (var Existed_notification in Existed_notifications)
                 {
                     Existed_notification.isActive = false;
                     Existed_notification.Modified = now;
@@ -1263,8 +1263,8 @@ namespace POTrackingV2.Controllers
                 //List<ProgressPhoto> Existed_Attachments = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID).ToList();
                 //SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material).FirstOrDefault();
 
-                Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
-                if (Existed_notification != null)
+                List<Notification> Existed_notifications = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3 && x.Role.ToLower() == LoginConstants.RoleVendor.ToLower()).ToList();
+                foreach (var Existed_notification in Existed_notifications)
                 {
                     Existed_notification.isActive = false;
                     Existed_notification.Modified = now;
