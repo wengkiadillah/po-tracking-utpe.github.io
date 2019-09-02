@@ -508,6 +508,13 @@ namespace POTrackingV2.Controllers
                                 Existed_notification.Modified = now;
                                 Existed_notification.ModifiedBy = User.Identity.Name;
                             }
+                            Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 2).FirstOrDefault();
+                            if (Existed_notification != null)
+                            {
+                                Existed_notification.isActive = false;
+                                Existed_notification.Modified = now;
+                                Existed_notification.ModifiedBy = User.Identity.Name;
+                            }
                         }
 
                         Existed_PDI.LastModified = now;
@@ -595,6 +602,14 @@ namespace POTrackingV2.Controllers
                                 Existed_notificationChild.Modified = now;
                                 Existed_notificationChild.ModifiedBy = User.Identity.Name;
                             }
+                            Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 2).FirstOrDefault();
+                            if (Existed_notificationChild != null)
+                            {
+                                Existed_notificationChild.isActive = false;
+                                Existed_notificationChild.Modified = now;
+                                Existed_notificationChild.ModifiedBy = User.Identity.Name;
+                            }
+
                             PurchasingDocumentItem Existed_child = db.PurchasingDocumentItems.Where(x => x.ID == item.ID).FirstOrDefault();
 
                             string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
@@ -1117,7 +1132,7 @@ namespace POTrackingV2.Controllers
 
                 Notification notificationTaskSubcontDev = new Notification();
                 notificationTaskSubcontDev.PurchasingDocumentItemID = Existed_PDI.ID;
-                notificationTaskSubcontDev.StatusID = 1;
+                notificationTaskSubcontDev.StatusID = 3;
                 notificationTaskSubcontDev.Stage = "3";
                 notificationTaskSubcontDev.Role = LoginConstants.RoleVendor.ToLower();
                 notificationTaskSubcontDev.isActive = true;
