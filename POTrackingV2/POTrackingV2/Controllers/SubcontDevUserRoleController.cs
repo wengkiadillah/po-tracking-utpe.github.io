@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator)]
     public class SubcontDevUserRoleController : Controller
     {
         List<SubcontDevRole> listSubcontDevRole = new List<SubcontDevRole>();
@@ -143,7 +143,7 @@ namespace POTrackingV2.Controllers
                     var chkUser = (db.SubcontDevUserRoles.FirstOrDefault(x => x.Username == objEditUser.Username && x.ID != ID));
                     if (chkUser == null)
                     {
-                        selectedUserRole.Username = objEditUser.Username;
+                        //selectedUserRole.Username = objEditUser.Username;
                         selectedUserRole.RoleID = objEditUser.RolesTypeID;
                         selectedUserRole.IsHead = objEditUser.IsHead;
                         //selectedUserRole.RolesTypeID = objEditUser.RolesTypeID;
