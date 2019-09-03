@@ -446,6 +446,22 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
+                            //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
+                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
+                            if (Existed_notification != null)
+                            {
+                                Existed_notification.isActive = false;
+                                Existed_notification.Modified = now;
+                                Existed_notification.ModifiedBy = User.Identity.Name;
+                            }
+                            List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).ToList();
+                            foreach (var Existed_notificationCancel in Existed_notificationCancels)
+                            {
+                                Existed_notificationCancel.isActive = false;
+                                Existed_notificationCancel.Modified = now;
+                                Existed_notificationCancel.ModifiedBy = User.Identity.Name;
+                            }
+
                             string vendorCode = db.POes.Where(x => x.ID == item.POID).Select(x => x.VendorCode).FirstOrDefault();
                             SubcontComponentCapability scc = db.SubcontComponentCapabilities.Where(x => x.VendorCode == vendorCode && x.Material == item.Material).FirstOrDefault();
                             int totalItemGR = Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.HasValue ? Existed_PDI.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity.Value : 0;
@@ -498,22 +514,6 @@ namespace POTrackingV2.Controllers
                                 Existed_PDI.ActiveStage = "2";
                                 notification.Stage = "2";
                                 notification.Role = LoginConstants.RoleVendor.ToLower();
-                            }
-
-                            //Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 3).FirstOrDefault();
-                            Notification Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID).FirstOrDefault();
-                            if (Existed_notification != null)
-                            {
-                                Existed_notification.isActive = false;
-                                Existed_notification.Modified = now;
-                                Existed_notification.ModifiedBy = User.Identity.Name;
-                            }
-                            List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 2).ToList();
-                            foreach (var Existed_notificationCancel in Existed_notificationCancels)
-                            {
-                                Existed_notificationCancel.isActive = false;
-                                Existed_notificationCancel.Modified = now;
-                                Existed_notificationCancel.ModifiedBy = User.Identity.Name;
                             }
                         }
 
@@ -602,7 +602,7 @@ namespace POTrackingV2.Controllers
                                 Existed_notificationChild.Modified = now;
                                 Existed_notificationChild.ModifiedBy = User.Identity.Name;
                             }
-                            List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 2).ToList();
+                            List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID).ToList();
                             foreach (var Existed_notificationCancel in Existed_notificationCancels)
                             {
                                 Existed_notificationCancel.isActive = false;
@@ -881,7 +881,7 @@ namespace POTrackingV2.Controllers
                         Existed_notification.ModifiedBy = User.Identity.Name;
                     }
 
-                    List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 2).ToList();
+                    List<Notification> Existed_notificationCancels = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.Stage == "1").ToList();
                     foreach (var Existed_notificationCancel in Existed_notificationCancels)
                     {
                         Existed_notificationCancel.isActive = false;
