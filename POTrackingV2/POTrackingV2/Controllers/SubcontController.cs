@@ -104,7 +104,7 @@ namespace POTrackingV2.Controllers
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    
+
                     List<string> listUsername;
                     //var listUsername = userName;
                     if (subcontDevUserRole != null)
@@ -157,14 +157,14 @@ namespace POTrackingV2.Controllers
                     }
                     else if (searchPOStatus == "done")
                     {
-                        pOes = pOes.Where(po => (po.Date.Year == today.Year || po.Date.Year == today.Year-1) && po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX")));
+                        pOes = pOes.Where(po => (po.Date.Year == today.Year || po.Date.Year == today.Year - 1) && po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" || x.IsClosed == "L" || x.IsClosed == "LX")));
                     }
                     else
                     {
                         pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null));
                     }
                 }
-                
+
                 string subcontDevUserRoleName = subcontDevUserRole != null ? subcontDevUserRole.RoleName.ToLower() : "";
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.CurrentSubcontDevRoleName = subcontDevUserRoleName;
@@ -317,7 +317,7 @@ namespace POTrackingV2.Controllers
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    if (listVendorSubconDev != null  && subcontDevUserRole.RoleID == 1)
+                    if (listVendorSubconDev != null && subcontDevUserRole.RoleID == 1)
                     {
                         pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
                     }
@@ -508,13 +508,6 @@ namespace POTrackingV2.Controllers
                                 Existed_notification.Modified = now;
                                 Existed_notification.ModifiedBy = User.Identity.Name;
                             }
-                            Existed_notification = db.Notifications.Where(x => x.PurchasingDocumentItemID == Existed_PDI.ID && x.StatusID == 2).FirstOrDefault();
-                            if (Existed_notification != null)
-                            {
-                                Existed_notification.isActive = false;
-                                Existed_notification.Modified = now;
-                                Existed_notification.ModifiedBy = User.Identity.Name;
-                            }
                         }
 
                         Existed_PDI.LastModified = now;
@@ -596,13 +589,6 @@ namespace POTrackingV2.Controllers
                         else
                         {
                             Notification Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 3).FirstOrDefault();
-                            if (Existed_notificationChild != null)
-                            {
-                                Existed_notificationChild.isActive = false;
-                                Existed_notificationChild.Modified = now;
-                                Existed_notificationChild.ModifiedBy = User.Identity.Name;
-                            }
-                            Existed_notificationChild = db.Notifications.Where(x => x.PurchasingDocumentItem.ParentID == item.ParentID && x.StatusID == 2).FirstOrDefault();
                             if (Existed_notificationChild != null)
                             {
                                 Existed_notificationChild.isActive = false;
@@ -896,7 +882,7 @@ namespace POTrackingV2.Controllers
                         }
                         else
                         {
-                            notification.StatusID = 1;
+                            notification.StatusID = 2;
                             notification.Role = LoginConstants.RoleVendor.ToLower();
 
                             Notification notificationForDeleteItemSAP = new Notification();
