@@ -1,7 +1,7 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
 @*@model IEnumerable<POTrackingV2.Models.PO>*@
-@model System.Collections.Generic.List<POTrackingV2.Models.PO>
+@model IPagedList<POTrackingV2.Models.PO>
 @{
     ViewBag.Title = "PO Local Report";
 
@@ -129,9 +129,9 @@
                             @eTAConfirmation
                         </td>
                     </tr>
-                                        }
-                                    }
-                                }
+                }
+            }
+        }
     </table>
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Report",
