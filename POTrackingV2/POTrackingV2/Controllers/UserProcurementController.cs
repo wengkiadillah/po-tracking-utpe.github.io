@@ -3,6 +3,7 @@ using POTrackingV2.CustomAuthentication;
 using POTrackingV2.Models;
 using POTrackingV2.ViewModels;
 using System;
+using PagedList;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace POTrackingV2.Controllers
         private UserManagementEntities dbUserManagement = new UserManagementEntities();
         public DateTime now = DateTime.Now;
 
-        public ActionResult Index(string searchUser)
+        public ActionResult Index(string searchUser, int? page)
         {
             List<UserProcurementSuperior> userProcurementSuperiors = dbPOTracking.UserProcurementSuperiors.ToList();
 
@@ -29,8 +30,8 @@ namespace POTrackingV2.Controllers
             }
 
             ViewBag.CurrentSearchUser = searchUser;
-
-            return View(userProcurementSuperiors.OrderBy(x => x.Username));
+            //return View(userProcurementSuperiors.OrderBy(x => x.Username));
+            return View(userProcurementSuperiors.OrderBy(x => x.Username).ToList().ToPagedList(page ?? 1, 10));
         }
 
         public ActionResult Details(int id)

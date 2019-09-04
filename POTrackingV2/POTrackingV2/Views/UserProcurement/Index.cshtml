@@ -1,4 +1,6 @@
-﻿@model IEnumerable<POTrackingV2.Models.UserProcurementSuperior>
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<POTrackingV2.Models.UserProcurementSuperior>
 
 @{
     ViewBag.Title = "Index";
@@ -7,7 +9,7 @@
 
 <h2>User Procurement Superior</h2>
 
-<div class="filter-row mb-2">
+<div class="filter-row">
     @using (Html.BeginForm("Index", "UserProcurement", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
     {
         <div class="form-group mr-4">
@@ -16,24 +18,27 @@
         <button type="submit" class="btn btn-info mr-3">Find</button>
         @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info mr-3" })
     }
+    @*<p>
+            @Html.ActionLink("Create New", "Create")
+        </p>*@
+    <div class="form-group mt-4">
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-info" })
+    </div>
 </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+<table class="table table-striped table-bordered">
     <tr>
         <th>
             Number
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Username)
+            @Html.DisplayNameFor(model => model.First().Username)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.NRP)
+            @Html.DisplayNameFor(model => model.First().NRP)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FullName)
+            @Html.DisplayNameFor(model => model.First().FullName)
         </th>
         <th></th>
     </tr>
@@ -42,7 +47,7 @@
     {
         foreach (var item in Model)
         {
-            <tr>
+            <tr style="background-color:white;">
                 <td>
                     @number
                 </td>
@@ -56,9 +61,15 @@
                     @Html.DisplayFor(modelItem => item.FullName)
                 </td>
                 <td class="edit-action">
-                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @*@Html.ActionLink("Details", "Details", new { id = item.ID }) |*@
+                    <a class="col-xs-2" href="@Url.Action("Details", "UserProcurement", new { id = item.ID })" alt="Details">
+                        <i class="fa fa-info-circle fa-lg"></i>
+                    </a>
                     <input type="text" value="@item.ID" class="userProcurementSuperiorID" name="userProcurementSuperiorID" hidden />
-                    <button class="btn btn-danger btn-sm delete-superiorUser" role="button" data-toggle="tooltip" data-placement="top" title="Delete">Delete</button>
+                    @*<button class="btn btn-danger btn-sm delete-superiorUser" role="button" data-toggle="tooltip" data-placement="top" title="Delete">Delete</button>*@
+                    <a class="col-xs-2 delete-superiorUser" href="#" alt="Delete" style="color:red;">
+                        <i class="fa fa-trash fa-lg"></i>
+                    </a>
                 </td>
             </tr>
 
@@ -79,6 +90,9 @@
 
 </table>
 
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

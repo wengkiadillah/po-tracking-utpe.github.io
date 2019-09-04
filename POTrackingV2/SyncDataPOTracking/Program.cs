@@ -54,11 +54,11 @@ namespace SyncDataPOTracking
                 bool skipHeader = Convert.ToBoolean(ConfigurationManager.AppSettings["skipHeader"]);
                 if (skipHeader)
                 {
-                    dataFromCSV = File.ReadAllLines("Data\\test.csv").Skip(1).Select(x => CSVModel.FromCSV(x)).ToList();
+                    dataFromCSV = File.ReadAllLines(@"C:\POTrackingScheduler\SyncDataSAP\Data\test.csv").Skip(1).Select(x => CSVModel.FromCSV(x)).ToList();
                 }
                 else
                 {
-                    dataFromCSV = File.ReadAllLines("Data\\test.csv").Select(x => CSVModel.FromCSV(x)).ToList();
+                    dataFromCSV = File.ReadAllLines(@"C:\POTrackingScheduler\SyncDataSAP\Data\test.csv").Select(x => CSVModel.FromCSV(x)).ToList();
                 }
                 
                 foreach (var dataItem in dataFromCSV)
@@ -197,7 +197,10 @@ namespace SyncDataPOTracking
                     {
                         poExist.Type = string.IsNullOrWhiteSpace(po.Value.Type) ? null : po.Value.Type;
                         poExist.Date = po.Value.PODate;
-                        poExist.ReleaseDate = po.Value.POReleaseDate;
+                        if (po.Value.POReleaseDate != null)
+                        {
+                            poExist.ReleaseDate = po.Value.POReleaseDate;
+                        }
                         poExist.VendorCode = string.IsNullOrWhiteSpace(po.Value.VendorCode) ? "" : po.Value.VendorCode;
                         poExist.Information = string.Empty;
                         poExist.ProductGroup = string.Empty;
