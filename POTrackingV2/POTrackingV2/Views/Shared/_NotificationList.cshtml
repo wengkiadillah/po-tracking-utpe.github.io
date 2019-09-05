@@ -206,10 +206,11 @@
                                         assignedFrom = "";
                                     } else if (confirmedItem == true) {
                                         if (targetRole = "vendor") {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + resultTwentyFivePercent;
+                                            assignedFrom = "Procurement";
+                                            message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + resultTwentyFivePercent;
                                         }
                                         else {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay, stage 2 will be available on " + resultTwentyFivePercent;
+                                            message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay, stage 2 will be available on " + resultTwentyFivePercent;
                                         }
                                     } else if (confirmedItem == false) {
                                         message += "Item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage +" has been canceled";
@@ -250,7 +251,7 @@
                                         }
                                     }
                                     else {
-                                        assignedFrom = "You "
+                                        assignedFrom = "You";
                                         if (confirmedPaymentReceive != null) {
                                                 message += " have updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", stage 4 will be available on " + resultSeventyFivePercent;
                                         } else if (confirmedPaymentReceive == null) {
