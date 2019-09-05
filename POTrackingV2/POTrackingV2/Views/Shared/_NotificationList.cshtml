@@ -221,6 +221,7 @@
                                 } else if (stage == "2") {
                                     if (confirmFirstETA == true) {
                                         if (targetRole = "vendor") {
+                                            assignedFrom = "Procurement";
                                             message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage;
                                         }
                                         else {
@@ -244,6 +245,7 @@
                                     }
                                 } else if (stage == "3") {
                                     if (targetRole = "vendor") {
+                                        assignedFrom = "Procurement";
                                         if (confirmedPaymentReceive != null) {
                                                 message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
                                         } else if (confirmedPaymentReceive == null) {
