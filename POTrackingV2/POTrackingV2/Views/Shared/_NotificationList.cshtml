@@ -199,6 +199,10 @@
                             message = "";
                             /*------------------------------------------------------------------IMPORT----------------------------------------------------------*/
                             if (POTypeCategory == "Import") {
+                                var targetRoleImport = jsonObj[k]['role'].toLowerCase();
+                                console.log(targetRole);
+                                console.log(targetRoleImport);
+
                                 if (GRDate != null) {
                                     message += " has confirmed " + GRDate + " for item " + material + " from <a href='" + url + "' class='third-text'>PO" + PONumber + "</a> for Qty: " + GRQty + " (10/10)";
                                 } else if (stage == "1") {
@@ -206,7 +210,7 @@
                                         message += " Please update Data " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at SAP";
                                         assignedFrom = "";
                                     } else if (confirmedItem == true) {
-                                        if (jsonObj[k]['role'].toLowerCase() = "vendor") {
+                                        if (targetRoleImport = "vendor") {
                                             assignedFrom = "Procurement";
                                             message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + resultTwentyFivePercent;
                                         }
@@ -221,7 +225,7 @@
                                     }
                                 } else if (stage == "2") {
                                     if (confirmFirstETA == true) {
-                                        if (jsonObj[k]['role'].toLowerCase() = "vendor") {
+                                        if (targetRoleImport = "vendor") {
                                             assignedFrom = "Procurement";
                                             message += " has accepted ETA for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage;
                                         }
@@ -245,7 +249,7 @@
                                         }
                                     }
                                 } else if (stage == "3") {
-                                    if (jsonObj[k]['role'].toLowerCase() = "vendor") {
+                                    if (targetRoleImport = "vendor") {
                                         assignedFrom = "Procurement";
                                         if (confirmedPaymentReceive != null) {
                                                 message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
