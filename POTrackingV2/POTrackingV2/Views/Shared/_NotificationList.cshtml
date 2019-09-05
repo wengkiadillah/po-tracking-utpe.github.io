@@ -209,7 +209,7 @@
                                         message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+", please proceed to update ETA on " + resultTwentyFivePercent;
                                         }
                                         else {
-                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay";
+                                        message += " has approved item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage "+stage+" without delay, stage 2 will be available on " + resultTwentyFivePercent;
                                         }
                                     } else if (confirmedItem == false) {
                                         message += "Item " + material + " from <a href= '" + url + "' class='third-text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " + stage +" has been canceled";
@@ -242,10 +242,20 @@
                                         }
                                     }
                                 } else if (stage == "3") {
-                                    if (confirmedPaymentReceive != null) {
-                                        message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
-                                    } else if (confirmedPaymentReceive == null) {
-                                        message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
+                                    if (targetRole = "vendor") {
+                                        if (confirmedPaymentReceive != null) {
+                                                message += " has updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
+                                        } else if (confirmedPaymentReceive == null) {
+                                                message += " has skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", please proceed to ETA Confirmation on " + resultSeventyFivePercent;
+                                        }
+                                    }
+                                    else {
+                                        assignedFrom = "You "
+                                        if (confirmedPaymentReceive != null) {
+                                                message += " have updated Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", stage 4 will be available on " + resultSeventyFivePercent;
+                                        } else if (confirmedPaymentReceive == null) {
+                                                message += " have skipped Confirmed Payment received for item " + material + " from <a href= '" + url + "' class='third- text'> PO " + PONumber + "</a > for Quantity: " + POConfirmedQty + " at stage " +stage+", stage 4 will be available on " + resultSeventyFivePercent;
+                                        }
                                     }
                                 } else if (stage == "4") {
                                     if (countProgressPhotos > 0) {
