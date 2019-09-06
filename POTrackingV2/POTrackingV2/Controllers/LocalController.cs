@@ -126,7 +126,7 @@ namespace POTrackingV2.Controllers
 
             if (!String.IsNullOrEmpty(searchMaterial))
             {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial))); //|| y.MaterialVendor.Contains(searchMaterial)));
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.Contains(searchMaterial) || y.Description.Contains(searchMaterial) || y.MaterialVendor.Contains(searchMaterial)));
             }
 
             if (!String.IsNullOrEmpty(searchStartPODate))

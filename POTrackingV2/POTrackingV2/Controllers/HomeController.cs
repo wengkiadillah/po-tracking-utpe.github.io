@@ -282,7 +282,7 @@ namespace POTrackingV2.Controllers
                       GRQty = x.GoodsReceiptQuantity,
                       stage = x.Stage,
                       statusID = x.StatusID,
-                      role = x.Role,
+                      role = x.Role.ToString(),
                       assignedFromInternal = userInternalList.Contains(x.CreatedBy),
                       url = "#",
                       created = x.Created,
