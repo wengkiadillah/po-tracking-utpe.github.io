@@ -383,7 +383,7 @@ namespace POTrackingV2.Controllers
             dt.Columns.Add("Description", typeof(string));
             dt.Columns.Add("Quantity", typeof(string));
             dt.Columns.Add("Delivery Date", typeof(string));
-            dt.Columns.Add("Vendor", typeof(string));
+            dt.Columns.Add("Subcont", typeof(string));
             dt.Columns.Add("Estimated Inspection Date", typeof(string));
             dt.Columns.Add("Estimated Time Arrival", typeof(string));
 
