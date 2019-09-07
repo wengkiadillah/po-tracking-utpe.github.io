@@ -969,20 +969,7 @@ namespace POTrackingV2.Controllers
                         notification.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notification);
-
-                        Notification notificationProc = new Notification();
-                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notificationProc.StatusID = 1;
-                        notificationProc.Stage = "1";
-                        notificationProc.Role = "procurement";
-                        notificationProc.isActive = true;
-                        notificationProc.Created = now;
-                        notificationProc.CreatedBy = User.Identity.Name;
-                        notificationProc.Modified = now;
-                        notificationProc.ModifiedBy = User.Identity.Name;
-
-                        db.Notifications.Add(notificationProc);
-
+                        
                         if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
                         {
                             Notification notificationSAP = new Notification();
@@ -997,6 +984,19 @@ namespace POTrackingV2.Controllers
                             notificationSAP.ModifiedBy = User.Identity.Name;
 
                             db.Notifications.Add(notificationSAP);
+
+                            Notification notificationProc = new Notification();
+                            notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                            notificationProc.StatusID = 1;
+                            notificationProc.Stage = "1";
+                            notificationProc.Role = "procurement";
+                            notificationProc.isActive = true;
+                            notificationProc.Created = now;
+                            notificationProc.CreatedBy = User.Identity.Name;
+                            notificationProc.Modified = now;
+                            notificationProc.ModifiedBy = User.Identity.Name;
+
+                            db.Notifications.Add(notificationProc);
                         }
                     }
                 }
