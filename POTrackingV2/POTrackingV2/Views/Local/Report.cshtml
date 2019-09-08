@@ -15,16 +15,17 @@
     <div class="filter-row">
         @using (Html.BeginForm("Report", "Local", null, FormMethod.Get, new { @class = "" }))
         {
-            <div class="filter-form-container form-inline">
-                <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
-                <datalist id="data-list-ponumber"></datalist>
-                <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
-                <datalist id="data-list-vendorname"></datalist>
-                <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
-                <datalist id="data-list-material"></datalist>
-                <button type="submit" class="btn btn-info mr-3">Find</button>
-                @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
-            </div>
+        <div class="filter-form-container form-inline">
+            <input id="searchPONumber" name="searchPONumber" list="data-list-ponumber" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search PO Number" autocomplete="off" value="@ViewBag.CurrentSearchPONumber" />
+            <datalist id="data-list-ponumber"></datalist>
+            <input id="searchVendorName" name="searchVendorName" list="data-list-vendorname" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Vendor Name" autocomplete="off" value="@ViewBag.CurrentSearchVendorName" />
+            <datalist id="data-list-vendorname"></datalist>
+            <input id="searchMaterial" name="searchMaterial" list="data-list-material" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search Material" autocomplete="off" value="@ViewBag.CurrentSearchMaterial" />
+            <datalist id="data-list-material"></datalist>
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
+            @Html.ActionLink("Download", "DownloadReport", "Local", new { searchPONumber = ViewBag.CurrentSearchPONumber, searchVendorName = ViewBag.CurrentSearchVendorName, searchMaterial = ViewBag.CurrentSearchMaterial }, new { @class = "btn btn-info" })
+        </div>
         }
     </div>
 
