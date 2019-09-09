@@ -183,7 +183,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
 
                 var noShowPOes = pOes;
 
@@ -234,7 +234,156 @@ namespace POTrackingV2.Controllers
                 return View(ex.Message + "-----" + ex.StackTrace);
             }
         }
-        
+
+        public void DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            if (!((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())))
+            {
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOLocal.xls"));
+                Response.ContentType = "application/ms-excel";
+                DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
+                string str = string.Empty;
+                foreach (DataColumn dtcol in dt.Columns)
+                {
+                    Response.Write(str + dtcol.ColumnName);
+                    str = "\t";
+                }
+                Response.Write("\n");
+                foreach (DataRow dr in dt.Rows)
+                {
+                    str = "";
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        Response.Write(str + Convert.ToString(dr[j]));
+                        str = "\t";
+                    }
+                    Response.Write("\n");
+                }
+                Response.End();
+            }
+        }
+
+
+        public DataTable BindDataTable(string searchPONumber, string searchVendorName, string searchMaterial)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles.ToLower();
+            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+
+            if ((myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "local") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "subcont") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
+                (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower()))
+            {
+                return null;
+            }
+            var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+
+            var pOes = db.POes.AsQueryable();
+            pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.Material != "" && x.Material != null && (x.ActiveStage != null && x.ActiveStage != "0")) && !vendorSubcont.Contains(po.VendorCode));
+
+
+            var noShowPOes = pOes;
+            List<string> myUserNRPs = new List<string>();
+
+            myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
+            myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+
+            if (myUserNRPs.Count > 0)
+            {
+                foreach (var myUserNRP in myUserNRPs)
+                {
+                    noShowPOes = noShowPOes.Where(x => x.CreatedBy != myUserNRP);
+                }
+            }
+
+            pOes = pOes.Except(noShowPOes);
+
+            #region Filter
+            if (!String.IsNullOrEmpty(searchPONumber))
+            {
+                pOes = pOes.Where(po => po.Number.Contains(searchPONumber));
+            }
+            if (!String.IsNullOrEmpty(searchVendorName))
+            {
+                pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
+            }
+            if (!String.IsNullOrEmpty(searchMaterial))
+            {
+                pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
+            }
+
+
+            #endregion
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Number", typeof(Int32));
+            dt.Columns.Add("PO Number", typeof(string));
+            dt.Columns.Add("Item Number", typeof(string));
+            dt.Columns.Add("Material", typeof(string));
+            dt.Columns.Add("Description", typeof(string));
+            dt.Columns.Add("Quantity", typeof(string));
+            dt.Columns.Add("Delivery Date", typeof(string));
+            dt.Columns.Add("Vendor", typeof(string));
+            dt.Columns.Add("Estimated Time Arrival", typeof(string));
+
+            int rowNumber = 1;
+
+            foreach (var po in pOes)
+            {
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
+                                                                        .OrderBy(x => x.ItemNumber);
+
+                foreach (var purchasingDocumentItem in purchasingDocumentItems)
+                {
+                    string deliveryDate = "-";
+                    //string estimatedInspectionDate = "-";
+                    string estimatedTimeArrival = "-";
+
+                    if (purchasingDocumentItem.DeliveryDate != null)
+                    {
+                        deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                    }
+
+
+                    if (purchasingDocumentItem.HasETAHistory)
+                    {
+                        if (purchasingDocumentItem.ETAHistories.Count < 2)
+                        {
+                            if (purchasingDocumentItem.FirstETAHistory.ETADate != null)
+                            {
+                                estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADate.GetValueOrDefault().AddDays(2).ToString("dd/MM/yyyy");
+                            }
+                        }
+                        else
+                        {
+                            if (purchasingDocumentItem.LastETAHistory.ETADate != null)
+                            {
+                                estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADate.GetValueOrDefault().AddDays(2).ToString("dd/MM/yyyy");
+                            }
+                        }
+                    }
+
+                    dt.Rows.Add(rowNumber, po.Number, purchasingDocumentItem.ItemNumber, purchasingDocumentItem.Material, purchasingDocumentItem.Description, purchasingDocumentItem.Quantity, deliveryDate, po.Vendor.Name, estimatedTimeArrival);
+
+                    rowNumber++;
+                }
+            }
+
+            return dt;
+        }
+
 
         public ActionResult History(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
@@ -970,6 +1119,19 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notification);
 
+                        Notification notificationProc = new Notification();
+                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationProc.StatusID = 1;
+                        notificationProc.Stage = "1";
+                        notificationProc.Role = "procurement";
+                        notificationProc.isActive = true;
+                        notificationProc.Created = now;
+                        notificationProc.CreatedBy = User.Identity.Name;
+                        notificationProc.Modified = now;
+                        notificationProc.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationProc);
+
                         if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
                         {
                             Notification notificationSAP = new Notification();
@@ -983,7 +1145,7 @@ namespace POTrackingV2.Controllers
                             notificationSAP.Modified = now;
                             notificationSAP.ModifiedBy = User.Identity.Name;
 
-                            db.Notifications.Add(notificationSAP);
+                            db.Notifications.Add(notificationSAP);                            
                         }
                     }
                 }
@@ -1849,18 +2011,31 @@ namespace POTrackingV2.Controllers
                             previousNotification.isActive = false;
                         }
 
-                        Notification notification = new Notification();
-                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 3;
-                        notification.Stage = "3";
-                        notification.Role = "vendor";
-                        notification.isActive = true;
-                        notification.Created = now;
-                        notification.CreatedBy = User.Identity.Name;
-                        notification.Modified = now;
-                        notification.ModifiedBy = User.Identity.Name;
+                        Notification notificationVendor = new Notification();
+                        notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationVendor.StatusID = 3;
+                        notificationVendor.Stage = "3";
+                        notificationVendor.Role = "vendor";
+                        notificationVendor.isActive = true;
+                        notificationVendor.Created = now;
+                        notificationVendor.CreatedBy = User.Identity.Name;
+                        notificationVendor.Modified = now;
+                        notificationVendor.ModifiedBy = User.Identity.Name;
 
-                        db.Notifications.Add(notification);
+                        db.Notifications.Add(notificationVendor);
+
+                        Notification notificationProc = new Notification();
+                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationProc.StatusID = 1;
+                        notificationProc.Stage = "3";
+                        notificationProc.Role = "procurement";
+                        notificationProc.isActive = true;
+                        notificationProc.Created = now;
+                        notificationProc.CreatedBy = User.Identity.Name;
+                        notificationProc.Modified = now;
+                        notificationProc.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationProc);
 
                         count++;
                     }
@@ -1909,18 +2084,31 @@ namespace POTrackingV2.Controllers
                             previousNotification.isActive = false;
                         }
 
-                        Notification notification = new Notification();
-                        notification.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
-                        notification.StatusID = 3;
-                        notification.Stage = "3";
-                        notification.Role = "vendor";
-                        notification.isActive = true;
-                        notification.Created = now;
-                        notification.CreatedBy = User.Identity.Name;
-                        notification.Modified = now;
-                        notification.ModifiedBy = User.Identity.Name;
+                        Notification notificationVendor = new Notification();
+                        notificationVendor.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationVendor.StatusID = 3;
+                        notificationVendor.Stage = "3";
+                        notificationVendor.Role = "vendor";
+                        notificationVendor.isActive = true;
+                        notificationVendor.Created = now;
+                        notificationVendor.CreatedBy = User.Identity.Name;
+                        notificationVendor.Modified = now;
+                        notificationVendor.ModifiedBy = User.Identity.Name;
 
-                        db.Notifications.Add(notification);
+                        db.Notifications.Add(notificationVendor);
+
+                        Notification notificationProc = new Notification();
+                        notificationProc.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
+                        notificationProc.StatusID = 1;
+                        notificationProc.Stage = "3";
+                        notificationProc.Role = "procurement";
+                        notificationProc.isActive = true;
+                        notificationProc.Created = now;
+                        notificationProc.CreatedBy = User.Identity.Name;
+                        notificationProc.Modified = now;
+                        notificationProc.ModifiedBy = User.Identity.Name;
+
+                        db.Notifications.Add(notificationProc);
 
                         counter++;                        
                     }
