@@ -183,7 +183,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null && x.ParentID == null) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.ActiveStage != null && x.ActiveStage != "0" && x.Material != "" && x.Material != null) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
 
                 var noShowPOes = pOes;
 
