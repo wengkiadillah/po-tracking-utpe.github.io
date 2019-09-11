@@ -157,8 +157,8 @@
         var scrollLength = [];
         $(document).ready(function () {
 
-            $('#startInspectionDate').datepicker({ autoHide: true });
-            $('#endInspectionDate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val()) >= date) ? false : true; } });
+            $('#startInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+            $('#endInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val()) >= date) ? false : true; } });
             $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
 
             $(".filter-search").on("keyup focus", function () {
