@@ -996,7 +996,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notificationProcurement);
 
-                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity || databasePurchasingDocumentItem.DeliveryDate != databasePurchasingDocumentItem.ConfirmedDate)
+                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity)
                         {
                             Notification notificationSAP = new Notification();
                             notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
