@@ -276,6 +276,7 @@ namespace POTrackingV2.Controllers
                       PONumber = x.PurchasingDocumentItem.PO.Number,
                       POQty = x.PurchasingDocumentItem.Quantity,
                       POConfirmedQty = x.PurchasingDocumentItem.ConfirmedQuantity,
+                      DeliveryDate = x.PurchasingDocumentItem.DeliveryDate,
                       PDIID = x.PurchasingDocumentItem.ID,
                       material = x.PurchasingDocumentItem.Material,
                       GRDate = x.GoodsReceiptDate,

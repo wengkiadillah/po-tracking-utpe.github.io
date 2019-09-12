@@ -38,7 +38,8 @@
                         <i class="far fa-calendar-alt form-type-icon"></i>
                     </div>
                     <button type="submit" class="btn btn-info mr-3">Find</button>
-                    @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
+                    @Html.ActionLink("Download", "DownloadReport", "Subcont", new { searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info" })
                 </div>
             </div>
         }
@@ -64,11 +65,11 @@
             Delivery Date
         </th>
         <th>
-            Estimated Inspection Date
-        </th>
-        <th>
             Subcont Name
         </th>
+        <th>
+            Estimated Inspection Date
+        </th>        
         <th>
             Estimated Time Arrival
         </th>
@@ -106,18 +107,18 @@
                         <td>
                             @if (purchasingDocumentItem.DeliveryDate != null)
                             {
-                                @purchasingDocumentItem.DeliveryDate.Value.ToString("dd/MM/yyyy")
+                                @purchasingDocumentItem.DeliveryDate.Value.ToString("dd/MM/yyyy");
                             }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => purchasingDocumentItem.PO.Vendor.Name)
                         </td>
                         <td>
                             @if (purchasingDocumentItem.PrimerActualDate != null)
                             {
-                                @purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy")
+                                @purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy");
                             }
                             @*@Html.DisplayFor(modelItem => purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy"))*@
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => purchasingDocumentItem.PO.Vendor.Name)
                         </td>
                         <td>
                             @if (purchasingDocumentItem.PrimerActualDate != null)
@@ -133,7 +134,7 @@
                                     ETADateNewFormat = ETADate.Value.ToString("dd/MM/yyyy");
                                 }
 
-                                @ETADateNewFormat
+                                @ETADateNewFormat;
                             }
                             @*@Html.DisplayFor(modelItem => purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy"))*@
                         </td>
@@ -156,8 +157,8 @@
         var scrollLength = [];
         $(document).ready(function () {
 
-            $('#startInspectionDate').datepicker({ autoHide: true });
-            $('#endInspectionDate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val()) >= date) ? false : true; } });
+            $('#startInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
+            $('#endInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val()) >= date) ? false : true; } });
             $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
 
             $(".filter-search").on("keyup focus", function () {
