@@ -88,7 +88,7 @@
                 var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.PrimerActualDate != null && x.Material != "" && x.Material != null);
                 if (!String.IsNullOrEmpty(ViewBag.CurrentDataMaterial))
                 {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(x=> x.Material.ToLower() == ViewBag.CurrentDataMaterial.ToLower());
+                    purchasingDocumentItems = purchasingDocumentItems.Where(x=> x.Material.ToLower().Contains(ViewBag.CurrentDataMaterial.ToLower()));
                 }
 
                 if (!String.IsNullOrEmpty(ViewBag.CurrentStartInspectionDate))
