@@ -217,6 +217,11 @@ body
         color: #F98E72;
     }
 
+    .notification-list-item > i.needsapchange
+    {
+        color: #F98E72;
+    }
+
 
 .notification-container.not-show,
 .notification-container.not-show .notification-header,
