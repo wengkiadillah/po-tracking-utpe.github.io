@@ -39,7 +39,7 @@
                     </div>
                     <button type="submit" class="btn btn-info mr-3">Find</button>
                     @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
-                    @Html.ActionLink("Download", "DownloadReport", "Subcont", new { searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Download", "DownloadReport", "Subcont", new { searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchStartInspectionDate = ViewBag.CurrentStartInspectionDate, searchEndInspectionDate = ViewBag.CurrentEndInspectionDate }, new { @class = "btn btn-info" })
                 </div>
             </div>
         }
@@ -147,7 +147,7 @@
 
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
     @Html.PagedListPager(Model, page => Url.Action("Report",
-    new { page, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, filterBy = @ViewBag.FilterBy, searchStartInspectionDate = ViewBag.CurrentStartInspectionDate, searchEndInspectionDate = ViewBag.CurrentEndInspectionDate }))
 
 </div>
 
