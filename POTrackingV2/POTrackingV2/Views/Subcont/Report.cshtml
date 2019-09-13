@@ -86,6 +86,24 @@
             foreach (var pO in Model)
             {
                 var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.PrimerActualDate != null && x.Material != "" && x.Material != null);
+                if (!String.IsNullOrEmpty(ViewBag.CurrentDataMaterial))
+                {
+                    purchasingDocumentItems = purchasingDocumentItems.Where(x=> x.Material.ToLower() == ViewBag.CurrentDataMaterial.ToLower());
+                }
+
+                if (!String.IsNullOrEmpty(ViewBag.CurrentStartInspectionDate))
+                {
+                    DateTime startDate = DateTime.ParseExact(ViewBag.CurrentStartInspectionDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.PrimerActualDate >= startDate);
+                }
+
+                if (!String.IsNullOrEmpty(ViewBag.CurrentEndInspectionDate))
+                {
+                    DateTime endDate = DateTime.ParseExact(ViewBag.CurrentEndInspectionDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.PrimerActualDate <= endDate);
+                }
+
                 //var purchasingDocumentItems = pO.PurchasingDocumentItems;
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
