@@ -38,7 +38,7 @@
                         <i class="far fa-calendar-alt form-type-icon"></i>
                     </div>
                     <button type="submit" class="btn btn-info mr-3">Find</button>
-                    @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Clear", "Report", null, new { @class = "btn btn-info mr-3" })
                     @Html.ActionLink("Download", "DownloadReport", "Subcont", new { searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchStartInspectionDate = ViewBag.CurrentStartInspectionDate, searchEndInspectionDate = ViewBag.CurrentEndInspectionDate }, new { @class = "btn btn-info" })
                 </div>
             </div>
