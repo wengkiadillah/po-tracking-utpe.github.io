@@ -29,7 +29,7 @@
             </div>
             <div class="col-lg-6 col-12 custom-form-field mb-3">
                 <label class="form-custom-label" for="subCont_Material">Material</label>
-                @Html.EditorFor(model => model.subCont.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line", @list = "data-list-material" } })
+                @Html.EditorFor(model => model.subCont.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line filter-search", @list = "data-list-material" } })
                 <datalist id="data-list-material"></datalist>
                 @Html.ValidationMessageFor(model => model.subCont.Material, "", new { @class = "field-validation-valid text-danger" })
 
@@ -126,7 +126,7 @@
             $('.chosen-drop').css("left", "0px");
 
             $(".filter-search").on("keyup focus", function () {
-                var searchData = $("#subCont_Material");
+                searchData = $("#subCont_Material");
 
                 $.ajax({
                     type: "GET",
