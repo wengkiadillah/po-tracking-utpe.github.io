@@ -7,89 +7,98 @@
 @using (Html.BeginForm())
 {
     @*@Html.AntiForgeryToken()*@
-    
-<div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
-    <h2 class="form-sub-header">
-        Edit Master Vendor As SubCont
-    </h2>
-    <hr class="mb-4">
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.ID)
-    <div class="row">
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="VendorCode">Vendor Code</label>
-            @Html.EditorFor(model => model.VendorCode, new { htmlAttributes = new { @class = "form-control full-width employee-number text-box single-line", @disabled = "disabled" } })
-            @Html.ValidationMessageFor(model => model.VendorCode, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="Material">Material</label>
-            @Html.EditorFor(model => model.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" , @list = "data-list-material" } })
-            <datalist id="data-list-material"></datalist>
-            @Html.ValidationMessageFor(model => model.Material, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="Description">Description</label>
-            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control full-width text-box single-line", @list = "data-list-description" } })
-            <datalist id="data-list-description"></datalist>
-            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="DailyLeadTime">Daily Lead Time</label>
-            @Html.EditorFor(model => model.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="MonthlyLeadTime">Monthly Lead Time</label>
-            @Html.EditorFor(model => model.MonthlyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.MonthlyLeadTime, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="PB">PB</label>
-            @Html.EditorFor(model => model.PB, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.PB, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="Setting">Setting</label>
-            @Html.EditorFor(model => model.Setting, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.Setting, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="Fullweld">Fullweld</label>
-            @Html.EditorFor(model => model.Fullweld, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.Fullweld, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="Primer">Primer</label>
-            @Html.EditorFor(model => model.Primer, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.Primer, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="MonthlyCapacity">Monthly Capacity</label>
-            @Html.EditorFor(model => model.MonthlyCapacity, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.MonthlyCapacity, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-        <div class="col-lg-6 col-12 custom-form-field mb-3">
-            <label class="form-custom-label" for="isNeedSequence">is Need Sequence</label>
-            @Html.CheckBoxFor(model => model.isNeedSequence, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
-            @Html.ValidationMessageFor(model => model.isNeedSequence, "", new { @class = "field-validation-valid text-danger" })
-        </div>
-    </div>
 
-    <div class="row justify-content-between mt-5">
-        <div class="col-auto">
-            <a href="@Url.Action("Index", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+    <div class="new-powerapps-user-section form-tab p-4" id="divPowerApps" style="background-color:white;">
+        <h2 class="form-sub-header">
+            Edit Master Vendor As SubCont
+        </h2>
+        <hr class="mb-4">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        <div class="row">
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="VendorCode">Vendor Code</label>
+                @Html.EditorFor(model => model.VendorCode, new { htmlAttributes = new { @class = "form-control full-width employee-number text-box single-line", @disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.VendorCode, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="Material">Material</label>
+                @Html.EditorFor(model => model.Material, new { htmlAttributes = new { @class = "form-control full-width text-box single-line", @list = "data-list-material" } })
+                <datalist id="data-list-material"></datalist>
+                @Html.ValidationMessageFor(model => model.Material, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="Description">Description</label>
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control full-width text-box single-line", @list = "data-list-description" } })
+                <datalist id="data-list-description"></datalist>
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="DailyLeadTime">Daily Lead Time</label>
+                @Html.EditorFor(model => model.DailyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.DailyLeadTime, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="MonthlyLeadTime">Monthly Lead Time</label>
+                @Html.EditorFor(model => model.MonthlyLeadTime, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.MonthlyLeadTime, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="PB">PB</label>
+                @Html.EditorFor(model => model.PB, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.PB, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="Setting">Setting</label>
+                @Html.EditorFor(model => model.Setting, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.Setting, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="Fullweld">Fullweld</label>
+                @Html.EditorFor(model => model.Fullweld, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.Fullweld, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="Primer">Primer</label>
+                @Html.EditorFor(model => model.Primer, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.Primer, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="MonthlyCapacity">Monthly Capacity</label>
+                @Html.EditorFor(model => model.MonthlyCapacity, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.MonthlyCapacity, "", new { @class = "field-validation-valid text-danger" })
+            </div>
+            <div class="col-lg-6 col-12 custom-form-field mb-3">
+                <label class="form-custom-label" for="isNeedSequence">is Need Sequence</label>
+                @Html.CheckBoxFor(model => model.isNeedSequence, new { htmlAttributes = new { @class = "form-control full-width text-box single-line" } })
+                @Html.ValidationMessageFor(model => model.isNeedSequence, "", new { @class = "field-validation-valid text-danger" })
+            </div>
         </div>
-        <div class="col-auto">
-            <button type="submit" value="Create" class="btn btn-success create-ad-user mr-0 mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> &nbsp; Update</button>
+
+        <div class="row justify-content-between mt-5">
+            <div class="col-auto">
+                <a href="@Url.Action("Index", "MasterVendor")" class="btn btn-primary mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> &nbsp; Back</a>
+            </div>
+            <div class="col-auto">
+                <button type="submit" value="Create" class="btn btn-success create-ad-user mr-0 mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> &nbsp; Update</button>
+            </div>
         </div>
-    </div>
-    
-    @if (ViewBag.Message != null)
-    {
-        <script type="text/javascript">
+
+        @if (ViewBag.Message != null)
+        {
+            <script type="text/javascript">
             window.onload = function () {
                 alert("@ViewBag.Message");
+            };
+            </script>
+        }
 
+    </div>
+}
+
+@section scripts {
+    <script>
+        $(function () {
                 $("input#Material").on("keyup focus", function () {
                 var searchData = $("#Material");
 
@@ -149,10 +158,7 @@
                     }
                 });
             });
-            };
-        </script>
-    }
+        })
+    </script>
 
-</div>
 }
-
