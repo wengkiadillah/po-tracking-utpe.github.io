@@ -33,7 +33,7 @@ namespace POTrackingV2
                       "~/Content/bootstrap.min.css",
                       "~/Content/all.min.css",
                       "~/Content/styles.css",
-                      "~/Content/Chosen/chosen.min.css"));
+                      "~/Content/chosen.min.css"));
         }
     }
 }

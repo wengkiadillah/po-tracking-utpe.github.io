@@ -437,8 +437,8 @@
     <Content Include="Content\all.min.css" />
     <Content Include="Content\bootstrap-select.min.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Chosen\chosen.css" />
-    <Content Include="Content\Chosen\chosen.min.css" />
+    <Content Include="Content\chosen.css" />
+    <Content Include="Content\chosen.min.css" />
     <Content Include="Content\dataTables.bootstrap4.min.css" />
     <Content Include="Content\datepicker.min.css" />
     <Content Include="Content\PagedList.css" />
@@ -468,7 +468,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Content\Chosen\chosen-sprite.png" />
+    <Content Include="Content\chosen-sprite.png" />
     <Content Include="Images\close.png" />
     <Content Include="Images\excel.png" />
     <Content Include="Images\LoaderIcon.gif" />
