@@ -34,6 +34,10 @@ namespace POTrackingV2.Controllers
                 {
                     return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
                 }
+                else if (searchBy == "material")
+                {
+                    return View(db.SubcontComponentCapabilities.Where(x => x.Material.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
+                }               
                 else
                 {
                     return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));

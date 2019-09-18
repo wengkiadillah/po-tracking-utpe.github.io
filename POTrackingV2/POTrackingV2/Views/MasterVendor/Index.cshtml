@@ -24,6 +24,7 @@
             <select id="searchBy" name="searchBy" class="form-control form-control-lg mr-4" value="@ViewBag.CurrentSearchFilterBy">
                 <option value="vendorCode">Vendor Code</option>
                 <option value="description">Description</option>
+                <option value="material">Material</option>
             </select>
             <button type="submit" class="btn btn-info mr-3">Find</button>
             @Html.ActionLink("Clear", "Index", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
