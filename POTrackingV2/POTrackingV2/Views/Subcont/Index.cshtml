@@ -181,10 +181,13 @@
 
                         var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-                        if (purchasingDocumentItems.Count() > 0)
+                        if (ViewBag.SearchPOStatus != "done")
                         {
-                            purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-                            purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+                            if (purchasingDocumentItems.Count() > 0)
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+                            }
                         }
 
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
@@ -898,8 +901,8 @@
                                     }
                                 </div>
                             </div>
-                                            row++;
-                                        }
+                            row++;
+                        }
                     </div>
                 </div>
                 <div class="po-item-section stage-5">
@@ -1181,8 +1184,8 @@
             </div>
         </li>
     </ul>
-                                poSignRow++;
-                            }
+    poSignRow++;
+}
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
