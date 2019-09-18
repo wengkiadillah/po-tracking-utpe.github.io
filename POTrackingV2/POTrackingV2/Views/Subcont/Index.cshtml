@@ -177,7 +177,16 @@
                     @{
                         var row = 1;
                         var rowChild = 1;
-                        var purchasingDocumentItems = pO.PurchasingDocumentItems;
+                        //var purchasingDocumentItems = pO.PurchasingDocumentItems;
+
+                        var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
+
+                        if (purchasingDocumentItems.Count() > 0)
+                        {
+                            purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+                            purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+                        }
+
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
 
                         if (ViewBag.CurrentRoleID == ViewBag.RoleVendor)

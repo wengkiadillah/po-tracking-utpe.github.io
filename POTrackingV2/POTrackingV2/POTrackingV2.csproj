@@ -468,6 +468,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\chosen-sprite.png" />
     <Content Include="Images\close.png" />
     <Content Include="Images\excel.png" />
     <Content Include="Images\LoaderIcon.gif" />

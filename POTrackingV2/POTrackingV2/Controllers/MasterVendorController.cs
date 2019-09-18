@@ -32,7 +32,7 @@ namespace POTrackingV2.Controllers
             {
                 if (searchBy == "description")
                 {
-                    return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).OrderBy(x=> x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
+                    return View(db.SubcontComponentCapabilities.Where(x => x.Description.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
                 }
                 else if (searchBy == "material")
                 {
@@ -560,6 +560,38 @@ namespace POTrackingV2.Controllers
         {
             return View();
 
+        }
+
+
+        [HttpGet]
+        public JsonResult GetDataFromMaterialAndDescription(string value)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            try
+            {
+                object data = null;
+                value = value.ToLower();
+
+                data = db.PurchasingDocumentItems.Where(x => x.Material.Contains(value) || x.Description.Contains(value)).Select(x =>
+                new
+                {
+                    Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : x.Material.ToLower().Contains(value) ? x.Material : x.Description,
+                    MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
+                }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
+
+                if (data != null)
+                {
+                    return Json(new { success = true, responseCode = "200", data = JsonConvert.SerializeObject(data) }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 
