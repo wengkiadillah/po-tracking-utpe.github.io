@@ -102,9 +102,12 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                if (searchPOStatus.ToLower() != "done")
+                if (!string.IsNullOrEmpty(searchPOStatus))
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                    if (searchPOStatus.ToLower() != "done")
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                    }
                 }
 
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
