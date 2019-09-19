@@ -109,6 +109,10 @@ namespace POTrackingV2.Controllers
                         pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
                 }
+                else
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                }
 
                 if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
