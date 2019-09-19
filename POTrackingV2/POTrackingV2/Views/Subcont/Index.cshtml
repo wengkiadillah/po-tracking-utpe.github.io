@@ -57,6 +57,7 @@
                            placeholder="dd/mm/yyyy" value="@ViewBag.CurrentEndPODate" autocomplete="off" />
                     <i class="far fa-calendar-alt form-type-icon"></i>
                 </div>
+                <input id="searchPOStatus" name="searchPOStatus" type="hidden" value="@ViewBag.CurrentSearchPOStatus" />
                 <button type="submit" class="btn btn-info mr-3">Find</button>
                 @Html.ActionLink("Clear", "Index", null, new { @class = "btn btn-info" })
 
@@ -1461,7 +1462,7 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action("Index",
     //new { page, role = ViewBag.CurrentRoleID, searchData = ViewBag.CurrentData, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
-    new { page, searchPOStatus = @ViewBag.SearchPOStatus, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchSubcontDev = ViewBag.CurrentDataSubcontDev, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
+    new { page, searchPOStatus = @ViewBag.CurrentSearchPOStatus, searchPONumber = ViewBag.CurrentDataPONumber, searchVendorName = ViewBag.CurrentDataVendorName, searchMaterial = ViewBag.CurrentDataMaterial, searchSubcontDev = ViewBag.CurrentDataSubcontDev, filterBy = @ViewBag.FilterBy, searchStartPODate = ViewBag.CurrentStartPODate, searchEndPODate = ViewBag.CurrentEndPODate }))
 @section scripts {
     <script src="~/Scripts/datepicker.min.js"></script>
     <script src="~/Scripts/donutty-jquery.min.js"></script>
