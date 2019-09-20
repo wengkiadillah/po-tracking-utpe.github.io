@@ -1436,7 +1436,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             else { }
 
             $('#startPODate').datepicker({ autoHide: true });
-            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+            $('#endPODate').datepicker({ autoHide: true, filter: date => { return (new Date($('#startPODate').val().replaceDayMonth()) >= date ? false : true); } });
             $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
 
             var tempArray = [];

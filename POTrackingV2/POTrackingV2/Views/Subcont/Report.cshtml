@@ -176,8 +176,13 @@
         var scrollLength = [];
         $(document).ready(function () {
 
+            //javasript date format mm/dd/yy
+            String.prototype.replaceDayMonth = function () {
+                return this.substr(3, 2) + this.substr(2, 1) + this.substr(0, 2) + this.substr(5);
+            }
+
             $('#startInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
-            $('#endInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val()) >= date) ? false : true; } });
+            $('#endInspectionDate').datepicker({ format: 'dd/mm/YYYY', autoHide: true, filter: date => { return (new Date($('#startInspectionDate').val().replaceDayMonth()) >= date ? false : true); } });
             $('.form-date').datepicker({ format: 'dd/mm/YYYY', autoHide: true });
 
             $(".filter-search").on("keyup focus", function () {
