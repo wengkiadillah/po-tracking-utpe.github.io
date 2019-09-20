@@ -2634,7 +2634,7 @@
                     var scrollLength = [];
                     $(document).ready(function () {
                         $('#startPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
-                        $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
+                        $('#endPODate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' }); //, filter: date => { return (new Date($('#startPODate').val()) >= date) ? false : true; } });
                         //$('#InputETAHistory_ETADate').datepicker({ autoHide: true, format: 'dd/mm/yyyy', filter: date => { return (new Date(Date.now()) >= date) ? false : true; } });
                         //$('#InputPurchasingDocumentItem_ConfirmReceivedPaymentDate').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
                         $('.form-date').datepicker({ autoHide: true, format: 'dd/mm/yyyy' });
