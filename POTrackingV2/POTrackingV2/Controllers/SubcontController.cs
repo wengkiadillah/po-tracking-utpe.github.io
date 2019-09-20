@@ -1333,9 +1333,9 @@ namespace POTrackingV2.Controllers
                 bool isDisabled = false;
                 bool isEditable = false;
                 int pb = purchasingDocumentItem.PB.HasValue ? purchasingDocumentItem.PB.Value : 0;
-                int setting = purchasingDocumentItem.PB.HasValue ? purchasingDocumentItem.PB.Value : 0;
-                int fullweld = purchasingDocumentItem.PB.HasValue ? purchasingDocumentItem.PB.Value : 0;
-                int primer = purchasingDocumentItem.PB.HasValue ? purchasingDocumentItem.PB.Value : 0;
+                int setting = purchasingDocumentItem.Setting.HasValue ? purchasingDocumentItem.Setting.Value : 0;
+                int fullweld = purchasingDocumentItem.Fullweld.HasValue ? purchasingDocumentItem.Fullweld.Value : 0;
+                int primer = purchasingDocumentItem.Primer.HasValue ? purchasingDocumentItem.Primer.Value : 0;
 
                 int leadTime = subcontComponentCapability != null ? (subcontComponentCapability.PB + subcontComponentCapability.Setting + subcontComponentCapability.Fullweld + subcontComponentCapability.Primer) : 0;
 
