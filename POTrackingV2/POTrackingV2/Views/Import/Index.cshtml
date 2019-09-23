@@ -115,7 +115,7 @@
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => !string.IsNullOrEmpty(x.LatestParkingDateNewFormat) || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
 
         if (purchasingDocumentItems.Count() > 0)
         {
@@ -255,7 +255,7 @@
                     {
                         var childPurchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => x.ParentID == purchasingDocumentItem.ID && x.ID != purchasingDocumentItem.ID);
                         var childRow = 1;
-                        var maximumStage = 10;
+                        var maximumStage = 9;
                         var donutProgress = purchasingDocumentItem.DonutProgress;
 
                         var materialUTPE = purchasingDocumentItem.Material;
@@ -273,7 +273,7 @@
 
                         if (roleID == "vendor")
                         {
-                            maximumStage = 9;
+                            maximumStage = 8;
                             donutProgress = purchasingDocumentItem.DonutProgressVendor;
                         }
 
@@ -310,7 +310,7 @@
                                 {
                                     foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                     {
-                                        maximumStage = 10;
+                                        maximumStage = 9;
                                         donutProgress = childPurchasingDocumentItem.DonutProgress;
 
                                         materialUTPE = childPurchasingDocumentItem.Material;
@@ -328,7 +328,7 @@
 
                                         if (roleID == "vendor")
                                         {
-                                            maximumStage = 9;
+                                            maximumStage = 8;
                                             donutProgress = childPurchasingDocumentItem.DonutProgressVendor;
                                         }
 
