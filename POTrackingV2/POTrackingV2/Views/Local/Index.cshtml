@@ -452,7 +452,7 @@ else
 
                                         if (purchasingDocumentItem.ConfirmedDate.HasValue)
                                         {
-                                            latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
+                                            latestConfirmedDate = purchasingDocumentItem.ConfirmedDateView;
 
                                             confirmedDate = purchasingDocumentItem.ConfirmedDateView;
                                         }
@@ -676,7 +676,7 @@ else
 
                                                             if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
                                                             {
-                                                                latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
+                                                                latestConfirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
 
                                                                 confirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
                                                             }
