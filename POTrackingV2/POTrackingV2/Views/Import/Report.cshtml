@@ -64,7 +64,7 @@
         {
             foreach (var po in Model)
             {
-                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && /*string.IsNullOrEmpty(x.LatestParkingDateNewFormat) &&*/ x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && /*string.IsNullOrEmpty(x.LatestParkingDateNewFormat) &&*/ x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory != "Q") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
                                                                         .OrderBy(x => x.ItemNumber);
 
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
