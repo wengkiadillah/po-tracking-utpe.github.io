@@ -115,7 +115,7 @@
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => !string.IsNullOrEmpty(x.LatestParkingDateNewFormat) || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
 
         if (purchasingDocumentItems.Count() > 0)
         {

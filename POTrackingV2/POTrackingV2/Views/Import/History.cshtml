@@ -92,37 +92,37 @@
     </div>
 </div>
 @foreach (var pO in Model)
-            {
-                var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
-                var today = DateTime.Now;
+{
+    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
+    var today = DateTime.Now;
 
-                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-                purchasingDocumentItems = purchasingDocumentItems.Where(x => !string.IsNullOrEmpty(x.LatestParkingDateNewFormat) || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")
-                                                                .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
+    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+    purchasingDocumentItems = purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")
+                                                    .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
 
 
-                if (!string.IsNullOrEmpty(currentSearchForMaterial))
-                {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
-                }
+    if (!string.IsNullOrEmpty(currentSearchForMaterial))
+    {
+        purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));
+    }
 
-                if (purchasingDocumentItems.Count() < 1)
-                {
-                    continue;
-                }
+    if (purchasingDocumentItems.Count() < 1)
+    {
+        continue;
+    }
 
-                purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
+    purchasingDocumentItems = purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
-                var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
+    var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
 
-                var poItemStickyProcurementWidth = "";
-                var poItemScrollableProcurementWidth = "";
+    var poItemStickyProcurementWidth = "";
+    var poItemScrollableProcurementWidth = "";
 
-                if (roleID == "procurement" || roleID == "administrator")
-                {
-                    poItemStickyProcurementWidth = "po-item-sticky-procurement";
-                    poItemScrollableProcurementWidth = "po-item-scrollable-procurement";
-                }
+    if (roleID == "procurement" || roleID == "administrator")
+    {
+        poItemStickyProcurementWidth = "po-item-sticky-procurement";
+        poItemScrollableProcurementWidth = "po-item-scrollable-procurement";
+    }
 
                 <ul class="list-unstyled po-list">
                     <li class="po-item-container">
