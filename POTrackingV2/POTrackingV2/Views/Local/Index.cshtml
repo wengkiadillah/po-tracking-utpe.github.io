@@ -452,7 +452,7 @@ else
 
                                         if (purchasingDocumentItem.ConfirmedDate.HasValue)
                                         {
-                                            latestConfirmedDate = purchasingDocumentItem.ConfirmedDateView;
+                                            latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
 
                                             confirmedDate = purchasingDocumentItem.ConfirmedDateView;
                                         }
@@ -648,7 +648,7 @@ else
                                                         <div class="form-inline">
                                                             <input type="hidden" class="@st1ItemIDInner" value="@purchasingDocumentItem.ID">
                                                             <div class="input-group mr-2">
-                                                                <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" value="@latestConfirmedDate" @disabledInputDate>
+                                                                <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@confirmedDate" placeholder="dd/mm/yyyy" value="@confirmedDate" @disabledInputDate>
                                                                 <i class="fas fa-calendar-alt form-type-icon icon-prepend"></i>
                                                                 <div class="input-group-prepend">
                                                                     <button type="submit" class="btn btn-positive @st1AcceptItem @selectedButtonConfirm" @disabledButtonConfirm>Yes</button>
@@ -670,13 +670,13 @@ else
                                                     {
                                                         foreach (var childPurchasingDocumentItem in childPurchasingDocumentItems)
                                                         {
-                                                            latestConfirmedDate = childPurchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                                            latestConfirmedDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                                             latestConfirmedQuantity = childPurchasingDocumentItem.Quantity;
                                                             confirmedDate = "";
 
                                                             if (childPurchasingDocumentItem.ConfirmedDate.HasValue)
                                                             {
-                                                                latestConfirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
+                                                                latestConfirmedDate = pO.PurchasingDocumentItems.Where(x => x.ID == purchasingDocumentItem.ID || x.ParentID == purchasingDocumentItem.ID).OrderByDescending(x => x.ConfirmedDate).FirstOrDefault().ConfirmedDateView;
 
                                                                 confirmedDate = childPurchasingDocumentItem.ConfirmedDateView;
                                                             }
@@ -797,7 +797,7 @@ else
                                                                     <div class="form-inline">
                                                                         <input type="hidden" class="@st1ItemIDInner" value="@childPurchasingDocumentItem.ID">
                                                                         <div class="input-group mr-2">
-                                                                            <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@latestConfirmedDate" placeholder="dd/mm/yyyy" value="@latestConfirmedDate" @disabledInputDate>
+                                                                            <input type="text" class="form-control form-date with-icon @st1PartialDate" required autofocus pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$" maxlength="10" maxdate="@confirmedDate" placeholder="dd/mm/yyyy" value="@confirmedDate" @disabledInputDate>
                                                                             <i class="fas fa-calendar-alt form-type-icon icon-prepend" @hideChildButton></i>
                                                                             <div class="input-group-prepend" @hideChildButton>
                                                                                 <button type="submit" class="btn btn-positive @st1AcceptItem @selectedButtonConfirm" @disabledButtonConfirm>Yes</button>
