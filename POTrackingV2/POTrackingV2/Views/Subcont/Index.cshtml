@@ -251,21 +251,21 @@
                                 <span class="po-item-data-header__column description">
                                     @purchasingDocumentItem.Description
                                 </span>
-                                @if (purchasingDocumentItem.ConfirmedItem != false || purchasingDocumentItem.IsClosed.ToLower().Contains("l"))
-                                {
-                                    <div class="po-item-data-header__column po-progress">
-                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                             data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
-                                    </div>
-                                }
-                                else
+                                @if (purchasingDocumentItem.ConfirmedItem == false || purchasingDocumentItem.IsClosed.ToLower().Contains("l"))
                                 {
                                     int donutProgress = 100;
                                     <div class="po-item-data-header__column po-progress">
                                         <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                              data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
                                         <div>Cancel</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="po-item-data-header__column po-progress">
+                                        <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                             data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                        <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItem.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
                                     </div>
                                 }
                             </div>
@@ -281,21 +281,21 @@
                                         <span class="po-item-data-header__column description" @isChild>
                                             @purchasingDocumentItemChild.Description
                                         </span>
-                                        @if (purchasingDocumentItemChild.ConfirmedItem != false || purchasingDocumentItemChild.IsClosed.ToLower().Contains("l"))
-                                        {
-                                            <div class="po-item-data-header__column po-progress">
-                                                <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
-                                                     data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
-                                                <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItemChild.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
-                                            </div>
-                                        }
-                                        else
+                                        @if (purchasingDocumentItemChild.ConfirmedItem == false || purchasingDocumentItemChild.IsClosed.ToLower().Contains("l"))
                                         {
                                             int donutProgress = 100;
                                             <div class="po-item-data-header__column po-progress">
                                                 <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
                                                      data-value="@donutProgress" data-round="false" data-color="#8b0000" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
                                                 <div>Cancel</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="po-item-data-header__column po-progress">
+                                                <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
+                                                     data-value="@donutProgressValue" data-round="false" data-color="#567FEF" data-transition="all 2s cubic-bezier(0.17, 2.39, 0.36, 0.9)"></div>
+                                                <div><span class="mark-donut" id="activeStagePo-@poSignRow">@purchasingDocumentItemChild.ActiveStageToNumber</span><span class="secondary-text">/7</span></div>
                                             </div>
                                         }
                                     </div>
