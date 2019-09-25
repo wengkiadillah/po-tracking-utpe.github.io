@@ -243,7 +243,7 @@
                                                 <span class="po-item-data-header__column material">@materialVendor</span>
                                             }
                                             <span class="po-item-data-header__column description">@purchasingDocumentItem.Description</span>
-                                            @if (purchasingDocumentItem.ConfirmedItem != false)
+                                            @if (purchasingDocumentItem.ConfirmedItem != false || purchasingDocumentItem.IsClosed.ToLower().Contains("l"))
                                             {
                                                 <div class="po-item-data-header__column po-progress">
                                                     <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
@@ -297,7 +297,7 @@
                                                             <span class="po-item-data-header__column material" style="visibility:hidden">@materialVendor</span>
                                                         }
                                                         <span class="po-item-data-header__column description" style="visibility:hidden">@childPurchasingDocumentItem.Description</span>
-                                                        @if (childPurchasingDocumentItem.ConfirmedItem != false)
+                                                        @if (childPurchasingDocumentItem.ConfirmedItem != false || childPurchasingDocumentItem.IsClosed.ToLower().Contains("l"))
                                                         {
                                                             <div class="po-item-data-header__column po-progress">
                                                                 <div class="donut-chart" data-donutty data-radius="12" data-thickness="4" data-padding="0"
