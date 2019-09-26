@@ -63,7 +63,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material))) &&
+                            (x.PurchasingDocumentItems.Any(y => /*string.IsNullOrEmpty(y.LatestParkingDateNewFormat) && */ y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory != "Q"))) &&
                             (x.ReleaseDate != null))
                             .AsQueryable();
 
@@ -140,21 +140,21 @@ namespace POTrackingV2.Controllers
             {
                 if (searchPOStatus.ToLower() == "ongoing")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                 }
                 else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
                 {
                     if (searchPOStatus.ToLower() == "negotiated")
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
                     else
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx"));
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                        (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0"))) &&
+                        (x.PurchasingDocumentItems.Any(y => /*string.IsNullOrEmpty(y.LatestParkingDateNewFormat) &&*/ y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory != "Q"))) &&
                         (x.ReleaseDate != null))
                         .AsQueryable();
 
@@ -411,7 +411,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" && !String.IsNullOrEmpty(y.Material))) &&
+                            (x.PurchasingDocumentItems.Any(y => /*!string.IsNullOrEmpty(y.LatestParkingDateNewFormat) ||*/ y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory == "Q") && !String.IsNullOrEmpty(y.Material))) &&
                             (x.ReleaseDate != null))
                             .AsQueryable();
 
@@ -771,7 +771,7 @@ namespace POTrackingV2.Controllers
 
                         if (childPurchasingDocumentItems.Count > 0)
                         {
-                            if (childPurchasingDocumentItems.Any(x => x.ActiveStage != "1"))
+                            if (childPurchasingDocumentItems.Any(x => x.ActiveStage != "1" && (databasePurchasingDocumentItem.ActiveStage != "2" && databasePurchasingDocumentItem.HasETAHistory)))
                             {
                                 return Json(new { responseText = $"Cannot edit progressed data" }, JsonRequestBehavior.AllowGet);
                             }
