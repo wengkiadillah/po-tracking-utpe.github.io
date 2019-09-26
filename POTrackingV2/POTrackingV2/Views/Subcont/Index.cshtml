@@ -1089,7 +1089,11 @@
                                         }
                                         else
                                         {
-                                            if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) || purchasingDocumentItemChild.InvoiceMethod != "partial" || purchasingDocumentItemChild.ActiveStageToNumber < 3 || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
+                                            if ((ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator) || 
+                                                purchasingDocumentItemChild.InvoiceMethod != "partial" || 
+                                                purchasingDocumentItemChild.ActiveStageToNumber < 3 || 
+                                                (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) || 
+                                                (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity))
                                             {
                                                 disabledFileInvoice = "disabled";
                                                 disabledFileInvoiceUpload = "disabled";
