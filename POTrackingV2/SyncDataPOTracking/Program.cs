@@ -271,11 +271,6 @@ namespace SyncDataPOTracking
                                 itemExist[flagItemExist].LastModified = DateTime.Now;
                                 itemExist[flagItemExist].LastModifiedBy = "SyncDataSAP";
 
-                                if (itemExist[flagItemExist].IsClosed.ToLower().Contains("l"))
-                                {
-                                    itemExist[flagItemExist].ConfirmedItem = false;
-                                }
-
                                 int itemID = itemExist[flagItemExist].ID > 0 ? itemExist[flagItemExist].ID : 0;
                                 List<int> notificationIDs = db.PurchasingDocumentItems.Where(x => x.ParentID == itemID || x.ID == itemID).Select(x => x.ID).ToList();
 
@@ -352,11 +347,6 @@ namespace SyncDataPOTracking
                                 //poItem.LastModified = DateTime.Now.Date;
                                 poItem.LastModified = DateTime.Now;
                                 poItem.LastModifiedBy = "SyncDataSAP";
-
-                                if (poItem.IsClosed.ToLower().Contains("l"))
-                                {
-                                    poItem.ConfirmedItem = false;
-                                }
 
                                 db.PurchasingDocumentItems.Add(poItem);
                                 db.SaveChanges();
