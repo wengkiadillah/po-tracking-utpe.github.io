@@ -224,7 +224,7 @@
                             }
                             else if (ViewBag.SearchPOStatus == "done")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase)))).ToList();
                             }
                             else
                             {
@@ -2835,6 +2835,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $("#inputProgressModalLabel").attr("row", row);
             $("#inputProgressModalLabel").attr("editable", false);
             if (role == "subcontdev" || role == "administrator") {
+                $("#EditSequencesProgress").hide();
                 $("#SaveSequencesProgress").hide();
             }
             //console.log(pdItemID);
@@ -2952,6 +2953,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
         //Edit Progress Sequences
         function EditSaveProgress() {
+            var role = $("#role").val();
             var pdItemID = $("#inputProgressModalLabel").attr("item-id");
             $.ajax({
                 type: "GET",
@@ -2960,24 +2962,27 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 success: function (response) {
                     if (response.responseCode == "200") {
                         //console.log(response.data);
-                        if ($("#ATA" + response.data).attr("disabled") == "disabled") {
-                            var active_tab = $("#myTab li a.active");
-                            if (active_tab.attr("aria-controls") == response.data.toLowerCase()) {
-                                $("#EditSequencesProgress").show();
-                            } else {
-                                $("#EditSequencesProgress").hide();
-                            }
-                            console.log(response.data + $("#ATA" + response.data).attr("disabled"));
+                        //if ($("#ATA" + response.data).attr("disabled") == "disabled") {
+                        //    var active_tab = $("#myTab li a.active");
+                        //    if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
+                        //        $("#EditSequencesProgress").show();
+                        //    } else {
+                        //        $("#EditSequencesProgress").hide();
+                        //    }
+                        //} else {
+                        //    var active_tab = $("#myTab li a.active");
+                        //    if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
+                        //        $("#EditSequencesProgress").show();
+                        //    } else {
+                        //        $("#EditSequencesProgress").hide();
+                        //    }
+                        //}
+                        var active_tab = $("#myTab li a.active");
+                        if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
+                            $("#EditSequencesProgress").show();
                         } else {
-                            var active_tab = $("#myTab li a.active");
-                            if (active_tab.attr("aria-controls") == response.data.toLowerCase()) {
-                                $("#EditSequencesProgress").show();
-                            } else {
-                                $("#EditSequencesProgress").hide();
-                            }
-                            console.log(response.data + " ga disabled");
+                            $("#EditSequencesProgress").hide();
                         }
-
                         
                     } else {
                         //console.log(response.responseCode + response.responseText);
