@@ -2847,7 +2847,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 //dataType: "json",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        //console.log(response);
+                        console.log(response);
 
                         $("#PBDays").val(response.arrayDataTime['PBDays']);
                         $("#SettingDays").val(response.arrayDataTime['SettingDays']);
@@ -2933,7 +2933,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         }
                         for (var k in jsonObjFileFullweld) {
                             filePreview(jsonObjFileFullweld[k]['fileName'], jsonObjFileFullweld[k]['url'], "fileFullweld");
-                        } for (var k in jsonObjFilePrimer) {
+                        }
+                        for (var k in jsonObjFilePrimer) {
                             filePreview(jsonObjFilePrimer[k]['fileName'], jsonObjFilePrimer[k]['url'], "filePrimer");
                         }
                         EditSaveProgress();
@@ -3567,7 +3568,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         function filePreview(fileName, url, elementID) {
             if (typeof (FileReader) != "undefined") {
                 var dvPreview = document.getElementById(elementID);
-                dvPreview.innerHTML = "";
+                //dvPreview.innerHTML = "";
                 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                 var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
 
