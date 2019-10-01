@@ -2962,27 +2962,27 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 success: function (response) {
                     if (response.responseCode == "200") {
                         //console.log(response.data);
-                        //if ($("#ATA" + response.data).attr("disabled") == "disabled") {
-                        //    var active_tab = $("#myTab li a.active");
-                        //    if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
-                        //        $("#EditSequencesProgress").show();
-                        //    } else {
-                        //        $("#EditSequencesProgress").hide();
-                        //    }
-                        //} else {
-                        //    var active_tab = $("#myTab li a.active");
-                        //    if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
-                        //        $("#EditSequencesProgress").show();
-                        //    } else {
-                        //        $("#EditSequencesProgress").hide();
-                        //    }
-                        //}
-                        var active_tab = $("#myTab li a.active");
-                        if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
-                            $("#EditSequencesProgress").show();
+                        if ($("#ATA" + response.data).attr("disabled") == "disabled") {
+                            var active_tab = $("#myTab li a.active");
+                            if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "vendor") {
+                                $("#EditSequencesProgress").show();
+                            } else {
+                                $("#EditSequencesProgress").hide();
+                            }
                         } else {
-                            $("#EditSequencesProgress").hide();
+                            var active_tab = $("#myTab li a.active");
+                            if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "vendor") {
+                                $("#EditSequencesProgress").show();
+                            } else {
+                                $("#EditSequencesProgress").hide();
+                            }
                         }
+                        //var active_tab = $("#myTab li a.active");
+                        //if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
+                        //    $("#EditSequencesProgress").show();
+                        //} else {
+                        //    $("#EditSequencesProgress").hide();
+                        //}
                         
                     } else {
                         //console.log(response.responseCode + response.responseText);
