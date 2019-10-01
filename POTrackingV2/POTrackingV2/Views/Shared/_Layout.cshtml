@@ -394,7 +394,7 @@
             type: "GET",
             url: "@Url.Action("GetPOItemCount", "Home")",
             success: function (response) {
-                console.log(response);
+                //console.log(response);
                 $('#importCountNew').text(response.ImportPOItemsCountNew);
                 $('#importCountOnGoing').text(response.ImportPOItemsCountOnGoing);
                 $('#importCountNew2').text(response.ImportPOItemsCountNew);

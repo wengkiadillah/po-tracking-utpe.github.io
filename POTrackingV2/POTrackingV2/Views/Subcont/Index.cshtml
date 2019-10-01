@@ -281,9 +281,9 @@
                                         <span class="po-item-data-header__column description" @isChild>
                                             @purchasingDocumentItemChild.Description
                                         </span>
-                                        @if (purchasingDocumentItemChild.ConfirmedItem == false || 
-                                            (purchasingDocumentItemChild.IsClosed != null && (purchasingDocumentItemChild.IsClosed.ToLower().Contains("l")))
-                                            )
+                                        @if (purchasingDocumentItemChild.ConfirmedItem == false ||
+                            (purchasingDocumentItemChild.IsClosed != null && (purchasingDocumentItemChild.IsClosed.ToLower().Contains("l")))
+                            )
                                         {
                                             int donutProgress = 100;
                                             <div class="po-item-data-header__column po-progress">
@@ -904,8 +904,8 @@
                                     }
                                 </div>
                             </div>
-                            row++;
-                        }
+                                            row++;
+                                        }
                     </div>
                 </div>
                 <div class="po-item-section stage-5">
@@ -1037,10 +1037,10 @@
                             else
                             {
                                 if (
-                                    roleID == ViewBag.RoleSubcontDev || 
+                                    roleID == ViewBag.RoleSubcontDev ||
                                     roleID == ViewBag.RoleAdministrator ||
-                                    (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) || 
-                                    purchasingDocumentItem.ActiveStageToNumber < 4 || 
+                                    (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) ||
+                                    purchasingDocumentItem.ActiveStageToNumber < 4 ||
                                     purchasingDocumentItem.InvoiceMethod == null ||
                                     purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity
                                     )
@@ -1100,8 +1100,8 @@
                                         {
                                             if (
                                                 roleID == ViewBag.RoleSubcontDev ||
-                                                roleID == ViewBag.RoleAdministrator || 
-                                                purchasingDocumentItemChild.InvoiceMethod != "partial" || 
+                                                roleID == ViewBag.RoleAdministrator ||
+                                                purchasingDocumentItemChild.InvoiceMethod != "partial" ||
                                                 purchasingDocumentItemChild.ActiveStageToNumber < 4 ||
                                                 (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) ||
                                                 purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity
@@ -1201,8 +1201,8 @@
             </div>
         </li>
     </ul>
-    poSignRow++;
-}
+                                poSignRow++;
+                            }
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -1469,7 +1469,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="SaveSequencesProgress" class="btn btn-positive w-100">Edit</button>
+                <button type="button" id="EditSequencesProgress" style="display: none;" class="btn btn-positive w-100">Edit</button>
                 <button type="button" id="SaveSequencesProgress" class="btn btn-positive w-100">Save changes</button>
             </div>
         </div>
@@ -2833,11 +2833,11 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
+            $("#inputProgressModalLabel").attr("editable", false);
             if (role == "subcontdev" || role == "administrator") {
                 $("#SaveSequencesProgress").hide();
             }
-
-            console.log(pdItemID);
+            //console.log(pdItemID);
             $.ajax({
                 type: "POST",
                 url: "@Url.Action("GetProgressData", "Subcont")",
@@ -2846,9 +2846,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 //dataType: "json",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        //console.log(response.arrayDataTime);
-                        console.log(response);
-                        //alert(response.responseCode + "arrayDataTime : " + response.arrayDataTime['PB']);
+                        //console.log(response);
 
                         $("#PBDays").val(response.arrayDataTime['PBDays']);
                         $("#SettingDays").val(response.arrayDataTime['SettingDays']);
@@ -2937,6 +2935,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         } for (var k in jsonObjFilePrimer) {
                             filePreview(jsonObjFilePrimer[k]['fileName'], jsonObjFilePrimer[k]['url'], "filePrimer");
                         }
+                        EditSaveProgress();
                     }
                     //alert(response.responseCode);
                 },
@@ -2946,11 +2945,98 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             });
         });
 
+        //tab onclick
+        $("#myTab .nav-link").on("click", function (obj) {
+            EditSaveProgress();
+        });
+
+        //Edit Progress Sequences
+        function EditSaveProgress() {
+            var pdItemID = $("#inputProgressModalLabel").attr("item-id");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("EditSequencesProgress", "Subcont")",
+                data: { 'pdItemID': pdItemID },
+                success: function (response) {
+                    if (response.responseCode == "200") {
+                        //console.log(response.data);
+                        if ($("#ATA" + response.data).attr("disabled") == "disabled") {
+                            var active_tab = $("#myTab li a.active");
+                            if (active_tab.attr("aria-controls") == response.data.toLowerCase()) {
+                                $("#EditSequencesProgress").show();
+                            } else {
+                                $("#EditSequencesProgress").hide();
+                            }
+                            console.log(response.data + $("#ATA" + response.data).attr("disabled"));
+                        } else {
+                            var active_tab = $("#myTab li a.active");
+                            if (active_tab.attr("aria-controls") == response.data.toLowerCase()) {
+                                $("#EditSequencesProgress").show();
+                            } else {
+                                $("#EditSequencesProgress").hide();
+                            }
+                            console.log(response.data + " ga disabled");
+                        }
+
+                        
+                    } else {
+                        //console.log(response.responseCode + response.responseText);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert(xhr.status + " : " + error);
+                }
+            });
+        }
+
+        $("#EditSequencesProgress").on("click", function (obj) {
+            var active_tab = $("#myTab li a.active");
+            if (active_tab.attr("aria-controls") == "pb") {
+                $("#ATAPB").removeAttr("disabled");
+                if ($("#ATAPBReasonID").val() != "0") {
+                    $("#ATAPBReasonID").removeAttr("disabled");
+                }
+                $("#inputFilePB").removeAttr("disabled");
+
+                $("#ATASetting").attr("disabled", "disabled");
+                $("#ATASettingReasonID").val("0")
+                $("#inputFileSetting").attr("disabled", "disabled");
+            } else if (active_tab.attr("aria-controls") == "setting"){
+                $("#ATASetting").removeAttr("disabled");
+                if ($("#ATASettingReasonID").val() != "0") {
+                    $("#ATASettingReasonID").removeAttr("disabled");
+                }
+                $("#inputFileSetting").removeAttr("disabled");
+
+                $("#ATAFullweld").attr("disabled", "disabled");
+                $("#ATAFullweldReasonID").val("0")
+                $("#inputFileFullweld").attr("disabled", "disabled");
+            } else if (active_tab.attr("aria-controls") == "fullweld") {
+                $("#ATAFullweld").removeAttr("disabled");
+                if ($("#ATAFullweldReasonID").val() != "0") {
+                    $("#ATAFullweldReasonID").removeAttr("disabled");
+                }
+                $("#inputFileFullweld").removeAttr("disabled");
+
+                $("#ATAPrimer").attr("disabled", "disabled");
+                $("#ATAPrimerReasonID").val("0")
+                $("#inputFilePrimer").attr("disabled", "disabled");
+            } else if (active_tab.attr("aria-controls") == "primer") {
+                $("#ATAPrimer").removeAttr("disabled");
+                if ($("#ATAPrimerReasonID").val() != "0") {
+                    $("#ATAPrimerReasonID").removeAttr("disabled");
+                }
+                $("#inputFilePrimer").removeAttr("disabled");
+            }
+            $("#inputProgressModalLabel").attr("editable", true);
+        });
+
         //Save Progress Data
         $("#SaveSequencesProgress").on("click", function (obj) {
             var pdItemID = $("#inputProgressModalLabel").attr("item-id");
             var rowNumber = $("#inputProgressModalLabel").attr("row");
             var childNumber = $("#inputProgressModalLabel").attr("child");
+            var editable = $("#inputProgressModalLabel").attr("editable");
             var stage5Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-5 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             var stage4Outer = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__outer");
             var stage4Child = $(".modal-progess-show").closest(".custom-scrollbar").find(".stage-4 .po-item-data-content.row-" + rowNumber + " .po-item-data-content__child");
@@ -3031,6 +3117,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         formData.append("fullweldActualReason", newFullweldActualReason);
                         formData.append("primerActualReason", newPrimerActualReason);
                         formData.append("invoices", file);
+                        formData.append("editable", $("#inputProgressModalLabel").attr("editable"));
                     }
                     //for (var value of formData.values()) {
                     //    console.log(value);
@@ -3048,15 +3135,17 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                                     ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
                                     $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
+                                    $("#inputFilePB").attr("disabled", "disabled");
                                 } else {
                                     $("#ATAPB").removeAttr("disabled");
                                     $("#inputFilePB").removeAttr("disabled");
                                 }
-
+                               
                                 if ($("#ATASetting").val()) {
                                     var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
                                     ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
                                     $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
+                                    $("#inputFileSetting").attr("disabled", "disabled");
                                 } else {
                                     $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
                                 }
@@ -3064,7 +3153,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAFullweld").val()) {
                                     var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
                                     ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
-                                    $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
+                                    $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat());
+                                    $("#inputFileFullweld").attr("disabled", "disabled");
                                 } else {
                                     $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
                                 }
@@ -3072,7 +3162,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 if ($("#ATAPrimer").val()) {
                                     $("#ATAPrimer").attr("disabled", "disabled");
                                     $("#ATAPrimerReasonID").attr("disabled", "disabled");
-
+                                    $("#inputFilePrimer").attr("disabled", "disabled");
                                     if (childNumber > 0) {
                                         stage4Child.find(".po-item-data-content.row-" + rowNumber + "-" + childNumber).attr("style", "visibility:display");
                                     } else {
@@ -3122,11 +3212,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#ATASettingReasonID").attr("disabled", "disabled");
                                 $("#ATAFullweldReasonID").attr("disabled", "disabled");
                                 $("#ATAPrimerReasonID").attr("disabled", "disabled");
-
-                                //$("#inputFilePB").attr("disabled", "disabled");
-                                //$("#inputFileSetting").attr("disabled", "disabled");
-                                //$("#inputFileFullweld").attr("disabled", "disabled");
-                                //$("#inputFilePrimer").attr("disabled", "disabled");
+                                
+                                EditSaveProgress();
                             } else {
                                 console.log(response.responseCode + response.responseText);
                             }
@@ -3361,7 +3448,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         var minDate = new Date($(this).attr("min").replaceDayMonth());
                         //console.log("tgl dipilih" + date);
                         //console.log("tgl min" + minDate);
-                        console.log($(this).attr("id"));
+                        //console.log($(this).attr("id"));
                         if (date > minDate) {
                             //this.setCustomValidity("Date must be greater than " + $(this).attr("min"));
                             if ($(this).attr("id") == "ATAPB") {

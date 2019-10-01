@@ -1196,6 +1196,54 @@ namespace POTrackingV2.Controllers
             }
         }
 
+        [HttpGet]
+        public JsonResult EditSequencesProgress(int pdItemID)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            try
+            {
+                PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == pdItemID).FirstOrDefault();
+
+                if (purchasingDocumentItem != null)
+                {
+                    string progressName;
+                    if (purchasingDocumentItem.PrimerActualDate != null)
+                    {
+                        PurchasingDocumentItemHistory purchasingDocumentItemHistory = db.PurchasingDocumentItemHistories.Where(x => x.PurchasingDocumentItemID == pdItemID || x.PurchasingDocumentItemID == purchasingDocumentItem.ParentID).FirstOrDefault();
+                        if (purchasingDocumentItemHistory!=null && purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity != null)
+                        {
+                            progressName = "Done";
+                        }
+                        else
+                        {
+                            progressName = "Primer";
+                        }
+                    }
+                    else if (purchasingDocumentItem.FullweldActualDate != null)
+                    {
+                        progressName = "Fullweld";
+                    }else if (purchasingDocumentItem.SettingActualDate != null)
+                    {
+                        progressName = "Setting";
+                    }
+                    else
+                    {
+                        progressName = "PB";
+                    }
+
+                    return Json(new { success = true, responseCode = "200", responseText = "Bind Data Reason Success", data = progressName }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, responseCode = "404", responseText = "Not Found" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, responseCode = "500", responseText = ex.Message + ex.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult GetSequenceData(int pdItemID)
         {
@@ -1419,7 +1467,7 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices)
+        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices, bool editable)
         {
             POTrackingEntities db = new POTrackingEntities();
             AlertToolsEntities alertDB = new AlertToolsEntities();
