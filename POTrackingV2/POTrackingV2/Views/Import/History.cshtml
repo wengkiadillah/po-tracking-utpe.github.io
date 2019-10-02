@@ -97,7 +97,7 @@
     var today = DateTime.Now;
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-    purchasingDocumentItems = purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory == "Q"))
+    purchasingDocumentItems = purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t"))
                                                     .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
 
 
