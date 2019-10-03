@@ -1468,7 +1468,7 @@ namespace POTrackingV2.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices, bool editable)
+        public ActionResult SaveSequencesProgress(int pdItemID, DateTime? PBActualDate, DateTime? settingActualDate, DateTime? fullweldActualDate, DateTime? primerActualDate, int? PBActualReason, int? settingActualReason, int? fullweldActualReason, int? primerActualReason, HttpPostedFileBase[] invoices, string editableProgressName)
         {
             POTrackingEntities db = new POTrackingEntities();
             AlertToolsEntities alertDB = new AlertToolsEntities();
@@ -1488,43 +1488,59 @@ namespace POTrackingV2.Controllers
                     Existed_notification.ModifiedBy = User.Identity.Name;
                 }
 
-                foreach (var invoice in invoices)
+                if (invoices != null)
                 {
                     var processName = "";
 
-                    if (settingActualDate == null)
+                    if (!string.IsNullOrEmpty(editableProgressName))
                     {
-                        processName = "PB";
-                    }
-                    else if (fullweldActualDate == null)
-                    {
-                        processName = "Setting";
-                    }
-                    else if (primerActualDate == null)
-                    {
-                        processName = "Fullweld";
+                        List<ProgressPhoto> progressPhotos = db.ProgressPhotoes.Where(x => x.PurchasingDocumentItemID == pdItemID && x.ProcessName.ToLower() == editableProgressName).ToList();
+                        foreach (var progressDatabasePurchasingDocumentItem in progressPhotos)
+                        {
+                            db.ProgressPhotoes.Remove(progressDatabasePurchasingDocumentItem);
+                        }
+                        processName = editableProgressName;
                     }
                     else
                     {
-                        processName = "Primer";
+                        if (settingActualDate == null)
+                        {
+                            processName = "PB";
+                        }
+                        else if (fullweldActualDate == null)
+                        {
+                            processName = "Setting";
+                        }
+                        else if (primerActualDate == null)
+                        {
+                            processName = "Fullweld";
+                        }
+                        else
+                        {
+                            processName = "Primer";
+                        }
                     }
-                    string fileName = $"{pdItemID.ToString()}_{processName}_{Path.GetFileName(invoice.FileName)}";
-                    string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/SequencesProgress"), fileName);
-                    ProgressPhoto progress = new ProgressPhoto();
-                    using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
+
+                    foreach (var invoice in invoices)
                     {
-                        invoice.InputStream.CopyTo(fileStream);
+                        string fileName = $"{pdItemID.ToString()}_{processName}_{Path.GetFileName(invoice.FileName)}";
+                        string uploadPathWithfileName = Path.Combine(Server.MapPath("~/Files/Subcont/SequencesProgress"), fileName);
+                        ProgressPhoto progress = new ProgressPhoto();
+                        using (FileStream fileStream = new FileStream(uploadPathWithfileName, FileMode.Create))
+                        {
+                            invoice.InputStream.CopyTo(fileStream);
+                        }
+
+                        progress.PurchasingDocumentItemID = pdItemID;
+                        progress.FileName = fileName;
+                        progress.Created = now;
+                        progress.CreatedBy = User.Identity.Name;
+                        progress.LastModified = now;
+                        progress.LastModifiedBy = User.Identity.Name;
+                        progress.ProcessName = processName;
+
+                        db.ProgressPhotoes.Add(progress);
                     }
-
-                    progress.PurchasingDocumentItemID = pdItemID;
-                    progress.FileName = fileName;
-                    progress.Created = now;
-                    progress.CreatedBy = User.Identity.Name;
-                    progress.LastModified = now;
-                    progress.LastModifiedBy = User.Identity.Name;
-                    progress.ProcessName = processName;
-
-                    db.ProgressPhotoes.Add(progress);
                 }
 
                 Existed_PDI.PBActualDate = PBActualDate;
