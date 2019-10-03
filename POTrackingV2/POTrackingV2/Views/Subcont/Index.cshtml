@@ -2823,6 +2823,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $("#inputFileSetting").val("");
             $("#inputFileFullweld").val("");
             $("#inputFilePrimer").val("");
+            $(".dvPreview").innerHTML = "";
 
             $(".input-progress").removeClass("modal-progess-show");
             $(this).addClass("modal-progess-show");
@@ -3558,19 +3559,38 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     dvPreview.innerHTML = "";
                     var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                     var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                    
                     for (var i = 0; i < fileUpload.files.length; i++) {
                         var file = fileUpload.files[i];
-
+                       
                         if (regex.test(file.name.toLowerCase())) {
                             var reader = new FileReader();
-                            var img = document.createElement("IMG");
-                            img.height = "100";
-                            //img.width = "100";
-                            img.title = file.name.toLowerCase();
-                            reader.onload = function (e) {
-                                img.src = e.target.result;
-                                dvPreview.appendChild(img);
-                            }
+                            //var img = document.createElement("IMG");
+                            //img.height = "100";
+                            ////img.width = "100";
+                            //img.title = file.name.toLowerCase();
+                           
+                            //reader.onload = function (e) {
+                            //    img.src = e.target.result;
+                            //    dvPreview.appendChild(img);
+                            //    dvPreview.appendChild(img);
+                            //    console.log(file.name);
+                            //}
+                            //reader.readAsDataURL(file);
+
+                            reader.onloadend = (function (file) {
+                                return function () {
+                                    var image = new Image();
+                                    image.height = 100;
+                                    image.title = file.name;
+                                    image.src = /^image/.test(file.type)
+                                        ? this.result
+                                        : "";
+                                    dvPreview.appendChild(image);
+                                }
+
+                            })(file);
+
                             reader.readAsDataURL(file);
                         } else if (regexOffice.test(file.name.toLowerCase())) {
 
@@ -3596,7 +3616,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             dvPreview.appendChild(img);
                         }
                         else {
-
+                            console.log("error preview");
                         }
                     }
                 } else {
