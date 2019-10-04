@@ -3582,6 +3582,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 return function () {
                                     var image = new Image();
                                     image.height = 100;
+                                    image.width = 100;
+                                    image.class = "mr-2";
                                     image.title = file.name;
                                     image.src = /^image/.test(file.type)
                                         ? this.result
