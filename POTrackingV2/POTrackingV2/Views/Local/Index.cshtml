@@ -2908,8 +2908,13 @@ else
                             $(this).css({
                                 "-ms-transform": scale,
                                 "-webkit-transform": scale,
-                                "transform": scale,
-                                "z-index": "999"
+                                "transform": scale
+                            });
+                        }, function () {
+                            $(this).css({
+                                "-ms-transform": "unset",
+                                "-webkit-transform": "unset",
+                                "transform": "unset"
                             });
                         });
 
