@@ -1042,7 +1042,8 @@
                                     (purchasingDocumentItem.ActiveStageToNumber > 3 && purchasingDocumentItem.InvoiceDocument != null) ||
                                     purchasingDocumentItem.ActiveStageToNumber < 4 ||
                                     purchasingDocumentItem.InvoiceMethod == null ||
-                                    purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity
+                                    purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItem.ConfirmedQuantity ||
+                                    purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity == null
                                     )
                                 {
                                     disabledFileInvoice = "disabled";
@@ -1104,7 +1105,8 @@
                                                 purchasingDocumentItemChild.InvoiceMethod != "partial" ||
                                                 purchasingDocumentItemChild.ActiveStageToNumber < 4 ||
                                                 (purchasingDocumentItemChild.ActiveStageToNumber > 3 && purchasingDocumentItemChild.InvoiceDocument != null) ||
-                                                purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity
+                                                purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity < purchasingDocumentItemChild.ConfirmedQuantity ||
+                                                purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity == null
                                                 )
                                             {
                                                 disabledFileInvoice = "disabled";
@@ -2816,11 +2818,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
-
+            
             $("#inputFilePB").val("");
             $("#inputFileSetting").val("");
             $("#inputFileFullweld").val("");
             $("#inputFilePrimer").val("");
+            $(".dvPreview").innerHTML = "";
 
             $(".input-progress").removeClass("modal-progess-show");
             $(this).addClass("modal-progess-show");
@@ -2833,7 +2836,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             $(this).addClass("open-edit-sequences");
             $("#inputProgressModalLabel").attr("item-id", pdItemID);
             $("#inputProgressModalLabel").attr("row", row);
-            $("#inputProgressModalLabel").attr("editable", false);
+            $("#inputProgressModalLabel").attr("editableProgressName", "");
             if (role == "subcontdev" || role == "administrator") {
                 $("#EditSequencesProgress").hide();
                 $("#SaveSequencesProgress").hide();
@@ -2872,11 +2875,16 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         //    var date = new Date(newDate);
                         //    date.setDate(date.getDate() - 10);
 
+                        $("#ATAPBReasonID").attr("disabled", "disabled");
+                        $("#ATASettingReasonID").attr("disabled", "disabled");
+                        $("#ATAFullweldReasonID").attr("disabled", "disabled");
+                        $("#ATAPrimerReasonID").attr("disabled", "disabled");
+
                         if ($("#ATAPB").val()) {
                             var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                             ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
                             $("#ATAPB").attr("disabled", "disabled");
-                            $("#inputFilePB").attr("disabled", "disabled");
+                            $("#inputFilePB").attr("disabled", "disabled"); 
                             $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                         } else {
                             $("#ATAPB").removeAttr("disabled");
@@ -2938,6 +2946,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             filePreview(jsonObjFilePrimer[k]['fileName'], jsonObjFilePrimer[k]['url'], "filePrimer");
                         }
                         EditSaveProgress();
+                        saveProgressBtnCheck();
                     }
                     //alert(response.responseCode);
                 },
@@ -2950,7 +2959,23 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
         //tab onclick
         $("#myTab .nav-link").on("click", function (obj) {
             EditSaveProgress();
+            var active_tab = $("#myTabContent [aria-labelledby=" + $(this).attr("aria-controls") + "-tab]");
+            if (active_tab.find(".form-row div:nth-child(2) input").attr("disabled") != "disabled") {
+                $("#SaveSequencesProgress").removeAttr("disabled");
+            } else {
+                $("#SaveSequencesProgress").attr("disabled", "disabled");
+            }
         });
+
+        //Save Progress Onchange
+        function saveProgressBtnCheck() {
+            var active_tab = $("#myTabContent .tab-pane.active");
+            if (active_tab.find(".form-row div:nth-child(2) input").attr("disabled") != "disabled") {
+                $("#SaveSequencesProgress").removeAttr("disabled");
+            } else {
+                $("#SaveSequencesProgress").attr("disabled", "disabled");
+            }
+        }
 
         //Edit Progress Sequences
         function EditSaveProgress() {
@@ -2962,28 +2987,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 data: { 'pdItemID': pdItemID },
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        //console.log(response.data);
-                        if ($("#ATA" + response.data).attr("disabled") == "disabled") {
-                            var active_tab = $("#myTab li a.active");
-                            if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "vendor") {
-                                $("#EditSequencesProgress").show();
-                            } else {
-                                $("#EditSequencesProgress").hide();
-                            }
+                        var active_tab = $("#myTab li a.active");
+                        if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "vendor") {
+                            $("#EditSequencesProgress").show();
                         } else {
-                            var active_tab = $("#myTab li a.active");
-                            if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "vendor") {
-                                $("#EditSequencesProgress").show();
-                            } else {
-                                $("#EditSequencesProgress").hide();
-                            }
+                            $("#EditSequencesProgress").hide();
                         }
-                        //var active_tab = $("#myTab li a.active");
-                        //if (active_tab.attr("aria-controls") == response.data.toLowerCase() && role == "subcont") {
-                        //    $("#EditSequencesProgress").show();
-                        //} else {
-                        //    $("#EditSequencesProgress").hide();
-                        //}
                         
                     } else {
                         //console.log(response.responseCode + response.responseText);
@@ -2995,9 +3004,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             });
         }
 
+
         $("#EditSequencesProgress").on("click", function (obj) {
             var active_tab = $("#myTab li a.active");
+            $("#SaveSequencesProgress").removeAttr("disabled");
             if (active_tab.attr("aria-controls") == "pb") {
+                $("#inputProgressModalLabel").attr("editableProgressName", "Pb");
                 $("#ATAPB").removeAttr("disabled");
                 if ($("#ATAPBReasonID").val() != "0") {
                     $("#ATAPBReasonID").removeAttr("disabled");
@@ -3007,7 +3019,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 $("#ATASetting").attr("disabled", "disabled");
                 $("#ATASettingReasonID").val("0")
                 $("#inputFileSetting").attr("disabled", "disabled");
-            } else if (active_tab.attr("aria-controls") == "setting"){
+            } else if (active_tab.attr("aria-controls") == "setting") {
+                $("#inputProgressModalLabel").attr("editableProgressName", "Setting");
                 $("#ATASetting").removeAttr("disabled");
                 if ($("#ATASettingReasonID").val() != "0") {
                     $("#ATASettingReasonID").removeAttr("disabled");
@@ -3018,6 +3031,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 $("#ATAFullweldReasonID").val("0")
                 $("#inputFileFullweld").attr("disabled", "disabled");
             } else if (active_tab.attr("aria-controls") == "fullweld") {
+                $("#inputProgressModalLabel").attr("editableProgressName", "Fullweld");
                 $("#ATAFullweld").removeAttr("disabled");
                 if ($("#ATAFullweldReasonID").val() != "0") {
                     $("#ATAFullweldReasonID").removeAttr("disabled");
@@ -3028,14 +3042,24 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 $("#ATAPrimerReasonID").val("0")
                 $("#inputFilePrimer").attr("disabled", "disabled");
             } else if (active_tab.attr("aria-controls") == "primer") {
+                $("#inputProgressModalLabel").attr("editableProgressName", "Primer");
                 $("#ATAPrimer").removeAttr("disabled");
                 if ($("#ATAPrimerReasonID").val() != "0") {
                     $("#ATAPrimerReasonID").removeAttr("disabled");
                 }
                 $("#inputFilePrimer").removeAttr("disabled");
+            } else {
+                $("#inputProgressModalLabel").attr("editableProgressName", "");
             }
-            $("#inputProgressModalLabel").attr("editable", true);
         });
+
+        
+        //$("#myTab .nav-link").on("click", function (obj) {
+        //    var active_tab = $("#myTabContent .tab-pane.active");
+        //    console.log(active_tab.find(".form-row div:nth-child(2) input").attr("disabled"));
+        //    saveProgressBtnCheck();
+        //});
+        
 
         //Save Progress Data
         $("#SaveSequencesProgress").on("click", function (obj) {
@@ -3103,7 +3127,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 isValid = false;
             }
 
-            if (fileUploadATA.files.length == 0) {
+            if (fileUploadATA.files.length == 0 && $("#inputProgressModalLabel").attr("editableProgressName") == "") {
                 errorMessage += "- Progress Photos Must Be Filled\n";
                 isValid = false;
             }
@@ -3111,8 +3135,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             if (isValid) {
                 if (!isNaN(Date.parse(ATADate))) { //&& newETADate < newATADate
                     var formData = new FormData();
-                    for (var i = 0; i < fileUploadATA.files.length; i++) {
-                        var file = fileUploadATA.files[i];
+                    if (fileUploadATA.files.length == 0){
                         formData.append("pdItemID", pdItemID);
                         formData.append("PBActualDate", newPBActualDate);
                         formData.append("settingActualDate", newSettingActualDate);
@@ -3122,9 +3145,25 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         formData.append("settingActualReason", newSettingActualReason);
                         formData.append("fullweldActualReason", newFullweldActualReason);
                         formData.append("primerActualReason", newPrimerActualReason);
-                        formData.append("invoices", file);
-                        formData.append("editable", $("#inputProgressModalLabel").attr("editable"));
+                        formData.append("invoices", null);
+                        formData.append("editableProgressName", $("#inputProgressModalLabel").attr("editableProgressName"));
+                    } else {
+                        for (var i = 0; i < fileUploadATA.files.length; i++) {
+                            var file = fileUploadATA.files[i];
+                            formData.append("pdItemID", pdItemID);
+                            formData.append("PBActualDate", newPBActualDate);
+                            formData.append("settingActualDate", newSettingActualDate);
+                            formData.append("fullweldActualDate", newFullweldActualDate);
+                            formData.append("primerActualDate", newPrimerActualDate);
+                            formData.append("PBActualReason", newPBActualReason);
+                            formData.append("settingActualReason", newSettingActualReason);
+                            formData.append("fullweldActualReason", newFullweldActualReason);
+                            formData.append("primerActualReason", newPrimerActualReason);
+                            formData.append("invoices", file);
+                            formData.append("editableProgressName", $("#inputProgressModalLabel").attr("editableProgressName"));
+                        }
                     }
+                    
                     //for (var value of formData.values()) {
                     //    console.log(value);
                     //}
@@ -3137,6 +3176,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         success: function (response) {
                             if (response.responseCode == "200") {
                                 alert(response.responseText);
+                                $("#SaveSequencesProgress").attr("disabled", "disabled");
+                                $("#inputProgressModalLabel").attr("editableProgressName", "");
                                 if ($("#ATAPB").val()) {
                                     var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                                     ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
@@ -3518,19 +3559,38 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     dvPreview.innerHTML = "";
                     var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                     var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
+                    
                     for (var i = 0; i < fileUpload.files.length; i++) {
                         var file = fileUpload.files[i];
-
+                       
                         if (regex.test(file.name.toLowerCase())) {
                             var reader = new FileReader();
-                            var img = document.createElement("IMG");
-                            img.height = "100";
-                            //img.width = "100";
-                            img.title = file.name.toLowerCase();
-                            reader.onload = function (e) {
-                                img.src = e.target.result;
-                                dvPreview.appendChild(img);
-                            }
+                            //var img = document.createElement("IMG");
+                            //img.height = "100";
+                            ////img.width = "100";
+                            //img.title = file.name.toLowerCase();
+                           
+                            //reader.onload = function (e) {
+                            //    img.src = e.target.result;
+                            //    dvPreview.appendChild(img);
+                            //    dvPreview.appendChild(img);
+                            //    console.log(file.name);
+                            //}
+                            //reader.readAsDataURL(file);
+
+                            reader.onloadend = (function (file) {
+                                return function () {
+                                    var image = new Image();
+                                    image.height = 100;
+                                    image.title = file.name;
+                                    image.src = /^image/.test(file.type)
+                                        ? this.result
+                                        : "";
+                                    dvPreview.appendChild(image);
+                                }
+
+                            })(file);
+
                             reader.readAsDataURL(file);
                         } else if (regexOffice.test(file.name.toLowerCase())) {
 
@@ -3556,7 +3616,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             dvPreview.appendChild(img);
                         }
                         else {
-
+                            console.log("error preview");
                         }
                     }
                 } else {
