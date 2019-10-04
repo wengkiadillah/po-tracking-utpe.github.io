@@ -121,8 +121,6 @@ else
             {
                 var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-
-
                 if (purchasingDocumentItems.Count() > 0)
                 {
                     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
@@ -2910,13 +2908,16 @@ else
                             $(this).css({
                                 "-ms-transform": scale,
                                 "-webkit-transform": scale,
-                                "transform": scale
+                                "transform": scale,
+                                "z-index": "999"
+
                             });
                         }, function () {
                             $(this).css({
                                 "-ms-transform": "scale(1)",
                                 "-webkit-transform": "scale(1)",
-                                "transform": "scale(1)"
+                                "transform": "scale(1)",
+                                "z-index" : "998"
                             });
                         });
 
