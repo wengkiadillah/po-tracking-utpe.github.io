@@ -3638,6 +3638,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 if (regexOffice.test(fileName.toLowerCase())) {
                     var img = document.createElement("IMG");
                     img.height = "100";
+                    img.width = "100";
+                    img.class = "mr-2";
                     //img.width = "100";
                     img.title = fileName.toLowerCase();
 
@@ -3656,6 +3658,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 } else {
                     var img = document.createElement("IMG");
                     img.height = "100";
+                    img.width = "100";
+                    img.class = "mr-2";
                     //img.width = "100";
                     img.title = fileName.toLowerCase();
                     img.src = url;
