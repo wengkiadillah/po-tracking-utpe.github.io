@@ -3582,6 +3582,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 return function () {
                                     var image = new Image();
                                     image.height = 100;
+                                    image.width = 100;
+                                    image.className = "mr-2";
                                     image.title = file.name;
                                     image.src = /^image/.test(file.type)
                                         ? this.result
@@ -3596,6 +3598,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                             var img = document.createElement("IMG");
                             img.height = "100";
+                            img.className = "mr-2";
                             //img.width = "100";
                             img.title = file.name.toLowerCase();
 
@@ -3635,6 +3638,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 if (regexOffice.test(fileName.toLowerCase())) {
                     var img = document.createElement("IMG");
                     img.height = "100";
+                    img.width = "100";
+                    img.className = "mr-2";
                     //img.width = "100";
                     img.title = fileName.toLowerCase();
 
@@ -3653,6 +3658,8 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                 } else {
                     var img = document.createElement("IMG");
                     img.height = "100";
+                    img.width = "100";
+                    img.className = "mr-2";
                     //img.width = "100";
                     img.title = fileName.toLowerCase();
                     img.src = url;
