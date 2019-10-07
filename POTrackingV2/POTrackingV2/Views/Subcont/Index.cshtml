@@ -2882,7 +2882,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         if ($("#ATAPB").val()) {
                             var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
-                            ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
+                            ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#SettingDays").val()));
                             $("#ATAPB").attr("disabled", "disabled");
                             $("#inputFilePB").attr("disabled", "disabled"); 
                             $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
@@ -2893,7 +2893,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         if ($("#ATASetting").val()) {
                             var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
-                            ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
+                            ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#FullweldDays").val()));
                             $("#ATASetting").attr("disabled", "disabled");
                             $("#inputFileSetting").attr("disabled", "disabled");
                             $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
@@ -2903,7 +2903,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                         if ($("#ATAFullweld").val()) {
                             var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
-                            ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
+                            ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#PrimerDays").val()));
                             $("#ATAFullweld").attr("disabled", "disabled");
                             $("#inputFileFullweld").attr("disabled", "disabled");
                             $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
@@ -3180,7 +3180,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#inputProgressModalLabel").attr("editableProgressName", "");
                                 if ($("#ATAPB").val()) {
                                     var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
-                                    ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#PBDays").val()));
+                                    ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#SettingDays").val()));
                                     $("#ATAPB").attr("disabled", "disabled"), $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                                     $("#inputFilePB").attr("disabled", "disabled");
                                 } else {
@@ -3190,7 +3190,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                
                                 if ($("#ATASetting").val()) {
                                     var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
-                                    ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#SettingDays").val()));
+                                    ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#FullweldDays").val()));
                                     $("#ATASetting").attr("disabled", "disabled"), $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                                     $("#inputFileSetting").attr("disabled", "disabled");
                                 } else {
@@ -3199,7 +3199,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
                                 if ($("#ATAFullweld").val()) {
                                     var ETAPrimerDate = new Date($("#ATAFullweld").val().replaceDayMonth());
-                                    ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#FullweldDays").val()));
+                                    ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#PrimerDays").val()));
                                     $("#ATAFullweld").attr("disabled", "disabled"), $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat());
                                     $("#inputFileFullweld").attr("disabled", "disabled");
                                 } else {
