@@ -1387,9 +1387,12 @@ namespace POTrackingV2.Controllers
 
                 int leadTime = subcontComponentCapability != null ? (subcontComponentCapability.PB + subcontComponentCapability.Setting + subcontComponentCapability.Fullweld + subcontComponentCapability.Primer) : 0;
 
+                //int fullweldDays = primer;
+                //int settingDays = fullweld + fullweldDays;
+                //int pbDays = setting + settingDays;
                 int fullweldDays = primer;
-                int settingDays = fullweld + fullweldDays;
-                int pbDays = setting + settingDays;
+                int settingDays = fullweld + primer;
+                int pbDays = setting + fullweld + primer;
 
                 string primerDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.ToString("dd/MM/yyyy") : "";
                 string fullweldDate = purchasingDocumentItem.ConfirmedDate.HasValue ? purchasingDocumentItem.ConfirmedDate.Value.AddDays(fullweldDays * -1).ToString("dd/MM/yyyy") : "";
