@@ -205,7 +205,7 @@
                             }
                             else if (ViewBag.SearchPOStatus == "done")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase)))).ToList();
                             }
                             else
                             {

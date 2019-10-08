@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -675,7 +674,6 @@
     <Content Include="Views\MasterVendor\ViewVendorSubcontDev.cshtml" />
     <Content Include="Views\MasterVendor\CreateVendorSubcontDev.cshtml" />
     <Content Include="Views\MasterVendor\EditVendorSubcontDev.cshtml" />
-    <Content Include="Views\Subcont\Outstanding.cshtml" />
     <Content Include="Views\Import\Report.cshtml" />
     <Content Include="Views\Subcont\Report.cshtml" />
     <Content Include="Views\Local\Report.cshtml" />
