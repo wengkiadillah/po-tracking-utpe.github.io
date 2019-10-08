@@ -410,7 +410,7 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
+            var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
                             (x.PurchasingDocumentItems.Any(y => /*!string.IsNullOrEmpty(y.LatestParkingDateNewFormat) ||*/ y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t") && !String.IsNullOrEmpty(y.Material))) &&
                             (x.ReleaseDate != null))
                             .AsQueryable();
