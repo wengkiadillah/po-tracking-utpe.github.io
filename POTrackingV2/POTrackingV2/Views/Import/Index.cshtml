@@ -9,6 +9,8 @@
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
 
+    string ftpUsername = "administrator";
+    string ftpPassword = "P@s5w0rd";
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -1181,6 +1183,7 @@
                                     hiddenInputDiv = "hidden";
                                     hiddenUploadedDiv = "";
                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                    //downloadPath = Path.Combine($"ftp://{ftpUsername}:{ftpPassword}@10.48.10.117/Inbound/POTracking", "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
                                 }
                                 else if (purchasingDocumentItem.ApproveProformaInvoiceDocument == null && purchasingDocumentItem.ActiveStage == "2a")
                                 {
@@ -1212,6 +1215,7 @@
                                     hiddenInputDiv = "hidden";
                                     hiddenUploadedDiv = "";
                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
+                                    //downloadPath = Path.Combine($"ftp://{ftpUsername}:{ftpPassword}@10.48.10.117/Inbound/POTracking", "Files/Import/ProformaInvoice", purchasingDocumentItem.ProformaInvoiceDocument);
                                     isChecked = "checked";
                                     disabledInputCheckbox = "disabled";
                                 }
@@ -1304,6 +1308,7 @@
                                                     hiddenInputDiv = "hidden";
                                                     hiddenUploadedDiv = "";
                                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                    //downloadPath = Path.Combine($"ftp://{ftpUsername}:{ftpPassword}@10.48.10.117/Inbound/POTracking", "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
                                                 }
                                                 else if (childPurchasingDocumentItem.ApproveProformaInvoiceDocument == null && childPurchasingDocumentItem.ActiveStage == "2a")
                                                 {
@@ -1335,6 +1340,7 @@
                                                     hiddenInputDiv = "hidden";
                                                     hiddenUploadedDiv = "";
                                                     downloadPath = Path.Combine("/", iisAppName, "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
+                                                    //downloadPath = Path.Combine($"ftp://{ftpUsername}:{ftpPassword}@10.48.10.117/Inbound/POTracking", "Files/Import/ProformaInvoice", childPurchasingDocumentItem.ProformaInvoiceDocument);
                                                     isChecked = "checked";
                                                     disabledInputCheckbox = "disabled";
                                                 }
