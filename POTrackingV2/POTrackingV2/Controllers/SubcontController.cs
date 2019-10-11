@@ -144,7 +144,7 @@ namespace POTrackingV2.Controllers
                     }
                     else if (searchPOStatus == "done")
                     {
-                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" && x.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "t")) || x.IsClosed == "L" || (x.IsClosed == "LX" && x.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "t")))  && vendorSubcont.Contains(po.VendorCode));
+                        pOes = pOes.Where(po => (po.Date.Year == today.Year || po.Date.Year == today.Year - 1) && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => (x.IsClosed == "X" && x.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "t")) || x.IsClosed == "L" || (x.IsClosed == "LX" && x.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "t")))  && vendorSubcont.Contains(po.VendorCode));
                     }
                     else if (searchPOStatus == "negotiated")
                     {
