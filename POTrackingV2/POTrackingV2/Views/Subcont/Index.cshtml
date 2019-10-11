@@ -187,7 +187,7 @@
                             if (purchasingDocumentItems.Count() > 0)
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx"));
+                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
                             }
                         }
 
@@ -252,7 +252,7 @@
                                 <span class="po-item-data-header__column description">
                                     @purchasingDocumentItem.Description
                                 </span>
-                                @if (purchasingDocumentItem.ConfirmedItem == false || purchasingDocumentItem.IsClosed.ToLower().Contains("l"))
+                                @if (purchasingDocumentItem.ConfirmedItem == false || (purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed.ToLower().Contains("l")))
                                 {
                                     int donutProgress = 100;
                                     <div class="po-item-data-header__column po-progress">

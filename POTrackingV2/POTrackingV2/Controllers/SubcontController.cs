@@ -108,6 +108,10 @@ namespace POTrackingV2.Controllers
                     {
                         pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX"));
                     }
+                    else
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed == "X" || y.IsClosed == "L" || y.IsClosed == "LX"));
+                    }
                 }
                 else
                 {

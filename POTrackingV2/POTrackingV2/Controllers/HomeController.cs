@@ -482,13 +482,13 @@ namespace POTrackingV2.Controllers
 
                     subcontNewPO = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontOngoing = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null);
-                    subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.PO.Date.Year == today.Year || y.PO.Date.Year == today.Year - 1) && y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+                    subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.PO.Date.Year == today.Year || y.PO.Date.Year == today.Year - 1) && y.IsClosed != null && ((y.IsClosed.ToLower() == "x" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory!= null && pdih.POHistoryCategory == "t")) || y.IsClosed.ToLower() == "l" || (y.IsClosed.ToLower() == "lx" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory != null && pdih.POHistoryCategory == "t"))));
                 }
                 else
                 {
                     subcontNewPO = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null);
                     subcontOngoing = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null);
-                    subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.PO.Date.Year == today.Year || y.PO.Date.Year == today.Year - 1) && y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx");
+                    subcontDone = pOesSubcont.Where(po => vendorSubcont.Contains(po.VendorCode)).SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.PO.Date.Year == today.Year || y.PO.Date.Year == today.Year - 1) && y.IsClosed != null && ((y.IsClosed.ToLower() == "x" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory != null && pdih.POHistoryCategory == "t")) || y.IsClosed.ToLower() == "l" || (y.IsClosed.ToLower() == "lx" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory != null && pdih.POHistoryCategory == "t"))));
                 }
                 #endregion
 
