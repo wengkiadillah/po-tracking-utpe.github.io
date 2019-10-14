@@ -283,7 +283,7 @@ namespace POTrackingV2.Controllers
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
 
             var pOes = db.POes.AsQueryable();
-            pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.Material != "" && x.Material != null && (x.ActiveStage != null && x.ActiveStage != "0") && x.PurchasingDocumentItemHistories.All(y => y.POHistoryCategory.ToLower() != "t")) && !vendorSubcont.Contains(po.VendorCode));
+            pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed != "l" && x.IsClosed != "L" && x.IsClosed != "lx" && x.IsClosed != "LX" && x.Material != "" && x.Material != null && (x.ActiveStage != null && x.ActiveStage != "0") && x.PurchasingDocumentItemHistories.All(y => y.POHistoryCategory.ToLower() != "T")) && !vendorSubcont.Contains(po.VendorCode));
 
 
             var noShowPOes = pOes;
@@ -404,7 +404,7 @@ namespace POTrackingV2.Controllers
             //}
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
+            var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t") && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null )
                                .AsQueryable();
             //var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
