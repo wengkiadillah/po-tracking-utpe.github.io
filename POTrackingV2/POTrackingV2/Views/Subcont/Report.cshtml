@@ -4,6 +4,7 @@
 @model IPagedList<POTrackingV2.Models.PO>
 @{
     ViewBag.Title = "Master Vendor";
+    int number = 1;
 }
 @section styles {
     <link href="~/Content/um-style.css" rel="stylesheet" />
@@ -48,13 +49,16 @@
     <table class="table table-striped table-bordered">
         <tr>
             <th>
-                PO No.
+                Number
             </th>
             <th>
-                Item No.
+                PO Number
             </th>
             <th>
-                Material Name
+                Item Number
+            </th>
+            <th>
+                Material
             </th>
             <th>
                 Description
@@ -66,7 +70,7 @@
                 Delivery Date
             </th>
             <th>
-                Subcont Name
+                Subcont
             </th>
             <th>
                 Estimated Inspection Date
@@ -108,6 +112,9 @@
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
                     <tr style="background-color:white;">
+                        <td>
+                            @number
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => purchasingDocumentItem.PO.Number)
                         </td>
@@ -158,6 +165,7 @@
                             @*@Html.DisplayFor(modelItem => purchasingDocumentItem.PrimerActualDate.Value.ToString("dd/MM/yyyy"))*@
                         </td>
                     </tr>
+                    number++;
                 }
             }
         }
