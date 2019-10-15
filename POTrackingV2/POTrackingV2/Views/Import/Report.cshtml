@@ -64,8 +64,9 @@
         {
             foreach (var po in Model)
             {
-                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))
-                                                                        .OrderBy(x => x.ItemNumber);
+                List<POTrackingV2.Models.PurchasingDocumentItem> pdissss = po.PurchasingDocumentItems.ToList();
+
+                List<POTrackingV2.Models.PurchasingDocumentItem> purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t")).OrderBy(x => x.ItemNumber).ToList();
 
                 if (purchasingDocumentItems.Count() < 1)
                 {
