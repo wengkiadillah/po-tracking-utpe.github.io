@@ -404,7 +404,7 @@ namespace POTrackingV2.Controllers
 
                 foreach (var po in pOes)
                 {
-                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
+                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")))
                                                                             .OrderBy(x => x.ItemNumber);
 
                     foreach (var purchasingDocumentItem in purchasingDocumentItems)
