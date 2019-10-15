@@ -17,6 +17,6 @@ namespace POTrackingV2.Constants
         public const string defaultPassword = "popatria16";
         
         //page
-        public const int PageSize = 20;
+        public const int PageSize = 10;
     }
 }
