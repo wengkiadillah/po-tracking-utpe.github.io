@@ -65,7 +65,12 @@
 
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
-                    if (!String.IsNullOrEmpty(purchasingDocumentItem.Material) && purchasingDocumentItem.ActiveStage != null && purchasingDocumentItem.ActiveStage != "0" && purchasingDocumentItem.IsClosed.ToLower() != "l" && purchasingDocumentItem.IsClosed.ToLower() != "lx" && purchasingDocumentItem.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))
+                    if (purchasingDocumentItem.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t"))
+                    {
+                        continue;
+                    }
+
+                    if (!String.IsNullOrEmpty(purchasingDocumentItem.Material) && purchasingDocumentItem.ActiveStage != null && purchasingDocumentItem.ActiveStage != "0" && purchasingDocumentItem.IsClosed.ToLower() != "l" && purchasingDocumentItem.IsClosed.ToLower() != "lx")
                     {
                         <tr style="background-color:white;">
                             <td>
