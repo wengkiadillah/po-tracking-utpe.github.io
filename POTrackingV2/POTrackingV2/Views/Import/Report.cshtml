@@ -64,9 +64,9 @@
         {
             foreach (var po in Model)
             {
-                if (po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx").Any())
+                if (po.PurchasingDocumentItems.Where(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t")).Any())
                 {
-                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx");
+                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"));
 
                     purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
