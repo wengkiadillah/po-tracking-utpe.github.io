@@ -66,7 +66,9 @@
             {
                 if (po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx").Any())
                 {
-                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx").OrderBy(x => x.ItemNumber);
+                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx");
+
+                    purchasingDocumentItems.OrderBy(x => x.ItemNumber);
 
                     foreach (var purchasingDocumentItem in purchasingDocumentItems)
                     {
