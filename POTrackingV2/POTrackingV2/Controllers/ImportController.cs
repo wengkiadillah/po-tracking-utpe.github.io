@@ -233,6 +233,8 @@ namespace POTrackingV2.Controllers
             }
             #endregion
 
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any());
+
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
