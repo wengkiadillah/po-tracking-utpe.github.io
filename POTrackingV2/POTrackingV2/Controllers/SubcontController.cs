@@ -252,7 +252,7 @@ namespace POTrackingV2.Controllers
 
                 var pOes = db.POes.AsQueryable();
 
-                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PBActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PrimerActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
 
                 ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
@@ -353,7 +353,7 @@ namespace POTrackingV2.Controllers
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
 
                 var pOes = db.POes.AsQueryable();
-                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PBActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
+                pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.PrimerActualDate != null && x.Material != "" && x.Material != null && x.ParentID == null && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx"))) && vendorSubcont.Contains(po.VendorCode));
 
 
                 var noShowPOes = pOes;
@@ -404,7 +404,7 @@ namespace POTrackingV2.Controllers
 
                 foreach (var po in pOes)
                 {
-                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")))
+                    var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => x.PrimerActualDate != null && !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")))
                                                                             .OrderBy(x => x.ItemNumber);
 
                     foreach (var purchasingDocumentItem in purchasingDocumentItems)
@@ -452,86 +452,7 @@ namespace POTrackingV2.Controllers
         }
 
         #endregion Report
-
-        #region OutStanding PO
-        public ActionResult Outstanding(string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, int? page)
-        {
-            POTrackingEntities db = new POTrackingEntities();
-            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            string role = myUser.Roles;
-            string userName = User.Identity.Name;
-            try
-            {
-                //var pOes = db.POes.OrderBy(x => x.Number).AsQueryable();
-                var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
-
-                var pOes = db.POes.AsQueryable();
-
-                if (role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || role.ToLower() == LoginConstants.RoleAdministrator.ToLower())
-                {
-                    var listVendorSubconDev = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).Distinct();
-                    if (listVendorSubconDev != null && subcontDevUserRole.RoleID == 1)
-                    {
-                        pOes = pOes.Where(po => listVendorSubconDev.Contains(po.VendorCode));
-                    }
-                    pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                }
-                else if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
-                {
-                    string vendorCode = db.UserVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).FirstOrDefault();
-                    //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                    pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
-                }
-
-                ViewBag.CurrentRoleID = role.ToLower();
-                ViewBag.RoleSubcont = LoginConstants.RoleSubcontDev.ToLower();
-                ViewBag.CurrentDataPONumber = searchPONumber;
-                ViewBag.CurrentDataVendorName = searchVendorName;
-                ViewBag.CurrentDataMaterial = searchMaterial;
-                //ViewBag.CurrentFilter = filterBy;
-                ViewBag.CurrentStartPODate = searchStartPODate;
-                ViewBag.CurrentEndPODate = searchEndPODate;
-                ViewBag.IISAppName = iisAppName;
-
-                #region Filter
-                if (!String.IsNullOrEmpty(searchPONumber))
-                {
-                    pOes = pOes.Where(po => po.Number.Contains(searchPONumber));
-                }
-                if (!String.IsNullOrEmpty(searchVendorName))
-                {
-                    pOes = pOes.Where(po => po.Vendor.Name.ToLower().Contains(searchVendorName.ToLower()));
-                }
-                if (!String.IsNullOrEmpty(searchMaterial))
-                {
-                    pOes = pOes.Where(po => po.PurchasingDocumentItems.Any(x => x.Material.ToLower().Contains(searchMaterial.ToLower()) || x.Description.ToLower().Contains(searchMaterial.ToLower())));
-                }
-
-                if (!String.IsNullOrEmpty(searchStartPODate))
-                {
-                    DateTime startDate = DateTime.ParseExact(searchStartPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                    pOes = pOes.Where(x => x.Date >= startDate);
-                }
-
-                if (!String.IsNullOrEmpty(searchEndPODate))
-                {
-                    DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-
-                    pOes = pOes.Where(x => x.Date <= endDate);
-                }
-                #endregion
-                //return (RedirectToAction("Index", "Error", new { ErrorList = "hi there!" }));
-                return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
-            }
-            catch (Exception ex)
-            {
-                return View(ex.Message + "-----" + ex.StackTrace);
-            }
-        }
-        #endregion
-
+        
         #region Template
         public ActionResult Template(string searchPoNumber, string searchStartPODate, string searchEndPODate, int? page)
         {
