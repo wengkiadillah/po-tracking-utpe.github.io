@@ -404,7 +404,7 @@ namespace POTrackingV2.Controllers
             //}
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
+            var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t") && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null )
                                .AsQueryable();
             //var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
