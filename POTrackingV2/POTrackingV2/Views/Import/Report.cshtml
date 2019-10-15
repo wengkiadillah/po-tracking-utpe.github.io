@@ -65,85 +65,82 @@
 
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
                 {
-                    if (purchasingDocumentItem.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t"))
+                    if (purchasingDocumentItem.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t") || String.IsNullOrEmpty(purchasingDocumentItem.Material) || purchasingDocumentItem.ActiveStage == null || purchasingDocumentItem.ActiveStage == "0" || purchasingDocumentItem.IsClosed.ToLower() == "l" || purchasingDocumentItem.IsClosed.ToLower() != "lx")
                     {
                         continue;
                     }
 
-                    if (!String.IsNullOrEmpty(purchasingDocumentItem.Material) && purchasingDocumentItem.ActiveStage != null && purchasingDocumentItem.ActiveStage != "0" && purchasingDocumentItem.IsClosed.ToLower() != "l" && purchasingDocumentItem.IsClosed.ToLower() != "lx")
-                    {
-                        <tr style="background-color:white;">
-                            <td>
-                                @po.Number
-                            </td>
-                            <td>
-                                @purchasingDocumentItem.ItemNumber
-                            </td>
-                            <td>
-                                @purchasingDocumentItem.Material
-                            </td>
-                            <td>
-                                @{
-                                    string description = "-";
+                    <tr style="background-color:white;">
+                        <td>
+                            @po.Number
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.ItemNumber
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Material
+                        </td>
+                        <td>
+                            @{
+                                string description = "-";
 
-                                    if (purchasingDocumentItem.Description != null)
-                                    {
-                                        description = purchasingDocumentItem.Description;
-                                    }
+                                if (purchasingDocumentItem.Description != null)
+                                {
+                                    description = purchasingDocumentItem.Description;
                                 }
-                                @description
-                            </td>
-                            <td>
-                                @purchasingDocumentItem.Quantity
-                            </td>
-                            <td>
-                                @{
-                                    string deliveryDate = "-";
+                            }
+                            @description
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Quantity
+                        </td>
+                        <td>
+                            @{
+                                string deliveryDate = "-";
 
-                                    if (purchasingDocumentItem.DeliveryDate != null)
-                                    {
-                                        deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
-                                    }
+                                if (purchasingDocumentItem.DeliveryDate != null)
+                                {
+                                    deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
-                                @deliveryDate
-                            </td>
-                            <td>
-                                @po.Vendor.Name
-                            </td>
-                            <td>
-                                @{
-                                    string estimatedTimeArrival = "-";
+                            }
+                            @deliveryDate
+                        </td>
+                        <td>
+                            @po.Vendor.Name
+                        </td>
+                        <td>
+                            @{
+                                string estimatedTimeArrival = "-";
 
-                                    if (purchasingDocumentItem.HasETAHistory)
+                                if (purchasingDocumentItem.HasETAHistory)
+                                {
+                                    if (purchasingDocumentItem.HasShipment)
                                     {
-                                        if (purchasingDocumentItem.HasShipment)
+                                        if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
                                         {
-                                            if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (purchasingDocumentItem.LastETAHistory.ETADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
-                                            }
-                                            else if (purchasingDocumentItem.FirstETAHistory.ETADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
-                                            }
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
                                         }
                                     }
-                                    else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                                    else
                                     {
-                                        estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                        if (purchasingDocumentItem.LastETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                        }
+                                        else if (purchasingDocumentItem.FirstETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                                        }
                                     }
                                 }
-                                @estimatedTimeArrival
-                            </td>
-                        </tr>
-                    }
+                                else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
+                            }
+                            @estimatedTimeArrival
+                        </td>
+                    </tr>
                 }
 
             }
