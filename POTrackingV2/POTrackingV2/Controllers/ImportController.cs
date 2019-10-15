@@ -63,7 +63,7 @@ namespace POTrackingV2.Controllers
             }
 
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => /*string.IsNullOrEmpty(y.LatestParkingDateNewFormat) && */ y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))) &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))) &&
                             (x.ReleaseDate != null))
                             .AsQueryable();
 
@@ -187,10 +187,7 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                        (x.PurchasingDocumentItems.Any(y => /*string.IsNullOrEmpty(y.LatestParkingDateNewFormat) &&*/ y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))) &&
-                        (x.ReleaseDate != null))
-                        .AsQueryable();
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t"))) && (x.ReleaseDate != null));
 
             var noShowPOes = pOes;
 
@@ -232,6 +229,8 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.Material.ToLower().Contains(searchMaterial.ToLower())));
             }
             #endregion
+
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any());
 
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
