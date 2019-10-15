@@ -2207,10 +2207,10 @@ else
                                         var hideMT = "mt-customize";
                                         var latestGR = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptQuantity;
                                         var confirmedQty = purchasingDocumentItem.ConfirmedQuantity;
-                                        if (roleID == "vendor" && purchasingDocumentItem.ActiveStageToNumber < 5)
-                                        {
-                                            hideGR = "style=visibility:hidden";
-                                        }
+                                        //if (roleID == "vendor" && purchasingDocumentItem.ActiveStageToNumber < 5)
+                                        //{
+                                        //    hideGR = "style=visibility:hidden";
+                                        //}
                                         var grDateNewDateFormat = purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItem.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                         var isComplete = "No";
 
@@ -2280,10 +2280,10 @@ else
                                                     }
                                                     grDateNewDateFormat = purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.HasValue ? purchasingDocumentItemChild.LatestPurchasingDocumentItemHistories.GoodsReceiptDate.Value.ToString("dd/MM/yyyy") : "";
                                                     hideGR = "";
-                                                    if (roleID == "vendor" && purchasingDocumentItemChild.ActiveStageToNumber < 5)
-                                                    {
-                                                        hideGR = "style=visibility:hidden";
-                                                    }
+                                                    //if (roleID == "vendor" && purchasingDocumentItemChild.ActiveStageToNumber < 5)
+                                                    //{
+                                                    //    hideGR = "style=visibility:hidden";
+                                                    //}
 
                                                     if (rowChild == 1)
                                                     {
