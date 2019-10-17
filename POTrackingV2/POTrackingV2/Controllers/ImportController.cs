@@ -246,10 +246,12 @@ namespace POTrackingV2.Controllers
                 (myUser.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import") ||
                 (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())))
             {
-                Response.ClearContent();
+                Response.Clear();
                 Response.Buffer = true;
                 Response.AddHeader("content-disposition", string.Format("attachment; filename={0}", "ReportPOImport.xls"));
                 Response.ContentType = "application/ms-excel";
+                Response.ContentEncoding = System.Text.Encoding.Unicode;
+                Response.BinaryWrite(System.Text.Encoding.Unicode.GetPreamble());
                 DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
                 string str = string.Empty;
                 foreach (DataColumn dtcol in dt.Columns)
