@@ -128,7 +128,7 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "T" || y.POHistoryCategory == "t"))
+    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "T" || y.POHistoryCategory == "t" || y.POHistoryCategory == "Q" || y.POHistoryCategory == "q"))
                                                     .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
 
     //if (purchasingDocumentItems.Count() > 0)

@@ -125,7 +125,7 @@ else
                 {
                     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-                    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "T" || y.POHistoryCategory == "t")));
+                    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "T" || y.POHistoryCategory == "t" || y.POHistoryCategory == "Q" || y.POHistoryCategory == "q")));
 
                     if (purchasingDocumentItems.Count() > 0)
                     {
