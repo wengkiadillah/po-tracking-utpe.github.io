@@ -245,23 +245,29 @@ namespace POTrackingV2.Controllers
                 Response.ContentType = "application/ms-excel";
                 DataTable dt = BindDataTable(searchPONumber, searchVendorName, searchMaterial);
                 string str = string.Empty;
-                foreach (DataColumn dtcol in dt.Columns)
+
+                if (dt != null)
                 {
-                    Response.Write(str + dtcol.ColumnName);
-                    str = "\t";
-                }
-                Response.Write("\n");
-                foreach (DataRow dr in dt.Rows)
-                {
-                    str = "";
-                    for (int j = 0; j < dt.Columns.Count; j++)
+                    foreach (DataColumn dtcol in dt.Columns)
                     {
-                        Response.Write(str + Convert.ToString(dr[j]));
+                        Response.Write(str + dtcol.ColumnName);
                         str = "\t";
                     }
+
                     Response.Write("\n");
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        str = "";
+                        for (int j = 0; j < dt.Columns.Count; j++)
+                        {
+                            Response.Write(str + Convert.ToString(dr[j]));
+                            str = "\t";
+                        }
+                        Response.Write("\n");
+                    }
                 }
-                Response.End();
+               
+                Response.End(); 
             }
         }
 
@@ -283,7 +289,7 @@ namespace POTrackingV2.Controllers
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
 
             var pOes = db.POes.AsQueryable();
-            pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx" && x.Material != "" && x.Material != null && (x.ActiveStage != null && x.ActiveStage != "0") && x.PurchasingDocumentItemHistories.All(y => y.POHistoryCategory.ToLower() != "t")) && !vendorSubcont.Contains(po.VendorCode));
+            pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && (x.ActiveStage != null && x.ActiveStage != "0") && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx"))) && !vendorSubcont.Contains(po.VendorCode) && (po.ReleaseDate != null));
 
 
             var noShowPOes = pOes;
@@ -334,7 +340,7 @@ namespace POTrackingV2.Controllers
 
             foreach (var po in pOes)
             {
-                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && (x.IsClosed == null || (x.IsClosed != null && x.IsClosed.ToLower() != "x" && x.IsClosed.ToLower() != "l" && x.IsClosed.ToLower() != "lx")))
                                                                         .OrderBy(x => x.ItemNumber);
 
                 foreach (var purchasingDocumentItem in purchasingDocumentItems)
