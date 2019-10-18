@@ -3,7 +3,7 @@
 @*@model IEnumerable<POTrackingV2.Models.PO>*@
 @model IPagedList<POTrackingV2.Models.PO>
 @{
-    ViewBag.Title = "PO Delivery Date";
+    ViewBag.Title = "Report Delivery Date";
 
 }
 @section styles {
@@ -11,7 +11,7 @@
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 <div class="um">
-    <h1>PO Delivery Date</h1>
+    <h1>Report Delivery Date</h1>
     <div class="filter-row">
         @using (Html.BeginForm("Report", "Local", null, FormMethod.Get, new { @class = "" }))
         {
