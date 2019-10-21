@@ -198,7 +198,7 @@
                         {
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)).ToList();
                             }
                             else if (ViewBag.SearchPOStatus == "ongoing")
                             {
@@ -217,7 +217,7 @@
                         {
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)).ToList();
                             }
                             if (ViewBag.SearchPOStatus == "ongoing")
                             {

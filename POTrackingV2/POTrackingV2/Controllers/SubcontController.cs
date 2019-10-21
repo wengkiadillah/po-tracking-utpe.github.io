@@ -140,7 +140,7 @@ namespace POTrackingV2.Controllers
 
                     if (searchPOStatus == "newpo")
                     {
-                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode));
+                        pOes = pOes.Where(po => (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)) && vendorSubcont.Contains(po.VendorCode));
                     }
                     else if (searchPOStatus == "ongoing")
                     {
@@ -166,7 +166,7 @@ namespace POTrackingV2.Controllers
                     //pOes = pOes.Where(po => po.VendorCode == myUser. (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.Material != "" && x.Material != null && x.ParentID == null) && vendorSubcont.Contains(po.VendorCode)).OrderBy(x => x.Number);
                     if (searchPOStatus == "newpo")
                     {
-                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && x.Material != "" && x.Material != null && x.ParentID == null));
+                        pOes = pOes.Where(po => po.VendorCode == vendorCode && (po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10") && po.PurchasingDocumentItems.Any(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)));
                     }
                     else if (searchPOStatus == "ongoing")
                     {
