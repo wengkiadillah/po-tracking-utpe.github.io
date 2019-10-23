@@ -22,7 +22,16 @@
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 <h1 class="page-title mb-4" id="rpv-display" style="display:none"><img src="~/Images/logo-patria.png" alt="logo-patria" id="rpv-display" style="display:none"></h1>
-<h1 class="page-title"><a href="~/SubCont/index" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle"><a href="~/SubCont/index?searchPOStatus=done" class="page-subtitle">History</a></span></h1>
+
+@if (ViewBag.SearchPOStatus == "done")
+{
+    <h1 class="page-title"><a href="~/SubCont/index" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>
+}
+else
+{
+    <h1 class="page-title"><span class="page-subtitle">PO Subcontractor Index</span><span class="page-subtitle"><a href="~/SubCont/index?searchPOStatus=done" class="page-subtitle">History</a></span></h1>
+}
+
 @*<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>*@
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "" }))
@@ -905,8 +914,8 @@
                                     }
                                 </div>
                             </div>
-                                            row++;
-                                        }
+                            row++;
+                        }
                     </div>
                 </div>
                 <div class="po-item-section stage-5">
@@ -1204,8 +1213,8 @@
             </div>
         </li>
     </ul>
-                                poSignRow++;
-                            }
+    poSignRow++;
+}
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -2819,7 +2828,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             var role = $("#role").val();
             var pdItemID = $(this).parent().find(".pd-item-id").val();
             var row = $(this).closest(".po-item-data-content").attr("row");
-            
+
             $("#inputFilePB").val("");
             $("#inputFileSetting").val("");
             $("#inputFileFullweld").val("");
@@ -2885,7 +2894,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             var ETASettingDate = new Date($("#ATAPB").val().replaceDayMonth());
                             ETASettingDate.setDate(ETASettingDate.getDate() + parseInt($("#SettingDays").val()));
                             $("#ATAPB").attr("disabled", "disabled");
-                            $("#inputFilePB").attr("disabled", "disabled"); 
+                            $("#inputFilePB").attr("disabled", "disabled");
                             $("#ETASetting").datepicker('setDate', ETASettingDate.newDateFormat());
                         } else {
                             $("#ATAPB").removeAttr("disabled");
@@ -2994,7 +3003,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                         } else {
                             $("#EditSequencesProgress").hide();
                         }
-                        
+
                     } else {
                         //console.log(response.responseCode + response.responseText);
                     }
@@ -3054,13 +3063,13 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
             }
         });
 
-        
+
         //$("#myTab .nav-link").on("click", function (obj) {
         //    var active_tab = $("#myTabContent .tab-pane.active");
         //    console.log(active_tab.find(".form-row div:nth-child(2) input").attr("disabled"));
         //    saveProgressBtnCheck();
         //});
-        
+
 
         //Save Progress Data
         $("#SaveSequencesProgress").on("click", function (obj) {
@@ -3164,7 +3173,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             formData.append("editableProgressName", $("#inputProgressModalLabel").attr("editableProgressName"));
                         }
                     }
-                    
+
                     //for (var value of formData.values()) {
                     //    console.log(value);
                     //}
@@ -3188,7 +3197,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                     $("#ATAPB").removeAttr("disabled");
                                     $("#inputFilePB").removeAttr("disabled");
                                 }
-                               
+
                                 if ($("#ATASetting").val()) {
                                     var ETAFullweldDate = new Date($("#ATASetting").val().replaceDayMonth());
                                     ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#FullweldDays").val()));
@@ -3260,7 +3269,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                                 $("#ATASettingReasonID").attr("disabled", "disabled");
                                 $("#ATAFullweldReasonID").attr("disabled", "disabled");
                                 $("#ATAPrimerReasonID").attr("disabled", "disabled");
-                                
+
                                 EditSaveProgress();
                             } else {
                                 console.log(response.responseCode + response.responseText);
@@ -3560,17 +3569,17 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     dvPreview.innerHTML = "";
                     var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                     var regexOffice = /^([a-zA-Z0-9\s_\\.\-:])+(.doc|.docx|.xls|.xlsx|.pdf|.ppt|.pptx)$/;
-                    
+
                     for (var i = 0; i < fileUpload.files.length; i++) {
                         var file = fileUpload.files[i];
-                       
+
                         if (regex.test(file.name.toLowerCase())) {
                             var reader = new FileReader();
                             //var img = document.createElement("IMG");
                             //img.height = "100";
                             ////img.width = "100";
                             //img.title = file.name.toLowerCase();
-                           
+
                             //reader.onload = function (e) {
                             //    img.src = e.target.result;
                             //    dvPreview.appendChild(img);

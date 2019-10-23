@@ -33,7 +33,8 @@ else
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
 }
 <h1 class="page-title mb-4" id="rpv-display" style="display:none"><img src="~/Images/logo-patria.png" alt="logo-patria"></h1>
-<h1 class="page-title"><a href="#" class="page-subtitle">PO Tracking Local System</a><span class="page-subtitle"><a href="@Url.Action("History", "Local")">History</a></span></h1>
+<h1 class="page-title">
+    <span class="page-subtitle">PO Tracking Local System</span><span class="page-subtitle"><a href="@Url.Action("History", "Local")">History</a></span></h1>
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Local", null, FormMethod.Get, new { @class = "" }))
     {
