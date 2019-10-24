@@ -336,7 +336,22 @@
     @Scripts.Render("~/bundles/bootstrap")
         
     <script type="text/javascript">
-    $(document).ready(function () {
+        $(document).ready(function () { 
+            let url = window.location.href;
+              $('.main-menu-submenu-item a').each(function() {
+                  if (this.href === url) {
+                      $(this).addClass('current');
+                      $(this).closest('li').removeClass('current');
+                  }
+                  else {}
+              });
+            $('.main-menu__link').each(function() {
+                  if (this.href === url) {
+                      $(this).addClass('active');                      
+                  }
+                  else {}
+              });
+
             if(window.innerWidth <= 920 ){
                 document.getElementById("sidebar").style.width = "0px";
                 document.getElementById("sidebar").style.padding = "0px";

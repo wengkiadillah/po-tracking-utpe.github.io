@@ -326,8 +326,7 @@ body
     transition: all .2s ease-out;
 }
 
-    .main-menu__link:hover, .main-menu-submenu__link:hover
-    {
+    .main-menu__link:hover, .main-menu-submenu__link:hover, .main-menu-submenu-item a.current {
         text-decoration: none;
         background-color: #F2F7FF;
         color: #567FEF;
