@@ -18,7 +18,7 @@
 
 <input hidden value="@ViewBag.myUserNRPs" />
 <h1 class="page-title mb-4" id="rpv-display" style="display:none"><img src="~/Images/logo-patria.png" alt="logo-patria" id="rpv-display" style="display:none"></h1>
-<h1 class="page-title">PO Tracking System <span class="page-subtitle"><a href="@Url.Action("History", "Import")">History</a></span></h1>
+<h1 class="page-title"><span>PO Tracking System </span><span class="page-subtitle"><a href="@Url.Action("History", "Import")">History</a></span></h1>
 <div class="filter-row mb-1">
 
     @using (Html.BeginForm("Index", "Import", null, FormMethod.Get, new { @class = "" }))
@@ -86,11 +86,13 @@
             <input class="form-control form-control-lg filter-search with-icon">
             <datalist></datalist>
         </div>
+        <!--
         <div class="form-group mr-0">
             <label>PO Date</label>
             <input class="form-control form-control-lg form-date with-icon">
             <i class="far fa-calendar-alt form-type-icon"></i>
         </div>
+        -->
     </form>
 
     <div class="stage-pagination-container">
