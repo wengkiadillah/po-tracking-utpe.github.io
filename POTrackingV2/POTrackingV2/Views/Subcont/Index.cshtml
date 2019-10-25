@@ -292,8 +292,8 @@ else
                                             @purchasingDocumentItemChild.Description
                                         </span>
                                         @if (purchasingDocumentItemChild.ConfirmedItem == false ||
-                            (purchasingDocumentItemChild.IsClosed != null && (purchasingDocumentItemChild.IsClosed.ToLower().Contains("l")))
-                            )
+(purchasingDocumentItemChild.IsClosed != null && (purchasingDocumentItemChild.IsClosed.ToLower().Contains("l")))
+)
                                         {
                                             int donutProgress = 100;
                                             <div class="po-item-data-header__column po-progress">
@@ -483,25 +483,14 @@ else
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            //if (ViewBag.CurrentRoleID == "vendor" && ((purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) || (purchasingDocumentItem.ConfirmedItem == true || (purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null))))
-                            if (ViewBag.CurrentRoleID == "vendor" &&
-                                    (
-                                        //(purchasingDocumentItem.DeliveryDate == purchasingDocumentItem.ConfirmedDate && purchasingDocumentItem.Quantity == purchasingDocumentItem.ConfirmedQuantity) ||
-                                        //(purchasingDocumentItem.ConfirmedItem == true ||
-                                        //(purchasingDocumentItem.ConfirmedQuantity != null && purchasingDocumentItem.ConfirmedItem != null) ||
-                                        //purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ConfirmedItem != null)
-                                        //)
-                                        /*
-                                        (purchasingDocumentItem.PB != null || purchasingDocumentItem.Setting != null || purchasingDocumentItem.Fullweld != null || purchasingDocumentItem.Primer != null) ||
-                                        (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x=> x.PB != null || x.Setting != null || x.Fullweld != null || x.Primer != null))
-                                        */
-                                        (purchasingDocumentItem.ActiveStageToNumber > 2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber > 2))
-                                    )
-                                )
+                            else if (ViewBag.CurrentRoleID == "vendor")
                             {
-                                hideEditButton = "style=visibility:hidden";
+                                if ((purchasingDocumentItem.ActiveStageToNumber > 2 || purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Any(x => x.ActiveStageToNumber > 2)))
+                                {
+                                    hideEditButton = "style=visibility:hidden";
+                                }
                             }
-                            else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2 ) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                            else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -914,8 +903,8 @@ else
                                     }
                                 </div>
                             </div>
-                            row++;
-                        }
+                                            row++;
+                                        }
                     </div>
                 </div>
                 <div class="po-item-section stage-5">
@@ -1213,8 +1202,8 @@ else
             </div>
         </li>
     </ul>
-    poSignRow++;
-}
+                                poSignRow++;
+                            }
 <div class="modal fade" id="sequencesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
