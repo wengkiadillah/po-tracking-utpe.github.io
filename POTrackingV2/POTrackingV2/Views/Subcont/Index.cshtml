@@ -594,7 +594,7 @@ else
                                             disabledChild = "disabled";
                                         }
 
-                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || (purchasingDocumentItemChild.IsClosed != null && purchasingDocumentItem.IsClosed != "") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || !String.IsNullOrEmpty(purchasingDocumentItemChild.IsClosed) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }
