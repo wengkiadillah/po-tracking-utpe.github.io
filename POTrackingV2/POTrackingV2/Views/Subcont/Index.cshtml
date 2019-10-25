@@ -479,7 +479,7 @@ else
                                 }
                             }
 
-                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0 || (purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed != "") || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                            if (purchasingDocumentItem.ConfirmedItem == null && purchasingDocumentItem.ActiveStageToNumber == 0 || !String.IsNullOrEmpty(purchasingDocumentItem.IsClosed))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -501,7 +501,7 @@ else
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
-                            else if ((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2)
+                            else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2 ) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
