@@ -18,7 +18,7 @@ namespace POTrackingV2.Controllers
     {
         private POTrackingEntities dbPOTracking = new POTrackingEntities();
         private UserManagementEntities dbUserManagement = new UserManagementEntities();
-        public DateTime now = DateTime.Now;
+        private DateTime now = DateTime.Now;
 
         public ActionResult Index(string searchUser, int? page)
         {
@@ -76,6 +76,7 @@ namespace POTrackingV2.Controllers
 
                 string description = GetNRPByUsername(username.ToLower());
                 string fullName = GetFullNameByUsername(username.ToLower());
+                string email = GetEmailByUsername(username.ToLower());
 
                 UserProcurementSuperior userProcurementSuperior = new UserProcurementSuperior();
                 userProcurementSuperior.Username = username;
@@ -108,6 +109,7 @@ namespace POTrackingV2.Controllers
                     {
                         description = GetNRPByUsername(inferiorUsername.ToLower());
                         fullName = GetFullNameByUsername(inferiorUsername.ToLower());
+                        email = GetEmailByUsername(inferiorUsername.ToLower());
 
                         userProcurementInferior.ParentID = id;
                         userProcurementInferior.Username = inferiorUsername;
@@ -154,6 +156,7 @@ namespace POTrackingV2.Controllers
                     {
                         string description = GetNRPByUsername(inferiorUsername.ToLower());
                         string fullName = GetFullNameByUsername(inferiorUsername.ToLower());
+                        string email = GetEmailByUsername(inferiorUsername.ToLower());
 
                         userProcurementInferior.ParentID = userSuperiorID;
                         userProcurementInferior.Username = inferiorUsername;
@@ -236,8 +239,40 @@ namespace POTrackingV2.Controllers
 
                     return Json(new { success = true }, JsonRequestBehavior.AllowGet);
                 }
-
+                else
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch
+            {
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditUserSuperior(int userSuperiorID, string inputEditNRP, string inputEditFullName, string inputEditEmail)
+        {
+            try
+            {
+                UserProcurementSuperior userProcurementSuperior = dbPOTracking.UserProcurementSuperiors.Find(userSuperiorID);
+
+                if (userProcurementSuperior != null)
+                {
+                    userProcurementSuperior.NRP = inputEditNRP;
+                    userProcurementSuperior.FullName = inputEditFullName;
+                    userProcurementSuperior.Email = inputEditEmail;
+                    userProcurementSuperior.LastModified = now;
+                    userProcurementSuperior.LastModifiedBy = User.Identity.Name;
+
+                    dbPOTracking.SaveChanges();
+
+                    return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch
             {
@@ -275,11 +310,18 @@ namespace POTrackingV2.Controllers
             return null;
         }
 
-        public string GetFullNameByUsername(string username)
+        private string GetFullNameByUsername(string username)
         {
             string fullname = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username.ToLower() == username.ToLower()).FirstOrDefault().Name;
 
             return fullname;
+        }
+
+        private string GetEmailByUsername(string username)
+        {
+            string email = dbUserManagement.Users.Where(x => x.UserRoles.Any(y => y.Role.Application.Name.ToLower() == ApplicationConstants.POTracking.ToLower()) && x.Username.ToLower() == username.ToLower()).FirstOrDefault().Email;
+
+            return email;
         }
     }
 }
