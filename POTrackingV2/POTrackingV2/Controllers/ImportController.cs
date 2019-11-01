@@ -742,6 +742,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 1
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
@@ -933,6 +934,8 @@ namespace POTrackingV2.Controllers
             }
         }
 
+
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
@@ -1026,6 +1029,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement + "," + LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
@@ -1118,7 +1122,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 2
 
-        // POST: Import/VendorConfirmFirstETA
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
@@ -1248,7 +1252,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementAcceptFirstEta
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementAcceptFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -1337,7 +1341,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementDeclineFirstEta
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementDeclineFirstEta(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -1424,7 +1428,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 2a
 
-        // POST: Import/VendorUploadProformaInvoice
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorUploadProformaInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileProformaInvoice)
         {
@@ -1493,7 +1497,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/VendorUploadProformaInvoice
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorUploadAllProformaInvoice(List<int> inputPurchasingDocumentItemIDs, HttpPostedFileBase[] fileProformaInvoices)
         {
@@ -1565,6 +1569,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorRemoveProformaInvoice(int inputPurchasingDocumentItemID)
         {
@@ -1634,7 +1639,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementAskProformaInvoice
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementAskProformaInvoice(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -1697,7 +1702,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/ProcurementSkipProformaInvoice
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementSkipProformaInvoice(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -1765,7 +1770,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 3
 
-        // POST: Import/ProcurementConfirmPaymentReceived
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementConfirmPaymentReceived(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
@@ -1843,7 +1848,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        // POST: Import/VendorSkipConfirmPayment
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementSkipConfirmPayment(List<int> inputPurchasingDocumentItemIDs)
         {
@@ -1921,7 +1926,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 4
 
-        // POST: Import/VendorUpdateETA
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorUpdateETA([Bind(Include = "PurchasingDocumentItemID,ETADate,DelayReasonID")]ETAHistory inputETAHistory)
         {
@@ -2036,6 +2041,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorUploadProgressPhotoes(int inputPurchasingDocumentItemID, HttpPostedFileBase[] fileProgressPhotoes)
         {
@@ -2117,7 +2123,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 5
 
-        // POST: Import/VendorConfirmShipmentBookingDate
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorConfirmShipmentBookingDate(List<Shipment> inputShipmentBookDates)
         {
@@ -2187,7 +2193,7 @@ namespace POTrackingV2.Controllers
 
         }
 
-        // POST: Import/VendorConfirmShipmentBookingDate
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorConfirmATD(List<Shipment> inputShipmentATDs)
         {
@@ -2263,7 +2269,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 6
 
-        // POST: Import/VendorFillInShipmentForm
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorFillInShipmentForm(int inputPurchasingDocumentItemID, DateTime inputCopyBLDate, HttpPostedFileBase fileCopyBL, HttpPostedFileBase filePackingList, HttpPostedFileBase fileInvoice, string inputAWB, string inputCourierName)
         {
@@ -2363,7 +2369,6 @@ namespace POTrackingV2.Controllers
 
         }
 
-        // POST: Import/GetShippingInformation
         [HttpPost]
         public ActionResult GetShippingInformation(int myPurchasingDocumentItemId)
         {
@@ -2394,7 +2399,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 7
 
-        // POST: Import/ProcurementConfirmOnAirport
+        [CustomAuthorize(Roles = LoginConstants.RoleProcurement)]
         [HttpPost]
         public ActionResult ProcurementConfirmOnAirport(List<Shipment> inputShipments)
         {
@@ -2467,6 +2472,7 @@ namespace POTrackingV2.Controllers
 
         #region STAGE 9
 
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileInvoice)
         {
@@ -2549,6 +2555,8 @@ namespace POTrackingV2.Controllers
                 return View(errorMessage);
             }
         }
+
+        [CustomAuthorize(Roles = LoginConstants.RoleVendor)]
         [HttpPost]
         public ActionResult VendorRemoveUploadInvoice(int inputPurchasingDocumentItemID)
         {

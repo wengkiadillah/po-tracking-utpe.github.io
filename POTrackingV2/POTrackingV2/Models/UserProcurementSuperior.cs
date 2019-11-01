@@ -19,6 +19,7 @@ namespace POTrackingV2.Models
         public string Username { get; set; }
         public string FullName { get; set; }
         public string NRP { get; set; }
+        public string Email { get; set; }
         public Nullable<System.DateTime> Created { get; set; }
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> LastModified { get; set; }

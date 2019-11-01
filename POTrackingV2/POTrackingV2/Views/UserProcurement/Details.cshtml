@@ -16,31 +16,45 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Superior Procurement User</h4>
+    <h3>Superior Procurement User</h3>
     <hr />
     <dl class="dl-horizontal">
         <dt>
             Username
         </dt>
         <dd id="superiorUsername" value="@Model.UserProcurementSuperior.Username">
-            @Html.DisplayFor(model => model.UserProcurementSuperior.Username)
+            <span class="userData">@Model.UserProcurementSuperior.Username</span>
         </dd>
         <dt>
             NRP
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.UserProcurementSuperior.NRP)
+            <span class="userData">@Model.UserProcurementSuperior.NRP</span>
+            <input id="inputEditNRP" type="text" class="form-control editInput" placeholder="@Model.UserProcurementSuperior.NRP" style="display:none">
         </dd>
         <dt>
             FullName
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.UserProcurementSuperior.FullName)
+            <span class="userData">@Model.UserProcurementSuperior.FullName</span>
+            <input id="inputEditFullName" type="text" class="form-control editInput" placeholder="@Model.UserProcurementSuperior.FullName" style="display:none">
+        </dd>
+        <dt>
+            Email
+        </dt>
+        <dd>
+            <span class="userData">@Model.UserProcurementSuperior.Email</span>
+            <input id="inputEditEmail" type="text" class="form-control editInput" placeholder="@Model.UserProcurementSuperior.Email" style="display:none">
         </dd>
     </dl>
 
+    <a id="editUserProcurementSuperior" href="#" class="btn-icon ml-1 userData"><i class="far fa-edit"></i></a>
+    <button id="confirmEditUserProcurementSuperior" class="btn btn-positive editInput" style="display:none">Save</button>
+    <br />
+    <hr />
+
     <div class="form-group">
-        <p class="form-custom-label">Select Inferior User</p>
+        <h3 class="form-custom-label">Select Inferior User</h3>
         <div class="inline field">
             <select name="InferiorUser_Username" id="InferiorUser_Username" multiple class="label ui selection fluid search dropdown"></select>
         </div>
@@ -66,6 +80,12 @@
                         NRP
                     </th>
                     <th>
+                        FullName
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
                         Action
                     </th>
                 </tr>
@@ -82,6 +102,12 @@
                         </td>
                         <td class="value-label">
                             <label for="valueLabel">@Html.DisplayFor(modelItem => item.NRP)</label>
+                        </td>
+                        <td class="value-label">
+                            <label for="valueLabel">@Html.DisplayFor(modelItem => item.FullName)</label>
+                        </td>
+                        <td class="value-label">
+                            <label for="valueLabel">@Html.DisplayFor(modelItem => item.Email)</label>
                         </td>
                         <td class="edit-action">
                             <input type="text" value="@item.ID" class="userProcurementInferiorID" name="userProcurementInferiorID" hidden />
@@ -157,7 +183,59 @@
                     });
                 }
                 else {
-                alert("Please Choose Inferior User");
+                    alert("Please Choose Inferior User");
+                }
+            }
+            else {
+                alert("Please Choose Superior User");
+            }
+        });
+
+        $('#editUserProcurementSuperior').click(function () {
+            $( ".userData" ).attr("style", "visibility:none");
+            $( ".editInput" ).attr("style", "visibility:display");
+        })
+
+        $('#confirmEditUserProcurementSuperior').click(function () {
+            var userSuperiorID = $('#userProcurementSuperiorID').val();
+            var inputEditNRP = $('#inputEditNRP').val();
+            var inputEditFullName = $('#inputEditFullName').val();
+            var inputEditEmail = $('#inputEditEmail').val();
+
+            var data = {
+                userSuperiorID: userSuperiorID,
+                inputEditNRP: inputEditNRP,
+                inputEditFullName: inputEditFullName,
+                inputEditEmail: inputEditEmail
+            };
+
+            if (data.userSuperiorID !== "" || data.userSuperiorID !== null) {
+                if (data.inputEditNRP.length > 0) {
+                    if (data.inputEditFullName.length > 0) {
+                        if (data.inputEditEmail.length > 0) {
+                            $.ajax({
+                                type: "POST",
+                                url: "@Url.Action("EditUserSuperior", "UserProcurement")",
+                                context: this,
+                                data: data,
+                                success: function (response) {
+                                    location.reload(true);
+                                },
+                                error: function (xhr, status, error) {
+                                    alert(xhr.status + " : " + error);
+                                }
+                            });
+                        }
+                        else {
+                            alert("Please enter valid Email");
+                        }
+                    }
+                    else {
+                        alert("Please enter valid FullName");
+                    }
+                }
+                else {
+                    alert("Please enter valid NRP");
                 }
             }
             else {
