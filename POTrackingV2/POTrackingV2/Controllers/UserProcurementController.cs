@@ -82,6 +82,7 @@ namespace POTrackingV2.Controllers
                 userProcurementSuperior.Username = username;
                 userProcurementSuperior.NRP = description;
                 userProcurementSuperior.FullName = fullName;
+                userProcurementSuperior.Email = email;
                 userProcurementSuperior.Created = now;
                 userProcurementSuperior.CreatedBy = User.Identity.Name;
                 userProcurementSuperior.LastModified = now;
@@ -115,6 +116,7 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior.Username = inferiorUsername;
                         userProcurementInferior.NRP = description;
                         userProcurementInferior.FullName = fullName;
+                        userProcurementInferior.Email = email;
                         userProcurementInferior.Created = now;
                         userProcurementInferior.CreatedBy = User.Identity.Name;
                         userProcurementInferior.LastModified = now;
@@ -162,6 +164,7 @@ namespace POTrackingV2.Controllers
                         userProcurementInferior.Username = inferiorUsername;
                         userProcurementInferior.NRP = description;
                         userProcurementInferior.FullName = fullName;
+                        userProcurementInferior.Email = email;
                         userProcurementInferior.Created = now;
                         userProcurementInferior.CreatedBy = User.Identity.Name;
                         userProcurementInferior.LastModified = now;
