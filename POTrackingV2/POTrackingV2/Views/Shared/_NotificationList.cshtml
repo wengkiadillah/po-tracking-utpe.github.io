@@ -96,7 +96,7 @@
                 contentType: "application/x-www-form-urlencoded; charset=utf-8",
                 success: function (response) {
                     if (response.responseCode == "200") {
-                        console.log(response.notifications);
+                        //console.log(response.notifications);
                         var jsonObj = $.parseJSON(response.notifications);
                         var message = "";
                         countNotification = Object.keys(jsonObj).length;
@@ -113,7 +113,7 @@
                             var statusID = jsonObj[k]['statusID'];
                             var className = "fas fa-check-circle approved";
                             var deletebutton = "";
-                            if (statusID == 1 && role != "administator") {
+                            if (statusID == 1 && role != "administrator") {
                                 className = "fas fa-exclamation-circle important";
                                 //onclick="Data('year', this)"
                                 deletebutton = "<a class='notification-info' href='#' onclick ='javascript:deleteNotification(" + ID + ",1" + ")'><i class='fas fa-trash delete-icon'></i></a>";
@@ -196,7 +196,7 @@
                             //var targetRolessss = targetRole;
 
                             var url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage;
-                            if (statusID == 1 && role != "administator") {
+                            if (statusID == 1 && role != "administrator") {
                                 url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
                             }
                             message = "";
