@@ -113,7 +113,7 @@
                             var statusID = jsonObj[k]['statusID'];
                             var className = "fas fa-check-circle approved";
                             var deletebutton = "";
-                            if (statusID == 1) {
+                            if (statusID == 1 && role != "administator") {
                                 className = "fas fa-exclamation-circle important";
                                 //onclick="Data('year', this)"
                                 deletebutton = "<a class='notification-info' href='#' onclick ='javascript:deleteNotification(" + ID + ",1" + ")'><i class='fas fa-trash delete-icon'></i></a>";
@@ -196,7 +196,7 @@
                             //var targetRolessss = targetRole;
 
                             var url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage;
-                            if (statusID == 1) {
+                            if (statusID == 1 && role != "administator") {
                                 url = siteUrl + "/" + POTypeCategory + "/Index?searchPONumber=" + PONumber + "&activeStage=" + stage + "'onclick ='javascript:deleteNotification(" + ID + ",2" + ")";
                             }
                             message = "";

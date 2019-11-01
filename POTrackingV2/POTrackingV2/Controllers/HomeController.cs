@@ -170,30 +170,9 @@ namespace POTrackingV2.Controllers
                 bool isHeadProcurement = false;
                 bool isHeadSubcont = false;
 
-                if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
+                if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     var userInternal = DBUser.Users.Where(x => x.Username == userName).FirstOrDefault();
-                    //if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
-                    //{
-                    //    SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
-                    //    if(subcontDevUserRole != null)
-                    //    {
-                    //        if(subcontDevUserRole.IsHead == null || subcontDevUserRole.IsHead == false)
-                    //        {
-                    //            vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
-                    //            notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                    //        }
-
-                    //        if (subcontDevUserRole.RoleName.ToLower() == "subcont technical")
-                    //        {
-                    //            notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber < 2);
-                    //        }
-                    //        else if(subcontDevUserRole.RoleName.ToLower() == "subcont management")
-                    //        {
-                    //            notifications = notifications.Where(x => vendorSubcont.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.PurchasingDocumentItem.ActiveStageToNumber > 1);
-                    //        }
-                    //    }                        
-                    //}
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
@@ -263,6 +242,10 @@ namespace POTrackingV2.Controllers
                     //{
                     //    vendorCode.Add(userEksternal.VendorCode);
                     //}
+                }
+                else if (role == LoginConstants.RoleAdministrator.ToLower())
+                {
+                    notifications = notifications.Where(x => (x.Role.ToLower() == LoginConstants.RoleSubcontDev.ToLower() || x.Role.ToLower() == LoginConstants.RoleProcurement.ToLower()) && x.isActive == true);
                 }
 
                 var notificationsDTO = notifications.Select(x =>

@@ -12,14 +12,14 @@
     <text>
         <div class="user-info-action">
             <div class="user-info-notification" onclick="toggleNotification()">
-                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
+                @*@if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
                 {
                     <i class="far fa-bell" style="display:none;"></i>
                 }
                 else
-                {
+                {*@
                     <i class="far fa-bell"></i>
-                }
+                @*}*@
                 <span class="user-info-notification__count" style="display:none;"></span>
             </div>
             <div class="user-info__avatar" id="userAvatar"></div>
