@@ -174,20 +174,23 @@ $(".st1-accept-all-po-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            $(".row-updated").attr("disabled", "disabled");
-            $(".row-updated").removeClass("selected-negative").removeClass("row-updated");
+            if (response.responseText.includes("Item affected")) {
+                $(".row-updated").attr("disabled", "disabled");
+                $(".row-updated").removeClass("selected-negative").removeClass("row-updated");
 
-            $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-            $(".row-updated-button").removeClass("row-updated-button");
+                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                $(".row-updated-button").removeClass("row-updated-button");
 
-            $(".row-updated-link").attr("style", "visibility:display");
-            $(".row-updated-link").removeClass("row-updated-link");
+                $(".row-updated-link").attr("style", "visibility:display");
+                $(".row-updated-link").removeClass("row-updated-link");
 
 
-            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-            $(".row-updated-donut-text").text("2");
-            $(".row-updated-donut").removeClass("row-updated-donut");
-            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                $(".row-updated-donut-text").text("2");
+                $(".row-updated-donut").removeClass("row-updated-donut");
+                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+            }
+            
         },
         error: function (xhr, status, error) {
             alert(xhr.status + " : " + error);
@@ -229,10 +232,12 @@ $(".st1-cancel-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            buttonAcceptItem.attr("disabled", "disabled").removeClass("selected");
-            buttonCancelItem.attr("disabled", "disabled").addClass("selected-negative");
-            checkboxItem.attr("disabled", "disabled");
-            buttonEditItem.attr("style", "visibility:display");
+            if (response.responseText.includes("is canceled")) {
+                buttonAcceptItem.attr("disabled", "disabled").removeClass("selected");
+                buttonCancelItem.attr("disabled", "disabled").addClass("selected-negative");
+                checkboxItem.attr("disabled", "disabled");
+                buttonEditItem.attr("style", "visibility:display");
+            }            
         },
         error: function (xhr, status, error) {
             alert(xhr.status + " : " + error);

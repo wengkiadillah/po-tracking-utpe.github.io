@@ -1077,7 +1077,7 @@ namespace POTrackingV2.Controllers
 
             if (inputPurchasingDocumentItems == null)
             {
-                return Json(new { responseText = $"No Item affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"No data affected" }, JsonRequestBehavior.AllowGet);
             }
 
             DateTime now = DateTime.Now;
@@ -2047,7 +2047,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{count} data affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{count} item affected" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
