@@ -1165,7 +1165,7 @@ namespace POTrackingV2.Controllers
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+            if (myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
