@@ -73,10 +73,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            if (response.responseText.includes("Authorized")) {
-                return 0;
-            }
-            else {
+            if (response.responseText.includes("Item affected")) {
                 buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
                 buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
                 checkboxItem.attr("disabled", "disabled");
@@ -85,7 +82,7 @@ $(".st1-accept-item-proc").on("click", function (obj) {
                 donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
                 donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2");
             }
-
+          
             
         },
         error: function (xhr, status, error) {
