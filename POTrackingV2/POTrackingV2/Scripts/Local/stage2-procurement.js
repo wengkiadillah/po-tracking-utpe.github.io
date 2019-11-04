@@ -66,18 +66,20 @@ $(".st2-proc-accept-first-eta").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                console.log(response.imageSources);
+                if (response.responseText.includes("item affected")) {
+                    console.log(response.imageSources);
 
-                buttonAcceptFirstEta.attr("disabled", "disabled").addClass("selected");
-                buttonDeclineFirstEta.attr("disabled", "disabled");
-                checkboxItem.attr("disabled", "disabled");
-                buttonEdit.attr("style", "visibility:display");
+                    buttonAcceptFirstEta.attr("disabled", "disabled").addClass("selected");
+                    buttonDeclineFirstEta.attr("disabled", "disabled");
+                    checkboxItem.attr("disabled", "disabled");
+                    buttonEdit.attr("style", "visibility:display");
 
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
 
-                nextDataContent.find(".st2a-checkbox-item").first().removeAttr("disabled");
-
+                    nextDataContent.find(".st2a-checkbox-item").first().removeAttr("disabled");
+                }
+                
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
@@ -154,21 +156,24 @@ $(".st2-proc-accept-first-eta-all").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                $(".row-updated-link").attr("style", "visibility:display");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").removeClass("row-updated-button");
-                $(".row-updated-link").removeClass("row-updated-link");
+                if (response.responseText.includes("item affected")) {
+                    $(".row-updated").attr("disabled", "disabled");
+                    $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                    $(".row-updated-link").attr("style", "visibility:display");
+                    $(".row-updated").removeClass("row-updated");
+                    $(".row-updated-button").removeClass("row-updated-button");
+                    $(".row-updated-link").removeClass("row-updated-link");
 
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("2a");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                    $(".row-updated-donut-text").text("2a");
+                    $(".row-updated-donut").removeClass("row-updated-donut");
+                    $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").removeAttr("disabled");
-                $(".row-updated-next-content").removeClass("row-updated-next-content");
+                    $(".row-updated-next-content").removeAttr("disabled");
+                    $(".row-updated-next-content").removeClass("row-updated-next-content");
+                }
 
+                
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
@@ -205,12 +210,14 @@ $(".st2-proc-decline-first-eta").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                console.log(inputPurchasingDocumentItemIDs);
+                if (response.responseText.includes("item affected")) {
+                    console.log(inputPurchasingDocumentItemIDs);
 
-                buttonAcceptFirstEta.attr("disabled", "disabled");
-                buttonDeclineFirstEta.attr("disabled", "disabled").addClass("selected-negative");
-                checkboxItem.attr("disabled", "disabled");
-                buttonEdit.attr("style", "visibility:display");
+                    buttonAcceptFirstEta.attr("disabled", "disabled");
+                    buttonDeclineFirstEta.attr("disabled", "disabled").addClass("selected-negative");
+                    checkboxItem.attr("disabled", "disabled");
+                    buttonEdit.attr("style", "visibility:display");
+                }                
 
             },
             error: function (xhr, status, error) {

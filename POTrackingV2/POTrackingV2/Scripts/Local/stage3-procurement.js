@@ -75,19 +75,23 @@ $(".st3-confirm-payment-submit").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                buttonConfirmPayment.attr("disabled", "disabled").addClass("selected");
-                buttonConfirmPaymentSkip.attr("disabled", "disabled");
-                inputCheckboxItem.attr("disabled", "disabled");
-                inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
-                editRow.attr("style", "visibility:display");
+                if (response.responseText.includes("item affected")) {
+                    buttonConfirmPayment.attr("disabled", "disabled").addClass("selected");
+                    buttonConfirmPaymentSkip.attr("disabled", "disabled");
+                    inputCheckboxItem.attr("disabled", "disabled");
+                    inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
+                    editRow.attr("style", "visibility:display");
 
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
 
-                //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                }
+
+                
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
@@ -167,23 +171,27 @@ $(".st3-confirm-payment-all").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            $(".row-updated").attr("disabled", "disabled");
-            $(".row-updated").removeClass("row-updated");
-            $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-            $(".row-updated-button").removeClass("row-updated-button");
-            $(".row-updated-link").attr("style", "visibility:display");
-            $(".row-updated-link").removeClass("row-updated-link");
+            if (response.responseText.includes("item affected")) {
+                $(".row-updated").attr("disabled", "disabled");
+                $(".row-updated").removeClass("row-updated");
+                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                $(".row-updated-button").removeClass("row-updated-button");
+                $(".row-updated-link").attr("style", "visibility:display");
+                $(".row-updated-link").removeClass("row-updated-link");
 
-            $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-            $(".row-updated-donut-text").text("4");
-            $(".row-updated-donut").removeClass("row-updated-donut");
-            $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                $(".row-updated-donut-text").text("4");
+                $(".row-updated-donut").removeClass("row-updated-donut");
+                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-            //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
-            //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
-            //$(".row-updated-next-content").removeClass("row-updated-next-content");
+                //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+                //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+                //$(".row-updated-next-content").removeClass("row-updated-next-content");
+            }
+
+            
         }
     });
 });
@@ -227,19 +235,21 @@ $(".st3-confirm-payment-skip").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                buttonConfirmPayment.attr("disabled", "disabled");
-                buttonConfirmPaymentSkip.attr("disabled", "disabled").addClass("selected-negative");
-                inputCheckboxItem.attr("disabled", "disabled");
-                inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
-                editRow.attr("style", "visibility:display");
+                if (response.responseText.includes("Skipped")) {
+                    buttonConfirmPayment.attr("disabled", "disabled");
+                    buttonConfirmPaymentSkip.attr("disabled", "disabled").addClass("selected-negative");
+                    inputCheckboxItem.attr("disabled", "disabled");
+                    inputConfirmReceivedPaymentDate.attr("disabled", "disabled");
+                    editRow.attr("style", "visibility:display");
 
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("4");
 
-                //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
-                //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-on-time-confirm").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-delay").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-update-eta-date-delay-confirm").first().removeAttr("disabled");
+                    //nextDataContent.find(".st4-delay-reason").first().removeAttr("disabled");
+                }                
 
             },
             error: function (xhr, status, error) {
@@ -305,23 +315,26 @@ $(".st3-skip-all-comfirm-payment").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
-                $(".row-updated-button").removeClass("row-updated-button");
-                $(".row-updated-link").attr("style", "visibility:display");
-                $(".row-updated-link").removeClass("row-updated-link");
+                if (response.responseText.includes("Skipped")) {
+                    $(".row-updated").attr("disabled", "disabled");
+                    $(".row-updated").removeClass("row-updated");
+                    $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
+                    $(".row-updated-button").removeClass("row-updated-button");
+                    $(".row-updated-link").attr("style", "visibility:display");
+                    $(".row-updated-link").removeClass("row-updated-link");
 
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("4");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                    $(".row-updated-donut-text").text("4");
+                    $(".row-updated-donut").removeClass("row-updated-donut");
+                    $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
-                //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
-                //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
-                //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
-                //$(".row-updated-next-content").removeClass("row-updated-next-content");
+                    //$(".row-updated-next-content").find(".st4-update-eta-date-on-time-confirm").removeAttr("disabled");
+                    //$(".row-updated-next-content").find(".st4-update-eta-date-delay").removeAttr("disabled");
+                    //$(".row-updated-next-content").find(".st4-update-eta-date-delay-confirm").removeAttr("disabled");
+                    //$(".row-updated-next-content").find(".st4-delay-reason").removeAttr("disabled");
+                    //$(".row-updated-next-content").removeClass("row-updated-next-content");
+                }
+                
             }
         });
     }

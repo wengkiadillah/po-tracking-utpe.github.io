@@ -19,7 +19,7 @@ using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement + "," + LoginConstants.RoleOthers)]
     public class ImportController : Controller
     {
 
