@@ -57,11 +57,13 @@ $(".st2a-ask-proforma").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                inputCheckboxItem.attr("disabled", "disabled");
-                buttonUploadProformaInvoice.attr("disabled", "disabled");
-                inputFileProformaInvoice.attr("disabled", "disabled");
-                buttonSkipProforma.attr("disabled", "disabled");
-                buttonAskProforma.attr("disabled", "disabled").addClass("selected");
+                if (response.responseText.includes("Proforma Invoice")) {
+                    inputCheckboxItem.attr("disabled", "disabled");
+                    buttonUploadProformaInvoice.attr("disabled", "disabled");
+                    inputFileProformaInvoice.attr("disabled", "disabled");
+                    buttonSkipProforma.attr("disabled", "disabled");
+                    buttonAskProforma.attr("disabled", "disabled").addClass("selected");
+                }                
 
             },
             error: function (xhr, status, error) {
@@ -108,10 +110,13 @@ $(".st2a-ask-first-eta-all").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
-                $(".row-updated-button").removeClass("row-updated-button");
+                if (response.responseText.includes("Proforma Invoice")) {
+                    $(".row-updated").attr("disabled", "disabled");
+                    $(".row-updated").removeClass("row-updated");
+                    $(".row-updated-button").attr("disabled", "disabled").addClass("selected");
+                    $(".row-updated-button").removeClass("row-updated-button");
+                }
+                
             }
         });
     }
@@ -161,16 +166,19 @@ $(".st2a-skip-proforma").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                inputCheckboxItem.attr("disabled", "disabled");
-                buttonUploadProformaInvoice.attr("disabled", "disabled");
-                inputFileProformaInvoice.attr("disabled", "disabled");
-                buttonSkipProforma.attr("disabled", "disabled").addClass("selected-negative");
-                buttonAskProforma.attr("disabled", "disabled");
+                if (response.responseText.includes("Skipped")) {
+                    inputCheckboxItem.attr("disabled", "disabled");
+                    buttonUploadProformaInvoice.attr("disabled", "disabled");
+                    inputFileProformaInvoice.attr("disabled", "disabled");
+                    buttonSkipProforma.attr("disabled", "disabled").addClass("selected-negative");
+                    buttonAskProforma.attr("disabled", "disabled");
 
-                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
+                    donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("3");
 
-                nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+                    nextDataContent.find(".st3-checkbox-item").first().removeAttr("disabled");
+                }
+                
             },
             error: function (xhr, status, error) {
                 alert(xhr.status + " : " + error);
@@ -237,18 +245,22 @@ $(".st2a-skip-first-eta-all").on("click", function (obj) {
             success: function (response) {
                 alert(response.responseText);
 
-                $(".row-updated").attr("disabled", "disabled");
-                $(".row-updated").removeClass("row-updated");
-                $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
-                $(".row-updated-button").removeClass("row-updated-button");
+                if (response.responseText.includes("Skipped")) {
+                    $(".row-updated").attr("disabled", "disabled");
+                    $(".row-updated").removeClass("row-updated");
+                    $(".row-updated-button").attr("disabled", "disabled").addClass("selected-negative");
+                    $(".row-updated-button").removeClass("row-updated-button");
 
-                $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
-                $(".row-updated-donut-text").text("3");
-                $(".row-updated-donut").removeClass("row-updated-donut");
-                $(".row-updated-donut-text").removeClass("row-updated-donut-text");
+                    $(".row-updated-donut").attr("stroke-dashoffset", donutProgress);
+                    $(".row-updated-donut-text").text("3");
+                    $(".row-updated-donut").removeClass("row-updated-donut");
+                    $(".row-updated-donut-text").removeClass("row-updated-donut-text");
 
-                $(".row-updated-next-content").removeAttr("disabled");
-                $(".row-updated-next-content").removeClass("row-updated-next-content");
+                    $(".row-updated-next-content").removeAttr("disabled");
+                    $(".row-updated-next-content").removeClass("row-updated-next-content");
+                }
+
+                
             }
         });
     }

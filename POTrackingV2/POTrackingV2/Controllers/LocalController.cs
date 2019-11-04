@@ -1077,7 +1077,7 @@ namespace POTrackingV2.Controllers
 
             if (inputPurchasingDocumentItems == null)
             {
-                return Json(new { responseText = $"No Item affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"No data affected" }, JsonRequestBehavior.AllowGet);
             }
 
             DateTime now = DateTime.Now;
@@ -1165,7 +1165,7 @@ namespace POTrackingV2.Controllers
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            if (myUser.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+            if (myUser.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower())
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
@@ -2047,7 +2047,7 @@ namespace POTrackingV2.Controllers
 
                 db.SaveChanges();
 
-                return Json(new { responseText = $"{count} data affected" }, JsonRequestBehavior.AllowGet);
+                return Json(new { responseText = $"{count} item affected" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
