@@ -454,7 +454,8 @@ else
                             else if (ViewBag.CurrentRoleID == ViewBag.RoleSubcontDev || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 disabledInputQty = "disabled";
-                                if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) || purchasingDocumentItem.ConfirmedQuantity == null)
+                                //if (ViewBag.SearchPOStatus == "newpo" || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator) || purchasingDocumentItem.ConfirmedQuantity == null)
+                                if (ViewBag.SearchPOStatus == "newpo" || ViewBag.CurrentSubcontDevRoleName != "subcont management" || purchasingDocumentItem.ConfirmedQuantity == null)
                                 {
                                     disabledBtnConfirmCancel = "disabled";
                                     disabledCheckbox = "disabled";
@@ -475,6 +476,10 @@ else
                                 }
                                 else
                                 {
+                                    if (ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
+                                    {
+                                        disabledCheckbox = "disabled";
+                                    }
                                     disabledBtnConfirmCancel = "disabled";
                                 }
                             }
@@ -490,7 +495,8 @@ else
                                     hideEditButton = "style=visibility:hidden";
                                 }
                             }
-                            else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                            //else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                            else if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && purchasingDocumentItem.ActiveStageToNumber != 2) || ViewBag.CurrentSubcontDevRoleName != "subcont management" || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                             {
                                 hideEditButton = "style=visibility:hidden";
                             }
@@ -558,12 +564,9 @@ else
                                         var disabledBtnConfirmCancelChild = "disabled";
                                         var hideEditBtnChild = "";
 
-                                        if (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator)
-                                        {
-                                            selectedCheckboxChild = "disabled";
-                                        }
+                                        //if (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator)
 
-                                        if ((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo")
+                                        if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo") || ViewBag.CurrentSubcontDevRoleName != "subcont management")
                                         {
                                             disabledChild = "disabled";
                                         }
@@ -583,7 +586,8 @@ else
                                             disabledChild = "disabled";
                                         }
 
-                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || !String.IsNullOrEmpty(purchasingDocumentItemChild.IsClosed) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                                        //if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || !String.IsNullOrEmpty(purchasingDocumentItemChild.IsClosed) || (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator))
+                                        if (ViewBag.CurrentRoleID == ViewBag.RoleVendor || purchasingDocumentItemChild.ActiveStageToNumber != 2 || !String.IsNullOrEmpty(purchasingDocumentItemChild.IsClosed) || ViewBag.CurrentSubcontDevRoleName != "subcont management" || ViewBag.CurrentRoleID == ViewBag.RoleAdministrator)
                                         {
                                             hideEditBtnChild = "style=visibility:hidden";
                                         }
