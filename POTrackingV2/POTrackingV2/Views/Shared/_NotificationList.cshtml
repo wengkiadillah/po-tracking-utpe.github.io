@@ -113,10 +113,12 @@
                             var statusID = jsonObj[k]['statusID'];
                             var className = "fas fa-check-circle approved";
                             var deletebutton = "";
-                            if (statusID == 1 && role != "administrator") {
+                            if (statusID == 1) {
                                 className = "fas fa-exclamation-circle important";
                                 //onclick="Data('year', this)"
-                                deletebutton = "<a class='notification-info' href='#' onclick ='javascript:deleteNotification(" + ID + ",1" + ")'><i class='fas fa-trash delete-icon'></i></a>";
+                                if (role != "administrator") {
+                                    deletebutton = "<a class='notification-info' href='#' onclick ='javascript:deleteNotification(" + ID + ",1" + ")'><i class='fas fa-trash delete-icon'></i></a>";
+                                }
                             } else if (statusID == 2) {
                                 className = "fas fa-times-circle rejected";
                             } else if (statusID == 4) {
