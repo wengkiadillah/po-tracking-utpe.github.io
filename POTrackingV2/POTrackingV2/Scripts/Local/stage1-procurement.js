@@ -73,13 +73,20 @@ $(".st1-accept-item-proc").on("click", function (obj) {
         success: function (response) {
             alert(response.responseText);
 
-            buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
-            buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
-            checkboxItem.attr("disabled", "disabled");
-            buttonEditItem.attr("style", "visibility:display");
+            if (response.responseText.includes("Authorized")) {
+                return 0;
+            }
+            else {
+                buttonAcceptItem.attr("disabled", "disabled").addClass("selected");
+                buttonCancelItem.attr("disabled", "disabled").removeClass("selected-negative");
+                checkboxItem.attr("disabled", "disabled");
+                buttonEditItem.attr("style", "visibility:display");
 
-            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2");
+                donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2");
+            }
+
+            
         },
         error: function (xhr, status, error) {
             alert(xhr.status + " : " + error);
