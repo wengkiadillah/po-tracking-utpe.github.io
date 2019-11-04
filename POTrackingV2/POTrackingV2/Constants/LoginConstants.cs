@@ -12,6 +12,7 @@ namespace POTrackingV2.Constants
         public const string RoleProcurement = "Procurement";
         public const string RoleVendor = "Vendor";
         public const string RoleSubcontDev = "SubcontDev";
+        public const string RoleOthers = "Others";
         public const string allowChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
         //public const string defaultPassword = "password0!";
         public const string defaultPassword = "popatria16";
