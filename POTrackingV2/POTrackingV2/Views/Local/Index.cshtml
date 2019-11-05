@@ -379,9 +379,11 @@ else
                                 <div class="po-item-section-body">
                                     <div class="po-item-data-header">
                                         <span class="po-item-data-header__text quantity">Qty</span>
-                                        <span class="po-item-data-header__text currency">Curr</span>
-                                        <span class="po-item-data-header__text price">Price</span>
-                                        @*<span class="po-item-data-header__text material">Material</span>*@
+                                        @if (roleID != "others")
+                                        {
+                                            <span class="po-item-data-header__text currency">Curr</span>
+                                            <span class="po-item-data-header__text price">Price</span>
+                                        }
                                         <span class="po-item-data-header__text delivery">Delivery Date</span>
                                     </div>
                                     @{
@@ -392,8 +394,11 @@ else
                                         <div class="po-item-data-content row-@rowInformation">
                                             <div class="po-item-data-content__outer">
                                                 <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity.ToString()</span>
-                                                <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
-                                                <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
+                                                @if (roleID != "others")
+                                                {
+                                                    <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
+                                                    <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
+                                                }   
                                                 <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
                                             </div>
                                         </div>
@@ -412,16 +417,24 @@ else
                                     @{
                                         var st1CheckboxAll = "st1-checkbox-all";
                                         var st1AcceptAll = "st1-accept-all-po";
+                                        var disabledCheckboxAll = "";
+                                        var disabledAcceptAll = "";
 
                                         if (roleID == "procurement" || roleID == "administrator")
                                         {
                                             st1CheckboxAll = "st1-checkbox-all-proc";
                                             st1AcceptAll = "st1-accept-all-po-proc";
                                         }
+
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledCheckboxAll = "disabled";
+                                            disabledAcceptAll = "disabled";
+                                        }
                                     }
                                     <div>
                                         <label class="checkbox-custom__label mr-0">
-                                            <input class="checkbox-custom @st1CheckboxAll" type="checkbox">
+                                            <input class="checkbox-custom @st1CheckboxAll" type="checkbox" @disabledCheckboxAll>
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
@@ -429,7 +442,7 @@ else
                                         <p class="mb-0">Stage 1</p>
                                     </div>
                                     <div>
-                                        <input class="btn btn-positive confirm-all-po @st1AcceptAll" type="submit" value="Save All" />
+                                        <input class="btn btn-positive confirm-all-po @st1AcceptAll" type="submit" value="Save All" @disabledAcceptAll />
                                     </div>
                                 </div>
                                 <div class="po-item-section-body">
@@ -605,6 +618,17 @@ else
 
                                         }
 
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledInputCheckbox = "disabled";
+                                            disabledInputConfirmedDate = "disabled";
+                                            disabledInputDeliveryMethod = "disabled";
+                                            disabledInputQuantity = "disabled";
+                                            disabledInputDate = "disabled";
+                                            disabledButtonConfirm = "disabled";
+                                            disabledButtonCancel = "disabled";
+                                        }
+
                                         if (childPurchasingDocumentItems.Count() > 0)
                                         {
                                             isPartial = "selected";
@@ -762,6 +786,18 @@ else
                                                                     hideButtonEdit = "style=visibility:hidden";
                                                                 }
                                                             }
+
+                                                            if (roleID == "administrator" || roleID == "others")
+                                                            {
+                                                                disabledInputCheckbox = "disabled";
+                                                                disabledInputConfirmedDate = "disabled";
+                                                                disabledInputDeliveryMethod = "disabled";
+                                                                disabledInputQuantity = "disabled";
+                                                                disabledInputDate = "disabled";
+                                                                disabledButtonConfirm = "disabled";
+                                                                disabledButtonCancel = "disabled";
+                                                            }
+
                                                             <div class="po-item-data-content row-@rowStage1-@childRowStage1" row="@rowStage1" child="@childRowStage1">
                                                                 <div class="po-item-data-header__column confirm-delivery-date" @hideCheckbox>
                                                                     <div class="form-inline">
@@ -832,13 +868,13 @@ else
                                     <div class="po-item-section-header stage-checkbox-header">
                                         <div>
                                             <label class="checkbox-custom__label mr-0">
-                                                <input class="checkbox-custom st2-proc-checkbox-all" type="checkbox">
+                                                <input class="checkbox-custom st2-proc-checkbox-all" type="checkbox" @disabledCheckboxAll>
                                                 <span class="checkmark"></span>
                                             </label>
                                         </div>
                                         <div><p class="mb-0">Stage 2</p></div>
                                         <div>
-                                            <input class="btn btn-positive st2-proc-accept-first-eta-all" type="submit" value="Save All" />
+                                            <input class="btn btn-positive st2-proc-accept-first-eta-all" type="submit" value="Save All" @disabledAcceptAll />
                                         </div>
                                     </div>
                                 }
@@ -847,13 +883,13 @@ else
                                     <div class="po-item-section-header stage-checkbox-header">
                                         <div>
                                             <label class="checkbox-custom__label mr-0">
-                                                <input class="checkbox-custom st2-checkbox-all" type="checkbox">
+                                                <input class="checkbox-custom st2-checkbox-all" type="checkbox" @disabledCheckboxAll>
                                                 <span class="checkmark"></span>
                                             </label>
                                         </div>
                                         <div><p class="mb-0">Stage 2</p></div>
                                         <div>
-                                            <input class="btn btn-positive st2-confirm-first-eta-all" type="submit" value="Save All" />
+                                            <input class="btn btn-positive st2-confirm-first-eta-all" type="submit" value="Save All" @disabledAcceptAll />
                                         </div>
                                     </div>
                                 }
@@ -968,10 +1004,19 @@ else
                                             }
                                         }
 
-                            if (!purchasingDocumentItem.IsTwentyFivePercent)
-                            {
-                                disabledInputCheckbox = "disabled";
-                            }
+                                        if (!purchasingDocumentItem.IsTwentyFivePercent)
+                                        {
+                                            disabledInputCheckbox = "disabled";
+                                        }
+
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledInputCheckbox = "disabled";
+                                            disabledInputFirstEtaDate = "disabled";
+                                            disabledButtonConfirmEtaDate = "disabled";
+                                            disabledButtonAccept = "disabled";
+                                            disabledButtonDecline = "disabled";
+                                        }
 
                                         <div class="po-item-data-content row-@rowStage2" row="@rowStage2" style="display:block;">
                                             <div class="po-item-data-content__outer">
@@ -1078,10 +1123,19 @@ else
                                                             }
                                                         }
 
-                                            if (!childPurchasingDocumentItem.IsTwentyFivePercent)
-                                            {
-                                                disabledInputCheckbox = "disabled";
-                                            }
+                                                        if (!childPurchasingDocumentItem.IsTwentyFivePercent)
+                                                        {
+                                                            disabledInputCheckbox = "disabled";
+                                                        }
+
+                                                        if (roleID == "administrator" || roleID == "others")
+                                                        {
+                                                            disabledInputCheckbox = "disabled";
+                                                            disabledInputFirstEtaDate = "disabled";
+                                                            disabledButtonConfirmEtaDate = "disabled";
+                                                            disabledButtonAccept = "disabled";
+                                                            disabledButtonDecline = "disabled";
+                                                        }
 
                                                         <div class="po-item-data-content row-@rowStage2-@childRowStage2" row="@rowStage2" child="@childRowStage2">
                                                             <form class="d-flex po-form-item-st2">
@@ -1140,11 +1194,19 @@ else
                                         hiddenst2aSkipAll = "hidden";
                                         hiddenst2aUploadAll = "";
                                     }
+
+                                    if (roleID == "administrator" || roleID == "others")
+                                    {
+                                        disabledst2aConfirmAll = "disabled";
+                                        disabledst2aSkipAll = "disabled";
+                                    }
+
                                 }
+
                                 <div class="po-item-section-header stage-checkbox-header">
                                     <div>
                                         <label class="checkbox-custom__label mr-0">
-                                            <input class="checkbox-custom @st2aCheckboxAll" type="checkbox">
+                                            <input class="checkbox-custom @st2aCheckboxAll" type="checkbox" @disabledCheckboxAll>
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
@@ -1259,6 +1321,15 @@ else
                                                 disabledSkipProforma = "disabled";
                                                 selectedSkipProforma = "selected-negative";
                                             }
+                                        }
+
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledInputCheckbox = "disabled";
+                                            disabledFileProformaInvoice = "disabled";
+                                            disabledUploadProformaInvoice = "disabled";
+                                            disabledSkipProforma = "disabled";
+                                            disabledAskProforma = "disabled";
                                         }
 
                                         <div class="po-item-data-content row-@rowStage2a">
@@ -1385,6 +1456,15 @@ else
                                                             }
                                                         }
 
+                                                        if (roleID == "administrator" || roleID == "others")
+                                                        {
+                                                            disabledInputCheckbox = "disabled";
+                                                            disabledFileProformaInvoice = "disabled";
+                                                            disabledUploadProformaInvoice = "disabled";
+                                                            disabledSkipProforma = "disabled";
+                                                            disabledAskProforma = "disabled";
+                                                        }
+
                                                         <div class="po-item-data-content row-@rowStage2a-@childRowStage2a" row="@rowStage2a" child="@childRowStage2a">
                                                             <form class="po-form-item-st2a">
                                                                 <div class="po-item-data-header__column">
@@ -1445,6 +1525,12 @@ else
                                         disabledst3SkipAllComfirmPayment = "disabled";
                                         hiddenst3ConfirmPaymentAll = "hidden";
                                         hiddenSkipAllComfirmPayment = "hidden";
+                                    }
+
+                                    if (roleID == "administrator" || roleID == "others")
+                                    {
+                                        disabledst3ConfirmPaymentAll = "disabled";
+                                        disabledst3SkipAllComfirmPayment = "disabled";
                                     }
                                 }
 
@@ -1528,6 +1614,14 @@ else
                                             hiddenEditButton = "hidden";
                                         }
 
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledCheckboxItem = "disabled";
+                                            disabledConfirmPaymentDate = "disabled";
+                                            disabledConfirmPaymentSubmit = "disabled";
+                                            disabledConfirmPaymentSkip = "disabled";
+                                        }
+
                                         <div class="po-item-data-content row-@rowStage3">
                                             <div class="po-item-data-content__outer">
                                                 <form class="po-form-item-st3">
@@ -1600,6 +1694,14 @@ else
                                                         {
                                                             disabledCheckboxItem = "disabled";
                                                             hiddenEditButton = "hidden";
+                                                        }
+
+                                                        if (roleID == "administrator" || roleID == "others")
+                                                        {
+                                                            disabledCheckboxItem = "disabled";
+                                                            disabledConfirmPaymentDate = "disabled";
+                                                            disabledConfirmPaymentSubmit = "disabled";
+                                                            disabledConfirmPaymentSkip = "disabled";
                                                         }
 
                                                         <div class="po-item-data-content row-@rowStage3-@childRowStage3" row="@rowStage3" child="@childRowStage3">
@@ -1867,6 +1969,17 @@ else
                                             disabledInputUploadProgressPhotoesConfirm = "disabled";
                                         }
 
+                                        if (roleID == "administrator" || roleID == "others")
+                                        {
+                                            disabledInputUpdateEtaDateOnTime = "disabled";
+                                            disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                            disabledInputUpdateEtaDateDelay = "disabled";
+                                            disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                            disabledInputUploadProgressPhotoes = "disabled";
+                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                            disabledDelayReason = "disabled";
+                                        }
+
                                         <div class="po-item-data-content row-@rowStage4">
                                             <div class="po-item-data-content__outer">
                                                 <div class="po-item-data-header__column">
@@ -2115,16 +2228,27 @@ else
                                                             }
                                                         }
 
-                                            if (!childPurchasingDocumentItem.IsSeventyFivePercent)
-                                            {
-                                                disabledInputUpdateEtaDateOnTime = "disabled";
-                                                disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
-                                                disabledInputUpdateEtaDateDelay = "disabled";
-                                                disabledDelayReason = "disabled";
-                                                disabledInputUpdateEtaDateDelayConfirm = "disabled";
-                                                disabledInputUploadProgressPhotoes = "disabled";
-                                                disabledInputUploadProgressPhotoesConfirm = "disabled";
-                                            }
+                                                        if (!childPurchasingDocumentItem.IsSeventyFivePercent)
+                                                        {
+                                                            disabledInputUpdateEtaDateOnTime = "disabled";
+                                                            disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                            disabledInputUpdateEtaDateDelay = "disabled";
+                                                            disabledDelayReason = "disabled";
+                                                            disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                            disabledInputUploadProgressPhotoes = "disabled";
+                                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                        }
+
+                                                        if (roleID == "administrator" || roleID == "others")
+                                                        {
+                                                            disabledInputUpdateEtaDateOnTime = "disabled";
+                                                            disabledInputUpdateEtaDateOnTimeConfirm = "disabled";
+                                                            disabledInputUpdateEtaDateDelay = "disabled";
+                                                            disabledInputUpdateEtaDateDelayConfirm = "disabled";
+                                                            disabledInputUploadProgressPhotoes = "disabled";
+                                                            disabledInputUploadProgressPhotoesConfirm = "disabled";
+                                                            disabledDelayReason = "disabled";
+                                                        }
 
                                                         <div class="po-item-data-content row-@rowStage4-@childRowStage4" row="@rowStage4" child="@childRowStage4">
                                                             <div class="po-item-data-header__column">
