@@ -380,8 +380,11 @@
                     <div class="po-item-section-body">
                         <div class="po-item-data-header">
                             <span class="po-item-data-header__text quantity">Qty</span>
-                            <span class="po-item-data-header__text currency">Curr</span>
-                            <span class="po-item-data-header__text price">Price</span>
+                            @if (roleID != "others")
+                            {
+                                <span class="po-item-data-header__text currency">Curr</span>
+                                <span class="po-item-data-header__text price">Price</span>
+                            }
                             <span class="po-item-data-header__text delivery">Delivery Date</span>
                         </div>
                         @{
@@ -392,10 +395,13 @@
                             <div class="po-item-data-content row-@rowInformation">
                                 <div class="po-item-data-content__outer">
                                     <span class="po-item-data-header__column quantity">@purchasingDocumentItem.Quantity.ToString()</span>
-                                    <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
-                                    <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
-                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
-                                </div>
+                                    @if (roleID != "others")
+                                    {
+                                        <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
+                                        <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
+                                    }
+                                        <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
+                                    </div>
                             </div>
                             rowInformation++;
                         }
