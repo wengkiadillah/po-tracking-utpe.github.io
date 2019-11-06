@@ -8,9 +8,6 @@
     var iisAppName = ViewBag.IISAppName;
     string currentSearchForMaterial = ViewBag.CurrentSearchMaterial;
     string currentSearchPOStatus = ViewBag.CurrentSearchPOStatus;
-
-    string ftpUsername = "administrator";
-    string ftpPassword = "P@s5w0rd";
 }
 @section styles {
     <link href="~/Content/datepicker.min.css" rel="stylesheet" />
@@ -400,8 +397,8 @@
                                         <span class="po-item-data-header__column currency">@purchasingDocumentItem.Currency</span>
                                         <span class="po-item-data-header__column price">@purchasingDocumentItem.NetPriceView</span>
                                     }
-                                        <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
-                                    </div>
+                                    <span class="po-item-data-header__column delivery">@purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy")</span>
+                                </div>
                             </div>
                             rowInformation++;
                         }
@@ -854,7 +851,7 @@
                             </div>
                             <div><p class="mb-0">Stage 2</p></div>
                             <div>
-                                <input class="btn btn-positive st2-proc-accept-first-eta-all" type="submit" value="Save All"  @disabledAcceptAll/>
+                                <input class="btn btn-positive st2-proc-accept-first-eta-all" type="submit" value="Save All" @disabledAcceptAll />
                             </div>
                         </div>
                     }
@@ -869,7 +866,7 @@
                             </div>
                             <div><p class="mb-0">Stage 2</p></div>
                             <div>
-                                <input class="btn btn-positive st2-confirm-first-eta-all" type="submit" value="Save All" @disabledAcceptAll/>
+                                <input class="btn btn-positive st2-confirm-first-eta-all" type="submit" value="Save All" @disabledAcceptAll />
                             </div>
                         </div>
                     }
@@ -1172,7 +1169,7 @@
                             hiddenst2aUploadAll = "";
                         }
 
-                        if (roleID == "administrator" || roleID =="others")
+                        if (roleID == "administrator" || roleID == "others")
                         {
                             disabledst2aConfirmAll = "disabled";
                             disabledst2aSkipAll = "disabled";
@@ -1506,7 +1503,7 @@
                             hiddenst3SkipAll = "hidden";
                         }
 
-                        if (roleID =="administrator" || roleID =="others")
+                        if (roleID == "administrator" || roleID == "others")
                         {
                             disabledst3ConfirmPaymentAll = "disabled";
                             disabledst3SkipAll = "disabled";
@@ -2287,7 +2284,7 @@
                             disabledst5ConfirmAll = "disabled";
                         }
 
-                        if (roleID == "administrator" || roleID =="others")
+                        if (roleID == "administrator" || roleID == "others")
                         {
                             disabledst5ConfirmAll = "disabled";
                         }
