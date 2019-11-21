@@ -77,6 +77,12 @@ namespace POTrackingV2.Controllers
                 return View(userData);
             }
         }
+        public ActionResult Dashboard()
+        {
+            ViewBag.Message = "Your application dashboard page.";
+
+            return View();
+        }
 
         public ActionResult About()
         {
