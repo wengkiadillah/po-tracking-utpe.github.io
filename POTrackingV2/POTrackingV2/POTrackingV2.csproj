@@ -684,6 +684,13 @@
     <Content Include="Views\SubcontDevUserRole\EditSubcontDevUserRole.cshtml" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Home\DashboardSubcontdevProgress.cshtml" />
+    <Content Include="Views\Home\DashboardCommandCenterPOTracking.cshtml" />
+    <Content Include="Views\Home\DashboardCommandCenterAlert.cshtml" />
+    <Content Include="Views\Home\DashboardProcurementProgress.cshtml" />
+    <Content Include="Views\Home\DashboardReminderComponentInspection.cshtml" />
+    <Content Include="Views\Home\DashboardItemArrivalStatus.cshtml" />
+    <Content Include="Views\Home\DashboardLeadTimeFromPR_PORelease.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
