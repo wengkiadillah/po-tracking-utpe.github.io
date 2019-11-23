@@ -77,61 +77,6 @@ namespace POTrackingV2.Controllers
                 return View(userData);
             }
         }
-        public ActionResult Dashboard()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardCommandCenterPOTracking()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardCommandCenterAlert()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardSubcontdevProgress()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardProcurementProgress()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardReminderComponentInspection()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardItemArrivalStatus()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
-
-        public ActionResult DashboardLeadTimeFromPR_PORelease()
-        {
-            ViewBag.Message = "Your application dashboard page.";
-
-            return View();
-        }
 
         public ActionResult About()
         {
