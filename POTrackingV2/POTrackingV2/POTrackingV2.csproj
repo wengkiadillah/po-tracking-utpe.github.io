@@ -441,6 +441,7 @@
     <Content Include="Content\chosen.min.css" />
     <Content Include="Content\dataTables.bootstrap4.min.css" />
     <Content Include="Content\datepicker.min.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\semantic.min.css" />
     <Content Include="Content\styles.css" />
