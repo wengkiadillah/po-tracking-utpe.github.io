@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard LeadTime FromPR - PORelease";
+}
+
+<h2>Dashboard LeadTime FromPR - PORelease</h2>
+
+@*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSectiond6b9bf13d9b6846ae687&$filter&navContentPaneEnabled=false&filterPaneEnabled=false"} frameborder="0" allowFullScreen="true" navContentPaneEnabled="false"></iframe>*@
+
+<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSectiond6b9bf13d9b6846ae687" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
+
+<script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/jquery/dist/jquery.js"></script>
+<script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/es6-promise/dist/es6-promise.js"></script>
+<script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/powerbi-client/dist/powerbi.js"></script>
+<script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/powerbi-report-authoring/dist/powerbi-report-authoring.js"></script>
+
+<script type="text/javascript">
+
+    var txtAccessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwLyIsImlhdCI6MTU3NDQ4Nzk4OSwibmJmIjoxNTc0NDg3OTg5LCJleHAiOjE1NzQ0OTE4ODksImFjY3QiOjAsImFjciI6IjEiLCJhaW8iOiJBU1FBMi84TkFBQUF4QXljZk5ZaXIxK0hDYkx4cFNBSnhnMzcxSkU0YXFpVCt3dVQyR3lmdUlvPSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiJlYTA2MTZiYS02MzhiLTRkZjUtOTViOS02MzY2NTlhZTUxMjEiLCJhcHBpZGFjciI6IjAiLCJkZXZpY2VpZCI6IjAwNjAwY2U1LTg0NmEtNGUxMC04Y2U1LWMyMjRkYjQyYjM2YyIsImZhbWlseV9uYW1lIjoiWXV6YXJpYW5zeWFoIiwiZ2l2ZW5fbmFtZSI6IlJhZGR5IiwiaXBhZGRyIjoiMTEyLjIxNS4yMDAuMTYiLCJuYW1lIjoiUmFkZHkgWXV6YXJpYW5zeWFoIiwib2lkIjoiMDkzY2I1MGMtOGIwZi00MjcwLWFiYmMtZWVmM2RiNWQxZmQ4IiwicHVpZCI6IjEwMDMyMDAwMzdCMzI2NDEiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJrSXBOSm4zbk01b0FaT3ZTLVBsSmZxQ0ZtMERKNzQwM0NrTkMwRk9xOW1jIiwidGlkIjoiNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwIiwidW5pcXVlX25hbWUiOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1cG4iOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1dGkiOiJtLTEtcmJoZUwwYWRqMElfQUJnWEFRIiwidmVyIjoiMS4wIn0.EWsvSfZq2mStJN76S1itcHnQ9rWKJ_aEvY1g8EFJb8o-l6RVbdUFV5sjI9CW2Vdlk07qpVFLdMHKgIxBOaNa_Yi_2wyw74CeC1EMcAKcj4_S04pCDloxJUXARLzWgqO0Wo1Mw_V8a22evSKE7B6VcVZd-_Nitzakbwg9Qi_ejwnx-f0JSCxF3YNXpVonPqFh4Ulemp2sQg391vLS5NtqxK9tMnIIkjnTWPFVRS85ho857fe1GuCycs8ss0O7K7jQPIN9XhnYLxcbgNcQdzg8F1pqPrtLL3_LHgjZ5EBii7jphjClHCEgCxAfBz_hkdzFMRonSouyUq049DdrHmWxnQ";
+    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSectiond6b9bf13d9b6846ae687";
+    var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
+    var tokenType = "0";
+    var models = window['powerbi-client'].models;
+    var permissions = models.Permissions.All;
+
+    // Embed configuration used to describe the what and how to embed.
+    // This object is used when calling powerbi.embed.
+    // This also includes settings and options such as filters.
+    // You can find more information at https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details.
+    var config = {
+        type: 'report',
+        tokenType: tokenType == '0' ? models.TokenType.Aad : models.TokenType.Embed,
+        accessToken: txtAccessToken,
+        embedUrl: txtEmbedUrl,
+        id: txtEmbedReportId,
+        permissions: permissions,
+        settings: {
+            filterPaneEnabled: false,
+            navContentPaneEnabled: false,
+        }
+    };
+
+    // Get a reference to the embedded report HTML element
+    var embedContainer = $('#embedContainer')[0];
+
+    // Embed the report and display it within the div container.
+    var report = powerbi.embed(embedContainer, config);
+
+    // Report.off removes a given event handler if it exists.
+    report.off("loaded");
+
+    // Report.on will add an event handler which prints to Log window.
+    report.on("loaded", function () {
+        Log.logText("Loaded");
+    });
+
+    // Report.off removes a given event handler if it exists.
+    report.off("rendered");
+
+    // Report.on will add an event handler which prints to Log window.
+    report.on("rendered", function () {
+        Log.logText("Rendered");
+    });
+
+    report.on("error", function (event) {
+        //Log.log(event.detail);
+        console.log(event.detail);
+
+        report.off("error");
+    });
+
+    report.off("saved");
+    report.on("saved", function (event) {
+        Log.log(event.detail);
+        if (event.detail.saveAs) {
+            Log.logText('In order to interact with the new report, create a new token and load the new report');
+        }
+    });
+</script>

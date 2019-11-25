@@ -18,8 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44365</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -184,6 +183,7 @@
     <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Constants\LoginConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DelayReasonController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -685,6 +685,14 @@
     <Content Include="Views\SubcontDevUserRole\CreateSubcontDevUserRole.cshtml" />
     <Content Include="Views\SubcontDevUserRole\EditSubcontDevUserRole.cshtml" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Dashboard\DashboardSubcontdevProgress.cshtml" />
+    <Content Include="Views\Dashboard\DashboardCommandCenterPOTracking.cshtml" />
+    <Content Include="Views\Dashboard\DashboardCommandCenterAlert.cshtml" />
+    <Content Include="Views\Dashboard\DashboardProcurementProgress.cshtml" />
+    <Content Include="Views\Dashboard\DashboardReminderComponentInspection.cshtml" />
+    <Content Include="Views\Dashboard\DashboardItemArrivalStatus.cshtml" />
+    <Content Include="Views\Dashboard\DashboardLeadTimeFromPR_PORelease.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
