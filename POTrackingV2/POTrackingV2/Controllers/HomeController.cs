@@ -227,6 +227,7 @@ namespace POTrackingV2.Controllers
                             }
                         }
 
+                        notifications = notifications.Where(x => x.Role.ToLower() != LoginConstants.RoleSubcontDev.ToLower());
                         notifications = notifications.Except(noShowNotifications);
 
                         // For Head or Superior
