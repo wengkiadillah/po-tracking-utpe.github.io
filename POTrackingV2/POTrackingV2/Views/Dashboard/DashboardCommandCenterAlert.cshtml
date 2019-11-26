@@ -2,9 +2,8 @@
 @{
     ViewBag.Title = "Command Center PO Tracking";
 }
-
 <h2>Command Center PO Tracking</h2>
-
+<input id="txtAccessToken" hidden type="text" value="@ViewBag.Token" />
 @*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603&$filter&navContentPaneEnabled=false&filterPaneEnabled=false"} frameborder="0" allowFullScreen="true" navContentPaneEnabled="false"></iframe>*@
 
 <div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
@@ -33,8 +32,7 @@
     //// We give All permissions to demonstrate switching between View and Edit mode and saving report.
     //var permissions = models.Permissions.All;
 
-
-    var txtAccessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwLyIsImlhdCI6MTU3NDQ4Nzk4OSwibmJmIjoxNTc0NDg3OTg5LCJleHAiOjE1NzQ0OTE4ODksImFjY3QiOjAsImFjciI6IjEiLCJhaW8iOiJBU1FBMi84TkFBQUF4QXljZk5ZaXIxK0hDYkx4cFNBSnhnMzcxSkU0YXFpVCt3dVQyR3lmdUlvPSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiJlYTA2MTZiYS02MzhiLTRkZjUtOTViOS02MzY2NTlhZTUxMjEiLCJhcHBpZGFjciI6IjAiLCJkZXZpY2VpZCI6IjAwNjAwY2U1LTg0NmEtNGUxMC04Y2U1LWMyMjRkYjQyYjM2YyIsImZhbWlseV9uYW1lIjoiWXV6YXJpYW5zeWFoIiwiZ2l2ZW5fbmFtZSI6IlJhZGR5IiwiaXBhZGRyIjoiMTEyLjIxNS4yMDAuMTYiLCJuYW1lIjoiUmFkZHkgWXV6YXJpYW5zeWFoIiwib2lkIjoiMDkzY2I1MGMtOGIwZi00MjcwLWFiYmMtZWVmM2RiNWQxZmQ4IiwicHVpZCI6IjEwMDMyMDAwMzdCMzI2NDEiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJrSXBOSm4zbk01b0FaT3ZTLVBsSmZxQ0ZtMERKNzQwM0NrTkMwRk9xOW1jIiwidGlkIjoiNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwIiwidW5pcXVlX25hbWUiOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1cG4iOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1dGkiOiJtLTEtcmJoZUwwYWRqMElfQUJnWEFRIiwidmVyIjoiMS4wIn0.EWsvSfZq2mStJN76S1itcHnQ9rWKJ_aEvY1g8EFJb8o-l6RVbdUFV5sjI9CW2Vdlk07qpVFLdMHKgIxBOaNa_Yi_2wyw74CeC1EMcAKcj4_S04pCDloxJUXARLzWgqO0Wo1Mw_V8a22evSKE7B6VcVZd-_Nitzakbwg9Qi_ejwnx-f0JSCxF3YNXpVonPqFh4Ulemp2sQg391vLS5NtqxK9tMnIIkjnTWPFVRS85ho857fe1GuCycs8ss0O7K7jQPIN9XhnYLxcbgNcQdzg8F1pqPrtLL3_LHgjZ5EBii7jphjClHCEgCxAfBz_hkdzFMRonSouyUq049DdrHmWxnQ";
+    var txtAccessToken = $('#txtAccessToken').val();
     var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603";
     var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
     var tokenType = "0";
@@ -69,7 +67,8 @@
 
     // Report.on will add an event handler which prints to Log window.
     report.on("loaded", function () {
-        Log.logText("Loaded");
+        //Log.logText("Loaded");
+        console.log("Loaded");
     });
 
     // Report.off removes a given event handler if it exists.
@@ -77,7 +76,8 @@
 
     // Report.on will add an event handler which prints to Log window.
     report.on("rendered", function () {
-        Log.logText("Rendered");
+        //Log.logText("Rendered");
+        console.log("Rendered");
     });
 
     report.on("error", function (event) {

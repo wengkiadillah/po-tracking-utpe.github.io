@@ -2,12 +2,11 @@
 @{
     ViewBag.Title = "Dashboard";
 }
-
 <h2>Dashboard</h2>
-
+<input id="txtAccessToken" hidden type="text" value="@ViewBag.Token"/>
 @*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&ctid=69a01d04-ea91-4c91-b46e-8369667541c0&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLXNvdXRoLWVhc3QtYXNpYS1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>*@
 @*<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=f6bfd646-b718-44dc-a378-b73e6b528204&amp;groupId=be8908da-da25-452e-b220-163f52476cdd&amp;config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLVVTLU5PUlRILUNFTlRSQUwtcmVkaXJlY3QuYW5hbHlzaXMud2luZG93cy5uZXQifQ%3d%3d&amp;uid=8njtz7" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>*@
-<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&pageName=ReportSection6c0395561b1dd8d9cd70&$filter&navContentPaneEnabled=false&filterPaneEnabled=false" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
+<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&pageName=ReportSection6c0395561b1dd8d9cd70&autoAuth=true" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
 
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/jquery/dist/jquery.js"></script>
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/es6-promise/dist/es6-promise.js"></script>
@@ -33,9 +32,8 @@
     //// We give All permissions to demonstrate switching between View and Edit mode and saving report.
     //var permissions = models.Permissions.All;
     
-
-    var txtAccessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwLyIsImlhdCI6MTU3NDQ4Nzk4OSwibmJmIjoxNTc0NDg3OTg5LCJleHAiOjE1NzQ0OTE4ODksImFjY3QiOjAsImFjciI6IjEiLCJhaW8iOiJBU1FBMi84TkFBQUF4QXljZk5ZaXIxK0hDYkx4cFNBSnhnMzcxSkU0YXFpVCt3dVQyR3lmdUlvPSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiJlYTA2MTZiYS02MzhiLTRkZjUtOTViOS02MzY2NTlhZTUxMjEiLCJhcHBpZGFjciI6IjAiLCJkZXZpY2VpZCI6IjAwNjAwY2U1LTg0NmEtNGUxMC04Y2U1LWMyMjRkYjQyYjM2YyIsImZhbWlseV9uYW1lIjoiWXV6YXJpYW5zeWFoIiwiZ2l2ZW5fbmFtZSI6IlJhZGR5IiwiaXBhZGRyIjoiMTEyLjIxNS4yMDAuMTYiLCJuYW1lIjoiUmFkZHkgWXV6YXJpYW5zeWFoIiwib2lkIjoiMDkzY2I1MGMtOGIwZi00MjcwLWFiYmMtZWVmM2RiNWQxZmQ4IiwicHVpZCI6IjEwMDMyMDAwMzdCMzI2NDEiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJrSXBOSm4zbk01b0FaT3ZTLVBsSmZxQ0ZtMERKNzQwM0NrTkMwRk9xOW1jIiwidGlkIjoiNjlhMDFkMDQtZWE5MS00YzkxLWI0NmUtODM2OTY2NzU0MWMwIiwidW5pcXVlX25hbWUiOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1cG4iOiJyYWRkeUBhbHRyb3Zpcy5jb20iLCJ1dGkiOiJtLTEtcmJoZUwwYWRqMElfQUJnWEFRIiwidmVyIjoiMS4wIn0.EWsvSfZq2mStJN76S1itcHnQ9rWKJ_aEvY1g8EFJb8o-l6RVbdUFV5sjI9CW2Vdlk07qpVFLdMHKgIxBOaNa_Yi_2wyw74CeC1EMcAKcj4_S04pCDloxJUXARLzWgqO0Wo1Mw_V8a22evSKE7B6VcVZd-_Nitzakbwg9Qi_ejwnx-f0JSCxF3YNXpVonPqFh4Ulemp2sQg391vLS5NtqxK9tMnIIkjnTWPFVRS85ho857fe1GuCycs8ss0O7K7jQPIN9XhnYLxcbgNcQdzg8F1pqPrtLL3_LHgjZ5EBii7jphjClHCEgCxAfBz_hkdzFMRonSouyUq049DdrHmWxnQ";
-    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&pageName=ReportSection6c0395561b1dd8d9cd70&$filter&navContentPaneEnabled=false&filterPaneEnabled=false";
+    var txtAccessToken = $('#txtAccessToken').val();
+    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&pageName=ReportSection6c0395561b1dd8d9cd70&autoAuth=true";
     var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
     var tokenType = "0";
     var models = window['powerbi-client'].models;
@@ -54,7 +52,7 @@
         permissions: permissions,
         settings: {
             filterPaneEnabled: false,
-            navContentPaneEnabled: false,
+            navContentPaneEnabled: true,
         }
     };
 
@@ -94,9 +92,4 @@
             Log.logText('In order to interact with the new report, create a new token and load the new report');
         }
     });
-
-    function getToken() {
-
-    }
-    
 </script>
