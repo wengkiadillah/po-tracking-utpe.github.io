@@ -209,9 +209,9 @@ namespace POTrackingV2.Controllers
 
                 if (userProcurementInferiors.Count > 0)
                 {
-                    foreach (var item in userProcurementInferiors)
+                    foreach (var userProcurementInferior in userProcurementInferiors)
                     {
-                        dbPOTracking.UserProcurementSuperiors.Remove(item);
+                        userProcurementInferior.ParentID = null;
                     }
                 }
 
