@@ -217,7 +217,7 @@ namespace POTrackingV2.Controllers
                         myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                         myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                        var noShowNotifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
+                        var noShowNotifications = notifications;
 
                         if (myUserNRPs.Count > 0)
                         {
@@ -227,7 +227,7 @@ namespace POTrackingV2.Controllers
                             }
                         }
 
-                        notifications = notifications.Where(x => x.Role.ToLower() != LoginConstants.RoleSubcontDev.ToLower());
+                        notifications = notifications.Where(x => x.Role.ToLower() == LoginConstants.RoleProcurement.ToLower());
                         notifications = notifications.Except(noShowNotifications);
 
                         // For Head or Superior
