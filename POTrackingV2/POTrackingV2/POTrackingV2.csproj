@@ -742,6 +742,7 @@
     <Content Include="Views\Dashboard\DashboardReminderComponentInspection.cshtml" />
     <Content Include="Views\Dashboard\DashboardItemArrivalStatus.cshtml" />
     <Content Include="Views\Dashboard\DashboardLeadTimeFromPR_PORelease.cshtml" />
+    <Content Include="Views\Dashboard\DashboardPerformanceVendor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

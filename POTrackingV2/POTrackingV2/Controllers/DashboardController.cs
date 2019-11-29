@@ -132,7 +132,21 @@ namespace POTrackingV2.Controllers
             }
             return View();
         }
-        
+
+        public ActionResult DashboardPerformanceVendor()
+        {
+            try
+            {
+                ViewBag.Token = getToken();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Token = "";
+                ViewBag.Message = ex.Message + ex.StackTrace;
+            }
+            return View();
+        }
+
 
         public string getToken()
         {
