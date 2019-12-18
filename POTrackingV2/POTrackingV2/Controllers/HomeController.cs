@@ -164,7 +164,7 @@ namespace POTrackingV2.Controllers
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 //var notifications = db.Notifications.Where(x => x.Role == role && x.isActive == true);
                 var notifications = db.Notifications.Where(x => x.isActive == true && x.PurchasingDocumentItem.IsClosed.ToLower() != "l" && x.PurchasingDocumentItem.IsClosed.ToLower() != "lx" && x.PurchasingDocumentItem.IsClosed.ToLower() != "x");
-                notifications = notifications.Where(x => x.Role == LoginConstants.RoleSubcontDev.ToLower() || x.Role == LoginConstants.RoleProcurement.ToLower());
+                //notifications = notifications.Where(x => x.Role == LoginConstants.RoleSubcontDev.ToLower() || x.Role == LoginConstants.RoleProcurement.ToLower());
 
                 string userName = User.Identity.Name.ToLower();
                 List<string> vendorCode = new List<string>();
