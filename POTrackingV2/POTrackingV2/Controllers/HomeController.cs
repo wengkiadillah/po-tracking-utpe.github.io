@@ -426,9 +426,9 @@ namespace POTrackingV2.Controllers
                 }
 
 
-                string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
-                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "t") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
-                string ImportPOItemsDone = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t") || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();
+                string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsDone = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();
 
                 #endregion
 
