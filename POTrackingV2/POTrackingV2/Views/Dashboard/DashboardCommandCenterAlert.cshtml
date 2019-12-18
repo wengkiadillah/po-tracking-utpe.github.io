@@ -1,7 +1,7 @@
 ﻿<input id="txtAccessToken" hidden type="text" value="@ViewBag.Token" />
 @*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603&$filter&navContentPaneEnabled=false&filterPaneEnabled=false"} frameborder="0" allowFullScreen="true" navContentPaneEnabled="false"></iframe>*@
 
-<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
+<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603&ctid=69a01d04-ea91-4c91-b46e-8369667541c0" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
 
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/jquery/dist/jquery.js"></script>
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/es6-promise/dist/es6-promise.js"></script>
@@ -28,7 +28,7 @@
     //var permissions = models.Permissions.All;
 
     var txtAccessToken = $('#txtAccessToken').val();
-    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603";
+    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection035119cc74601b5d1603&ctid=69a01d04-ea91-4c91-b46e-8369667541c0";
     var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
     var tokenType = "0";
     var models = window['powerbi-client'].models;
