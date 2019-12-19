@@ -54,7 +54,7 @@ namespace POTrackingV2.Controllers
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
-                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x" ))) && (x.ReleaseDate != null))
+                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))))) && (x.ReleaseDate != null))
                                 .AsQueryable();
 
             //var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
@@ -144,7 +144,9 @@ namespace POTrackingV2.Controllers
             {
                 if (searchPOStatus.ToLower() == "ongoing")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")));
+                    List<PurchasingDocumentItemHistory> childHistory = db.PurchasingDocumentItemHistories.ToList();
+                    //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && (y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() == "x")));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((y.ParentID==null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")))   ));
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {

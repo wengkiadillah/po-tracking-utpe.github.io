@@ -520,7 +520,7 @@ namespace POTrackingV2.Controllers
 
                 //count by po
                 string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q"))).Count().ToString();
-                string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q"))).Count().ToString();
+                string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
                 string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))).Count().ToString();
 
                 #endregion
