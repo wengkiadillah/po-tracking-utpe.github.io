@@ -527,7 +527,6 @@ namespace POTrackingV2.Controllers
                 string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))).Count().ToString();
 
                 #endregion
-
                 return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone, LocalPOItemsCountNew, LocalPOItemsCountOnGoing, LocalPOItemsDone }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
