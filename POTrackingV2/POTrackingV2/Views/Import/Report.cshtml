@@ -1,6 +1,6 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-@model IPagedList<POTrackingV2.Models.PurchasingDocumentItem>
+@model IPagedList<POTrackingV2.Models.PO>
 @{
     ViewBag.Title = "Report Delivery Date";
     int number = 1;
@@ -58,79 +58,88 @@
     <tbody>
         @if (Model.Count() > 0)
         {
-            foreach (var purchasingDocumentItem in Model)
+            foreach (var po in Model)
             {
-                <tr style="background-color:white;">
-                    <td>
-                        @purchasingDocumentItem.PO.Number
-                    </td>
-                    <td>
-                        @purchasingDocumentItem.ItemNumber
-                    </td>
-                    <td>
-                        @purchasingDocumentItem.Material
-                    </td>
-                    <td>
-                        @{
-                            string description = "-";
+                //List<POTrackingV2.Models.PurchasingDocumentItem> purchasingDocumentItems = po.PurchasingDocumentItems.OrderBy(x => x.ItemNumber).ToList();
 
-                            if (purchasingDocumentItem.Description != null)
-                            {
-                                description = purchasingDocumentItem.Description;
-                            }
-                        }
-                        @description
-                    </td>
-                    <td>
-                        @purchasingDocumentItem.Quantity
-                    </td>
-                    <td>
-                        @{
-                            string deliveryDate = "-";
+                var purchasingDocumentItems = po.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material) && x.ActiveStage != null && x.ActiveStage != "0" && x.IsClosed != "l" && x.IsClosed != "L" && x.IsClosed != "lx" && x.IsClosed != "LX" && x.PurchasingDocumentItemHistories.All(y => y.POHistoryCategory != "Q"))
+                                                                    .OrderBy(x => x.ItemNumber);
 
-                            if (purchasingDocumentItem.DeliveryDate != null)
-                            {
-                                deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
-                            }
-                        }
-                        @deliveryDate
-                    </td>
-                    <td>
-                        @purchasingDocumentItem.PO.Vendor.Name
-                    </td>
-                    <td>
-                        @{
-                            string estimatedTimeArrival = "-";
+                foreach (var item in purchasingDocumentItems)
+                {
+                    <tr style="background-color:white;">
+                        <td>
+                            @po.Number
+                        </td>
+                        <td>
+                            @item.ItemNumber
+                        </td>
+                        <td>
+                            @item.Material
+                        </td>
+                        <td>
+                            @{
+                                string description = "-";
 
-                            if (purchasingDocumentItem.HasETAHistory)
-                            {
-                                if (purchasingDocumentItem.HasShipment)
+                                if (item.Description != null)
                                 {
-                                    if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
-                                    {
-                                        estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
-                                    }
-                                }
-                                else
-                                {
-                                    if (purchasingDocumentItem.LastETAHistory.ETADate.HasValue)
-                                    {
-                                        estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
-                                    }
-                                    else if (purchasingDocumentItem.FirstETAHistory.ETADate.HasValue)
-                                    {
-                                        estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
-                                    }
+                                    description = item.Description;
                                 }
                             }
-                            else if (purchasingDocumentItem.ConfirmedDate.HasValue)
-                            {
-                                estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                            @description
+                        </td>
+                        <td>
+                            @item.Quantity
+                        </td>
+                        <td>
+                            @{
+                                string deliveryDate = "-";
+
+                                if (item.DeliveryDate != null)
+                                {
+                                    deliveryDate = item.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
                             }
-                        }
-                        @estimatedTimeArrival
-                    </td>
-                </tr>
+                            @deliveryDate
+                        </td>
+                        <td>
+                            @po.Vendor.Name
+                        </td>
+                        <td>
+                            @{
+                                string estimatedTimeArrival = "-";
+
+                                if (item.HasETAHistory)
+                                {
+                                    if (item.HasShipment)
+                                    {
+                                        if (item.FirstShipment.ATADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = item.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (item.LastETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = item.LastETAHistory.ETADateView;
+                                        }
+                                        else if (item.FirstETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = item.FirstETAHistory.ETADateView;
+                                        }
+                                    }
+                                }
+                                else if (item.ConfirmedDate.HasValue)
+                                {
+                                    estimatedTimeArrival = item.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
+                            }
+                            @estimatedTimeArrival
+                        </td>
+                    </tr>
+                }
+
             }
         }
         else

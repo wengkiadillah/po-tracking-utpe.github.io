@@ -187,10 +187,7 @@ namespace POTrackingV2.Controllers
                 return RedirectToAction("Index", "SubCont");
             }
 
-            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))))) &&
-                            (x.ReleaseDate != null))
-                            .AsQueryable();
+            var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") && (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && (y.ActiveStage != null && y.ActiveStage != "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q"))) && (x.ReleaseDate != null));
 
             var noShowPOes = pOes;
 
@@ -233,22 +230,9 @@ namespace POTrackingV2.Controllers
             }
             #endregion
 
-            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any()).OrderBy(x => x.Number);
+            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any());
 
-            List<PurchasingDocumentItem> purchasingDocumentItems = new List<PurchasingDocumentItem>();
-
-            foreach (var po in pOes )
-            {
-                foreach (var pdi in po.PurchasingDocumentItems)
-                {
-                    if (!String.IsNullOrEmpty(pdi.Material) && pdi.ActiveStage != null && pdi.ActiveStage != "0" && pdi.IsClosed != "L" && pdi.IsClosed != "LX")
-                    {
-                        purchasingDocumentItems.Add(pdi);
-                    }
-                }
-            }
-
-            return View(purchasingDocumentItems.OrderBy(x => x.ItemNumber).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
+            return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
 
         public void DownloadReport(string searchPONumber, string searchVendorName, string searchMaterial)
