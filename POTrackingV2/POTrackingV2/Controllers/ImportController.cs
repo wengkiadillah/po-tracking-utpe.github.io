@@ -241,7 +241,10 @@ namespace POTrackingV2.Controllers
             {
                 foreach (var pdi in po.PurchasingDocumentItems)
                 {
-                    purchasingDocumentItems.Add(pdi);
+                    if (!String.IsNullOrEmpty(pdi.Material) && pdi.ActiveStage != null && pdi.ActiveStage != "0" && pdi.IsClosed != "L" && pdi.IsClosed != "LX")
+                    {
+                        purchasingDocumentItems.Add(pdi);
+                    }
                 }
             }
 
