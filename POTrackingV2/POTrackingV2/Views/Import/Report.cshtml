@@ -1,6 +1,6 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
-@model IPagedList<POTrackingV2.Models.PO>
+@model IPagedList<POTrackingV2.Models.PurchasingDocumentItem>
 @{
     ViewBag.Title = "Report Delivery Date";
     int number = 1;
@@ -58,93 +58,82 @@
     <tbody>
         @if (Model.Count() > 0)
         {
-            foreach (var po in Model)
+            foreach (var purchasingDocumentItem in Model)
             {
-                List<POTrackingV2.Models.PurchasingDocumentItem> purchasingDocumentItems = po.PurchasingDocumentItems.OrderBy(x => x.ItemNumber).ToList();
-
-                foreach (var item in purchasingDocumentItems)
+                if (!String.IsNullOrEmpty(purchasingDocumentItem.Material) && purchasingDocumentItem.ActiveStage != null && purchasingDocumentItem.ActiveStage != "0" && purchasingDocumentItem.IsClosed != "L" && purchasingDocumentItem.IsClosed != "LX")
                 {
-                    if (item.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "t"))
-                    {
-                        continue;
-                    }
+                    <tr style="background-color:white;">
+                        <td>
+                            @purchasingDocumentItem.PO.Number
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.ItemNumber
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Material
+                        </td>
+                        <td>
+                            @{
+                                string description = "-";
 
-                    if (!String.IsNullOrEmpty(item.Material) && item.ActiveStage != null && item.ActiveStage != "0" && item.IsClosed != "L" && item.IsClosed != "LX")
-                    {
-                        <tr style="background-color:white;">
-                            <td>
-                                @po.Number
-                            </td>
-                            <td>
-                                @item.ItemNumber
-                            </td>
-                            <td>
-                                @item.Material
-                            </td>
-                            <td>
-                                @{
-                                    string description = "-";
-
-                                    if (item.Description != null)
-                                    {
-                                        description = item.Description;
-                                    }
+                                if (purchasingDocumentItem.Description != null)
+                                {
+                                    description = purchasingDocumentItem.Description;
                                 }
-                                @description
-                            </td>
-                            <td>
-                                @item.Quantity
-                            </td>
-                            <td>
-                                @{
-                                    string deliveryDate = "-";
+                            }
+                            @description
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.Quantity
+                        </td>
+                        <td>
+                            @{
+                                string deliveryDate = "-";
 
-                                    if (item.DeliveryDate != null)
-                                    {
-                                        deliveryDate = item.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
-                                    }
+                                if (purchasingDocumentItem.DeliveryDate != null)
+                                {
+                                    deliveryDate = purchasingDocumentItem.DeliveryDate.GetValueOrDefault().ToString("dd/MM/yyyy");
                                 }
-                                @deliveryDate
-                            </td>
-                            <td>
-                                @po.Vendor.Name
-                            </td>
-                            <td>
-                                @{
-                                    string estimatedTimeArrival = "-";
+                            }
+                            @deliveryDate
+                        </td>
+                        <td>
+                            @purchasingDocumentItem.PO.Vendor.Name
+                        </td>
+                        <td>
+                            @{
+                                string estimatedTimeArrival = "-";
 
-                                    if (item.HasETAHistory)
+                                if (purchasingDocumentItem.HasETAHistory)
+                                {
+                                    if (purchasingDocumentItem.HasShipment)
                                     {
-                                        if (item.HasShipment)
+                                        if (purchasingDocumentItem.FirstShipment.ATADate.HasValue)
                                         {
-                                            if (item.FirstShipment.ATADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = item.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (item.LastETAHistory.ETADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = item.LastETAHistory.ETADateView;
-                                            }
-                                            else if (item.FirstETAHistory.ETADate.HasValue)
-                                            {
-                                                estimatedTimeArrival = item.FirstETAHistory.ETADateView;
-                                            }
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstShipment.ATADate.GetValueOrDefault().AddDays(7).ToString("dd/MM/yyyy");
                                         }
                                     }
-                                    else if (item.ConfirmedDate.HasValue)
+                                    else
                                     {
-                                        estimatedTimeArrival = item.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                        if (purchasingDocumentItem.LastETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.LastETAHistory.ETADateView;
+                                        }
+                                        else if (purchasingDocumentItem.FirstETAHistory.ETADate.HasValue)
+                                        {
+                                            estimatedTimeArrival = purchasingDocumentItem.FirstETAHistory.ETADateView;
+                                        }
                                     }
                                 }
-                                @estimatedTimeArrival
-                            </td>
-                        </tr>
-                    }
+                                else if (purchasingDocumentItem.ConfirmedDate.HasValue)
+                                {
+                                    estimatedTimeArrival = purchasingDocumentItem.ConfirmedDate.GetValueOrDefault().ToString("dd/MM/yyyy");
+                                }
+                            }
+                            @estimatedTimeArrival
+                        </td>
+                    </tr>
                 }
-
             }
         }
         else
