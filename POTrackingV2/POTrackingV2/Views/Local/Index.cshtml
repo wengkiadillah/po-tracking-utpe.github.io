@@ -2696,10 +2696,10 @@
                         @foreach (var purchasingDocumentItem in purchasingDocumentItems)
                         {
                             var rowChild = 1;
-                            if (purchasingDocumentItem.ActiveStageToNumber < 5 && roleID == "vendor")
-                            {
-                                hidden = "hidden";
-                            }
+                            //if (purchasingDocumentItem.ActiveStageToNumber < 5 && roleID == "vendor")
+                            //{
+                            //    hidden = "hidden";
+                            //}
 
                             <div class="po-item-data-content row-@row" row="@row">
                                 <div class="po-item-data-content__outer">
@@ -2711,10 +2711,10 @@
                                     @foreach (var purchasingDocumentItemChild in purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID))
                                     {
                                         hidden = "";
-                                        if (purchasingDocumentItemChild.ActiveStageToNumber < 5 && roleID == "vendor")
-                                        {
-                                            hidden = "hidden";
-                                        }
+                                        //if (purchasingDocumentItemChild.ActiveStageToNumber < 5 && roleID == "vendor")
+                                        //{
+                                        //    hidden = "hidden";
+                                        //}
                                         <div class="po-item-data-content row-@row-@rowChild mt-customize" row="@row" child="@rowChild">
                                             <span class="po-item-data-header__column parking-date" @hidden>@purchasingDocumentItemChild.LatestParkingDateNewFormat</span>
                                             <span class="po-item-data-header__column term-date" @hidden @hiddenPayTerms>@purchasingDocumentItemChild.LatestTermDateNewFormat</span>
