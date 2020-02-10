@@ -35,7 +35,7 @@
         </div>
         <nav>
             <ul class="main-menu list-unstyled">
-                @*@if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     <li class="main-menu-item">
                         <a href="#" class="main-menu__link" data-menu="Dashboard">
@@ -62,7 +62,7 @@
                             </li>
                         </ul>
                     </li>
-                }*@
+                }
                 @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower() && roleType.RolesType.Name.ToLower() == "import"))
                 {
                     <li class="main-menu-item">
