@@ -35,8 +35,8 @@
         </div>
         <nav>
             <ul class="main-menu list-unstyled">
-                @*@if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())*@
-                @if (1 == 1)
+                @*@if (1 == 1)*@
+                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                 {
                     <li class="main-menu-item">
                         <a href="#" class="main-menu__link" data-menu="Dashboard">
