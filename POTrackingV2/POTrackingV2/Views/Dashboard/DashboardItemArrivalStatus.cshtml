@@ -1,4 +1,7 @@
 ﻿<input id="txtAccessToken" hidden type="text" value="@ViewBag.Token" />
+<input id="txtReportID" hidden type="text" value="@ViewBag.ReportID" />
+<input id="txtReportSection" hidden type="text" value="@ViewBag.ReportSectionItemArrivalStatus" />
+
 @*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection6c0395561b1dd8d9cd70&$filter&navContentPaneEnabled=false&filterPaneEnabled=false"} frameborder="0" allowFullScreen="true" navContentPaneEnabled="false"></iframe>*@
 <div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection6c0395561b1dd8d9cd70&ctid=69a01d04-ea91-4c91-b46e-8369667541c0" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
 
@@ -10,8 +13,11 @@
 <script type="text/javascript">
 
     var txtAccessToken = $('#txtAccessToken').val();
-    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection6c0395561b1dd8d9cd70&ctid=69a01d04-ea91-4c91-b46e-8369667541c0";
-    var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
+    //var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection6c0395561b1dd8d9cd70&ctid=69a01d04-ea91-4c91-b46e-8369667541c0";
+    //var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
+    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=" + txtReportSection + "&amp;autoAuth=true&amp;pageName=" + txtReportSection + "&amp;$filter&amp;navContentPaneEnabled=false&amp;filterPaneEnabled=false";
+    var txtEmbedReportId = txtReportID;
+
     var tokenType = "0";
     var models = window['powerbi-client'].models;
     var permissions = models.Permissions.All;

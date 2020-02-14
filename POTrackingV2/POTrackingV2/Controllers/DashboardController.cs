@@ -68,6 +68,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionSubcontdevProgress = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"]) ? WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"] : "";
             }
             catch (Exception ex)
             {
@@ -82,6 +84,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionProcurementProgress = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionProcurementProgress"]) ? WebConfigurationManager.AppSettings["ReportSectionProcurementProgress"] : "";
             }
             catch (Exception ex)
             {
@@ -96,6 +100,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionReminderComponentInspection = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionReminderComponentInspection"]) ? WebConfigurationManager.AppSettings["ReportSectionReminderComponentInspection"] : "";
             }
             catch (Exception ex)
             {
@@ -110,6 +116,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionItemArrivalStatus = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionItemArrivalStatus"]) ? WebConfigurationManager.AppSettings["ReportSectionItemArrivalStatus"] : "";
             }
             catch (Exception ex)
             {
@@ -124,6 +132,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionLeadTimeFromPR_PORelease = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionLeadTimeFromPR_PORelease"]) ? WebConfigurationManager.AppSettings["ReportSectionLeadTimeFromPR_PORelease"] : "";
             }
             catch (Exception ex)
             {
@@ -138,6 +148,8 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
+                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
+                ViewBag.ReportSectionPerformanceVendor = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionPerformanceVendor"]) ? WebConfigurationManager.AppSettings["ReportSectionPerformanceVendor"] : "";
             }
             catch (Exception ex)
             {
