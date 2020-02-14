@@ -35,7 +35,8 @@
         </div>
         <nav>
             <ul class="main-menu list-unstyled">
-                @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                @*@if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())*@
+                @if (1 == 1)
                 {
                     <li class="main-menu-item">
                         <a href="#" class="main-menu__link" data-menu="Dashboard">
@@ -153,23 +154,23 @@
                         <ul class="main-menu-submenu list-unstyled">
                             <li class="main-menu-submenu-item">
                                 @*@if (myRole.Roles.ToLower() == LoginConstants.RoleVendor.ToLower())
-                                {*@
-                                    <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
-                                        <span>On Going</span>
-                                        <span class="pull-right-container">
-                                            <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
-                                        </span>
-                                    </a>
+                                    {*@
+                                <a href="~/SubCont/index?searchPOStatus=ongoing" class="main-menu-submenu__link" data-menu="On Going">
+                                    <span>On Going</span>
+                                    <span class="pull-right-container">
+                                        <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                    </span>
+                                </a>
                                 @*}
-                                else
-                                {
-                                    <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
-                                        <span>On Going</span>
-                                        <span class="pull-right-container">
-                                            <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
-                                        </span>
-                                    </a>
-                                }*@
+                                    else
+                                    {
+                                        <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
+                                            <span>On Going</span>
+                                            <span class="pull-right-container">
+                                                <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                            </span>
+                                        </a>
+                                    }*@
                             </li>
                             <li class="main-menu-submenu-item">
                                 <a href="~/SubCont/index?searchPOStatus=newpo" class="main-menu-submenu__link" data-menu="New PO">
@@ -320,9 +321,9 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-        
+
     <script type="text/javascript">
-        $(document).ready(function () { 
+        $(document).ready(function () {
             let url = window.location.href;
               $('.main-menu-submenu-item a').each(function() {
                   if (this.href === url) {
@@ -334,7 +335,7 @@
               });
             $('.main-menu__link').each(function() {
                   if (this.href === url) {
-                      $(this).addClass('active');                      
+                      $(this).addClass('active');
                   }
                   else {}
               });

@@ -68,14 +68,15 @@ namespace POTrackingV2.Controllers
             try
             {
                 ViewBag.Token = getToken();
-                ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "";
-                ViewBag.ReportSectionSubcontdevProgress = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"]) ? WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"] : "";
             }
             catch (Exception ex)
             {
                 ViewBag.Token = "";
                 ViewBag.Message = ex.Message + ex.StackTrace;
             }
+            ViewBag.ReportID = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportId"]) ? WebConfigurationManager.AppSettings["ReportId"] : "asd";
+            ViewBag.ReportSectionSubcontdevProgress = !string.IsNullOrEmpty(WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"]) ? WebConfigurationManager.AppSettings["ReportSectionSubcontdevProgress"] : "";
+
             return View();
         }
 
