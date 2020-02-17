@@ -1,10 +1,9 @@
 ﻿<input id="txtMessage" hidden type="text" value="@ViewBag.Message" />
 <input id="txtAccessToken" hidden type="text" value="@ViewBag.Token" />
 <input id="txtReportID" hidden type="text" value="@ViewBag.ReportID" />
-<input id="txtReportSection" hidden type="text" value="@ViewBag.ReportSectionProcurementProgress" />
-
-@*<iframe width="100%" height="100%" src="https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection&$filter&navContentPaneEnabled=false&filterPaneEnabled=false"} frameborder="0" allowFullScreen="true" navContentPaneEnabled="false"></iframe>*@
-<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe src="https://app.powerbi.com/reportEmbed?reportId=@ViewBag.ReportID&amp;autoAuth=true&amp;pageName=@ViewBag.ReportSectionProcurementProgress&amp;$filter&amp;navContentPaneEnabled=false&amp;filterPaneEnabled=false" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
+<input id="txtReportURL" hidden type="text" value="@ViewBag.ReportURL" />
+<input id="txtReportSection" hidden type="text" value="@ViewBag.ReportURL" />
+<div class="reportContainer iframeContainer active" id="embedContainer" style="visibility: visible; height: 100%;"><iframe id="IframeID" src="@ViewBag.ReportURL" scrolling="no" allowfullscreen="true" style="width: 100%; height: 100%;"></iframe></div>
 
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/jquery/dist/jquery.js"></script>
 <script src="https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/es6-promise/dist/es6-promise.js"></script>
@@ -14,13 +13,10 @@
 <script type="text/javascript">
 
     var txtAccessToken = $('#txtAccessToken').val();
-    var txtAccessToken = $('#txtAccessToken').val();
     var txtReportID = $('#txtReportID').val();
+    var txtReportURL = $('#txtReportURL').val();
     var txtReportSection = $('#txtReportSection').val();
-
-    //var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=80f83ebf-e90f-4a29-8274-541a752423d0&autoAuth=true&pageName=ReportSection&ctid=69a01d04-ea91-4c91-b46e-8369667541c0";
-    //var txtEmbedReportId = "80f83ebf-e90f-4a29-8274-541a752423d0";
-    var txtEmbedUrl = "https://app.powerbi.com/reportEmbed?reportId=" + txtReportID + "&amp;autoAuth=true&amp;pageName=" + txtReportSection + "&amp;$filter&amp;navContentPaneEnabled=false&amp;filterPaneEnabled=false";
+    var txtEmbedUrl = txtReportURL;
     var txtEmbedReportId = txtReportID;
     var tokenType = "0";
     var models = window['powerbi-client'].models;
