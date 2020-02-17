@@ -664,6 +664,10 @@
     <Content Include="Scripts\Local\Stage6-vendor.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\PowerBI\es6-promise.js" />
+    <Content Include="Scripts\PowerBI\jquery.js" />
+    <Content Include="Scripts\PowerBI\powerbi-report-authoring.js" />
+    <Content Include="Scripts\PowerBI\powerbi.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\semantic.min.js" />
