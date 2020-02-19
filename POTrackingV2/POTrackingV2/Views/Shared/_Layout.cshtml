@@ -1,5 +1,4 @@
-﻿
-@using POTrackingV2.CustomAuthentication
+﻿@using POTrackingV2.CustomAuthentication
 @using POTrackingV2.Constants
 @using POTrackingV2.Models
 
@@ -43,15 +42,24 @@
                             <i class="fas fa-chart-pie"></i><span>Dashboard</span>
                         </a>
                         <ul class="main-menu-submenu list-unstyled">
-                            <li class="main-menu-submenu-item">
-                                <a href="~/Dashboard/DashboardSubcontdevProgress" class="main-menu-submenu__link" data-menu="subcontdev progress">SubcontDev Progress</a>
-                            </li>
-                            <li class="main-menu-submenu-item">
-                                <a href="~/Dashboard/DashboardProcurementProgress" class="main-menu-submenu__link" data-menu="procurement progress">Procurement Progress</a>
-                            </li>
-                            <li class="main-menu-submenu-item">
-                                <a href="~/Dashboard/DashboardReminderComponentInspection" class="main-menu-submenu__link" data-menu="reminder component inspection">Reminder Component Inspection</a>
-                            </li>
+                            @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                            {
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/Dashboard/DashboardSubcontdevProgress" class="main-menu-submenu__link" data-menu="subcontdev progress">SubcontDev Progress</a>
+                                </li>
+                            }
+                            @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleProcurement.ToLower())
+                            {
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/Dashboard/DashboardProcurementProgress" class="main-menu-submenu__link" data-menu="procurement progress">Procurement Progress</a>
+                                </li>
+                            }
+                            @if (myRole.Roles.ToLower() == LoginConstants.RoleAdministrator.ToLower() || myRole.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
+                            {
+                                <li class="main-menu-submenu-item">
+                                    <a href="~/Dashboard/DashboardReminderComponentInspection" class="main-menu-submenu__link" data-menu="reminder component inspection">Reminder Component Inspection</a>
+                                </li>
+                            }
                             <li class="main-menu-submenu-item">
                                 <a href="~/Dashboard/DashboardItemArrivalStatus" class="main-menu-submenu__link" data-menu="arrival status">Arrival Status</a>
                             </li>
@@ -164,12 +172,12 @@
                                 @*}
                                     else
                                     {
-                                        <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
-                                            <span>On Going</span>
-                                            <span class="pull-right-container">
-                                                <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
-                                            </span>
-                                        </a>
+                                    <a href="~/SubCont/index" class="main-menu-submenu__link" data-menu="On Going">
+                                        <span>On Going</span>
+                                        <span class="pull-right-container">
+                                            <small id="subcont-ongoing__count" class="label pull-right bg-yellow mr-1" title="On Going">0</small>
+                                        </span>
+                                    </a>
                                     }*@
                             </li>
                             <li class="main-menu-submenu-item">
@@ -236,7 +244,8 @@
             <img class="notification__close" src="~/Images/close.png" alt="close-icon" onclick="toggleNotification()" />
         </div>
         <ul class="list-unstyled notification-list">
-            @*<li class="notification-list-item">
+            @*
+                <li class="notification-list-item">
                     <i class="fas fa-check-circle approved"></i>
                     <div class="notification-message-container">
                         <p class="mb-1">
