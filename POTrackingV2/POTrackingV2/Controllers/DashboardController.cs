@@ -20,7 +20,8 @@ using System.IO;
 
 namespace POTrackingV2.Controllers
 {
-    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement + "," + LoginConstants.RoleSubcontDev)]
+    //[CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleVendor + "," + LoginConstants.RoleProcurement + "," + LoginConstants.RoleSubcontDev)]
+    [CustomAuthorize(Roles = LoginConstants.RoleAdministrator + "," + LoginConstants.RoleProcurement + "," + LoginConstants.RoleSubcontDev)]
     public class DashboardController : Controller
     {
         //WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
