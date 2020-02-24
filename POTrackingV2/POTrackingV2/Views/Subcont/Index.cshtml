@@ -2645,10 +2645,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     var jsonObjSuggestion = $.parseJSON(response.data);
                     var element = "";
                     //console.log(response.data);
-                    var i = 1;
+                    //var i = 1;
                     for (var k in jsonObjSuggestion) {
-                        element += "<option value='" + i + "'>" + jsonObjSuggestion[k]['Data'] + "</option>";
-                        i++;
+                        element += "<option value='" + jsonObjSuggestion[k]['ID'] + "'>" + jsonObjSuggestion[k]['Name'] + "</option>";
+                        //i++;
                     }
                     $(".sequences-progress-reasons").append(element);
                 } else {

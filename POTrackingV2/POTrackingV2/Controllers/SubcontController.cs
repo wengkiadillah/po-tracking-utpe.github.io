@@ -1110,8 +1110,9 @@ namespace POTrackingV2.Controllers
                 data = db.SequencesProgressReasons.Select(x =>
                 new
                 {
-                    Data = x.Name
-                }).OrderBy(x => x.Data);
+                    ID = x.ID,
+                    Name = x.Name
+                }).OrderBy(x => x.Name);
 
                 if (data != null)
                 {
