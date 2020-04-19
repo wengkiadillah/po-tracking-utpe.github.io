@@ -55,7 +55,7 @@ namespace POTrackingV2.Controllers
             var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
-                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && ((!parentPDIH.Contains(y.ID) && y.ParentID==null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))) && (x.ReleaseDate != null))
+                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))) && (x.ReleaseDate != null))
                                 .AsQueryable();
 
             //var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
@@ -94,7 +94,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                
+
                 pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
@@ -108,7 +108,7 @@ namespace POTrackingV2.Controllers
                 pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
-                       
+
 
 
             if (!String.IsNullOrEmpty(searchPONumber))
@@ -151,7 +151,7 @@ namespace POTrackingV2.Controllers
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*&& !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")*/));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.IsClosed.ToLower() != "x" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*&& !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")*/));
                 }
                 else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
                 {
@@ -192,7 +192,7 @@ namespace POTrackingV2.Controllers
                     myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
                     myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
 
-                   
+
                     if (myUserNRPs.Count > 0)
                     {
                         foreach (var myUserNRP in myUserNRPs)
@@ -206,8 +206,8 @@ namespace POTrackingV2.Controllers
 
                 ViewBag.CurrentSearchPONumber = searchPONumber;
                 ViewBag.CurrentSearchVendorName = searchVendorName;
-                ViewBag.CurrentSearchMaterial = searchMaterial;                                
-                ViewBag.CurrentRoleID = role.ToLower();                            
+                ViewBag.CurrentSearchMaterial = searchMaterial;
+                ViewBag.CurrentRoleID = role.ToLower();
                 ViewBag.IISAppName = iisAppName;
 
                 if (!String.IsNullOrEmpty(searchPONumber))
@@ -273,8 +273,8 @@ namespace POTrackingV2.Controllers
                         Response.Write("\n");
                     }
                 }
-               
-                Response.End(); 
+
+                Response.End();
             }
         }
 
@@ -418,7 +418,7 @@ namespace POTrackingV2.Controllers
 
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
             var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
-                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null )
+                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null)
                                .AsQueryable();
             //var pOes = db.POes.Include(x => x.PurchasingDocumentItems)
             //                    //.Where(x => x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)))
@@ -454,7 +454,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                
+
                 pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
@@ -560,7 +560,7 @@ namespace POTrackingV2.Controllers
                     data = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(value) || x.Description.ToLower().Contains(value) || x.MaterialVendor.ToLower().Contains(value)).Select(x =>
                     new
                     {
-                        Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : (x.MaterialVendor??"").ToLower().StartsWith(value) ? x.MaterialVendor : x.Material.ToLower().Contains(value) ? x.Material : (x.MaterialVendor ?? "").ToLower().Contains(value) ? x.MaterialVendor : x.Description,
+                        Data = x.Material.ToLower().StartsWith(value) ? x.Material : x.Description.ToLower().StartsWith(value) ? x.Description : (x.MaterialVendor ?? "").ToLower().StartsWith(value) ? x.MaterialVendor : x.Material.ToLower().Contains(value) ? x.Material : (x.MaterialVendor ?? "").ToLower().Contains(value) ? x.MaterialVendor : x.Description,
                         MatchEvaluation = (x.Material.ToLower().StartsWith(value) ? 1 : 0) + ((x.MaterialVendor ?? "").ToLower().StartsWith(value) ? 1 : 0) + (x.Description.ToLower().StartsWith(value) ? 1 : 0)
                     }).Distinct().OrderByDescending(x => x.MatchEvaluation).Take(10);
                 }
@@ -1072,7 +1072,7 @@ namespace POTrackingV2.Controllers
         //        return Json(new { responseText = errorMessage }, JsonRequestBehavior.AllowGet);
         //    }
         //}
-        
+
         [HttpPost]
         public ActionResult ProcurementConfirmItem(List<PurchasingDocumentItem> inputPurchasingDocumentItems)
         {
@@ -1150,7 +1150,7 @@ namespace POTrackingV2.Controllers
                             notificationSAP.Modified = now;
                             notificationSAP.ModifiedBy = User.Identity.Name;
 
-                            db.Notifications.Add(notificationSAP);                            
+                            db.Notifications.Add(notificationSAP);
                         }
                     }
                 }
@@ -1166,7 +1166,7 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        
+
 
         [HttpPost]
         public ActionResult CancelItem([Bind(Include = "ID")] PurchasingDocumentItem inputPurchasingDocumentItem)
@@ -1235,7 +1235,7 @@ namespace POTrackingV2.Controllers
                         notificationVend.ModifiedBy = User.Identity.Name;
 
                         db.Notifications.Add(notificationVend);
-                    }                    
+                    }
                 }
 
                 db.SaveChanges();
@@ -1253,7 +1253,7 @@ namespace POTrackingV2.Controllers
         #endregion
 
         #region stage 2 VendorConfirmETA
-         // POST: Local/VendorConfirmAllFirstETA
+        // POST: Local/VendorConfirmAllFirstETA
         [HttpPost]
         public ActionResult VendorConfirmFirstETA(List<ETAHistory> inputETAHistories)
         {
@@ -1585,7 +1585,7 @@ namespace POTrackingV2.Controllers
 
         #region stage 2a (uploadproformainvoice)
         [HttpPost]
-        public ActionResult VendorUploadInvoice (int inputPurchasingDocumentItemID,HttpPostedFileBase fileProformaInvoice)
+        public ActionResult VendorUploadInvoice(int inputPurchasingDocumentItemID, HttpPostedFileBase fileProformaInvoice)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             if (myUser.Roles.ToLower() != LoginConstants.RoleVendor.ToLower())
@@ -1650,9 +1650,9 @@ namespace POTrackingV2.Controllers
                 string errorMessage = ex.Message + " --- " + ex.StackTrace;
 
                 return View(errorMessage);
-                    
+
             }
-            
+
             //return RedirectToAction("Index");
         }
 
@@ -2071,7 +2071,7 @@ namespace POTrackingV2.Controllers
             {
                 return Json(new { responseText = $"You are not Authorized" }, JsonRequestBehavior.AllowGet);
             }
-            
+
             try
             {
                 int counter = 0;
@@ -2121,7 +2121,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notificationProc);
 
-                        counter++;                        
+                        counter++;
                     }
                 }
 
