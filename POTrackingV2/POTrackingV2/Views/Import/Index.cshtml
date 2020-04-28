@@ -111,12 +111,13 @@
 
 @foreach (var pO in Model)
 {
-    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
+    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));        
 
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q")));
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ActiveStage =="0" && x.IsClosed.ToLower() =="x"));
 
         if (purchasingDocumentItems.Count() > 0)
         {

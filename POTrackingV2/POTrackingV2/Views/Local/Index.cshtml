@@ -129,6 +129,8 @@
 
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "Q" || y.POHistoryCategory == "q")));
 
+        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ActiveStage == "0" && x.IsClosed.ToLower() == "x"));
+
         if (purchasingDocumentItems.Count() > 0)
         {
             if (!String.IsNullOrEmpty(currentSearchPOStatus))
