@@ -93,6 +93,10 @@ namespace POTrackingV2.Controllers
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles;
             string userName = User.Identity.Name;
+            //string role = "administrator";
+            //string userName = "altrovis";
+            //role = "subcontdev";
+            //userName = "pangeran";
             DateTime today = DateTime.Now;
             try
             {
@@ -106,7 +110,14 @@ namespace POTrackingV2.Controllers
                 {
                     if (searchPOStatus.ToLower() != "done")
                     {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX"));
+                        if (searchPOStatus.ToLower() == "ongoing")
+                        {
+                            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX") || (y.ParentID==null && y.IsClosed != null && y.IsClosed.Contains("X") && !y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory != null && z.POHistoryCategory.ToLower() == "q")) ));
+                        }
+                        else
+                        {
+                            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX"));
+                        }
                     }
                     else
                     {
