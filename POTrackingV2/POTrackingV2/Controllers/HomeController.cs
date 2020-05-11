@@ -179,17 +179,13 @@ namespace POTrackingV2.Controllers
                     if (myUser.Roles.ToLower() == LoginConstants.RoleSubcontDev.ToLower())
                     {
                         SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+
+                        vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
+                        notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode) && x.Role.ToLower() == LoginConstants.RoleSubcontDev.ToLower());
+
                         if (subcontDevUserRole != null)
                         {
-                            if (subcontDevUserRole.IsHead == false)
-                            {
-                                if (subcontDevUserRole.RoleID == 1)
-                                {
-                                    vendorCode = db.SubcontDevVendors.Where(x => x.Username == userName).Select(x => x.VendorCode).ToList();
-                                    notifications = notifications.Where(x => vendorCode.Contains(x.PurchasingDocumentItem.PO.VendorCode));
-                                }
-                            }
-                            else
+                            if (subcontDevUserRole.IsHead == true)
                             {
                                 isHeadSubcont = true;
                             }
