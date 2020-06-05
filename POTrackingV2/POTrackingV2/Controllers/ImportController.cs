@@ -67,7 +67,7 @@ namespace POTrackingV2.Controllers
             var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ActiveStage == null || s.ActiveStage == "0") && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
             var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();
             var pOes = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
-                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && !pdiCloseActiveStage0.Contains(y.ID) && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))) &&
+                            (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) && /*!pdiCloseActiveStage0.Contains(y.ID) &&*/ ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))) &&
                             (x.ReleaseDate != null))
                             .AsQueryable();
 
