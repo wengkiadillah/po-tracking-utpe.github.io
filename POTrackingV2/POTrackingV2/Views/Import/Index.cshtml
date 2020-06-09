@@ -130,7 +130,7 @@
                 }
                 else if (currentSearchPOStatus == "newpo")
                 {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed));
                 }
                 else if (roleID == "procurement" || roleID == "administrator")
                 {
