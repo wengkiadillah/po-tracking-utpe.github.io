@@ -196,7 +196,14 @@ else
                             if (purchasingDocumentItems.Count() > 0)
                             {
                                 purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
+                                if(ViewBag.SearchPOStatus == "ongoing")
+                                {
+                                    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y=> y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
+                                }
+                                else
+                                {
+                                    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
+                                }
                             }
                         }
 
@@ -231,6 +238,7 @@ else
                             }
                             if (ViewBag.SearchPOStatus == "ongoing")
                             {
+                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                             }
                             else if (ViewBag.SearchPOStatus == "done")
@@ -423,7 +431,10 @@ else
                             var isPartial = "";
                             var quantity = purchasingDocumentItem.ConfirmedQuantity > 0 ? purchasingDocumentItem.ConfirmedQuantity : purchasingDocumentItem.Quantity;
 
-
+                            if(purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed.ToLower().Contains("x"))
+                            {
+                                disabledCheckbox = "disabled";
+                            }
 
                             if (purchasingDocumentItemChilds.Where(x => x.ParentID == purchasingDocumentItem.ID).Count() > 0)
                             {
@@ -567,6 +578,11 @@ else
                                         var hideEditBtnChild = "";
 
                                         //if (ViewBag.CurrentSubcontDevRoleName != "subcont management" && ViewBag.CurrentRoleID != ViewBag.RoleAdministrator)
+
+                                        if (purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed.ToLower().Contains("x"))
+                                        {
+                                            disabledChild = "disabled";
+                                        }
 
                                         if (((roleID == ViewBag.RoleSubcontDev || roleID == ViewBag.RoleAdministrator) && ViewBag.SearchPOStatus == "newpo") || ViewBag.CurrentSubcontDevRoleName != "subcont management")
                                         {
