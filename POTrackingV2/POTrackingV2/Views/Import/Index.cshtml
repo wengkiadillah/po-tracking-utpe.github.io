@@ -111,21 +111,22 @@
 
 @foreach (var pO in Model)
 {
-    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));        
+    var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
+    var pdiCloseConfirmQtynull = pO.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
 
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q")));
-        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ActiveStage =="0" && x.IsClosed.ToLower() =="x"));
+        //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ActiveStage =="0" && x.IsClosed.ToLower() =="x"));
 
         if (purchasingDocumentItems.Count() > 0)
         {
             if (!String.IsNullOrEmpty(currentSearchPOStatus))
             {
                 if (currentSearchPOStatus == "ongoing")
-                {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
+                {                    
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseConfirmQtynull.Contains(y.ID));
                 }
                 else if (currentSearchPOStatus == "newpo")
                 {
@@ -576,6 +577,10 @@
                                     isChecked = "checked";
                                     selectedButtonConfirm = "selected";
                                     hideButtonEdit = "";
+                                }
+                                else if (purchasingDocumentItem.ConfirmedQuantity == null && purchasingDocumentItem.IsClosed == "X")
+                                {
+                                    disabledInputCheckbox = "disabled";
                                 }
 
                                 if (purchasingDocumentItem.ActiveStage != "1" || childPurchasingDocumentItems.Any(x => x.ActiveStage != "1"))

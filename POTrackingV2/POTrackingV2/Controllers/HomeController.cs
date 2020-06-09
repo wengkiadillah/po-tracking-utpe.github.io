@@ -388,7 +388,7 @@ namespace POTrackingV2.Controllers
                 DateTime today = DateTime.Now;
 
                 #region Import
-
+                var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
                 var pOesImport = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
                         (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))) &&
                         (x.ReleaseDate != null))
@@ -423,7 +423,7 @@ namespace POTrackingV2.Controllers
 
 
                 string ImportPOItemsCountNew = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.IsClosed.ToLower() != "x")).Count().ToString();
-                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string ImportPOItemsCountOnGoing = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null && y.ConfirmedDate != null && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" || pdiCloseActiveStage0.Contains(y.ID))).Count().ToString();
                 string ImportPOItemsDone = pOesImport.Where(x => x.PurchasingDocumentItems.Any(y => y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx")).Count().ToString();
 
                 #endregion
@@ -435,6 +435,7 @@ namespace POTrackingV2.Controllers
                 var pOesSubcont = db.POes.Where(po => po.Type.ToLower() == "zo05" || po.Type.ToLower() == "zo09" || po.Type.ToLower() == "zo10").AsQueryable();
                 var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
                 var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();
+                
                 if (role.ToLower() == LoginConstants.RoleVendor.ToLower())
                 {
                     string vendorCode = db.UserVendors.Where(x => x.Username == myUser.UserName).Select(x => x.VendorCode).FirstOrDefault();
@@ -519,7 +520,7 @@ namespace POTrackingV2.Controllers
                 //string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q"))).Count().ToString();
                 string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.IsClosed.ToLower() != "x" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))).Count().ToString();
                 //string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
-                string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
+                string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null && y.ConfirmedDate != null && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" || pdiCloseActiveStage0.Contains(y.ID))).Count().ToString();
                 string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))).Count().ToString();
 
                 #endregion
