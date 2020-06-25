@@ -16,6 +16,21 @@ namespace POTrackingV2.Models
             }
         }
 
+        public int CurrentQuantity
+        {
+            get
+            {
+                if(this.ConfirmedQuantity.HasValue)
+                {
+                    return this.ConfirmedQuantity.Value;
+                }
+                else
+                {
+                    return this.Quantity;
+                }
+            }
+        }
+
         public int TotalGR
         {
             get
