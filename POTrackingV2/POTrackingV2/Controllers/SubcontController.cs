@@ -89,7 +89,7 @@ namespace POTrackingV2.Controllers
         // GET: POSubcont
         public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchSubcontDev, string searchStartPODate, string searchEndPODate, int? page)
         {
-            int all = 0;
+            int totalPDI = 0;
             POTrackingEntities db = new POTrackingEntities();
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
             string role = myUser.Roles;
@@ -223,10 +223,10 @@ namespace POTrackingV2.Controllers
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
 
-                all = pOes.SelectMany(x => x.PurchasingDocumentItems).Count();
-                //ViewBag.NewPO = all.ToString();
-                //ViewBag.Ongoing = all.ToString();
-                //ViewBag.Done = all.ToString();
+                totalPDI = pOes.SelectMany(x => x.PurchasingDocumentItems).Count();
+                ViewBag.NewPO = totalPDI.ToString();
+                ViewBag.Ongoing = totalPDI.ToString();
+                ViewBag.Done = totalPDI.ToString();
 
                 #region Filter
                 if (!String.IsNullOrEmpty(searchPONumber))
