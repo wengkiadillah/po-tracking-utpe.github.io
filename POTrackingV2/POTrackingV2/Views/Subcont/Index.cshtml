@@ -220,7 +220,7 @@ else
                             }
                             else
                             {
-                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed == "L") || (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity));
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed == "L") || (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity));
                             }
                         }
 
