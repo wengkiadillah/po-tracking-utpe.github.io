@@ -36,8 +36,8 @@ else
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "" }))
     {
         @*<div>Newpo   : @ViewBag.NewPO</div>
-            <div>Ongoing : @ViewBag.Ongoing</div>
-            <div>Done    : @ViewBag.Done</div>*@
+        <div>Ongoing : @ViewBag.Ongoing</div>
+        <div>Done    : @ViewBag.Done</div>*@
         <div class="filter-form-container form-inline">
             <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
@@ -106,6 +106,10 @@ else
         </ul>
     </div>
 </div>
+@{
+    var no = 1;
+}
+
 @foreach (var pO in Model)
 {
     <ul class="list-unstyled po-list">
@@ -206,6 +210,7 @@ else
                                 else if (ViewBag.SearchPOStatus == "ongoing")
                                 {
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
+                                    //purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
                                     purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
                                 }
                                 else
@@ -284,6 +289,7 @@ else
 
                         <div class="po-item-data-content row-@row">
                             <div class="po-item-data-content__outer">
+                                @*<span class="po-item-data-header__column no">@no</span>*@
                                 <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
                                 <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
                                 <span class="po-item-data-header__column description">
@@ -340,10 +346,12 @@ else
                                         }
                                     </div>
                                     rowChild++;
+                                    no++;
                                 }
                             </div>
                         </div>
                         row++;
+                        no++;
                     }
                 </div>
             </div>
