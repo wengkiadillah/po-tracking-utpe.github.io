@@ -223,7 +223,7 @@ namespace POTrackingV2.Controllers
                 ViewBag.CurrentEndPODate = searchEndPODate;
                 ViewBag.IISAppName = iisAppName;
 
-                //all = pOes.SelectMany(x => x.PurchasingDocumentItems).Count();
+                all = pOes.SelectMany(x => x.PurchasingDocumentItems).Count();
                 //ViewBag.NewPO = all.ToString();
                 //ViewBag.Ongoing = all.ToString();
                 //ViewBag.Done = all.ToString();
