@@ -391,6 +391,8 @@ namespace POTrackingV2.Controllers
                 //userName = "pangeran";
                 //role = "vendor";
                 //userName = "51007";
+                //role = "vendor";
+                //userName = "50993";
                 DateTime today = DateTime.Now;
 
                 #region Import
@@ -443,7 +445,8 @@ namespace POTrackingV2.Controllers
                 var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();
 
                 var pOesSubcontNewPO = pOesSubcont.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX"));
-                var pOesSubcontOngoing = pOesSubcont.Where(x => x.PurchasingDocumentItems.Any(y => (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))));
+                //var pOesSubcontOngoing = pOesSubcont.Where(x => x.PurchasingDocumentItems.Any(y => (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))));
+                var pOesSubcontOngoing = pOesSubcont.Where(x => x.PurchasingDocumentItems.Any(y => (y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))));
                 var pOesSubcontDone = pOesSubcont.Where(x => x.PurchasingDocumentItems.Any(y => ((y.IsClosed == "L") || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity <= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))) ));
 
                 if (role.ToLower() == LoginConstants.RoleVendor.ToLower())

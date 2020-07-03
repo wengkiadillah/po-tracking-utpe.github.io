@@ -218,7 +218,7 @@ else
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y => y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
                                     purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed != "X" && x.IsClosed != "L" && x.IsClosed != "LX") ||
-                                     ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity))
+                                     ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity))
                                      //|| ((x.IsClosed == "L") || (x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))
                                      );
                                 }
@@ -237,7 +237,7 @@ else
                         {
                             if (ViewBag.SearchPOStatus == "newpo")
                             {
-                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed)).ToList();
                             }
                             else if (ViewBag.SearchPOStatus == "ongoing")
                             {
