@@ -138,8 +138,8 @@
             {
                 if (currentSearchPOStatus == "ongoing")
                 {
-                    //purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseConfirmQtynull.Contains(y.ID));
-                    purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseConfirmQtynull.Contains(y.ID));
+                    
                 }
                 else if (currentSearchPOStatus == "newpo")
                 {
