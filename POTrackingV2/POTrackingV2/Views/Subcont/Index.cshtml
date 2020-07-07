@@ -31,12 +31,13 @@ else
 {
     <h1 class="page-title"><span class="page-subtitle">PO Subcontractor Index</span><span class="page-subtitle"><a href="~/SubCont/index?searchPOStatus=done" class="page-subtitle">History</a></span></h1>
 }
-
 @*<h1 class="page-title"><a href="#" class="page-subtitle">PO Subcontractor Index</a><span class="page-subtitle">History</span></h1>*@
 <div class="filter-row mb-2">
     @using (Html.BeginForm("Index", "Subcont", FormMethod.Get, new { @class = "" }))
     {
-
+        @*<div>Newpo   : @ViewBag.NewPO</div>
+        <div>Ongoing : @ViewBag.Ongoing</div>
+        <div>Done    : @ViewBag.Done</div>*@
         <div class="filter-form-container form-inline">
             <input id="searchPONumber" name="searchPONumber" list="data-list-po" type="text" class="form-control form-control-lg filter-search with-icon pr-2 mr-md-4 mb-1" placeholder="Search No. PO" autocomplete="off" value="@ViewBag.CurrentDataPONumber" />
             <datalist id="data-list-po"></datalist>
@@ -105,6 +106,10 @@ else
         </ul>
     </div>
 </div>
+@{
+    var no = 1;
+}
+
 @foreach (var pO in Model)
 {
     <ul class="list-unstyled po-list">
@@ -191,21 +196,39 @@ else
 
                         var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
 
-                        if (ViewBag.SearchPOStatus != "done")
+
+                        if (purchasingDocumentItems.Count() > 0)
                         {
-                            if (purchasingDocumentItems.Count() > 0)
+                            purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
+
+                            if (ViewBag.SearchPOStatus != "done")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-                                if(ViewBag.SearchPOStatus == "ongoing")
-                                {
-                                    purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y=> y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
-                                }
-                                else
+                                if (ViewBag.SearchPOStatus == "newpo")
                                 {
                                     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && (x.IsClosed.ToLower() == "x" || x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx")));
                                 }
+                                else if (ViewBag.SearchPOStatus == "ongoing")
+                                {
+                                    //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
+                                    //purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
+                                    purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
+                                }
+                                else
+                                {
+                                    //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y => y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
+                                    //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
+                                    purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed != "X" && x.IsClosed != "L" && x.IsClosed != "LX") ||
+                                     ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity))
+                                     //|| ((x.IsClosed == "L") || (x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))
+                                     );
+                                }
+                            }
+                            else
+                            {
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed == "L") || (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity));
                             }
                         }
+
 
                         var purchasingDocumentItemChilds = pO.PurchasingDocumentItems.Where(x => x.ParentID != null);
                         DateTime today = DateTime.Now;
@@ -218,11 +241,11 @@ else
                             }
                             else if (ViewBag.SearchPOStatus == "ongoing")
                             {
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null).ToList();
+                                purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material != "" && x.Material != null && x.ParentID == null).ToList();
                             }
                             else if (ViewBag.SearchPOStatus == "done")
                             {
-                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase)))).ToList();
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase)))).ToList();
                             }
                             else
@@ -239,16 +262,16 @@ else
                             if (ViewBag.SearchPOStatus == "ongoing")
                             {
                                 //purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
-                                purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.ConfirmedQuantity != null || x.ConfirmedItem != null) && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
+                                // purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedItem == false && x.ParentID == null) || (x.Material != "" && x.Material != null && x.ParentID == null && ((x.IsClosed != null && x.IsClosed.Contains("X") && (
+                                //(x.ConfirmedQuantity > 0 && x.ConfirmedQuantity > x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (x.ConfirmedQuantity == null && x.Quantity > x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))
+                                //))))).ToList();
                             }
                             else if (ViewBag.SearchPOStatus == "done")
                             {
-                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "t", StringComparison.OrdinalIgnoreCase)))).ToList();
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase)))).ToList();
                             }
                             else
                             {
-                                //purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.ConfirmedQuantity > 0 && x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                                 purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.Material != "" && x.Material != null && x.ParentID == null) || (x.ConfirmedItem == false && x.ParentID == null)).ToList();
                             }
                         }
@@ -266,6 +289,7 @@ else
 
                         <div class="po-item-data-content row-@row">
                             <div class="po-item-data-content__outer">
+                                @*<span class="po-item-data-header__column no">@no</span>*@
                                 <span class="po-item-data-header__column item-id">@purchasingDocumentItem.ItemNumber</span>
                                 <span class="po-item-data-header__column material">@purchasingDocumentItem.Material</span>
                                 <span class="po-item-data-header__column description">
@@ -322,10 +346,12 @@ else
                                         }
                                     </div>
                                     rowChild++;
+                                    no++;
                                 }
                             </div>
                         </div>
                         row++;
+                        no++;
                     }
                 </div>
             </div>
@@ -431,7 +457,7 @@ else
                             var isPartial = "";
                             var quantity = purchasingDocumentItem.ConfirmedQuantity > 0 ? purchasingDocumentItem.ConfirmedQuantity : purchasingDocumentItem.Quantity;
 
-                            if(purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed.ToLower().Contains("x"))
+                            if (purchasingDocumentItem.IsClosed != null && purchasingDocumentItem.IsClosed.ToLower().Contains("x"))
                             {
                                 disabledCheckbox = "disabled";
                             }
@@ -2920,6 +2946,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                         } else {
                             $("#ATAPB").val() ? ($("#ATASetting").removeAttr("disabled"), $("#inputFileSetting").removeAttr("disabled")) : ($("#ATASetting").attr("disabled", "disabled"), $("#inputFileSetting").attr("disabled", "disabled"));
+
+                            var ETAFullweldDate = new Date($("#ETASetting").val().replaceDayMonth());
+                            ETAFullweldDate.setDate(ETAFullweldDate.getDate() + parseInt($("#FullweldDays").val()));
+                            $("#ETAFullweld").datepicker('setDate', ETAFullweldDate.newDateFormat());
                         }
 
                         if ($("#ATAFullweld").val()) {
@@ -2930,6 +2960,10 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                             $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
                         } else {
                             $("#ATASetting").val() ? ($("#ATAFullweld").removeAttr("disabled"), $("#inputFileFullweld").removeAttr("disabled")) : ($("#ATAFullweld").attr("disabled", "disabled"), $("#inputFileFullweld").attr("disabled", "disabled"));
+
+                            var ETAPrimerDate = new Date($("#ETAFullweld").val().replaceDayMonth());
+                            ETAPrimerDate.setDate(ETAPrimerDate.getDate() + parseInt($("#PrimerDays").val()));
+                            $("#ETAPrimer").datepicker('setDate', ETAPrimerDate.newDateFormat())
                         }
 
                         if ($("#ATAPrimer").val()) {
@@ -3150,6 +3184,12 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
             if (fileUploadATA.files.length == 0 && $("#inputProgressModalLabel").attr("editableProgressName") == "") {
                 errorMessage += "- Progress Photos Must Be Filled\n";
+                isValid = false;
+            }
+
+            //tanggal pengisian tidak boleh lebih besar dr hari ini 27/05/2020
+            if (new Date(ATADate) > new Date((new Date().getMonth() + 1) + '/' + new Date().getDate() + '/' + new Date().getFullYear())) {
+                errorMessage += "- Finish Date Cannot Be Greater Than Today \n";
                 isValid = false;
             }
 
