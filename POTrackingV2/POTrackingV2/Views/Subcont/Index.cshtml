@@ -211,14 +211,14 @@ else
                                 {
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
                                     //purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
-                                    purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
+                                    purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.IsClosed != "L") && (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)));
                                 }
                                 else
                                 {
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y => y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
                                     //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
                                     purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed != "X" && x.IsClosed != "L" && x.IsClosed != "LX") ||
-                                     ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity))
+                                     ((x.IsClosed != "L") && (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity))
                                      //|| ((x.IsClosed == "L") || (x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))
                                      );
                                 }
