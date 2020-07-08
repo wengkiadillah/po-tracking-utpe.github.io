@@ -148,7 +148,7 @@ namespace POTrackingV2.Controllers
                 {
                     List<PurchasingDocumentItemHistory> childHistory = db.PurchasingDocumentItemHistories.ToList();
                     //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && (y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() == "x")));
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseActiveStage0.Contains(y.ID)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*((y.ParentID==null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")))*/));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseActiveStage0.Contains(y.ID)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*((y.ParentID==null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")))*/));                    
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
