@@ -115,7 +115,7 @@ namespace POTrackingV2.Controllers
                     {
                         if (searchPOStatus.ToLower() == "newpo")
                         {
-                            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null));
+                            pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null && y.PurchasingDocumentItemHistories.Count == 0));
                         }
                         else
                         {
@@ -139,7 +139,7 @@ namespace POTrackingV2.Controllers
                     //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null) || 
                     //(y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) 
                     //));
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null) ||
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null && y.PurchasingDocumentItemHistories.Count == 0) ||
                     ((y.IsClosed != "L") && y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))
                     ));
                 }
