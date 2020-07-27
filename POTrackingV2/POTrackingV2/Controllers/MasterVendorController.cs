@@ -37,7 +37,7 @@ namespace POTrackingV2.Controllers
                 else if (searchBy == "material")
                 {
                     return View(db.SubcontComponentCapabilities.Where(x => x.Material.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
-                }               
+                }
                 else
                 {
                     return View(db.SubcontComponentCapabilities.Where(x => x.VendorCode.Contains(search) || search == null).OrderBy(x => x.VendorCode.Length).ThenBy(x => x.VendorCode).ToList().ToPagedList(page ?? 1, 10));
@@ -60,11 +60,13 @@ namespace POTrackingV2.Controllers
         public ActionResult Create()
         {
             POTrackingEntities db = new POTrackingEntities();
+            //List<Vendor> Vendors = db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name).ToList();
+            //IEnumerable<object> en = Vendors;
             var ViewModel = new MasterVendorViewModel
             {
-
                 ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name), "Code", "Name")
             };
+
             return View(ViewModel);
             //return View();
         }
@@ -75,44 +77,71 @@ namespace POTrackingV2.Controllers
         {
             try
             {
-                string userName = User.Identity.Name;
-                DateTime now = DateTime.Now;
-                string VendorCode = masterVendorViewModel.SelectedName;
-                decimal dailyCapacity = masterVendorViewModel.subCont.MonthlyCapacity / 22;
-                // TODO: Add insert logic here
-                using (POTrackingEntities db = new POTrackingEntities())
+                //POTrackingEntities db1 = new POTrackingEntities();
+                POTrackingEntities db = new POTrackingEntities();
+                //{
+                //masterVendorViewModel.Vendors = db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name);
+                var ViewModel = new MasterVendorViewModel
                 {
+                    ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name), "Code", "Name")
+                };
 
-                    SubcontComponentCapability subcontComponentCapability = new SubcontComponentCapability
-                    {
-                        VendorCode = VendorCode,
-                        Material = masterVendorViewModel.subCont.Material,
-                        Description = masterVendorViewModel.subCont.Description,
-                        DailyLeadTime = masterVendorViewModel.subCont.DailyLeadTime,
-                        MonthlyLeadTime = masterVendorViewModel.subCont.MonthlyLeadTime,
-                        PB = masterVendorViewModel.subCont.PB,
-                        Setting = masterVendorViewModel.subCont.Setting,
-                        Fullweld = masterVendorViewModel.subCont.Fullweld,
-                        Primer = masterVendorViewModel.subCont.Primer,
-                        MonthlyCapacity = masterVendorViewModel.subCont.MonthlyCapacity,
-                        DailyCapacity = dailyCapacity,
-                        CreatedBy = userName,
-                        Created = now,
-                        LastModified = now,
-                        LastModifiedBy = userName
-
-                    };
-
-                    ViewBag.Message = "Data Berhasil di Tambahkan";
-                    db.SubcontComponentCapabilities.Add(subcontComponentCapability);
-                    db.SaveChanges();
+                if (!ModelState.IsValid)
+                {
+                    return View(ViewModel);
                 }
+                else
+                {
+                    string userName = User.Identity.Name;
+                    DateTime now = DateTime.Now;
+                    string VendorCode = masterVendorViewModel.SelectedName;
+                    decimal dailyCapacity = masterVendorViewModel.subCont.MonthlyCapacity / 22;
+                    // TODO: Add insert logic here
+                    //using (POTrackingEntities db = new POTrackingEntities())
+                    //{
+                    int subcontComponentCapabilityCount = db.SubcontComponentCapabilities.Where(x => x.VendorCode.ToLower() == VendorCode && x.Material.Trim().ToLower() == masterVendorViewModel.subCont.Material.Trim().ToLower()).Count();
+                    if (subcontComponentCapabilityCount < 1)
+                    {
+                        SubcontComponentCapability subcontComponentCapability = new SubcontComponentCapability
+                        {
+                            VendorCode = VendorCode,
+                            Material = masterVendorViewModel.subCont.Material,
+                            Description = masterVendorViewModel.subCont.Description,
+                            DailyLeadTime = masterVendorViewModel.subCont.DailyLeadTime,
+                            MonthlyLeadTime = masterVendorViewModel.subCont.MonthlyLeadTime,
+                            PB = masterVendorViewModel.subCont.PB,
+                            Setting = masterVendorViewModel.subCont.Setting,
+                            Fullweld = masterVendorViewModel.subCont.Fullweld,
+                            Primer = masterVendorViewModel.subCont.Primer,
+                            MonthlyCapacity = masterVendorViewModel.subCont.MonthlyCapacity,
+                            DailyCapacity = dailyCapacity,
+                            CreatedBy = userName,
+                            Created = now,
+                            LastModified = now,
+                            LastModifiedBy = userName
+                        };
 
-                return RedirectToAction("Index");
+                        ViewBag.Message = "Data Berhasil di Tambahkan";
+                        db.SubcontComponentCapabilities.Add(subcontComponentCapability);
+                        db.SaveChanges();
+                        //return View();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Data Material Sudah Ada";
+                        return View(ViewModel);
+                        //return View();
+                    }
+                    //}
+                }
+                //}
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Message = ex.Message;
                 return View();
+                //return RedirectToAction("Index");
             }
         }
 
@@ -137,20 +166,35 @@ namespace POTrackingV2.Controllers
                 using (POTrackingEntities db = new POTrackingEntities())
                 {
                     SubcontComponentCapability selectedSubContComponent = db.SubcontComponentCapabilities.SingleOrDefault(x => x.ID == id);
-                    selectedSubContComponent.isNeedSequence = subcontComponent.isNeedSequence;
-                    selectedSubContComponent.Material = subcontComponent.Material;
-                    selectedSubContComponent.Description = subcontComponent.Description;
-                    selectedSubContComponent.DailyLeadTime = subcontComponent.DailyLeadTime;
-                    selectedSubContComponent.MonthlyLeadTime = subcontComponent.MonthlyLeadTime;
-                    selectedSubContComponent.PB = subcontComponent.PB;
-                    selectedSubContComponent.Setting = subcontComponent.Setting;
-                    selectedSubContComponent.Fullweld = subcontComponent.Fullweld;
-                    selectedSubContComponent.Primer = subcontComponent.Primer;
-                    selectedSubContComponent.MonthlyCapacity = subcontComponent.MonthlyCapacity;
-                    ViewBag.Message = "Data Berhasil di Update";
-                    db.SaveChanges();
+                    int subcontComponentCapabilityCount = db.SubcontComponentCapabilities.Where(x => x.ID != id && x.VendorCode.ToLower() == selectedSubContComponent.VendorCode && x.Material.Trim().ToLower() == subcontComponent.Material.Trim().ToLower()).Count();
+                    if (subcontComponentCapabilityCount > 0)
+                    {
+                        var ViewModel = new MasterVendorViewModel
+                        {
+                            ListName = new SelectList(db.Vendors.Where(x => x.Code.Length == 5).OrderBy(x => x.Name), "Code", "Name")
+                        };
+
+                        ViewBag.Message = "Data Material Sudah Ada";
+                        return View(db.SubcontComponentCapabilities.Where(x => x.ID == id).FirstOrDefault());
+                    }
+                    else
+                    {
+                        selectedSubContComponent.isNeedSequence = subcontComponent.isNeedSequence;
+                        selectedSubContComponent.Material = subcontComponent.Material;
+                        selectedSubContComponent.Description = subcontComponent.Description;
+                        selectedSubContComponent.DailyLeadTime = subcontComponent.DailyLeadTime;
+                        selectedSubContComponent.MonthlyLeadTime = subcontComponent.MonthlyLeadTime;
+                        selectedSubContComponent.PB = subcontComponent.PB;
+                        selectedSubContComponent.Setting = subcontComponent.Setting;
+                        selectedSubContComponent.Fullweld = subcontComponent.Fullweld;
+                        selectedSubContComponent.Primer = subcontComponent.Primer;
+                        selectedSubContComponent.MonthlyCapacity = subcontComponent.MonthlyCapacity;
+                        ViewBag.Message = "Data Berhasil di Update";
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                        //return View(db.SubcontComponentCapabilities.Where(x => x.ID == id).FirstOrDefault());
+                    }
                 }
-                return RedirectToAction("Index");
             }
             catch
             {
