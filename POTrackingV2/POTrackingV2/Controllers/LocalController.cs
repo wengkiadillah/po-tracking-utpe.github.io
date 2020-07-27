@@ -1098,7 +1098,7 @@ namespace POTrackingV2.Controllers
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
                     var totQty = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID || x.ParentID == inputPurchasingDocumentItem.ID).Sum(y => y.ConfirmedQuantity);
-                    //var checkChild = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID || x.ParentID == inputPurchasingDocumentItem.ParentID).Sum(y => y.ConfirmedQuantity);
+                    var totQtyChild = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID || x.ParentID == inputPurchasingDocumentItem.ParentID).Sum(y => y.ConfirmedQuantity);
 
                     if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
@@ -1141,7 +1141,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notificationProc);
 
-                        if (databasePurchasingDocumentItem.Quantity != totQty )
+                        if (databasePurchasingDocumentItem.Quantity != totQty || databasePurchasingDocumentItem.Quantity != totQtyChild)
                         {
                             Notification notificationSAP = new Notification();
                             notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
