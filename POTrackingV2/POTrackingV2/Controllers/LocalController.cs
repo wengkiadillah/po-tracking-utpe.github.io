@@ -148,7 +148,7 @@ namespace POTrackingV2.Controllers
                 {
                     List<PurchasingDocumentItemHistory> childHistory = db.PurchasingDocumentItemHistories.ToList();
                     //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && (y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() == "x")));
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseActiveStage0.Contains(y.ID)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*((y.ParentID==null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")))*/));                    
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => ((y.ConfirmedQuantity != null || y.ConfirmedDate != null) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*((y.ParentID==null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")))*/)|| pdiCloseActiveStage0.Contains(y.ID)));
                 }
                 else if (searchPOStatus.ToLower() == "newpo")
                 {
@@ -793,7 +793,7 @@ namespace POTrackingV2.Controllers
                 foreach (var inputPurchasingDocumentItem in inputPurchasingDocumentItems)
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = new PurchasingDocumentItem();
-
+                    
                     if (!inputPurchasingDocumentItem.ParentID.HasValue)
                     {
                         List<PurchasingDocumentItem> childPurchasingDocumentItems = db.PurchasingDocumentItems.Where(x => x.ParentID == inputPurchasingDocumentItem.ID && x.ID != inputPurchasingDocumentItem.ID).ToList();
@@ -825,7 +825,7 @@ namespace POTrackingV2.Controllers
                         }
 
                         databasePurchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID).FirstOrDefault();
-
+                        
                         if (databasePurchasingDocumentItem.ActiveStage == null || databasePurchasingDocumentItem.ActiveStage == "1" || databasePurchasingDocumentItem.ActiveStage == "0" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                         {
                             databasePurchasingDocumentItem.ConfirmedQuantity = inputPurchasingDocumentItem.ConfirmedQuantity;
@@ -948,7 +948,7 @@ namespace POTrackingV2.Controllers
                 }
 
                 db.SaveChanges();
-
+                
                 return Json(new { responseText = $"{counter} Item succesfully affected", isSameAsProcs, isTwentyFivePercents }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -1097,6 +1097,9 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
+                    var checkParent = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID || x.ParentID == inputPurchasingDocumentItem.ID).Sum(y => y.ConfirmedQuantity);
+                    var checkChild = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID || x.ParentID == inputPurchasingDocumentItem.ParentID).Sum(y => y.ConfirmedQuantity);
+
                     if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
                         databasePurchasingDocumentItem.ConfirmedItem = true;
@@ -1138,7 +1141,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notificationProc);
 
-                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity)
+                        if (databasePurchasingDocumentItem.Quantity != databasePurchasingDocumentItem.ConfirmedQuantity && !(databasePurchasingDocumentItem.Quantity == checkParent || databasePurchasingDocumentItem.Quantity == checkChild))
                         {
                             Notification notificationSAP = new Notification();
                             notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
