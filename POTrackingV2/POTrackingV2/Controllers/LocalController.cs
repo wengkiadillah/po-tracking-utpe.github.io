@@ -1090,6 +1090,7 @@ namespace POTrackingV2.Controllers
 
             DateTime now = DateTime.Now;
             int counter = 0;
+            int totQty = 0;
 
             try
             {
@@ -1097,8 +1098,14 @@ namespace POTrackingV2.Controllers
                 {
                     PurchasingDocumentItem databasePurchasingDocumentItem = db.PurchasingDocumentItems.Find(inputPurchasingDocumentItem.ID);
 
-                    var totQty = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ID || x.ParentID == inputPurchasingDocumentItem.ID).Sum(y => y.ConfirmedQuantity);
-                    var totQtyChild = db.PurchasingDocumentItems.Where(x => x.ID == inputPurchasingDocumentItem.ParentID || x.ParentID == inputPurchasingDocumentItem.ParentID).Sum(y => y.ConfirmedQuantity);
+                    if (databasePurchasingDocumentItem.ParentID > 0)
+                    {
+                        totQty = db.PurchasingDocumentItems.Where(x => x.ID == databasePurchasingDocumentItem.ParentID || x.ParentID == databasePurchasingDocumentItem.ParentID).Sum(y => y.ConfirmedQuantity ?? 0);
+                    }
+                    else
+                    {
+                        totQty = db.PurchasingDocumentItems.Where(x => x.ID == databasePurchasingDocumentItem.ID ||x.ParentID == databasePurchasingDocumentItem.ID).Sum(y => y.ConfirmedQuantity ?? 0);
+                    }
 
                     if (databasePurchasingDocumentItem.ActiveStage == "1" || (databasePurchasingDocumentItem.ActiveStage == "2" && !databasePurchasingDocumentItem.HasETAHistory))
                     {
@@ -1141,7 +1148,7 @@ namespace POTrackingV2.Controllers
 
                         db.Notifications.Add(notificationProc);
 
-                        if (databasePurchasingDocumentItem.Quantity != totQty || databasePurchasingDocumentItem.Quantity != totQtyChild)
+                        if (databasePurchasingDocumentItem.Quantity != totQty)
                         {
                             Notification notificationSAP = new Notification();
                             notificationSAP.PurchasingDocumentItemID = databasePurchasingDocumentItem.ID;
