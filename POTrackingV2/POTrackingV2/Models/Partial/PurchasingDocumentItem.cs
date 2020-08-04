@@ -1182,8 +1182,8 @@ namespace POTrackingV2.Models
         {
             get
             {
-                string netPricePrimary = this.NetPrice.ToString().Split(',')[0];
-                string netPriceDecimal = this.NetPrice.ToString().Split(',')[1];
+                string netPricePrimary = this.NetPrice.ToString().Split('.')[0];
+                string netPriceDecimal = this.NetPrice.ToString().Split('.')[1];
 
                 int length = netPricePrimary.Length;
                 int count = 0;
