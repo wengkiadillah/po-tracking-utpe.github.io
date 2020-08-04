@@ -130,32 +130,20 @@
 
     purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
 
-    purchasingDocumentItems = purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "Q" || y.POHistoryCategory == "q"))
-                                                    .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
+    //purchasingDocumentItems = purchasingDocumentItems.Where(x => x.IsClosed == "L" || x.IsClosed == "LX" || x.IsClosed == "l" || x.IsClosed == "lx" || x.PurchasingDocumentItemHistories.Any(y => y.POHistoryCategory == "Q" || y.POHistoryCategory == "q"))
+    //                                                .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
+    purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed == "L") || (x.IsClosed == "LX") || (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory == "Q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))
+                                                     .Where(x => x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1);
 
-    //if (purchasingDocumentItems.Count() > 0)
+    //if (roleID == "vendor")
     //{
-
-    //    if (currentSearchPOStatus == "ongoing")
-    //    {
-    //        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
-    //    }
-    //    else if (currentSearchPOStatus == "newpo")
-    //    {
-    //        purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == null || y.ActiveStage == "0");
-    //    }
-    //    else if (roleID == "procurement" || roleID == "administrator")
-    //    {
-    //        if (currentSearchPOStatus == "negotiated")
-    //        {
-    //            purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate));
-    //        }
-    //        else
-    //        {
-    //            purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
-    //        }
-    //    }
+    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase)))).ToList();
     //}
+    //else
+    //{
+    //    purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.PO.Date.Year == today.Year || x.PO.Date.Year == today.Year - 1) && (String.Equals(x.IsClosed, "x", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase))) || String.Equals(x.IsClosed, "l", StringComparison.OrdinalIgnoreCase) || (String.Equals(x.IsClosed, "lx", StringComparison.OrdinalIgnoreCase) && x.PurchasingDocumentItemHistories.Any(pdih => String.Equals(pdih.POHistoryCategory, "q", StringComparison.OrdinalIgnoreCase)))).ToList();
+    //}
+
     if (!string.IsNullOrEmpty(currentSearchForMaterial))
     {
         purchasingDocumentItems = purchasingDocumentItems.Where(x => x.Material.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.Description.ToLower().Contains(currentSearchForMaterial.ToLower()) || x.MaterialVendor.ToLower().Contains(currentSearchForMaterial.ToLower()));

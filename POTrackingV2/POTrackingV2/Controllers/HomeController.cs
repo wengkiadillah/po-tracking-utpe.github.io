@@ -396,7 +396,7 @@ namespace POTrackingV2.Controllers
                 DateTime today = DateTime.Now;
 
                 #region Import
-                var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
+                var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && String.IsNullOrEmpty(s.IsClosed) && s.PurchasingDocumentItemHistories.Count == 0).Select(b => b.ID).Distinct();                
                 var pOesImport = db.POes.Where(x => (x.Type.ToLower() == "zo04" || x.Type.ToLower() == "zo07" || x.Type.ToLower() == "zo08") &&
                         (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))) &&
                         (x.ReleaseDate != null))
@@ -529,7 +529,7 @@ namespace POTrackingV2.Controllers
 
                 var pOesLocal = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
                                      (x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material))) && (x.ReleaseDate != null))
-                                     .AsQueryable();                
+                                     .AsQueryable();               
 
                 if (role == LoginConstants.RoleProcurement.ToLower())
                 {
@@ -547,10 +547,12 @@ namespace POTrackingV2.Controllers
                         }
                     }
                     pOesLocal = pOesLocal.Except(noShowPOes);
+                     
                 }
 
                 else if (role == LoginConstants.RoleAdministrator.ToLower())
                 {
+                     
                     //pOesLocal = pOes.Include(x => x.PurchasingDocumentItems)
                     //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                     //                .AsQueryable();
@@ -558,18 +560,24 @@ namespace POTrackingV2.Controllers
                 else
                 {
                     pOesLocal = pOesLocal.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                     
                 }
                 //count by item
                 //string LocalPOItemsCountNew = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.ActiveStage == null || y.ActiveStage == "0") && (y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).ToString();
+                string LocalPOItemsCountNew = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(x => x.ConfirmedQuantity == null && !String.IsNullOrEmpty(x.Material) && x.ParentID == null && String.IsNullOrEmpty(x.IsClosed) && x.PurchasingDocumentItemHistories.Count == 0).ToString();
                 //string LocalPOItemsCountOnGoing = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.ActiveStage != null && y.ActiveStage != "0" && y.IsClosed.ToLower() != "x" && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx").ToString();
+                string LocalPOItemsCountOnGoing = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.IsClosed != "L") && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))) && !pdiCloseActiveStage0.Contains(y.ID)).ToString();
                 //string LocalPOItemsDone = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => y.IsClosed.ToLower() == "x" || y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx").ToString();
+                var pOesLocalDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => ((y.IsClosed == "L") || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity <= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))))));
+                string LocalPOItemsDone = pOesLocal.SelectMany(x => x.PurchasingDocumentItems).Count(y => (y.PO.Date.Year == today.Year || y.PO.Date.Year == today.Year - 1) &&
+                    y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))) && (y.IsClosed == "X" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "q")) || y.IsClosed == "L" || (y.IsClosed == "LX" && y.PurchasingDocumentItemHistories.Any(pdih => pdih.POHistoryCategory.ToLower() == "q"))).ToString();
 
                 //count by po
                 //string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.PurchasingDocumentItemHistories.All(z => z.POHistoryCategory.ToLower() != "q"))).Count().ToString();
-                string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.IsClosed.ToLower() != "x" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))).Count().ToString();
+                //string LocalPOItemsCountNew = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && y.IsClosed.ToLower() != "x" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))).Count().ToString();
                 //string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage != null && y.ActiveStage != "0" && (y.ParentID == null && !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")).Count().ToString();
-                string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")|| pdiCloseActiveStage0.Contains(x.ID))).Count().ToString();
-                string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))).Count().ToString();
+                //string LocalPOItemsCountOnGoing = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")|| pdiCloseActiveStage0.Contains(x.ID))).Count().ToString();                 
+                //string LocalPOItemsDone = pOesLocal.Where(x => x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q"))).Count().ToString();
 
                 #endregion
                 return Json(new { success = true, ImportPOItemsCountNew, ImportPOItemsCountOnGoing, ImportPOItemsDone, subcontNewPO, subcontOngoing, subcontDone, LocalPOItemsCountNew, LocalPOItemsCountOnGoing, LocalPOItemsDone }, JsonRequestBehavior.AllowGet);

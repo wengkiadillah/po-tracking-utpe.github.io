@@ -1,15 +1,15 @@
 ﻿// Validations
-$(".st2-first-eta-date").on('input focus', function (e) {
-    this.setCustomValidity('');
-    var thisDate = $(this).val();
-    var minDate = $(this).attr("mindate");
-    if ((!isNaN(thisDate) || thisDate !== '') && (!isNaN(minDate) || minDate !== '')) {
-        if (reverseDayMonth(thisDate) < reverseDayMonth(minDate)) {
-            this.setCustomValidity("Value must be more than or equal " + $(this).attr("mindate"));
-        }
-    }
-    this.reportValidity();
-});
+//$(".st2-first-eta-date").on('input focus', function (e) {
+//    this.setCustomValidity('');
+//    var thisDate = $(this).val();
+//    var minDate = $(this).attr("mindate");
+//    if ((!isNaN(thisDate) || thisDate !== '') && (!isNaN(minDate) || minDate !== '')) {
+//        if (reverseDayMonth(thisDate) < reverseDayMonth(minDate)) {
+//            this.setCustomValidity("Value must be more than or equal " + $(this).attr("mindate"));
+//        }
+//    }
+//    this.reportValidity();
+//});
 
 //Check / Unchecked All PO Items
 $("input.st2-checkbox-all").on("change", function (obj) {
@@ -75,53 +75,53 @@ $(".st2-confirm-first-eta").on("click", function (obj) {
     var prevDataContent = $(this).closest(".po-item-section").prev().find(cssRow);
 
     if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
-        if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
-            $.ajax({
-                type: "POST",
-                url: stage2VendorConfirmFirstETA,
-                data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    alert(response.responseText);
+        //if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
+        $.ajax({
+            type: "POST",
+            url: stage2VendorConfirmFirstETA,
+            data: JSON.stringify({ 'inputETAHistories': inputETAHistories }),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                alert(response.responseText);
 
-                    for (var i = 0; i < response.isSameAsProcs.length; i++) {
-                        if (response.isSameAsProcs[i] === true) {
-                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
-                            checkboxItem.attr("disabled", "disabled");
-                            inputFirstEtaDate.attr("disabled", "disabled");
-                            buttonEdit.attr("style", "visibility:display");
+                for (var i = 0; i < response.isSameAsProcs.length; i++) {
+                    if (response.isSameAsProcs[i] === true) {
+                        buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                        checkboxItem.attr("disabled", "disabled");
+                        inputFirstEtaDate.attr("disabled", "disabled");
+                        buttonEdit.attr("style", "visibility:display");
 
-                            donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                            donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+                        donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                        donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
 
-                            prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
-                        }
-                        else {
-                            buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
-                            checkboxItem.attr("disabled", "disabled");
-                            inputFirstEtaDate.attr("disabled", "disabled");
-                            buttonEdit.attr("style", "visibility:display");
-
-                            prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
-                        }
+                        prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
                     }
+                    else {
+                        buttonConfirmFirstEta.attr("disabled", "disabled").addClass("selected");
+                        checkboxItem.attr("disabled", "disabled");
+                        inputFirstEtaDate.attr("disabled", "disabled");
+                        buttonEdit.attr("style", "visibility:display");
 
-                    //donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
-                    //donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
-
-                    //nextDataContent.find(".st2a-file-proforma-invoice").first().removeAttr("disabled");
-                    //nextDataContent.find(".st2a-upload-proforma-invoice").first().removeAttr("disabled");
-
-                },
-                error: function (xhr, status, error) {
-                    alert(xhr.status + " : " + error);
+                        prevDataContent.find(".st1-edit-row").attr("style", "visibility:hidden");
+                    }
                 }
-            });
-        }
-        else {
-            alert("The Date cannot be less than the Date agreed on stage 1");
-            inputFirstEtaDate.focus();
-        }
+
+                //donutRow.find(".donut-chart").first().find("circle").next().attr("stroke-dashoffset", donutProgress);
+                //donutRow.find(".donut-chart").first().next().find("span.mark-donut").text("2a");
+
+                //nextDataContent.find(".st2a-file-proforma-invoice").first().removeAttr("disabled");
+                //nextDataContent.find(".st2a-upload-proforma-invoice").first().removeAttr("disabled");
+
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.status + " : " + error);
+            }
+        });
+        //}
+        //else {
+        //    alert("The Date cannot be less than the Date agreed on stage 1");
+        //    inputFirstEtaDate.focus();
+        //}
     }
     else {
         alert("Dates cannot be empty");
@@ -166,29 +166,29 @@ $(".st2-confirm-first-eta-all").on("click", function (obj) {
 
         if (inputFirstEtaDate.attr("disabled") !== "disabled" && checkboxItem.prop("checked") === true && checkboxItem.attr("disabled") !== "disabled") {
             if (etaDate !== '' && !isNaN(etaDateObject.getTime())) {
-                if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
-                    inputETAHistories.push({
-                        PurchasingDocumentItemID: itemID,
-                        ETADate: etaDateObject
-                    });
+                //if (reverseDayMonth(etaDate) >= reverseDayMonth(minimumDate)) {
+                inputETAHistories.push({
+                    PurchasingDocumentItemID: itemID,
+                    ETADate: etaDateObject
+                });
 
-                    buttonConfirmFirstEta.addClass("row-updated-button");
-                    checkboxItem.addClass("row-updated");
-                    inputFirstEtaDate.addClass("row-updated");
-                    buttonEdit.addClass("row-updated-link");
+                buttonConfirmFirstEta.addClass("row-updated-button");
+                checkboxItem.addClass("row-updated");
+                inputFirstEtaDate.addClass("row-updated");
+                buttonEdit.addClass("row-updated-link");
 
-                    //nextDataContent.find(".st2a-file-proforma-invoice").first().addClass("next-row-updated");
-                    //nextDataContent.find(".st2a-upload-proforma-invoice").first().addClass("next-row-updated");
+                //nextDataContent.find(".st2a-file-proforma-invoice").first().addClass("next-row-updated");
+                //nextDataContent.find(".st2a-upload-proforma-invoice").first().addClass("next-row-updated");
 
-                    donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
-                    donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
+                donutRow.find(".donut-chart").first().find("circle").next().addClass("row-updated-donut");
+                donutRow.find(".donut-chart").first().next().find("span.mark-donut").addClass("row-updated-donut-text");
 
-                    prevDataContent.find(".st1-edit-row").addClass("row-updated-prev-stage");
-                }
-                else {
-                    alert("The Date cannot be less than the Date agreed on stage 1");
-                    inputFirstEtaDate.focus();
-                }
+                prevDataContent.find(".st1-edit-row").addClass("row-updated-prev-stage");
+                //}
+                //else {
+                //    alert("The Date cannot be less than the Date agreed on stage 1");
+                //    inputFirstEtaDate.focus();
+                //}
             }
             else {
                 alert("Dates cannot be empty");
