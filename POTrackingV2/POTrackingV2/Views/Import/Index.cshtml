@@ -112,12 +112,14 @@
 @foreach (var pO in Model)
 {
     var purchasingDocumentItems = pO.PurchasingDocumentItems.Where(x => !String.IsNullOrEmpty(x.Material));
-    var pdiCloseConfirmQtynull = pO.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
+    //var pdiCloseConfirmQtynull = pO.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && s.IsClosed.ToLower() == "x").Select(b => b.ID).Distinct();
+    var pdiCloseConfirmQtynull = pO.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && String.IsNullOrEmpty(s.IsClosed) && s.PurchasingDocumentItemHistories.Count == 0).Select(b => b.ID).Distinct();
+    var pdiHistory = purchasingDocumentItems.Where(x => (x.IsClosed == "L") || (x.IsClosed == "LX") || (x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory == "Q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity)).Select(b => b.ID).Distinct();
 
     if (purchasingDocumentItems.Count() > 0)
     {
         purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ParentID != null && x.ParentID != x.ID));
-        purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q")));
+        //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => /*!string.IsNullOrEmpty(x.LatestParkingDateNewFormat) ||*/ x.IsClosed.ToLower() == "l" || x.IsClosed.ToLower() == "lx" || x.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q")));
         //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.ActiveStage =="0" && x.IsClosed.ToLower() =="x"));
 
         if (purchasingDocumentItems.Count() > 0)
@@ -125,12 +127,14 @@
             if (!String.IsNullOrEmpty(currentSearchPOStatus))
             {
                 if (currentSearchPOStatus == "ongoing")
-                {                    
-                    purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseConfirmQtynull.Contains(y.ID));
+                {
+                    //purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null || pdiCloseConfirmQtynull.Contains(y.ID));
+                    purchasingDocumentItems = purchasingDocumentItems.Where(x => ((x.IsClosed != "L") && ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)) && !pdiCloseConfirmQtynull.Contains(x.ID)));
                 }
                 else if (currentSearchPOStatus == "newpo")
                 {
-                    purchasingDocumentItems = purchasingDocumentItems.Where(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed));
+                    purchasingDocumentItems = purchasingDocumentItems.Where(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed) && y.PurchasingDocumentItemHistories.Count == 0);
+                    //purchasingDocumentItems = purchasingDocumentItems.Where(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed));
                 }
                 else if (roleID == "procurement" || roleID == "administrator")
                 {
@@ -143,6 +147,15 @@
                         purchasingDocumentItems = purchasingDocumentItems.Where(y => y.ActiveStage != null && y.ActiveStage != "0");
                     }
                 }
+            }
+            else
+            {
+                //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => x.IsClosed != null && ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistories.Any(y => y.GoodsReceiptQuantity != null && y.POHistoryCategory.ToLower() == "q")) || x.IsClosed.ToLower() == "l")));
+                //purchasingDocumentItems = purchasingDocumentItems.Except(purchasingDocumentItems.Where(x => ((x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))));
+                purchasingDocumentItems = purchasingDocumentItems.Where(x => (x.IsClosed != "X" && x.IsClosed != "L" && x.IsClosed != "LX" && !pdiHistory.Contains(x.ID)) ||
+                 ((x.IsClosed != "L") && ((x.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) < x.CurrentQuantity)))
+                 //|| ((x.IsClosed == "L") || (x.IsClosed.ToLower().Contains("x") && x.PurchasingDocumentItemHistoriesParkingDetail.Sum(z => z.GoodsReceiptQuantity ?? 0) >= x.CurrentQuantity))
+                 );
             }
 
             if (!string.IsNullOrEmpty(currentSearchForMaterial))
@@ -1602,6 +1615,7 @@
                                 disabledConfirmPaymentDate = "disabled";
                                 disabledConfirmPaymentSubmit = "disabled";
                                 disabledConfirmPaymentSkip = "disabled";
+                                hiddenEditButton = "hidden";
                             }
 
                             <div class="po-item-data-content row-@rowStage3">
@@ -1684,6 +1698,7 @@
                                                 disabledConfirmPaymentDate = "disabled";
                                                 disabledConfirmPaymentSubmit = "disabled";
                                                 disabledConfirmPaymentSkip = "disabled";
+                                                hiddenEditButton = "hidden";
                                             }
 
                                             <div class="po-item-data-content row-@rowStage3-@childRowStage3" row="@rowStage3" child="@childRowStage3">
