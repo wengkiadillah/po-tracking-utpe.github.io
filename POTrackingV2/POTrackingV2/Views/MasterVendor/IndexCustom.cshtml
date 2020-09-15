@@ -1,0 +1,220 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@*@model IEnumerable<POTracking.Models.SubcontComponentCapability>*@
+@model IPagedList<POTrackingV2.Models.PurchasingDocumentItem>
+
+@{
+    ViewBag.Title = "Maintain Sequence Leadtime Subcont";
+}
+
+@section styles {
+    <link href="~/Content/um-style.css" rel="stylesheet" />
+}
+
+<div class="um">
+    <h1>Maintain Sequence Leadtime Subcont</h1>
+    <div class="filter-row">
+        @using (Html.BeginForm("IndexCustom", "MasterVendor", null, FormMethod.Get, new { @class = "filter-form-container form-inline" }))
+        {
+            <div class="form-group mr-4">
+                <input name="search" type="text" class="form-control form-control-lg filter-search with-icon" placeholder="Search" value="@ViewBag.CurrentSearchString" />
+                <i class="fas fa-search form-type-icon hint"></i>
+            </div>
+            <select id="searchBy" name="searchBy" class="form-control form-control-lg mr-4" value="@ViewBag.CurrentSearchFilterBy">
+                <option value="vendorCode">Vendor Code</option>
+                <option value="description">Description</option>
+                <option value="material">Material</option>
+            </select>
+            <button type="submit" class="btn btn-info mr-3">Find</button>
+            @Html.ActionLink("Clear", "IndexCustom", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
+            @*<a class="btn btn-positive mr-3" data-toggle="modal" data-target="#example">Export</a>
+            <a class="btn btn-warning mr-3" data-toggle="modal" data-target="#importModal">Import</a>*@
+
+        }
+        @*<div class="form-group mt-4">
+                <button type="submit" class="btn btn-info"><a href="~/MasterVendor/Create" style="color:white;">Create New</a></button>
+            </div>*@
+    </div>
+
+    @*<p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
+        <p>
+            @using (Html.BeginForm("Index", "MasterVendor", FormMethod.Get))
+            {
+                <b>Search By: </b> @Html.RadioButton("searchBy", "VendorCode", true) <text>VendorCode</text>
+                @Html.RadioButton("searchBy", "Description") <text>Description</text> <br />
+                @Html.TextBox("search") <input type="submit" value="Search" />
+            }
+        </p>*@
+    <table class="table table-striped table-bordered">
+        @*<tr style="background-color:#17A2B8;color:white;">*@
+        @*<th>
+                PO Number
+            </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().VendorCode)*@
+            Vendor Code
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().Material)*@
+            Material
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().Description)*@
+            Description
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().PB)*@
+            PB
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().Setting)*@
+            Setting
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().Fullweld)*@
+            Fullweld
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.First().Primer)*@
+            Primer
+        </th>
+        <th>Action</th>
+        </tr>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="12">No rows match search criteria</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr style="background-color:white;">
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.PO.Number)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PO.VendorCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Material)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PB)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Setting)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fullweld)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Primer)
+                    </td>
+                    <td>
+                        <span>
+                            <a class="col-xs-2" href="@Url.Action("DetailsCustom", "MasterVendor", new { id = item.ID })" alt="Details">
+                                <i class="fa fa-info-circle fa-lg"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a class="col-xs-2" href="@Url.Action("EditCustom", "MasterVendor", new { id = item.ID })" alt="Edit" style="color:green;">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </a>
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+
+    @* Modal *@
+
+    @* Modal *@
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("IndexCustom", new { page, searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] }),
+    new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
+
+</div>
+<div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><b>Note</b></h5>
+                <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="data-content">
+                    <div class="data-header__column">
+                        <form method="post">
+                            <span>Ketentuan untuk melakukan export adalah sebagai berikut:</span>
+                            <ul>
+                                <li>Data yang ditampilkan merukapan data berdasarkan filter dan katakunci pada kolom pencarian.</li>
+                                <li>Kolom yang dapat diedit adalah kolom "PB,Fullweld,Settig,Primer" saja.</li>
+                                <li>Tidak diperkenankan untuk mengubah nama sheet.</li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("DownloadExcel","MasterVendor",new { searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] })" class="btn btn-positive w-100">Download Format</a>
+            </div>
+        </div>
+    </div>
+</div>
+@using (Html.BeginForm("UploadExcel", "MasterVendor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><b>Import</b></h5>
+                    <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="data-content">
+                        <div class="data-header__column">
+
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">File</p>
+                                <input type="file" id="FileUpload" name="FileUpload" class="" />
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Upload" id="btnSubmit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    @section scripts {
+        <script src="~/Scripts/datepicker.min.js"></script>
+        <script src="~/Scripts/donutty-jquery.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+            });
+
+
+        </script>
+    }
