@@ -28,13 +28,14 @@
             </select>
             <button type="submit" class="btn btn-info mr-3">Find</button>
             @Html.ActionLink("Clear", "IndexCustom", new { role = Request.QueryString["role"] }, new { @class = "btn btn-info mr-3" })
-            @*<a class="btn btn-positive mr-3" data-toggle="modal" data-target="#example">Export</a>
-            <a class="btn btn-warning mr-3" data-toggle="modal" data-target="#importModal">Import</a>*@
-
+            
         }
-        @*<div class="form-group mt-4">
-                <button type="submit" class="btn btn-info"><a href="~/MasterVendor/Create" style="color:white;">Create New</a></button>
-            </div>*@
+        <div class="form-group mt-4">
+            @*<button type="submit" class="btn btn-info"><a href="~/MasterVendor/Create" style="color:white;">Create New</a></button>*@
+            <a class="btn btn-positive mr-3" data-toggle="modal" data-target="#example">Export</a>
+            <a class="btn btn-warning mr-3" data-toggle="modal" data-target="#importModal">Import</a>
+            @*<a class="btn btn-warning mr-3" data-toggle="modal" data-target="#importModal">Import</a>*@
+        </div>
     </div>
 
     @*<p>
@@ -158,11 +159,8 @@
                 <div class="data-content">
                     <div class="data-header__column">
                         <form method="post">
-                            <span>Ketentuan untuk melakukan export adalah sebagai berikut:</span>
                             <ul>
-                                <li>Data yang ditampilkan merukapan data berdasarkan filter dan katakunci pada kolom pencarian.</li>
-                                <li>Kolom yang dapat diedit adalah kolom "PB,Fullweld,Settig,Primer" saja.</li>
-                                <li>Tidak diperkenankan untuk mengubah nama sheet.</li>
+                                <li>The excel file contains data based on filters and keywords in the search column.</li>
                             </ul>
                         </form>
                     </div>
@@ -170,12 +168,48 @@
 
             </div>
             <div class="modal-footer">
-                <a href="@Url.Action("DownloadExcel","MasterVendor",new { searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] })" class="btn btn-positive w-100">Download Format</a>
+                <a href="@Url.Action("DownloadExcel","MasterVendor",new { searchBy = Request.QueryString["searchBy"], search = Request.QueryString["search"] })" class="btn btn-positive w-100">Download</a>
             </div>
         </div>
     </div>
 </div>
-@using (Html.BeginForm("UploadExcel", "MasterVendor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("InsertViaExcel", "MasterVendor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><b>Import</b></h5>
+                    <button id="close-sequence" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="data-content">
+                        <div class="data-header__column">
+
+                            <div class="form-inline">
+                                <a href="~/Files/TemplateMasterVendor.xls"><span class="fa fa-download"></span> Download Template </a>
+                                <label style="color:red">* (Vendor Code & Material are required, columns with green headers must fill with numbers)</label>
+                            </div>
+                            <br />
+                            <div class="form-inline">
+                                <p class="mb-0 mr-5">File</p>
+                                <input type="file" id="FileUpload" name="FileUpload" class="" />
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Upload" id="btnSubmit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*@using (Html.BeginForm("UploadExcel", "MasterVendor", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -194,7 +228,7 @@
                                 <p class="mb-0 mr-5">File</p>
                                 <input type="file" id="FileUpload" name="FileUpload" class="" />
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -205,16 +239,16 @@
             </div>
         </div>
     </div>
+}*@
+@section scripts {
+    <script src="~/Scripts/datepicker.min.js"></script>
+    <script src="~/Scripts/donutty-jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+
+    </script>
 }
-    @section scripts {
-        <script src="~/Scripts/datepicker.min.js"></script>
-        <script src="~/Scripts/donutty-jquery.min.js"></script>
-
-        <script type="text/javascript">
-            $(document).ready(function () {
-
-            });
-
-
-        </script>
-    }

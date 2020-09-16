@@ -26,20 +26,38 @@
                     
                     <div class="row">
                         <div class="col-md-6 col-12">
-                            <label class="view-data__label form-custom-label">PB</label>
-                            <p class="view-data__content"> @Html.DisplayFor(model => model.PB)</p>
+                            <label class="view-data__label form-custom-label">Vendor Code</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.PO.VendorCode)</p>
                         </div>
                         <div class="col-md-6 col-12">
-                            <label class="view-data__label form-custom-label"> Setting</label>
-                            <p class="view-data__content"> @Html.DisplayFor(model => model.Setting)</p>
+                            <label class="view-data__label form-custom-label">Material</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.Material)</p>
                         </div>
                     </div>
                     <div class="row">
+                        
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">Description</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.Description)</p>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">PB</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.PB)</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6 col-12">
+                            <label class="view-data__label form-custom-label">Setting</label>
+                            <p class="view-data__content"> @Html.DisplayFor(model => model.Setting)</p>
+                        </div>
                         <div class="col-md-6 col-12">
                             <label class="view-data__label form-custom-label">Fullweld</label>
                             <p class="view-data__content">@Html.DisplayFor(model => model.Fullweld)</p>
                         </div>
-
+                    </div>
+                    <div class="row">
+                        
                         <div class="col-md-6 col-12">
                             <label class="view-data__label form-custom-label">Primer</label>
                             <p class="view-data__content"> @Html.DisplayFor(model => model.Primer)</p>

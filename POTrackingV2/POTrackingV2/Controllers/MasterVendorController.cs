@@ -130,46 +130,59 @@ namespace POTrackingV2.Controllers
             }
 
         }
-        //Fahmi 
+        //Fahmi
         public void DownloadExcel(string searchBy, string search)
         {
             POTrackingEntities db = new POTrackingEntities();
             var listPDI = new List<PurchasingDocumentItem>();
+            var pOes = (from pdi in db.PurchasingDocumentItems
+                        join p in db.POes on pdi.POID equals p.ID
+                        where !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == pdi.PO.VendorCode && scc.Material == pdi.Material).Any()
+                        && (pdi.IsClosed == "X" || pdi.IsClosed == "L" || pdi.IsClosed == "LX")
+                        //group pdi by new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer } into pdi
+                        select pdi).GroupBy(pdi => new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer })
+                            .Select(g => g.FirstOrDefault());
             if (searchBy == "description")
             {
-                listPDI = db.PurchasingDocumentItems.Where(x => x.Description.Contains(search) || search == null).OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).ToList();
+                listPDI = pOes.Where(x => x.Description.Contains(search) || search == null)//.GroupBy(x =>new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
             }
             else if (searchBy == "material")
             {
-                listPDI = db.PurchasingDocumentItems.Where(x => x.Material.Contains(search) || search == null).OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).ToList();
+                listPDI = pOes.Where(x => x.Material.Contains(search) || search == null)
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
             }
             else
             {
-                listPDI = db.PurchasingDocumentItems.Where(x => x.PO.VendorCode.Contains(search) || search == null).OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).ToList();
+                listPDI = pOes.Where(x => x.PO.VendorCode.Contains(search) || search == null)
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
             }
 
             ExcelPackage Ep = new ExcelPackage();
-            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
-            Sheet.Cells["A1"].Value = "ID";
-            Sheet.Cells["B1"].Value = "PO Number";
-            Sheet.Cells["C1"].Value = "Tanggal PO";
-            Sheet.Cells["D1"].Value = "Vendor Code";
-            Sheet.Cells["E1"].Value = "Material";
-            Sheet.Cells["F1"].Value = "Description";
-            Sheet.Cells["G1"].Value = "PB";
-            Sheet.Cells["H1"].Value = "Setting";
-            Sheet.Cells["I1"].Value = "Fullweld";
-            Sheet.Cells["J1"].Value = "Primer";
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Sheet1");
+            Sheet.Cells["A1"].Value = "VendorCode";
+            Sheet.Cells["B1"].Value = "Material";
+            Sheet.Cells["C1"].Value = "Description";
+            Sheet.Cells["D1"].Value = "DailyLeadTime";
+            Sheet.Cells["E1"].Value = "MonthlyLeadTime";
+            Sheet.Cells["F1"].Value = "PB";
+            Sheet.Cells["G1"].Value = "Setting";
+            Sheet.Cells["H1"].Value = "Fullweld";
+            Sheet.Cells["I1"].Value = "Primer";
+            Sheet.Cells["J1"].Value = "MonthlyCapacity";
             #region settingCell
 
             //The numbers represent a range: (FromRow, FromCol, ToRow, ToCol)
-            using (var range = Sheet.Cells[1, 1, 1, 6])
+            using (var range = Sheet.Cells[1, 1, 1, 3])
             {
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow);
             }
 
-            using (var range = Sheet.Cells[1, 7, 1, 10])
+            using (var range = Sheet.Cells[1, 4, 1, 10])
             {
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
@@ -190,23 +203,23 @@ namespace POTrackingV2.Controllers
             foreach (var item in listPDI)
             {
 
-                Sheet.Cells[string.Format("A{0}", row)].Value = item.ID;
-                Sheet.Cells[string.Format("B{0}", row)].Value = item.PO.Number;
-                Sheet.Cells[string.Format("C{0}", row)].Value = item.PO.Date.ToString("dd/MM/yyyy");
-                Sheet.Cells[string.Format("D{0}", row)].Value = item.PO.VendorCode;
-                Sheet.Cells[string.Format("E{0}", row)].Value = item.Material;
-                Sheet.Cells[string.Format("F{0}", row)].Value = item.Description;
-                Sheet.Cells[string.Format("G{0}", row)].Value = item.PB;
-                Sheet.Cells[string.Format("H{0}", row)].Value = item.Setting;
-                Sheet.Cells[string.Format("I{0}", row)].Value = item.Fullweld;
-                Sheet.Cells[string.Format("J{0}", row)].Value = item.Primer;
+                Sheet.Cells[string.Format("A{0}", row)].Value = item.PO.VendorCode;
+                Sheet.Cells[string.Format("B{0}", row)].Value = item.Material;
+                Sheet.Cells[string.Format("C{0}", row)].Value = item.Description;
+                Sheet.Cells[string.Format("D{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("E{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("F{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("G{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("H{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("I{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("J{0}", row)].Value = 0;
                 row++;
             }
 
             Sheet.Cells["A:AZ"].AutoFitColumns();
             Response.Clear();
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xls");
             Response.BinaryWrite(Ep.GetAsByteArray());
             Response.End();
         }
@@ -363,70 +376,83 @@ namespace POTrackingV2.Controllers
                     var excelPDI = from a in excelFile.Worksheet<SubcontComponentCapability>(sheetName) select a;
                     string userName = User.Identity.Name;
                     DateTime now = DateTime.Now;
-                    foreach (var a in excelPDI)
+                    try
                     {
-                        try
+                        foreach (var a in excelPDI)
                         {
-                            if (a.VendorCode != null && a.Material != null)
+                            try
                             {
-                                SubcontComponentCapability cekRedundan = db.SubcontComponentCapabilities.Where(x => x.Material == a.Material && x.VendorCode == a.VendorCode).FirstOrDefault();
-                                if (cekRedundan == null)
+                                if (a.VendorCode != null && a.Material != null && a.PB > 0 && a.Setting > 0 && a.Fullweld > 0 && a.Primer > 0)
                                 {
-                                    Vendor cekVendor = db.Vendors.Where(x => x.Code == a.VendorCode).FirstOrDefault();
-                                    if (cekVendor != null)
+                                    SubcontComponentCapability cekRedundan = db.SubcontComponentCapabilities.Where(x => x.Material == a.Material && x.VendorCode == a.VendorCode).FirstOrDefault();
+                                    if (cekRedundan == null)
                                     {
-                                        SubcontComponentCapability subcontComponentCapability = new SubcontComponentCapability
+                                        Vendor cekVendor = db.Vendors.Where(x => x.Code == a.VendorCode).FirstOrDefault();
+                                        if (cekVendor != null)
                                         {
-                                            VendorCode = a.VendorCode,
-                                            Material = a.Material,
-                                            Description = a.Description,
-                                            DailyLeadTime = a.DailyLeadTime,
-                                            MonthlyLeadTime = a.MonthlyLeadTime,
-                                            PB = a.PB,
-                                            Setting = a.Setting,
-                                            Fullweld = a.Fullweld,
-                                            Primer = a.Primer,
-                                            MonthlyCapacity = a.MonthlyCapacity,
-                                            DailyCapacity = a.DailyCapacity,
-                                            CreatedBy = userName,
-                                            Created = now,
-                                            LastModified = now,
-                                            LastModifiedBy = userName
+                                            SubcontComponentCapability subcontComponentCapability = new SubcontComponentCapability
+                                            {
+                                                VendorCode = a.VendorCode,
+                                                Material = a.Material,
+                                                Description = a.Description,
+                                                DailyLeadTime = a.DailyLeadTime,
+                                                MonthlyLeadTime = a.MonthlyLeadTime,
+                                                PB = a.PB,
+                                                Setting = a.Setting,
+                                                Fullweld = a.Fullweld,
+                                                Primer = a.Primer,
+                                                MonthlyCapacity = a.MonthlyCapacity,
+                                                DailyCapacity = a.DailyCapacity,
+                                                CreatedBy = userName,
+                                                Created = now,
+                                                LastModified = now,
+                                                LastModifiedBy = userName
 
-                                        };
-                                        ViewBag.Message = "Data Berhasil di Tambahkan";
-                                        db.SubcontComponentCapabilities.Add(subcontComponentCapability);
-                                        db.SaveChanges();
+                                            };
+                                            ViewBag.Message = "Data Berhasil di Tambahkan";
+                                            db.SubcontComponentCapabilities.Add(subcontComponentCapability);
+                                            db.SaveChanges();
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                data.Add("<ul>");
-                                if (a.VendorCode == null) data.Add("<li> VendorCode is required</li>");
-                                if (a.Material == null) data.Add("<li> Material is required</li>");
-
-                                data.Add("</ul>");
-                                data.ToArray();
-                                ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
-
-                            }
-                        }
-
-                        catch (DbEntityValidationException ex)
-                        {
-                            foreach (var entityValidationErrors in ex.EntityValidationErrors)
-                            {
-
-                                foreach (var validationError in entityValidationErrors.ValidationErrors)
+                                else
                                 {
+                                    data.Add("<ul>");
+                                    if (a.VendorCode == null) data.Add("<li> VendorCode is required</li>");
+                                    if (a.Material == null) data.Add("<li> Material is required</li>");
+                                    if (a.DailyLeadTime <= 0 && a.MonthlyLeadTime <= 0 && a.PB <= 0 && a.Setting <= 0 && a.Fullweld <= 0 && a.Primer <= 0 && a.MonthlyCapacity <= 0) data.Add("<li> Please fill all column</li>");
 
-                                    Response.Write("Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
+                                    data.Add("</ul>");
+                                    data.ToArray();
+                                    ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
 
                                 }
+                            }
 
+                            catch (DbEntityValidationException ex)
+                            {
+                                foreach (var entityValidationErrors in ex.EntityValidationErrors)
+                                {
+
+                                    foreach (var validationError in entityValidationErrors.ValidationErrors)
+                                    {
+
+                                        Response.Write("Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
+
+                                    }
+
+                                }
                             }
                         }
+                    }
+                    catch
+                    {
+                        data.Add("<ul>");
+                        data.Add("<li> File format doesn't match</li>");
+
+                        data.Add("</ul>");
+                        data.ToArray();
+                        ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
                     }
                     //deleting excel file from folder  
                     if ((System.IO.File.Exists(pathToExcelFile)))
