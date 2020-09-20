@@ -13,6 +13,14 @@ using System.Security.Cryptography;
 using System.Collections;
 using POTrackingV2.CustomAuthentication;
 using Newtonsoft.Json;
+using System.Configuration;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Data.OleDb;
+using System.Data;
+using LinqToExcel;
+using System.Data.Entity.Validation;
+using System.Web.Security;
 
 namespace POTrackingV2.Controllers
 {
@@ -44,6 +52,65 @@ namespace POTrackingV2.Controllers
                 }
             }
         }
+        // GET: CustomMasterVendor //Fahmi
+        public ActionResult IndexCustom(string searchBy, string search, int? page)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            string userName = User.Identity.Name;
+            DateTime today = DateTime.Now;
+            CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
+            string role = myUser.Roles;
+            string roleVendor = LoginConstants.RoleVendor.ToLower();
+            try
+            {
+                var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
+                SubcontDevUserRole subcontDevUserRole = db.SubcontDevUserRoles.Where(x => x.Username == userName).FirstOrDefault();
+
+                var pOes = (from pdi in db.PurchasingDocumentItems
+                            join p in db.POes on pdi.POID equals p.ID
+                            where !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == pdi.PO.VendorCode && scc.Material == pdi.Material).Any()
+                            && (pdi.IsClosed == "X" || pdi.IsClosed == "L" || pdi.IsClosed == "LX")
+                            //group pdi by new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer } into pdi
+                            select pdi).GroupBy(pdi => new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer })
+                            .Select(g => g.FirstOrDefault()); //produces flat sequence;
+                                                              //view index Subcont
+
+                //end
+                ViewBag.CurrentSearchFilterBy = searchBy;
+                ViewBag.CurrentSearchString = search;
+
+
+                if (searchBy == "description")
+                {
+                    //return View(db.PurchasingDocumentItems.Where(x => x.Description.Contains(search) && !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == x.PO.VendorCode && scc.Material == x.Material).Any() || search == null )
+                    //    .OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).Distinct().ToList().ToPagedList(page ?? 1, 10));
+                    return View(pOes.Where(x => x.Description.Contains(search) || search == null)//.GroupBy(x =>new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                                                                                                 //.Select(x => new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList().ToPagedList(page ?? 1, 10));
+                }
+                else if (searchBy == "material")
+                {
+                    //return View(db.PurchasingDocumentItems.Where(x => x.Material.Contains(search) && !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == x.PO.VendorCode && scc.Material == x.Material).Any() || search == null)
+                    //    .OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).Distinct().ToList().ToPagedList(page ?? 1, 10));
+                    return View(pOes.Where(x => x.Material.Contains(search) || search == null)//.GroupBy(x => new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList().ToPagedList(page ?? 1, 10));
+                }
+                else
+                {
+                    //return View(db.PurchasingDocumentItems.Where(x => x.PO.VendorCode.Contains(search) && !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == x.PO.VendorCode && scc.Material == x.Material).Any() || search == null)
+                    //    .OrderBy(x => x.PO.VendorCode.Length).ThenBy(x => x.PO.VendorCode).Distinct().ToList().ToPagedList(page ?? 1, 10));
+                    return View(pOes.Where(x => x.PO.VendorCode.Contains(search) || search == null)//.GroupBy(x => new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList().ToPagedList(page ?? 1, 10));
+                }
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message + "-----" + ex.StackTrace);
+            }
+        }
 
         // GET: MasterVendor/Details/5
         public ActionResult Details(int id)
@@ -54,7 +121,367 @@ namespace POTrackingV2.Controllers
             }
 
         }
+        //Fahmi
+        public ActionResult DetailsCustom(int id)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                return View(db.PurchasingDocumentItems.Include(x => x.PO).SingleOrDefault(x => x.ID == id));
+            }
 
+        }
+        //Fahmi
+        public void DownloadExcel(string searchBy, string search)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            var listPDI = new List<PurchasingDocumentItem>();
+            var pOes = (from pdi in db.PurchasingDocumentItems
+                        join p in db.POes on pdi.POID equals p.ID
+                        where !db.SubcontComponentCapabilities.Where(scc => scc.VendorCode == pdi.PO.VendorCode && scc.Material == pdi.Material).Any()
+                        && (pdi.IsClosed == "X" || pdi.IsClosed == "L" || pdi.IsClosed == "LX")
+                        //group pdi by new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer } into pdi
+                        select pdi).GroupBy(pdi => new { pdi.PO.VendorCode, pdi.Material, pdi.Description, pdi.PB, pdi.Fullweld, pdi.Setting, pdi.Primer })
+                            .Select(g => g.FirstOrDefault());
+            if (searchBy == "description")
+            {
+                listPDI = pOes.Where(x => x.Description.Contains(search) || search == null)//.GroupBy(x =>new { x.PO.VendorCode, x.Material, x.Description, x.PB, x.Fullweld, x.Setting, x.Primer })
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
+            }
+            else if (searchBy == "material")
+            {
+                listPDI = pOes.Where(x => x.Material.Contains(search) || search == null)
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
+            }
+            else
+            {
+                listPDI = pOes.Where(x => x.PO.VendorCode.Contains(search) || search == null)
+                        .OrderBy(x => x.PO.VendorCode).ThenByDescending(x => x.Material).Select(x => x).Distinct()
+                        .ToList();
+            }
+
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Sheet1");
+            Sheet.Cells["A1"].Value = "VendorCode";
+            Sheet.Cells["B1"].Value = "Material";
+            Sheet.Cells["C1"].Value = "Description";
+            Sheet.Cells["D1"].Value = "DailyLeadTime";
+            Sheet.Cells["E1"].Value = "MonthlyLeadTime";
+            Sheet.Cells["F1"].Value = "PB";
+            Sheet.Cells["G1"].Value = "Setting";
+            Sheet.Cells["H1"].Value = "Fullweld";
+            Sheet.Cells["I1"].Value = "Primer";
+            Sheet.Cells["J1"].Value = "MonthlyCapacity";
+            #region settingCell
+
+            //The numbers represent a range: (FromRow, FromCol, ToRow, ToCol)
+            using (var range = Sheet.Cells[1, 1, 1, 3])
+            {
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightYellow);
+            }
+
+            using (var range = Sheet.Cells[1, 4, 1, 10])
+            {
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+            }
+            Sheet.Cells["A1"].Style.Font.Bold = true;
+            Sheet.Cells["B1"].Style.Font.Bold = true;
+            Sheet.Cells["C1"].Style.Font.Bold = true;
+            Sheet.Cells["D1"].Style.Font.Bold = true;
+            Sheet.Cells["E1"].Style.Font.Bold = true;
+            Sheet.Cells["F1"].Style.Font.Bold = true;
+            Sheet.Cells["G1"].Style.Font.Bold = true;
+            Sheet.Cells["H1"].Style.Font.Bold = true;
+            Sheet.Cells["I1"].Style.Font.Bold = true;
+            Sheet.Cells["J1"].Style.Font.Bold = true;
+
+            #endregion
+            int row = 2;
+            foreach (var item in listPDI)
+            {
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = item.PO.VendorCode;
+                Sheet.Cells[string.Format("B{0}", row)].Value = item.Material;
+                Sheet.Cells[string.Format("C{0}", row)].Value = item.Description;
+                Sheet.Cells[string.Format("D{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("E{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("F{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("G{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("H{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("I{0}", row)].Value = 0;
+                Sheet.Cells[string.Format("J{0}", row)].Value = 0;
+                row++;
+            }
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xls");
+            Response.BinaryWrite(Ep.GetAsByteArray());
+            Response.End();
+        }
+        //Fahmi 
+        [HttpPost]
+        public ActionResult UploadExcel(HttpPostedFileBase FileUpload)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            List<string> data = new List<string>();
+            if (FileUpload != null)
+            {
+                // tdata.ExecuteCommand("truncate table OtherCompanyAssets");  
+                if (FileUpload.ContentType == "application/vnd.ms-excel" || FileUpload.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+
+                    string filename = FileUpload.FileName;
+                    string targetpath = Server.MapPath("~/Files/Import/");
+                    FileUpload.SaveAs(targetpath + filename);
+                    string pathToExcelFile = targetpath + filename;
+                    var connectionString = "";
+                    if (filename.EndsWith(".xls"))
+                    {
+                        connectionString = string.Format("Provider=Microsoft.Jet.OLEDB.4.0; data source={0}; Extended Properties=Excel 8.0;", pathToExcelFile);
+                    }
+                    else if (filename.EndsWith(".xlsx"))
+                    {
+                        connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1\";", pathToExcelFile);
+                    }
+
+                    var adapter = new OleDbDataAdapter("SELECT * FROM [Sheet1$]", connectionString);
+                    var ds = new DataSet();
+
+                    adapter.Fill(ds, "ExcelTable");
+
+                    DataTable dtable = ds.Tables["ExcelTable"];
+
+                    string sheetName = "Report";
+
+                    var excelFile = new ExcelQueryFactory(pathToExcelFile);
+                    var excelPDI = from a in excelFile.Worksheet<PurchasingDocumentItem>(sheetName) select a;
+
+                    foreach (var a in excelPDI)
+                    {
+                        try
+                        {
+                            if (a.PB.HasValue && a.Setting.HasValue && a.Primer.HasValue && a.Fullweld.HasValue)
+                            {
+                                PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == a.ID).FirstOrDefault();
+                                SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material && x.VendorCode == purchasingDocumentItem.PO.VendorCode).FirstOrDefault();
+                                purchasingDocumentItem.PB = a.PB;
+                                purchasingDocumentItem.Setting = a.Setting;
+                                purchasingDocumentItem.Fullweld = a.Fullweld;
+                                purchasingDocumentItem.Primer = a.Primer;
+                                db.SaveChanges();
+
+
+
+                            }
+                            else
+                            {
+                                data.Add("<ul>");
+                                if (!a.PB.HasValue) data.Add("<li> PB is required</li>");
+                                if (!a.Setting.HasValue) data.Add("<li> Setting is required</li>");
+                                if (!a.Primer.HasValue) data.Add("<li>Primer is required</li>");
+                                if (!a.Fullweld.HasValue) data.Add("<li>Fullweld is required</li>");
+
+                                data.Add("</ul>");
+                                data.ToArray();
+                                ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+
+                            }
+                        }
+
+                        catch (DbEntityValidationException ex)
+                        {
+                            foreach (var entityValidationErrors in ex.EntityValidationErrors)
+                            {
+
+                                foreach (var validationError in entityValidationErrors.ValidationErrors)
+                                {
+
+                                    Response.Write("Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
+
+                                }
+
+                            }
+                        }
+                    }
+                    //deleting excel file from folder  
+                    if ((System.IO.File.Exists(pathToExcelFile)))
+                    {
+                        System.IO.File.Delete(pathToExcelFile);
+                    }
+                    ViewBag.Message = Json("success", JsonRequestBehavior.AllowGet);
+                    return RedirectToAction("IndexCustom");
+                }
+                else
+                {
+                    //alert message for invalid file format  
+                    data.Add("<ul>");
+                    data.Add("<li>Only Excel file format is allowed</li>");
+                    data.Add("</ul>");
+                    data.ToArray();
+                    ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+                    return RedirectToAction("IndexCustom");
+                }
+            }
+            else
+            {
+                data.Add("<ul>");
+                if (FileUpload == null) data.Add("<li>Please choose Excel file</li>");
+                data.Add("</ul>");
+                data.ToArray();
+                ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+                return RedirectToAction("IndexCustom");
+            }
+        }
+        //Fahmi 
+        [HttpPost]
+        public ActionResult InsertViaExcel(HttpPostedFileBase FileUpload)
+        {
+            POTrackingEntities db = new POTrackingEntities();
+            List<string> data = new List<string>();
+            if (FileUpload != null)
+            {
+                // tdata.ExecuteCommand("truncate table OtherCompanyAssets");  
+                if (FileUpload.ContentType == "application/vnd.ms-excel" || FileUpload.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+
+                    string filename = FileUpload.FileName;
+                    string targetpath = Server.MapPath("~/Files/Import/");
+                    FileUpload.SaveAs(targetpath + filename);
+                    string pathToExcelFile = targetpath + filename;
+                    var connectionString = "";
+                    if (filename.EndsWith(".xls"))
+                    {
+                        connectionString = string.Format("Provider=Microsoft.Jet.OLEDB.4.0; data source={0}; Extended Properties=Excel 8.0;", pathToExcelFile);
+                    }
+                    else if (filename.EndsWith(".xlsx"))
+                    {
+                        connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1\";", pathToExcelFile);
+                    }
+
+                    var adapter = new OleDbDataAdapter("SELECT * FROM [Sheet1$]", connectionString);
+                    var ds = new DataSet();
+
+                    adapter.Fill(ds, "ExcelTable");
+
+                    DataTable dtable = ds.Tables["ExcelTable"];
+
+                    string sheetName = "Sheet1";
+
+                    var excelFile = new ExcelQueryFactory(pathToExcelFile);
+                    var excelPDI = from a in excelFile.Worksheet<SubcontComponentCapability>(sheetName) select a;
+                    string userName = User.Identity.Name;
+                    DateTime now = DateTime.Now;
+                    try
+                    {
+                        foreach (var a in excelPDI)
+                        {
+                            try
+                            {
+                                if (a.VendorCode != null && a.Material != null && a.PB > 0 && a.Setting > 0 && a.Fullweld > 0 && a.Primer > 0)
+                                {
+                                    SubcontComponentCapability cekRedundan = db.SubcontComponentCapabilities.Where(x => x.Material == a.Material && x.VendorCode == a.VendorCode).FirstOrDefault();
+                                    if (cekRedundan == null)
+                                    {
+                                        Vendor cekVendor = db.Vendors.Where(x => x.Code == a.VendorCode).FirstOrDefault();
+                                        if (cekVendor != null)
+                                        {
+                                            SubcontComponentCapability subcontComponentCapability = new SubcontComponentCapability
+                                            {
+                                                VendorCode = a.VendorCode,
+                                                Material = a.Material,
+                                                Description = a.Description,
+                                                DailyLeadTime = a.DailyLeadTime,
+                                                MonthlyLeadTime = a.MonthlyLeadTime,
+                                                PB = a.PB,
+                                                Setting = a.Setting,
+                                                Fullweld = a.Fullweld,
+                                                Primer = a.Primer,
+                                                MonthlyCapacity = a.MonthlyCapacity,
+                                                DailyCapacity = a.DailyCapacity,
+                                                CreatedBy = userName,
+                                                Created = now,
+                                                LastModified = now,
+                                                LastModifiedBy = userName
+
+                                            };
+                                            ViewBag.Message = "Data Berhasil di Tambahkan";
+                                            db.SubcontComponentCapabilities.Add(subcontComponentCapability);
+                                            db.SaveChanges();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    data.Add("<ul>");
+                                    if (a.VendorCode == null) data.Add("<li> VendorCode is required</li>");
+                                    if (a.Material == null) data.Add("<li> Material is required</li>");
+                                    if (a.DailyLeadTime <= 0 && a.MonthlyLeadTime <= 0 && a.PB <= 0 && a.Setting <= 0 && a.Fullweld <= 0 && a.Primer <= 0 && a.MonthlyCapacity <= 0) data.Add("<li> Please fill all column</li>");
+
+                                    data.Add("</ul>");
+                                    data.ToArray();
+                                    ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+
+                                }
+                            }
+
+                            catch (DbEntityValidationException ex)
+                            {
+                                foreach (var entityValidationErrors in ex.EntityValidationErrors)
+                                {
+
+                                    foreach (var validationError in entityValidationErrors.ValidationErrors)
+                                    {
+
+                                        Response.Write("Property: " + validationError.PropertyName + " Error: " + validationError.ErrorMessage);
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        data.Add("<ul>");
+                        data.Add("<li> File format doesn't match</li>");
+
+                        data.Add("</ul>");
+                        data.ToArray();
+                        ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+                    }
+                    //deleting excel file from folder  
+                    if ((System.IO.File.Exists(pathToExcelFile)))
+                    {
+                        System.IO.File.Delete(pathToExcelFile);
+                    }
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    //alert message for invalid file format  
+                    data.Add("<ul>");
+                    data.Add("<li>Only Excel file format is allowed</li>");
+                    data.Add("</ul>");
+                    data.ToArray();
+                    ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                data.Add("<ul>");
+                if (FileUpload == null) data.Add("<li>Please choose Excel file</li>");
+                data.Add("</ul>");
+                data.ToArray();
+                ViewBag.Message = Json(data, JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Index");
+            }
+        }
         // GET: MasterVendor/Create
         [HttpGet]
         public ActionResult Create()
@@ -153,7 +580,20 @@ namespace POTrackingV2.Controllers
                 return View(db.SubcontComponentCapabilities.Where(x => x.ID == id).FirstOrDefault());
             }
         }
-
+        //Fahmi
+        public ActionResult EditCustom(int id)
+        {
+            using (POTrackingEntities db = new POTrackingEntities())
+            {
+                PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.Where(x => x.ID == id).FirstOrDefault();
+                //SubcontComponentCapability subcontComponentCapability = db.SubcontComponentCapabilities.Where(x => x.Material == purchasingDocumentItem.Material && x.VendorCode == purchasingDocumentItem.PO.VendorCode).FirstOrDefault();
+                //var totalSubCount = subcontComponentCapability.PB + subcontComponentCapability.Setting + subcontComponentCapability.Fullweld + subcontComponentCapability.Primer;
+                @ViewBag.Daily = 0;
+                @ViewBag.Monthly = 0;
+                @ViewBag.Capacity = 0;
+                return View(db.PurchasingDocumentItems.Include(x => x.PO).SingleOrDefault(x => x.ID == id));
+            }
+        }
         // POST: MasterVendor/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, SubcontComponentCapability subcontComponent)
@@ -201,7 +641,58 @@ namespace POTrackingV2.Controllers
                 return View();
             }
         }
+        //Fahmi
+        [HttpPost]
+        public ActionResult EditCustom(int id, PurchasingDocumentItem pdi)
+        {
+            DateTime now = DateTime.Now;
+            var userName = User.Identity.Name;
+            try
+            {
+                // TODO: Add update logic here
+                using (POTrackingEntities db = new POTrackingEntities())
+                {
+                    PurchasingDocumentItem purchasingDocumentItem = db.PurchasingDocumentItems.SingleOrDefault(x => x.ID == id);
+                    string sVendorCode = purchasingDocumentItem.PO.VendorCode;
+                    string sMaterial = purchasingDocumentItem.Material;
+                    string sDescription = purchasingDocumentItem.Description;
+                    int iPB = pdi.PB.Value;
+                    int iSetting = pdi.Setting.Value;
+                    int iFullweld = pdi.Fullweld.Value;
+                    int iPrimer = pdi.Primer.Value;
 
+                    SubcontComponentCapability subCon = new SubcontComponentCapability
+                    {
+                        VendorCode = sVendorCode,
+                        Material = sMaterial,
+                        Description = sDescription,
+                        DailyLeadTime = 0,
+                        MonthlyLeadTime = 0,
+                        PB = iPB,
+                        Setting = iSetting,
+                        Fullweld = iFullweld,
+                        Primer = iPrimer,
+                        MonthlyCapacity = 0,
+                        DailyCapacity = 0,
+                        CreatedBy = userName,
+                        Created = now,
+                        LastModified = now,
+                        LastModifiedBy = userName
+                    };
+                    db.SubcontComponentCapabilities.Add(subCon);
+                    db.SaveChanges();
+
+                    ViewBag.Message = "Data Berhasil di Update";
+                    //db.SaveChanges();
+                }
+                return RedirectToAction("IndexCustom");
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                return RedirectToAction("Index");
+            }
+        }
         // GET: MasterVendor/Delete/5
         public ActionResult Delete(int id)
         {
