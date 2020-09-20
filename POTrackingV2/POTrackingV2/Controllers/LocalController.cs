@@ -51,14 +51,45 @@ namespace POTrackingV2.Controllers
             List<DelayReason> delayReasons = db.DelayReasons.ToList();
 
             ViewBag.DelayReasons = delayReasons;
-
-            var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && String.IsNullOrEmpty(s.IsClosed) && s.PurchasingDocumentItemHistories.Count == 0).Select(b => b.ID).Distinct();
-            var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();
-            var pdiHistory = db.PurchasingDocumentItems.Where(y => y.IsClosed.ToLower() == "l" || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !String.IsNullOrEmpty(y.Material)).Select(b => b.ID).Distinct();
+           
+            var parentPDIH = db.PurchasingDocumentItemHistories.Where(a => a.POHistoryCategory.ToLower() == "q").Select(x => x.PurchasingDocumentItemID).Distinct();            
             var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-            var pOes = db.POes.Where(x => ((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode)) &&
-                                (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && !String.IsNullOrEmpty(y.Material) /*&& ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))*/)) && (x.ReleaseDate != null))
-                                .AsQueryable();            
+            var pOes = db.POes.Where(x => (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx")) && (x.ReleaseDate != null))
+                                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchPOStatus))
+            {
+                if (searchPOStatus.ToLower() == "ongoing")
+                {
+                    var pdiCloseActiveStage0 = db.PurchasingDocumentItems.Where(s => (s.ConfirmedQuantity == null || s.ConfirmedDate == null) && String.IsNullOrEmpty(s.IsClosed) && s.PurchasingDocumentItemHistories.Count == 0).Select(b => b.ID).Distinct();
+                    //((x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
+                    //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && (y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() == "x")));
+                    //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => ((y.ConfirmedQuantity != null || y.ConfirmedDate != null) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))|| pdiCloseActiveStage0.Contains(y.ID)));
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "L") && (y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !pdiCloseActiveStage0.Contains(y.ID)));
+                }
+                else if (searchPOStatus.ToLower() == "newpo")
+                {
+                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed) && y.PurchasingDocumentItemHistories.Count == 0 /*&& ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))*/));
+                }
+                else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
+                {
+                    if (searchPOStatus.ToLower() == "negotiated")
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))));
+                    }
+                    else
+                    {
+                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))));
+                    }
+                }
+            }
+            else
+            {
+                var pdiHistory = db.PurchasingDocumentItems.Where(y => y.IsClosed.ToLower() == "l" || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !String.IsNullOrEmpty(y.Material)).Select(b => b.ID).Distinct();
+                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null && y.PurchasingDocumentItemHistories.Count == 0) ||
+                    ((y.IsClosed != "L") && y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !pdiHistory.Contains(y.ID)
+                    ));
+            }
 
             var noShowPOes = pOes;
 
@@ -92,18 +123,18 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-
-                pOes = pOes.Except(noShowPOes);
+                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) && !vendorSubcont.Contains(x.VendorCode)).Except(noShowPOes);
+                //pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
             {
-                //pOes = pOes.Include(x => x.PurchasingDocumentItems)
-                //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
-                //               .AsQueryable();
+                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) && !vendorSubcont.Contains(x.VendorCode));
+                
             }
             else
             {
-                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                string vendorCode = db.UserVendors.Where(x => x.Username == myUser.UserName).Select(x => x.VendorCode).FirstOrDefault();
+                pOes = pOes.Where(x => x.VendorCode == vendorCode && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
             }
 
             if (!String.IsNullOrEmpty(searchPONumber))
@@ -134,38 +165,7 @@ namespace POTrackingV2.Controllers
                 DateTime endDate = DateTime.ParseExact(searchEndPODate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                 pOes = pOes.Where(x => x.Date <= endDate);
-            }
-
-            if (!string.IsNullOrEmpty(searchPOStatus))
-            {
-                if (searchPOStatus.ToLower() == "ongoing")
-                {                    
-                    //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && (y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() != "q") && y.IsClosed.ToLower() == "x")));
-                    //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => ((y.ConfirmedQuantity != null || y.ConfirmedDate != null) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null)))|| pdiCloseActiveStage0.Contains(y.ID)));
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "L") && (y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !pdiCloseActiveStage0.Contains(y.ID)));
-                }
-                else if (searchPOStatus.ToLower() == "newpo")
-                {
-                    pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage == null || y.ActiveStage == "0") && String.IsNullOrEmpty(y.IsClosed) && y.PurchasingDocumentItemHistories.Count == 0 /*&& ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))*/));
-                }
-                else if (role == LoginConstants.RoleProcurement.ToLower() || role == LoginConstants.RoleAdministrator.ToLower())
-                {
-                    if (searchPOStatus.ToLower() == "negotiated")
-                    {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => y.ActiveStage == "1" && (y.ConfirmedQuantity != y.Quantity || y.ConfirmedDate != y.DeliveryDate) && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*&& !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")*/));
-                    }
-                    else
-                    {
-                        pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.ActiveStage != null && y.ActiveStage != "0") && y.IsClosed.ToLower() != "l" && y.IsClosed.ToLower() != "lx" && ((!parentPDIH.Contains(y.ID) && y.ParentID == null) || (!parentPDIH.Contains(y.ParentID.Value) && y.ParentID != null))/*&& !(y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && y.IsClosed.ToLower() == "x")*/));
-                    }
-                }
-            }
-            else
-            {
-                pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed != "X" && y.IsClosed != "L" && y.IsClosed != "LX" && y.ConfirmedQuantity == null && y.PurchasingDocumentItemHistories.Count == 0) ||
-                    ((y.IsClosed != "L") && y.ParentID == null && ((y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity) == null) || (y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity > y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !pdiHistory.Contains(y.ID)
-                    ));
-            }
+            }            
 
             return View(pOes.OrderBy(x => x.Number).ToPagedList(page ?? 1, Constants.LoginConstants.PageSize));
         }
@@ -400,15 +400,9 @@ namespace POTrackingV2.Controllers
 
             ViewBag.IsHeadProcurement = false;
 
-            var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();
-            //var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
-            //                   (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" || y.PurchasingDocumentItemHistories.Any(z => z.POHistoryCategory.ToLower() == "q") && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null)
-            //                   .AsQueryable();
-            //var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
-            //                   (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || y.IsClosed.ToLower() == "lx" && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null)
-            //                   .AsQueryable();
-            var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode) &&
-                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))) && !String.IsNullOrEmpty(y.Material))) && x.ReleaseDate != null)
+            var vendorSubcont = db.SubcontComponentCapabilities.Select(x => x.VendorCode).Distinct();            
+            var pOes = db.POes.Where(x => (x.Date.Year == today.Year || x.Date.Year == today.Year - 1) &&
+                               (x.PurchasingDocumentItems.Any(y => y.IsClosed.ToLower() == "l" || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)))))) && x.ReleaseDate != null)
                                .AsQueryable();
             //pOes = pOes.Where(x => x.PurchasingDocumentItems.Any(y => (y.IsClosed == "L") || (y.ParentID == null && y.IsClosed != null && y.IsClosed.Contains("X") && ((y.ConfirmedQuantity >= 0 && y.ConfirmedQuantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0)) || (y.ConfirmedQuantity == null && y.Quantity <= y.PurchasingDocumentItemHistories.Where(zx => zx.POHistoryCategory != null && zx.POHistoryCategory.ToLower() == "q").Sum(z => z.GoodsReceiptQuantity ?? 0))))));
             var noShowPOes = pOes;
@@ -439,18 +433,21 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-
-                pOes = pOes.Except(noShowPOes);
+                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) && !vendorSubcont.Contains(x.VendorCode)).Except(noShowPOes);                
+                //pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
             {
+                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) && !vendorSubcont.Contains(x.VendorCode));
                 //pOes = pOes.Include(x => x.PurchasingDocumentItems)
                 //                .Where(x => x.PurchasingDocumentItems.Any(y => y.ConfirmedQuantity != null || y.ConfirmedDate != null))
                 //               .AsQueryable();
             }
             else
             {
-                pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
+                string vendorCode = db.UserVendors.Where(x => x.Username == myUser.UserName).Select(x => x.VendorCode).FirstOrDefault();
+                pOes = pOes.Where(x => x.VendorCode == vendorCode && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
+                //pOes = pOes.Where(x => x.VendorCode == db.UserVendors.Where(y => y.Username == myUser.UserName).FirstOrDefault().VendorCode);
             }
 
 
