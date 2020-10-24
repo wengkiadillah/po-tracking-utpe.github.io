@@ -34,8 +34,8 @@ namespace POTrackingV2.Controllers
         public ActionResult Index(string searchPOStatus, string searchPONumber, string searchVendorName, string searchMaterial, string searchStartPODate, string searchEndPODate, string searchUserProcurement, int? page)
         {
             CustomMembershipUser myUser = (CustomMembershipUser)Membership.GetUser(User.Identity.Name, false);
-            string role = myUser.Roles.ToLower();
-            var roleType = db.UserRoleTypes.Where(x => x.Username == myUser.UserName).FirstOrDefault();
+            string role = "procurement";
+            var roleType = db.UserRoleTypes.Where(x => x.Username == "mufti").FirstOrDefault();
 
             ViewBag.IsHeadProcurement = false;
             ViewBag.CurrentSearchPONumber = searchPONumber;
@@ -97,8 +97,8 @@ namespace POTrackingV2.Controllers
             {
                 List<string> myUserNRPs = new List<string>();
 
-                myUserNRPs = GetChildNRPsByUsername(myUser.UserName);
-                myUserNRPs.Add(GetNRPByUsername(myUser.UserName));
+                myUserNRPs = GetChildNRPsByUsername("mufti");
+                myUserNRPs.Add(GetNRPByUsername("mufti"));
 
                 if (myUserNRPs.Count > 2)
                 {
@@ -107,7 +107,7 @@ namespace POTrackingV2.Controllers
 
                 if (!string.IsNullOrEmpty(searchUserProcurement))
                 {
-                    myUserNRPs = GetChildNRPsByUsernameWithFilter(myUser.UserName, searchUserProcurement);
+                    myUserNRPs = GetChildNRPsByUsernameWithFilter("mufti", searchUserProcurement);
                 }
 
                 //var noShowPOes = db.POes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && !vendorSubcont.Contains(x.VendorCode))
@@ -123,7 +123,7 @@ namespace POTrackingV2.Controllers
                     }
                 }
 
-                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) && !vendorSubcont.Contains(x.VendorCode)).Except(noShowPOes);
+                pOes = pOes.Where(x => (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)) /*&& !vendorSubcont.Contains(x.VendorCode)*/).Except(noShowPOes);
                 //pOes = pOes.Except(noShowPOes);
             }
             else if (role == LoginConstants.RoleAdministrator.ToLower())
@@ -133,7 +133,7 @@ namespace POTrackingV2.Controllers
             }
             else
             {
-                string vendorCode = db.UserVendors.Where(x => x.Username == myUser.UserName).Select(x => x.VendorCode).FirstOrDefault();
+                string vendorCode = db.UserVendors.Where(x => x.Username == "mufti").Select(x => x.VendorCode).FirstOrDefault();
                 pOes = pOes.Where(x => x.VendorCode == vendorCode && (x.Type.ToLower() == "zo05" || x.Type.ToLower() == "zo09" || x.Type.ToLower() == "zo10") && x.PurchasingDocumentItems.Any(y => !String.IsNullOrEmpty(y.Material)));
             }
 
@@ -606,52 +606,52 @@ namespace POTrackingV2.Controllers
             }
         }
 
-        public JsonResult GetUserDataFromAD(string username)
-        {
-            if (!string.IsNullOrEmpty(username))
-            {
-                SearchResult sResultSet;
+        //public JsonResult GetUserDataFromAD(string username)
+        //{
+        //    if (!string.IsNullOrEmpty(username))
+        //    {
+        //        SearchResult sResultSet;
 
-                string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
-                string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
-                string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
-                {
-                    DirectorySearcher dSearch = new DirectorySearcher(entry);
-                    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
-                    sResultSet = dSearch.FindOne();
-                }
+        //        string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
+        //        string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
+        //        string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
+        //        using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+        //        {
+        //            DirectorySearcher dSearch = new DirectorySearcher(entry);
+        //            dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
+        //            sResultSet = dSearch.FindOne();
+        //        }
 
-                return Json(new { sResultSet }, JsonRequestBehavior.AllowGet);
-            }
-            return null;
-        }
+        //        return Json(new { sResultSet }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    return null;
+        //}
 
         public string GetNRPByUsername(string username)
         {
             if (!string.IsNullOrEmpty(username))
             {
-                SearchResult sResultSet;
+                //SearchResult sResultSet;
 
-                string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
-                string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
-                string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
-                using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
-                {
-                    DirectorySearcher dSearch = new DirectorySearcher(entry);
-                    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
-                    sResultSet = dSearch.FindOne();
-                }
+                //string domain = WebConfigurationManager.AppSettings["ActiveDirectoryUrl"];
+                //string ldapUser = WebConfigurationManager.AppSettings["ADUsername"];
+                //string ldapPassword = WebConfigurationManager.AppSettings["ADPassword"];
+                //using (DirectoryEntry entry = new DirectoryEntry(domain, ldapUser, ldapPassword))
+                //{
+                //    DirectorySearcher dSearch = new DirectorySearcher(entry);
+                //    dSearch.Filter = "(&(objectClass=user)(samaccountname=" + username + "))";
+                //    sResultSet = dSearch.FindOne();
+                //}
 
-                try
-                {
-                    string description = sResultSet.Properties["description"][0].ToString();
-                    return description;
-                }
-                catch (Exception)
-                {
-                    return "-";
-                }
+                //try
+                //{
+                //    string description = sResultSet.Properties["description"][0].ToString();
+                //    return description;
+                //}
+                //catch (Exception)
+                //{
+                //    return "-";
+                //}
             }
             return null;
         }
@@ -666,7 +666,7 @@ namespace POTrackingV2.Controllers
 
                 if (!String.IsNullOrEmpty(userProcurementSuperior.NRP))
                 {
-                    userNRPs.Add(userProcurementSuperior.NRP);
+                    userNRPs.Add(userProcurementSuperior.NRP.TrimStart('0'));
                 }
 
                 if (userProcurementSuperior != null)
@@ -677,7 +677,7 @@ namespace POTrackingV2.Controllers
                     {
                         if (!string.IsNullOrEmpty(childUser.NRP))
                         {
-                            userNRPs.Add(childUser.NRP);
+                            userNRPs.Add(childUser.NRP.TrimStart('0'));
                         }
 
                         List<UserProcurementSuperior> grandchildUsers = db.UserProcurementSuperiors.Where(x => x.ParentID == childUser.ID).ToList();
@@ -688,7 +688,7 @@ namespace POTrackingV2.Controllers
                             {
                                 if (!string.IsNullOrEmpty(grandchildUser.NRP))
                                 {
-                                    userNRPs.Add(grandchildUser.NRP);
+                                    userNRPs.Add(grandchildUser.NRP.TrimStart('0'));
                                 }
                             }
                         }
